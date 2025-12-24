@@ -72,8 +72,15 @@ class HandleInertiaRequests extends Middleware
         // Safely generate Ziggy routes
         $ziggyRoutes = [];
         try {
-            $ziggy = new \Tightenco\Ziggy\Ziggy();
-            $ziggyRoutes = $ziggy->toArray();
+            // Check if Ziggy class exists (handles both v1 and v2 namespaces)
+            if (class_exists(\Tighten\Ziggy\Ziggy::class)) {
+                $ziggy = new \Tighten\Ziggy\Ziggy();
+                $ziggyRoutes = $ziggy->toArray();
+            } elseif (class_exists(\Tightenco\Ziggy\Ziggy::class)) {
+                // Fallback for Ziggy v1
+                $ziggy = new \Tightenco\Ziggy\Ziggy();
+                $ziggyRoutes = $ziggy->toArray();
+            }
         } catch (\Exception $e) {
             // If Ziggy fails, use empty array - routes will still work via direct URLs
             $ziggyRoutes = [];
