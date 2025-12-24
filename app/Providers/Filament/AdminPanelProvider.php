@@ -41,16 +41,6 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->authGuard('web')
-            ->canAccess(function () {
-                $user = auth()->user();
-                if (!$user) {
-                    return false;
-                }
-                
-                // Allow super_admin and transport_admin roles
-                $role = $user->role ?? null;
-                return in_array($role, ['super_admin', 'transport_admin']);
-            })
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

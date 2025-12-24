@@ -96,4 +96,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Route::class, 'driver_id');
     }
+
+    /**
+     * Determine if the user can access the admin panel.
+     */
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            // Only super_admin and transport_admin can access admin panel
+            $role = $this->role ?? null;
+            return in_array($role, ['super_admin', 'transport_admin']);
+        }
+
+        if ($panel->getId() === 'driver') {
+            // Only drivers can access driver panel
+            $role = $this->role ?? null;
+            return $role === 'driver';
+        }
+
+        return true;
+    }
 }
