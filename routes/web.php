@@ -35,6 +35,19 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     Route::post('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
 });
 
+// Admin Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    
+    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
+    Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class);
+    Route::resource('pickup-points', \App\Http\Controllers\Admin\PickupPointController::class);
+    Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class);
+    Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class);
+    Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
