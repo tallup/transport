@@ -1,0 +1,221 @@
+<?php
+
+namespace App\Http\Controllers\Parent;
+
+use App\Http\Controllers\Controller;
+use App\Models\Booking;
+use App\Models\PickupPoint;
+use App\Models\Route;
+use App\Notifications\BookingConfirmed;
+use App\Services\BookingService;
+use App\Services\CapacityGuard;
+use App\Services\PricingService;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Laravel\Cashier\Exceptions\IncompletePayment;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
+
+class BookingController extends Controller
+{
+    protected $capacityGuard;
+    protected $pricingService;
+    protected $bookingService;
+
+    public function __construct(CapacityGuard $capacityGuard, PricingService $pricingService, BookingService $bookingService)
+    {
+        $this->capacityGuard = $capacityGuard;
+        $this->pricingService = $pricingService;
+        $this->bookingService = $bookingService;
+        
+        Stripe::setApiKey(config('cashier.secret'));
+    }
+
+    public function create(Request $request)
+    {
+        $user = $request->user();
+        $students = $user->students()->get();
+        $routes = Route::where('active', true)
+            ->with(['vehicle', 'pickupPoints'])
+            ->get()
+            ->map(function ($route) {
+                $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
+                // Ensure pickup_points is accessible in frontend
+                $route->pickup_points = $route->pickupPoints;
+                return $route;
+            });
+
+        return Inertia::render('Parent/Bookings/Create', [
+            'students' => $students,
+            'routes' => $routes,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'route_id' => 'required|exists:routes,id',
+            'pickup_point_id' => 'required|exists:pickup_points,id',
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'start_date' => 'required|date|after_or_equal:today',
+        ]);
+
+        // Verify student belongs to parent
+        $user = $request->user();
+        $student = $user->students()->findOrFail($validated['student_id']);
+
+        // Check capacity
+        $route = Route::findOrFail($validated['route_id']);
+        try {
+            $this->capacityGuard->validateBookingCapacity($route);
+        } catch (\Exception $e) {
+            return back()->withErrors(['route_id' => $e->getMessage()]);
+        }
+
+        // Calculate price
+        try {
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $route);
+        } catch (\Exception $e) {
+            return back()->withErrors(['plan_type' => 'Pricing not configured for this plan type']);
+        }
+
+        // Calculate end date based on plan type
+        $bookingService = app(BookingService::class);
+        $endDate = $bookingService->calculateEndDate(
+            $validated['plan_type'],
+            \Carbon\Carbon::parse($validated['start_date'])
+        );
+
+        // Create booking (pending until payment)
+        $booking = Booking::create([
+            'student_id' => $validated['student_id'],
+            'route_id' => $validated['route_id'],
+            'pickup_point_id' => $validated['pickup_point_id'],
+            'plan_type' => $validated['plan_type'],
+            'status' => 'pending',
+            'start_date' => $validated['start_date'],
+            'end_date' => $endDate?->format('Y-m-d'),
+        ]);
+
+        return Inertia::render('Parent/Bookings/Checkout', [
+            'booking' => $booking->load(['student', 'route', 'pickupPoint']),
+            'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+        ]);
+    }
+
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $students = $user->students;
+        $bookings = Booking::whereIn('student_id', $students->pluck('id'))
+            ->with(['student', 'route', 'pickupPoint'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Parent/Bookings/Index', [
+            'bookings' => $bookings,
+        ]);
+    }
+
+    public function getPickupPoints(Request $request, Route $route)
+    {
+        $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
+        return response()->json($pickupPoints);
+    }
+
+    public function checkCapacity(Request $request, Route $route)
+    {
+        $availableSeats = $this->capacityGuard->getAvailableSeats($route);
+        return response()->json([
+            'available' => $availableSeats,
+            'capacity' => $route->capacity,
+        ]);
+    }
+
+    public function calculatePrice(Request $request)
+    {
+        $validated = $request->validate([
+            'route_id' => 'required|exists:routes,id',
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+        ]);
+
+        try {
+            $route = Route::findOrFail($validated['route_id']);
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $route);
+            return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function createPaymentIntent(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'amount' => 'required|numeric|min:50', // Minimum $0.50
+        ]);
+
+        $user = $request->user();
+        $booking = Booking::findOrFail($validated['booking_id']);
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $validated['amount'],
+                'currency' => 'usd',
+                'metadata' => [
+                    'booking_id' => $booking->id,
+                    'user_id' => $user->id,
+                ],
+            ]);
+
+            return response()->json(['clientSecret' => $paymentIntent->client_secret]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function paymentSuccess(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'payment_intent_id' => 'required|string',
+        ]);
+
+        $user = $request->user();
+        $booking = Booking::findOrFail($validated['booking_id']);
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            return back()->withErrors(['error' => 'Unauthorized']);
+        }
+
+        // Verify payment intent
+        try {
+            $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
+
+            if ($paymentIntent->status === 'succeeded') {
+                // Update booking status
+                $booking->update([
+                    'status' => 'active',
+                    'stripe_customer_id' => $user->stripe_id,
+                ]);
+
+                // Send confirmation notification
+                $user->notify(new BookingConfirmed($booking));
+
+                return redirect()->route('parent.bookings.index')
+                    ->with('success', 'Booking confirmed! Check your email for details.');
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Payment verification failed']);
+        }
+
+        return back()->withErrors(['error' => 'Payment was not successful']);
+    }
+}
