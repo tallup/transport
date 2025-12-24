@@ -1,27 +1,63 @@
-# Production 500 Error Fix Guide
+# Production Deployment Fix Guide
 
-## The Problem
+## Common Issues and Fixes
 
-The 500 error is caused by the `role` column missing from the `users` table in production.
+### Issue 1: 500 Error - Missing Role Column
 
-## Quick Fix Steps
+The `role` column is missing from the `users` table in production.
 
-### 1. Run Migrations
-
+**Fix:**
 ```bash
 php artisan migrate --force
 ```
 
-This will add the `role` column to the `users` table if it doesn't exist.
+### Issue 2: Vite Manifest Error - CSS File Not Found
 
-### 2. Clear All Caches
+Vite assets haven't been built for production.
 
+**Fix:**
 ```bash
-php artisan optimize:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+npm install
+npm run build
 ```
+
+### Complete Deployment Steps
+
+1. **Pull latest code:**
+   ```bash
+   git pull origin main
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   npm install
+   ```
+
+3. **Build assets:**
+   ```bash
+   npm run build
+   ```
+
+4. **Run migrations:**
+   ```bash
+   php artisan migrate --force
+   ```
+
+5. **Clear all caches:**
+   ```bash
+   php artisan optimize:clear
+   php artisan config:clear
+   php artisan route:clear
+   php artisan view:clear
+   ```
+
+6. **Optimize for production:**
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
 
 ### 3. Verify Database
 
