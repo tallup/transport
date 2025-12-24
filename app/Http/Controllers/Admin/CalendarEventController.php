@@ -3,63 +3,67 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CalendarEventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $calendarEvents = CalendarEvent::orderBy('date', 'desc')
+            ->paginate(15);
+
+        return Inertia::render('Admin/CalendarEvents/Index', [
+            'calendarEvents' => $calendarEvents,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return Inertia::render('Admin/CalendarEvents/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'type' => 'required|in:school_day,holiday,closure',
+            'description' => 'required|string|max:500',
+        ]);
+
+        CalendarEvent::create($validated);
+
+        return redirect()->route('admin.calendar-events.index')
+            ->with('success', 'Calendar event created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(CalendarEvent $calendarEvent)
     {
-        //
+        return Inertia::render('Admin/CalendarEvents/Edit', [
+            'calendarEvent' => $calendarEvent,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, CalendarEvent $calendarEvent)
     {
-        //
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'type' => 'required|in:school_day,holiday,closure',
+            'description' => 'required|string|max:500',
+        ]);
+
+        $calendarEvent->update($validated);
+
+        return redirect()->route('admin.calendar-events.index')
+            ->with('success', 'Calendar event updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(CalendarEvent $calendarEvent)
     {
-        //
-    }
+        $calendarEvent->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.calendar-events.index')
+            ->with('success', 'Calendar event deleted successfully.');
     }
 }

@@ -3,63 +3,88 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PickupPoint;
+use App\Models\Route;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PickupPointController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $pickupPoints = PickupPoint::with('route')
+            ->orderBy('route_id')
+            ->orderBy('sequence_order')
+            ->paginate(15);
+
+        return Inertia::render('Admin/PickupPoints/Index', [
+            'pickupPoints' => $pickupPoints,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $routes = Route::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Admin/PickupPoints/Create', [
+            'routes' => $routes,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'route_id' => 'required|exists:routes,id',
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'sequence_order' => 'required|integer|min:0',
+            'pickup_time' => 'required|date_format:H:i',
+            'dropoff_time' => 'required|date_format:H:i',
+        ]);
+
+        PickupPoint::create($validated);
+
+        return redirect()->route('admin.pickup-points.index')
+            ->with('success', 'Pickup point created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(PickupPoint $pickupPoint)
     {
-        //
+        $pickupPoint->load('route');
+        $routes = Route::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Admin/PickupPoints/Edit', [
+            'pickupPoint' => $pickupPoint,
+            'routes' => $routes,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, PickupPoint $pickupPoint)
     {
-        //
+        $validated = $request->validate([
+            'route_id' => 'required|exists:routes,id',
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'sequence_order' => 'required|integer|min:0',
+            'pickup_time' => 'required|date_format:H:i',
+            'dropoff_time' => 'required|date_format:H:i',
+        ]);
+
+        $pickupPoint->update($validated);
+
+        return redirect()->route('admin.pickup-points.index')
+            ->with('success', 'Pickup point updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(PickupPoint $pickupPoint)
     {
-        //
-    }
+        $pickupPoint->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.pickup-points.index')
+            ->with('success', 'Pickup point deleted successfully.');
     }
 }

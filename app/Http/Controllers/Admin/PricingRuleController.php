@@ -3,63 +3,88 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PricingRule;
+use App\Models\Route;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PricingRuleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $pricingRules = PricingRule::with('route')
+            ->orderBy('plan_type')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return Inertia::render('Admin/PricingRules/Index', [
+            'pricingRules' => $pricingRules,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $routes = Route::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Admin/PricingRules/Create', [
+            'routes' => $routes,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'route_id' => 'nullable|exists:routes,id',
+            'vehicle_type' => 'nullable|in:bus,van',
+            'amount' => 'required|numeric|min:0',
+            'currency' => 'required|string|size:3',
+            'active' => 'nullable|boolean',
+        ]);
+
+        $validated['active'] = $request->boolean('active', true);
+
+        PricingRule::create($validated);
+
+        return redirect()->route('admin.pricing-rules.index')
+            ->with('success', 'Pricing rule created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(PricingRule $pricingRule)
     {
-        //
+        $pricingRule->load('route');
+        $routes = Route::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Admin/PricingRules/Edit', [
+            'pricingRule' => $pricingRule,
+            'routes' => $routes,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, PricingRule $pricingRule)
     {
-        //
+        $validated = $request->validate([
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'route_id' => 'nullable|exists:routes,id',
+            'vehicle_type' => 'nullable|in:bus,van',
+            'amount' => 'required|numeric|min:0',
+            'currency' => 'required|string|size:3',
+            'active' => 'nullable|boolean',
+        ]);
+
+        $validated['active'] = $request->boolean('active', true);
+
+        $pricingRule->update($validated);
+
+        return redirect()->route('admin.pricing-rules.index')
+            ->with('success', 'Pricing rule updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(PricingRule $pricingRule)
     {
-        //
-    }
+        $pricingRule->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.pricing-rules.index')
+            ->with('success', 'Pricing rule deleted successfully.');
     }
 }

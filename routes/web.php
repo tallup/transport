@@ -5,6 +5,7 @@ use App\Http\Controllers\Parent\DashboardController;
 use App\Http\Controllers\Parent\StudentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,9 +16,10 @@ Route::get('/', function (Request $request) {
         if (in_array($role, ['super_admin', 'transport_admin'])) {
             return redirect()->route('admin.dashboard');
         }
+        return redirect()->route('parent.dashboard');
     }
-    return redirect()->route('parent.dashboard');
-});
+    return Inertia::render('Home');
+})->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

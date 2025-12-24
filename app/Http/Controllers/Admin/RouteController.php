@@ -45,8 +45,10 @@ class RouteController extends Controller
             'driver_id' => 'nullable|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
-            'active' => 'boolean',
+            'active' => 'nullable|boolean',
         ]);
+
+        $validated['active'] = $request->boolean('active', true);
 
         Route::create($validated);
 
@@ -80,8 +82,10 @@ class RouteController extends Controller
             'driver_id' => 'nullable|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
-            'active' => 'boolean',
+            'active' => 'nullable|boolean',
         ]);
+
+        $validated['active'] = $request->boolean('active', true);
 
         $route->update($validated);
 
