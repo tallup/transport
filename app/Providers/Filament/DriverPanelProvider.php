@@ -39,16 +39,6 @@ class DriverPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
             ])
             ->authGuard('web')
-            ->canAccess(function () {
-                $user = auth()->user();
-                if (!$user) {
-                    return false;
-                }
-                
-                // Allow only driver role
-                $role = $user->role ?? null;
-                return $role === 'driver';
-            })
             ->authMiddleware([
                 Authenticate::class,
             ], isPersistent: true)
