@@ -102,15 +102,16 @@ class User extends Authenticatable
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
+        // Get role directly from attributes to avoid accessor issues
+        $role = $this->attributes['role'] ?? $this->role ?? null;
+        
         if ($panel->getId() === 'admin') {
             // Only super_admin and transport_admin can access admin panel
-            $role = $this->role ?? null;
             return in_array($role, ['super_admin', 'transport_admin']);
         }
 
         if ($panel->getId() === 'driver') {
             // Only drivers can access driver panel
-            $role = $this->role ?? null;
             return $role === 'driver';
         }
 
