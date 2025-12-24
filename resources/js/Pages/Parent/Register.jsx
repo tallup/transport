@@ -16,25 +16,25 @@ export default function Register() {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('register'), {
+        post(route('parent.register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Parent Registration" />
 
             <div className="mb-4 text-center">
-                <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Create Parent Account</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                    Register as a parent to book school transportation for your child
+                    Register to manage your child's school transportation
                 </p>
             </div>
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value="Full Name" />
 
                     <TextInput
                         id="name"
@@ -45,13 +45,14 @@ export default function Register() {
                         isFocused={true}
                         onChange={(e) => setData('name', e.target.value)}
                         required
+                        placeholder="Enter your full name"
                     />
 
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Email Address" />
 
                     <TextInput
                         id="email"
@@ -62,6 +63,7 @@ export default function Register() {
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
                         required
+                        placeholder="your.email@example.com"
                     />
 
                     <InputError message={errors.email} className="mt-2" />
@@ -79,6 +81,7 @@ export default function Register() {
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
                         required
+                        placeholder="Create a secure password"
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -101,6 +104,7 @@ export default function Register() {
                             setData('password_confirmation', e.target.value)
                         }
                         required
+                        placeholder="Confirm your password"
                     />
 
                     <InputError
@@ -109,19 +113,24 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-6 flex items-center justify-between">
                     <Link
                         href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Already registered?
+                        Already have an account? Sign in
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        {processing ? 'Creating Account...' : 'Create Account'}
                     </PrimaryButton>
+                </div>
+
+                <div className="mt-4 text-xs text-gray-500 text-center">
+                    By registering, you agree to our terms of service and privacy policy.
                 </div>
             </form>
         </GuestLayout>
     );
 }
+

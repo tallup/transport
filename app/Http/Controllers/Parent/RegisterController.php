@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,18 +13,18 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class RegisteredUserController extends Controller
+class RegisterController extends Controller
 {
     /**
-     * Display the registration view.
+     * Display the parent registration view.
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Parent/Register');
     }
 
     /**
-     * Handle an incoming registration request.
+     * Handle an incoming parent registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -40,18 +40,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'parent', // Default to parent role for general registration
+            'role' => 'parent', // Set role as parent
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // Redirect based on role
-        if ($user->role === 'parent') {
-            return redirect()->route('parent.dashboard');
-        }
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('parent.dashboard');
     }
 }
+
