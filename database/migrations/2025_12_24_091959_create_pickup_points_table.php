@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pickup_points', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
-            $table->string('name');
-            $table->text('address');
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
-            $table->integer('sequence_order');
-            $table->time('pickup_time');
-            $table->time('dropoff_time');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('pickup_points')) {
+            Schema::create('pickup_points', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
+                $table->string('name');
+                $table->text('address');
+                $table->decimal('latitude', 10, 8)->nullable();
+                $table->decimal('longitude', 11, 8)->nullable();
+                $table->integer('sequence_order');
+                $table->time('pickup_time');
+                $table->time('dropoff_time');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

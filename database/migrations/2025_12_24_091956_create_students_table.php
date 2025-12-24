@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('students', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('parent_id')->constrained('users')->onDelete('cascade');
-            $table->string('name');
-            $table->string('school');
-            $table->string('emergency_phone');
-            $table->string('emergency_contact_name');
-            $table->date('date_of_birth')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        if (!Schema::hasTable('students')) {
+            Schema::create('students', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('parent_id')->constrained('users')->onDelete('cascade');
+                $table->string('name');
+                $table->string('school');
+                $table->string('emergency_phone');
+                $table->string('emergency_contact_name');
+                $table->date('date_of_birth')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
     }
 
     /**

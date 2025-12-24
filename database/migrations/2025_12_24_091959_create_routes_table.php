@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('routes', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('restrict');
-            $table->integer('capacity');
-            $table->boolean('active')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('routes')) {
+            Schema::create('routes', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('set null');
+                $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('restrict');
+                $table->integer('capacity');
+                $table->boolean('active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

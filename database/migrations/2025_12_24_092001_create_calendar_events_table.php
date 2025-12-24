@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('calendar_events', function (Blueprint $table) {
-            $table->id();
-            $table->date('date');
-            $table->enum('type', ['school_day', 'holiday', 'closure']);
-            $table->text('description')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('calendar_events')) {
+            Schema::create('calendar_events', function (Blueprint $table) {
+                $table->id();
+                $table->date('date');
+                $table->enum('type', ['school_day', 'holiday', 'closure']);
+                $table->text('description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

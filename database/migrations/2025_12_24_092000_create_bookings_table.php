@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('route_id')->constrained('routes')->onDelete('restrict');
-            $table->foreignId('pickup_point_id')->constrained('pickup_points')->onDelete('restrict');
-            $table->enum('plan_type', ['weekly', 'bi_weekly', 'monthly', 'semester', 'annual']);
-            $table->enum('status', ['pending', 'active', 'cancelled', 'expired'])->default('pending');
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
-            $table->string('stripe_subscription_id')->nullable();
-            $table->string('stripe_customer_id')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('bookings')) {
+            Schema::create('bookings', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+                $table->foreignId('route_id')->constrained('routes')->onDelete('restrict');
+                $table->foreignId('pickup_point_id')->constrained('pickup_points')->onDelete('restrict');
+                $table->enum('plan_type', ['weekly', 'bi_weekly', 'monthly', 'semester', 'annual']);
+                $table->enum('status', ['pending', 'active', 'cancelled', 'expired'])->default('pending');
+                $table->date('start_date');
+                $table->date('end_date')->nullable();
+                $table->string('stripe_subscription_id')->nullable();
+                $table->string('stripe_customer_id')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

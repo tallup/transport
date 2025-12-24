@@ -11,20 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
-            $table->id();
-            $table->enum('type', ['bus', 'van']);
-            $table->string('license_plate')->unique();
-            $table->string('registration_number')->unique();
-            $table->string('make');
-            $table->string('model');
-            $table->integer('year');
-            $table->integer('capacity');
-            $table->date('last_maintenance_date')->nullable();
-            $table->date('next_maintenance_date')->nullable();
-            $table->enum('status', ['active', 'maintenance', 'retired'])->default('active');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('vehicles')) {
+            Schema::create('vehicles', function (Blueprint $table) {
+                $table->id();
+                $table->enum('type', ['bus', 'van']);
+                $table->string('license_plate')->unique();
+                $table->string('registration_number')->unique();
+                $table->string('make');
+                $table->string('model');
+                $table->integer('year');
+                $table->integer('capacity');
+                $table->date('last_maintenance_date')->nullable();
+                $table->date('next_maintenance_date')->nullable();
+                $table->enum('status', ['active', 'maintenance', 'retired'])->default('active');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
