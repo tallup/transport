@@ -35,10 +35,29 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $userData = null;
+        
+        if ($user) {
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ];
+            
+            // Only include role if the column exists
+            if (isset($user->role)) {
+                $userData['role'] = $user->role;
+            } else {
+                // Default to 'parent' if role column doesn't exist yet
+                $userData['role'] = 'parent';
+            }
+        }
+        
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user()?->only(['id', 'name', 'email', 'role']),
+                'user' => $userData,
             ],
         ];
     }

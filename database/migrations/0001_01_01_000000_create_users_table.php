@@ -11,16 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['super_admin', 'transport_admin', 'driver', 'parent'])->default('parent');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('email')->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
+                // Use string instead of enum for better compatibility
+                $table->string('role')->default('parent');
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        } else {
+            // If users table exists but role column doesn't, add it
+            if (!Schema::hasColumn('users', 'role')) {
+                Schema::table('users', function (Blueprint $table) {
+                    $table->string('role')->default('parent')->after('password');
+                });
+            }
+        }
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
