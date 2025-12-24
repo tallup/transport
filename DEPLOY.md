@@ -60,24 +60,22 @@ The error `Unable to locate file in Vite manifest: resources/css/app.css` happen
    php artisan view:cache
    ```
 
-### Option 2: Add to Forge Deployment Script
+### Option 2: Use the Provided Deployment Script
 
-In Laravel Forge, go to your site → "Deploy Script" and replace with:
+I've created an optimized deployment script for Laravel Forge. Copy the contents of `DEPLOY_SCRIPT.sh` into your Forge deployment script.
 
-```bash
-cd /home/forge/transport.on-forge.com
-git pull origin main
-composer install --no-dev --optimize-autoloader
-npm ci
-npm run build  # THIS IS CRITICAL!
-php artisan migrate --force
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
+**In Laravel Forge:**
+1. Go to your site → Settings → Deployments
+2. Copy the entire contents of `DEPLOY_SCRIPT.sh` 
+3. Paste it into the "Deploy Script" editor
+4. Click "Save" and then "Deploy Now"
 
-Then click "Deploy Now" in Forge.
+**Key improvements in the script:**
+- ✅ Proper order: Install dependencies → Build assets → Migrate → Clear caches → Optimize
+- ✅ Uses `npm ci` for faster, reliable installs
+- ✅ Clears all caches before optimizing
+- ✅ Includes fallback for storage:link
+- ✅ Uses Forge's built-in variables (`$FORGE_PHP`, `$FORGE_COMPOSER`, etc.)
 
 ### Verify the Fix
 

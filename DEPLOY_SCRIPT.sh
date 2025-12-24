@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Laravel Forge Deployment Script
+# This script is optimized for zero-downtime deployments
+
+$CREATE_RELEASE()
+
+cd $FORGE_RELEASE_DIRECTORY
+
+# Install Composer dependencies
+$FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+# Install Node dependencies and build assets
+npm ci --prefer-offline --no-audit || npm install --prefer-offline --no-audit
+npm run build
+
+# Run database migrations
+$FORGE_PHP artisan migrate --force
+
+# Clear all caches before optimizing
+$FORGE_PHP artisan optimize:clear
+$FORGE_PHP artisan config:clear
+$FORGE_PHP artisan route:clear
+$FORGE_PHP artisan view:clear
+
+# Optimize for production (cache config, routes, views)
+$FORGE_PHP artisan config:cache
+$FORGE_PHP artisan route:cache
+$FORGE_PHP artisan view:cache
+
+# Create storage symlink if it doesn't exist
+$FORGE_PHP artisan storage:link || true
+
+# Activate the new release
+$ACTIVATE_RELEASE()
+
+# Restart queues
+$RESTART_QUEUES()
+
