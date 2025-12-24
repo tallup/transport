@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role', // Will be ignored if column doesn't exist
     ];
 
     /**
@@ -43,10 +43,42 @@ class User extends Authenticatable
      */
     protected function casts(): array
     {
-        return [
+        $casts = [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+        
+        // Only cast role if column exists
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+                // Role will be handled as string, no special casting needed
+            }
+        } catch (\Exception $e) {
+            // If schema check fails, continue without role casting
+        }
+        
+        return $casts;
+    }
+    
+    /**
+     * Get the user's role, defaulting to 'parent' if column doesn't exist.
+     */
+    public function getRoleAttribute($value)
+    {
+        if ($value !== null) {
+            return $value;
+        }
+        
+        // Check if column exists, if not return default
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+                return 'parent';
+            }
+        } catch (\Exception $e) {
+            return 'parent';
+        }
+        
+        return $value ?? 'parent';
     }
 
     /**

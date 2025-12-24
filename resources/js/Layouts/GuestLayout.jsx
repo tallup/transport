@@ -18,13 +18,13 @@ export default function GuestLayout({ children }) {
                         </div>
                         <div className="flex items-center space-x-4">
                             <Link
-                                href={route('login')}
+                                href="/login"
                                 className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                             >
                                 Log in
                             </Link>
                             <Link
-                                href={route('parent.register')}
+                                href="/parent/register"
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                             >
                                 Register

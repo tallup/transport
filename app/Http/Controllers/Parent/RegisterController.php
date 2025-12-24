@@ -36,12 +36,18 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'parent', // Set role as parent
-        ]);
+        ];
+        
+        // Only add role if column exists
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+            $userData['role'] = 'parent';
+        }
+        
+        $user = User::create($userData);
 
         event(new Registered($user));
 

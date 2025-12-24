@@ -46,10 +46,15 @@ class HandleInertiaRequests extends Middleware
             ];
             
             // Only include role if the column exists
-            if (isset($user->role)) {
-                $userData['role'] = $user->role;
-            } else {
-                // Default to 'parent' if role column doesn't exist yet
+            try {
+                if (isset($user->role) || \Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+                    $userData['role'] = $user->role ?? 'parent';
+                } else {
+                    // Default to 'parent' if role column doesn't exist yet
+                    $userData['role'] = 'parent';
+                }
+            } catch (\Exception $e) {
+                // If schema check fails, default to parent
                 $userData['role'] = 'parent';
             }
         }
@@ -58,6 +63,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $userData,
+            ],
+            'ziggy' => fn () => [
+                ...(new \Tightenco\Ziggy\Ziggy)->toArray(),
+                'location' => $request->url(),
             ],
         ];
     }
