@@ -46,6 +46,11 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
 
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Redirect /admin to /admin/dashboard
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
