@@ -8,7 +8,14 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    $user = $request->user();
+    if ($user) {
+        $role = $user->attributes['role'] ?? $user->role ?? null;
+        if (in_array($role, ['super_admin', 'transport_admin'])) {
+            return redirect()->route('admin.dashboard');
+        }
+    }
     return redirect()->route('parent.dashboard');
 });
 
