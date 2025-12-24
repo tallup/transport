@@ -45,18 +45,38 @@ class HandleInertiaRequests extends Middleware
                 'email' => $user->email,
             ];
             
-            // Only include role if the column exists
+            // Safely get role - try multiple methods
             try {
-                if (isset($user->role) || \Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
-                    $userData['role'] = $user->role ?? 'parent';
+                // First try to get role directly (fastest)
+                if (isset($user->role) && $user->role !== null) {
+                    $userData['role'] = $user->role;
                 } else {
-                    // Default to 'parent' if role column doesn't exist yet
-                    $userData['role'] = 'parent';
+                    // Fallback: check if column exists in database
+                    try {
+                        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+                            $userData['role'] = $user->role ?? 'parent';
+                        } else {
+                            $userData['role'] = 'parent';
+                        }
+                    } catch (\Exception $e) {
+                        // If database check fails, default to parent
+                        $userData['role'] = 'parent';
+                    }
                 }
             } catch (\Exception $e) {
-                // If schema check fails, default to parent
+                // If anything fails, default to parent
                 $userData['role'] = 'parent';
             }
+        }
+        
+        // Safely generate Ziggy routes
+        $ziggyRoutes = [];
+        try {
+            $ziggy = new \Tightenco\Ziggy\Ziggy();
+            $ziggyRoutes = $ziggy->toArray();
+        } catch (\Exception $e) {
+            // If Ziggy fails, use empty array - routes will still work via direct URLs
+            $ziggyRoutes = [];
         }
         
         return [
@@ -64,10 +84,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $userData,
             ],
-            'ziggy' => fn () => [
-                ...(new \Tightenco\Ziggy\Ziggy)->toArray(),
+            'ziggy' => array_merge($ziggyRoutes, [
                 'location' => $request->url(),
-            ],
+            ]),
         ];
     }
 }
