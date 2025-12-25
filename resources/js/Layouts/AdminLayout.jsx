@@ -16,20 +16,27 @@ export default function AdminLayout({ header, children }) {
                                     <ApplicationLogo className="block h-9 w-auto" />
                                 </Link>
                             </div>
-                            <div className="hidden space-x-6 sm:-my-px sm:ml-12 sm:flex items-center">
+                            <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/admin/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-5 px-4 border-b-2 font-extrabold text-lg transition-all duration-200 rounded-t-lg hover:bg-white/20 active:border-indigo-600"
+                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20 active:border-indigo-600"
                                 >
                                     Dashboard
+                                </Link>
+
+                                <Link
+                                    href="/admin/bookings"
+                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
+                                >
+                                    Bookings
                                 </Link>
                                 
                                 {/* People Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-5 px-4 border-b-2 font-extrabold text-lg transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             People
-                                            <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </button>
@@ -43,9 +50,9 @@ export default function AdminLayout({ header, children }) {
                                 {/* Transport Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-5 px-4 border-b-2 font-extrabold text-lg transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             Transport
-                                            <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </button>
@@ -60,15 +67,14 @@ export default function AdminLayout({ header, children }) {
                                 {/* Operations Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-5 px-4 border-b-2 font-extrabold text-lg transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             Operations
-                                            <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </button>
                                     </Dropdown.Trigger>
                                     <Dropdown.Content align="left" width="56">
-                                        <Dropdown.Link href="/admin/bookings">Bookings</Dropdown.Link>
                                         <Dropdown.Link href="/admin/pricing-rules">Pricing Rules</Dropdown.Link>
                                         <Dropdown.Link href="/admin/calendar-events">Calendar Events</Dropdown.Link>
                                     </Dropdown.Content>
@@ -81,11 +87,11 @@ export default function AdminLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-4 py-2.5 border border-white/30 text-base leading-5 font-bold rounded-lg text-gray-800 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150 shadow-sm"
+                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-sm leading-4 font-semibold rounded-lg text-gray-800 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150 shadow-sm"
                                         >
                                             {auth?.user?.name || 'Admin'}
                                             <svg
-                                                className="ml-2 -mr-0.5 h-5 w-5"
+                                                className="ml-2 -mr-0.5 h-4 w-4"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20"
                                                 fill="currentColor"

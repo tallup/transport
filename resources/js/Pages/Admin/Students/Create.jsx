@@ -1,10 +1,11 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Select from '@/Components/Select';
+import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
 export default function Create({ parents }) {
     const { auth } = usePage().props;
@@ -17,9 +18,22 @@ export default function Create({ parents }) {
         emergency_contact_name: '',
     });
 
+    const handlePhoneChange = (e) => {
+        const inputValue = e.target.value;
+        const formatted = formatPhoneNumber(inputValue);
+        setData('emergency_phone', formatted);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/admin/students');
+        // Prepare submission data with unformatted phone
+        const submitData = {
+            ...data,
+            emergency_phone: unformatPhoneNumber(data.emergency_phone || '')
+        };
+        
+        // Submit with transformed data
+        router.post('/admin/students', submitData);
     };
 
     return (
@@ -110,8 +124,10 @@ export default function Create({ parents }) {
                                         id="emergency_phone"
                                         type="tel"
                                         value={data.emergency_phone}
-                                        onChange={(e) => setData('emergency_phone', e.target.value)}
+                                        onChange={handlePhoneChange}
                                         className="mt-1 block w-full"
+                                        placeholder="(123) 456-7890"
+                                        maxLength="14"
                                         required
                                     />
                                     <InputError message={errors.emergency_phone} className="mt-2" />

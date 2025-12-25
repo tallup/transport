@@ -1,8 +1,10 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import InputError from '@/Components/InputError';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
 export default function Edit({ student, parents }) {
     const { auth } = usePage().props;
@@ -15,9 +17,30 @@ export default function Edit({ student, parents }) {
         emergency_contact_name: student.emergency_contact_name || '',
     });
 
+    // Format phone on mount if it exists
+    useEffect(() => {
+        if (data.emergency_phone && !data.emergency_phone.includes('(')) {
+            setData('emergency_phone', formatPhoneNumber(data.emergency_phone));
+        }
+    }, []);
+
+    const handlePhoneChange = (e) => {
+        const inputValue = e.target.value;
+        const formatted = formatPhoneNumber(inputValue);
+        setData('emergency_phone', formatted);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(`/admin/students/${student.id}`);
+        // Prepare submission data with unformatted phone
+        const submitData = {
+            ...data,
+            emergency_phone: unformatPhoneNumber(data.emergency_phone || ''),
+            _method: 'PUT'
+        };
+        
+        // Submit with transformed data (using POST with _method for Laravel)
+        router.post(`/admin/students/${student.id}`, submitData);
     };
 
     return (
@@ -121,8 +144,10 @@ export default function Edit({ student, parents }) {
                                             id="emergency_phone"
                                             type="tel"
                                             value={data.emergency_phone}
-                                            onChange={(e) => setData('emergency_phone', e.target.value)}
+                                            onChange={handlePhoneChange}
                                             className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            placeholder="(123) 456-7890"
+                                            maxLength="14"
                                             required
                                         />
                                         <InputError message={errors.emergency_phone} className="mt-2 text-red-300 font-semibold" />

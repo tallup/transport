@@ -13,19 +13,19 @@ export default function DriverLayout({ header, children }) {
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/driver/dashboard">
-                                    <ApplicationLogo className="block h-9 w-auto" />
+                                    <ApplicationLogo className="block h-9 w-auto text-gray-800" />
                                 </Link>
                             </div>
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/driver/dashboard"
-                                    className="border-transparent text-white hover:text-green-200 hover:border-green-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-green-700 hover:border-green-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/driver/roster"
-                                    className="border-transparent text-white hover:text-green-200 hover:border-green-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-green-700 hover:border-green-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Daily Roster
                                 </Link>
@@ -37,7 +37,7 @@ export default function DriverLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-base leading-4 font-bold rounded-lg text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150"
+                                            className="inline-flex items-center px-3 py-2 border border-gray-300 text-base leading-4 font-bold rounded-lg text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150"
                                         >
                                             {auth?.user?.name || 'Driver'}
                                             <svg

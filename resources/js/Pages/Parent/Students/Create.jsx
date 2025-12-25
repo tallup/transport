@@ -1,8 +1,10 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
+import { useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
 export default function CreateStudent() {
     const { auth } = usePage().props;
@@ -14,9 +16,29 @@ export default function CreateStudent() {
         emergency_contact_name: '',
     });
 
+    // Format phone on mount if it exists (for editing scenarios)
+    useEffect(() => {
+        if (data.emergency_phone && !data.emergency_phone.includes('(')) {
+            setData('emergency_phone', formatPhoneNumber(data.emergency_phone));
+        }
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/parent/students');
+        // Prepare submission data with unformatted phone
+        const submitData = {
+            ...data,
+            emergency_phone: unformatPhoneNumber(data.emergency_phone || '')
+        };
+        
+        // Submit with transformed data
+        router.post('/parent/students', submitData);
+    };
+
+    const handlePhoneChange = (e) => {
+        const inputValue = e.target.value;
+        const formatted = formatPhoneNumber(inputValue);
+        setData('emergency_phone', formatted);
     };
 
     return (
@@ -106,8 +128,10 @@ export default function CreateStudent() {
                                             type="tel"
                                             id="emergency_phone"
                                             value={data.emergency_phone}
-                                            onChange={(e) => setData('emergency_phone', e.target.value)}
+                                            onChange={handlePhoneChange}
                                             className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            placeholder="(123) 456-7890"
+                                            maxLength="14"
                                             required
                                         />
                                         {errors.emergency_phone && (
