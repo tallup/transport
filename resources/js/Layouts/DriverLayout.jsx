@@ -6,7 +6,7 @@ export default function DriverLayout({ header, children }) {
     const { auth } = usePage().props;
     
     return (
-        <div className="min-h-screen bg-indigo-700">
+        <div className="min-h-screen bg-gradient-to-br from-green-700 via-teal-700 to-green-800">
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -16,16 +16,16 @@ export default function DriverLayout({ header, children }) {
                                     <ApplicationLogo className="block h-9 w-auto" />
                                 </Link>
                             </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/driver/dashboard"
-                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-green-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
+                                    className="border-transparent text-white hover:text-green-200 hover:border-green-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/driver/roster"
-                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-green-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
+                                    className="border-transparent text-white hover:text-green-200 hover:border-green-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Daily Roster
                                 </Link>
@@ -37,7 +37,7 @@ export default function DriverLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150"
+                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-base leading-4 font-bold rounded-lg text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150"
                                         >
                                             {auth?.user?.name || 'Driver'}
                                             <svg

@@ -18,24 +18,24 @@ export default function Timeline({ items = [] }) {
                         <div className="glass-card rounded-lg p-4">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                                    <h4 className="text-base font-bold text-white">{item.title}</h4>
                                     {item.description && (
-                                        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                                        <p className="text-base font-semibold text-white/90 mt-1">{item.description}</p>
                                     )}
                                 </div>
                                 {item.time && (
-                                    <span className="text-xs font-medium text-gray-500 whitespace-nowrap ml-4">
+                                    <span className="text-sm font-bold text-white/80 whitespace-nowrap ml-4">
                                         {item.time}
                                     </span>
                                 )}
                             </div>
                             {item.status && (
                                 <div className="mt-2">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                        item.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                        item.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                        item.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
-                                        'bg-gray-100 text-gray-800'
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${
+                                        item.status === 'completed' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                        item.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                        item.status === 'upcoming' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
+                                        'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                     }`}>
                                         {item.status}
                                     </span>
