@@ -21,13 +21,13 @@ export default function Index({ routes }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="glass-card overflow-hidden">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold">Routes</h2>
+                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Routes</h2>
                                 <Link
                                     href="/admin/routes/create"
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
                                 >
                                     Add Route
                                 </Link>
@@ -35,47 +35,47 @@ export default function Index({ routes }) {
 
                             {routes.data && routes.data.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
+                                    <table className="min-w-full divide-y divide-gray-200/50">
+                                        <thead className="bg-white/10">
                                             <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Name
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Driver
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Vehicle
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Capacity
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Status
                                                 </th>
-                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
                                                     Actions
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="bg-white/5 divide-y divide-gray-200/30">
                                             {routes.data.map((route) => (
-                                                <tr key={route.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                <tr key={route.id} className="hover:bg-white/10 transition">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
                                                         {route.name}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                                         {route.driver?.name || '-'}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                                         {route.vehicle?.license_plate || '-'}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                                         {route.capacity}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                            route.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                                                            route.active ? 'bg-green-500/30 text-green-100 border-green-400/50' : 'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                                         }`}>
                                                             {route.active ? 'Active' : 'Inactive'}
                                                         </span>
@@ -83,14 +83,14 @@ export default function Index({ routes }) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <Link
                                                             href={`/admin/routes/${route.id}/edit`}
-                                                            className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                            className="text-blue-300 hover:text-blue-100 mr-4"
                                                         >
                                                             Edit
                                                         </Link>
                                                         <button
                                                             onClick={() => handleDelete(route.id)}
                                                             disabled={deleting === route.id}
-                                                            className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                                            className="text-red-300 hover:text-red-100 disabled:opacity-50"
                                                         >
                                                             {deleting === route.id ? 'Deleting...' : 'Delete'}
                                                         </button>
@@ -101,7 +101,7 @@ export default function Index({ routes }) {
                                     </table>
                                 </div>
                             ) : (
-                                <p className="text-gray-500">No routes found.</p>
+                                <p className="text-white">No routes found.</p>
                             )}
 
                             {routes.links && (
@@ -111,10 +111,10 @@ export default function Index({ routes }) {
                                             <Link
                                                 key={index}
                                                 href={link.url || '#'}
-                                                className={`px-3 py-2 rounded ${
+                                                className={`px-3 py-2 rounded-lg ${
                                                     link.active
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                                        ? 'glass-button text-white'
+                                                        : 'bg-white/20 text-white hover:bg-white/30'
                                                 } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />

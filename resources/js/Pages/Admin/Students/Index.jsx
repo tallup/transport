@@ -21,13 +21,13 @@ export default function Index({ students }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="glass-card overflow-hidden">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold">Students</h2>
+                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Students</h2>
                                 <Link
                                     href="/admin/students/create"
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
                                 >
                                     Add Student
                                 </Link>
@@ -35,58 +35,58 @@ export default function Index({ students }) {
 
                             {students.data && students.data.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
+                                    <table className="min-w-full divide-y divide-gray-200/50">
+                                        <thead className="bg-white/10">
                                             <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Name
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Parent
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     School
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Date of Birth
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Emergency Contact
                                                 </th>
-                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
                                                     Actions
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="bg-white/5 divide-y divide-gray-200/30">
                                             {students.data.map((student) => (
-                                                <tr key={student.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                <tr key={student.id} className="hover:bg-white/10 transition">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
                                                         {student.name}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
                                                         {student.parent?.name}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
                                                         {student.school}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
                                                         {student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString() : '-'}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
                                                         {student.emergency_contact_name} ({student.emergency_phone})
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
                                                         <Link
                                                             href={`/admin/students/${student.id}/edit`}
-                                                            className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                            className="text-blue-300 hover:text-blue-100 mr-4 font-semibold"
                                                         >
                                                             Edit
                                                         </Link>
                                                         <button
                                                             onClick={() => handleDelete(student.id)}
                                                             disabled={deleting === student.id}
-                                                            className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                                            className="text-red-300 hover:text-red-100 disabled:opacity-50 font-semibold"
                                                         >
                                                             {deleting === student.id ? 'Deleting...' : 'Delete'}
                                                         </button>
@@ -97,7 +97,7 @@ export default function Index({ students }) {
                                     </table>
                                 </div>
                             ) : (
-                                <p className="text-gray-500">No students found.</p>
+                                <p className="text-white text-lg font-semibold">No students found.</p>
                             )}
 
                             {students.links && (
@@ -107,10 +107,10 @@ export default function Index({ students }) {
                                             <Link
                                                 key={index}
                                                 href={link.url || '#'}
-                                                className={`px-3 py-2 rounded ${
+                                                className={`px-3 py-2 rounded-lg ${
                                                     link.active
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                                        ? 'glass-button text-white'
+                                                        : 'bg-white/20 text-white hover:bg-white/30'
                                                 } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />

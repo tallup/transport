@@ -2,81 +2,93 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useState } from 'react';
 
-export default function Index({ bookings }) {
+export default function Index({ users, filters }) {
     const { auth } = usePage().props;
     const [deleting, setDeleting] = useState(null);
+    const [search, setSearch] = useState(filters.search || '');
+    const [roleFilter, setRoleFilter] = useState(filters.role || '');
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this booking?')) {
+        if (confirm('Are you sure you want to delete this user?')) {
             setDeleting(id);
-            router.delete(`/admin/bookings/${id}`, {
+            router.delete(`/admin/users/${id}`, {
                 onFinish: () => setDeleting(null),
             });
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-500/30 text-green-100 border border-green-400/50';
-            case 'pending':
-                return 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50';
-            case 'cancelled':
-                return 'bg-red-500/30 text-red-100 border border-red-400/50';
-            case 'expired':
-                return 'bg-gray-500/30 text-gray-200 border border-gray-400/50';
-            default:
-                return 'bg-gray-500/30 text-gray-200 border border-gray-400/50';
-        }
+    const handleSearch = (e) => {
+        e.preventDefault();
+        router.get('/admin/users', { search, role: roleFilter }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
-    const formatPlanType = (planType) => {
-        return planType.replace('_', '-').replace(/\b\w/g, l => l.toUpperCase());
+    const handleRoleFilter = (e) => {
+        setRoleFilter(e.target.value);
+        router.get('/admin/users', { search, role: e.target.value }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     return (
         <AdminLayout>
-            <Head title="Bookings" />
+            <Head title="Users" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="glass-card overflow-hidden">
+                    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Bookings</h2>
+                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Users</h2>
                                 <Link
-                                    href="/admin/bookings/create"
-                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
+                                    href="/admin/users/create"
+                                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg transition shadow-lg"
                                 >
-                                    Add Booking
+                                    Add User
                                 </Link>
                             </div>
 
-                            {bookings.data && bookings.data.length > 0 ? (
+                            {/* Filters */}
+                            <div className="mb-6 flex flex-col sm:flex-row gap-4">
+                                <form onSubmit={handleSearch} className="flex-1">
+                                    <input
+                                        type="text"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Search by name or email..."
+                                        className="w-full px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </form>
+                                <select
+                                    value={roleFilter}
+                                    onChange={handleRoleFilter}
+                                    className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="">All Roles</option>
+                                    <option value="parent">Parent</option>
+                                    <option value="driver">Driver</option>
+                                </select>
+                            </div>
+
+                            {users.data && users.data.length > 0 ? (
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-gray-200/50">
                                         <thead className="bg-white/10">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Student
+                                                    Name
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Route
+                                                    Email
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Pickup Point
+                                                    Role
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Plan Type
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Start Date
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    End Date
+                                                    Created
                                                 </th>
                                                 <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
                                                     Actions
@@ -84,46 +96,39 @@ export default function Index({ bookings }) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white/5 divide-y divide-gray-200/30">
-                                            {bookings.data.map((booking) => (
-                                                <tr key={booking.id} className="hover:bg-white/10 transition">
+                                            {users.data.map((user) => (
+                                                <tr key={user.id} className="hover:bg-white/10 transition">
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
-                                                        {booking.student?.name}
+                                                        {user.name}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.route?.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.pickup_point?.name}
+                                                        {user.email}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
-                                                            {formatPlanType(booking.plan_type)}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(booking.status)}`}>
-                                                            {booking.status}
+                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                            user.role === 'driver' 
+                                                                ? 'bg-green-100 text-green-800' 
+                                                                : 'bg-blue-100 text-blue-800'
+                                                        }`}>
+                                                            {user.role}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.start_date ? new Date(booking.start_date).toLocaleDateString() : '-'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.end_date ? new Date(booking.end_date).toLocaleDateString() : '-'}
+                                                        {new Date(user.created_at).toLocaleDateString()}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
                                                         <Link
-                                                            href={`/admin/bookings/${booking.id}/edit`}
+                                                            href={`/admin/users/${user.id}/edit`}
                                                             className="text-blue-300 hover:text-blue-100 mr-4 font-semibold"
                                                         >
                                                             Edit
                                                         </Link>
                                                         <button
-                                                            onClick={() => handleDelete(booking.id)}
-                                                            disabled={deleting === booking.id}
+                                                            onClick={() => handleDelete(user.id)}
+                                                            disabled={deleting === user.id}
                                                             className="text-red-300 hover:text-red-100 disabled:opacity-50 font-semibold"
                                                         >
-                                                            {deleting === booking.id ? 'Deleting...' : 'Delete'}
+                                                            {deleting === user.id ? 'Deleting...' : 'Delete'}
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -132,20 +137,20 @@ export default function Index({ bookings }) {
                                     </table>
                                 </div>
                             ) : (
-                                <p className="text-white text-lg font-semibold">No bookings found.</p>
+                                <p className="text-white text-lg font-semibold text-center py-8">No users found.</p>
                             )}
 
-                            {bookings.links && (
+                            {users.links && (
                                 <div className="mt-4 flex justify-center">
                                     <div className="flex gap-2">
-                                        {bookings.links.map((link, index) => (
+                                        {users.links.map((link, index) => (
                                             <Link
                                                 key={index}
                                                 href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-lg ${
+                                                className={`px-3 py-2 rounded-lg backdrop-blur-sm ${
                                                     link.active
-                                                        ? 'glass-button text-white'
-                                                        : 'bg-white/20 text-white hover:bg-white/30'
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-white/20 text-gray-700 hover:bg-white/30'
                                                 } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
@@ -160,5 +165,4 @@ export default function Index({ bookings }) {
         </AdminLayout>
     );
 }
-
 

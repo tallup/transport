@@ -5,8 +5,8 @@ import Dropdown from '@/Components/Dropdown';
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-200">
+        <div className="min-h-screen">
+            <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -18,25 +18,25 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <Link
                                     href="/parent/dashboard"
-                                    className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-purple-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/parent/students/create"
-                                    className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-purple-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
                                 >
                                     Add Student
                                 </Link>
                                 <Link
                                     href="/parent/bookings/create"
-                                    className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-purple-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
                                 >
                                     Book Transport
                                 </Link>
                                 <Link
                                     href="/parent/bookings"
-                                    className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                                    className="border-transparent text-gray-700 hover:text-gray-900 hover:border-purple-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition"
                                 >
                                     My Bookings
                                 </Link>
@@ -48,7 +48,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150"
                                         >
                                             {auth?.user?.name || 'User'}
                                             <svg
@@ -80,14 +80,14 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow">
+                <header className="glass-nav mt-16 shadow-lg">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {header}
                     </div>
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className={header ? '' : 'pt-16'}>{children}</main>
         </div>
     );
 }
