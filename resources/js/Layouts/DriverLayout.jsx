@@ -1,9 +1,22 @@
 import { Link, usePage } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import MobileMenu from '@/Components/MobileMenu';
 
 export default function DriverLayout({ header, children }) {
     const { auth } = usePage().props;
+    const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+    
+    // Build navigation items for mobile menu
+    const navigationItems = [
+        { href: '/driver/dashboard', label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
+        { href: '/driver/roster', label: 'Daily Roster', active: currentUrl?.startsWith('/driver/roster') },
+    ];
+
+    const userMenuItems = [
+        { href: '/profile', label: 'Profile' },
+        { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
+    ];
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-700 via-teal-700 to-green-800">
@@ -64,6 +77,13 @@ export default function DriverLayout({ header, children }) {
                                 </Dropdown>
                             </div>
                         </div>
+
+                        {/* Mobile Menu */}
+                        <MobileMenu
+                            navigationItems={navigationItems}
+                            userMenuItems={userMenuItems}
+                            user={auth?.user}
+                        />
                     </div>
                 </div>
             </nav>

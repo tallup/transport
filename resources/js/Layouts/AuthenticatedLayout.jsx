@@ -1,9 +1,24 @@
 import { Link, usePage } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import MobileMenu from '@/Components/MobileMenu';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
+    const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+    
+    // Build navigation items for mobile menu
+    const navigationItems = [
+        { href: '/parent/dashboard', label: 'Dashboard', active: currentUrl === '/parent/dashboard' },
+        { href: '/parent/students/create', label: 'Add Student', active: currentUrl?.startsWith('/parent/students') },
+        { href: '/parent/bookings/create', label: 'Book Transport', active: currentUrl === '/parent/bookings/create' },
+        { href: '/parent/bookings', label: 'My Bookings', active: currentUrl?.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' },
+    ];
+
+    const userMenuItems = [
+        { href: '/profile', label: 'Profile' },
+        { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
+    ];
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-700 via-pink-700 to-purple-800">
             <nav className="glass-nav fixed w-full top-0 z-50">
@@ -75,6 +90,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Dropdown>
                             </div>
                         </div>
+
+                        {/* Mobile Menu */}
+                        <MobileMenu
+                            navigationItems={navigationItems}
+                            userMenuItems={userMenuItems}
+                            user={auth?.user}
+                        />
                     </div>
                 </div>
             </nav>

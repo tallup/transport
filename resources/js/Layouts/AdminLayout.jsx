@@ -1,9 +1,29 @@
 import { Link, usePage } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import MobileMenu from '@/Components/MobileMenu';
 
 export default function AdminLayout({ header, children }) {
     const { auth } = usePage().props;
+    const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+    
+    // Build navigation items for mobile menu
+    const navigationItems = [
+        { href: '/admin/dashboard', label: 'Dashboard', active: currentUrl === '/admin/dashboard' },
+        { href: '/admin/bookings', label: 'Bookings', active: currentUrl?.startsWith('/admin/bookings') },
+        { href: '/admin/routes', label: 'Routes', active: currentUrl?.startsWith('/admin/routes') },
+        { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl?.startsWith('/admin/pickup-points') },
+        { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
+        { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
+        { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
+        { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
+        { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl?.startsWith('/admin/calendar-events') },
+    ];
+
+    const userMenuItems = [
+        { href: '/profile', label: 'Profile' },
+        { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
+    ];
     
     return (
         <div className="min-h-screen bg-indigo-700">
@@ -37,6 +57,13 @@ export default function AdminLayout({ header, children }) {
                                 >
                                     Routes
                                 </Link>
+
+                                <Link
+                                    href="/admin/pickup-points"
+                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
+                                >
+                                    Pickup Points
+                                </Link>
                                 
                                 {/* People Dropdown */}
                                 <Dropdown>
@@ -66,7 +93,6 @@ export default function AdminLayout({ header, children }) {
                                     </Dropdown.Trigger>
                                     <Dropdown.Content align="left" width="56">
                                         <Dropdown.Link href="/admin/vehicles">Vehicles</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/pickup-points">Pickup Points</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
 
@@ -120,6 +146,13 @@ export default function AdminLayout({ header, children }) {
                                 </Dropdown>
                             </div>
                         </div>
+
+                        {/* Mobile Menu */}
+                        <MobileMenu
+                            navigationItems={navigationItems}
+                            userMenuItems={userMenuItems}
+                            user={auth?.user}
+                        />
                     </div>
                 </div>
             </nav>
