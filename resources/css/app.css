@@ -10,6 +10,7 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.75rem; /* 12px - rounded-xl */
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     }
 
@@ -19,6 +20,7 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 0.75rem; /* 12px - rounded-xl */
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         transition: all 0.3s ease;
     }
@@ -35,6 +37,7 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0; /* Navigation bar doesn't need border radius */
         box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
     }
 
@@ -44,6 +47,7 @@
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 1rem; /* 16px - rounded-2xl */
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
     }
 
@@ -53,6 +57,7 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.5rem; /* 8px - rounded-lg */
         transition: all 0.3s ease;
     }
 
@@ -61,6 +66,7 @@
         border-color: rgba(59, 130, 246, 0.5);
         outline: none;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-radius: 0.5rem; /* Maintain border radius on focus */
     }
 
     /* Glass button */
@@ -69,6 +75,7 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.5rem; /* 8px - rounded-lg */
         box-shadow: 0 4px 16px 0 rgba(59, 130, 246, 0.3);
         transition: all 0.3s ease;
     }
@@ -77,6 +84,37 @@
         background: rgba(59, 130, 246, 0.9);
         box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
         transform: translateY(-1px);
+        border-radius: 0.5rem; /* Maintain border radius on hover */
+    }
+
+    /* Glass checkbox */
+    .glass-checkbox {
+        border-radius: 0.25rem; /* 4px - rounded */
+    }
+
+    /* Glass cancel/secondary button */
+    .glass-button-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.5rem; /* 8px - rounded-lg */
+        transition: all 0.3s ease;
+    }
+
+    .glass-button-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 0.5rem; /* Maintain border radius on hover */
+    }
+
+    /* Ensure textareas with glass-input get border radius */
+    textarea.glass-input {
+        border-radius: 0.5rem; /* 8px - rounded-lg */
+    }
+
+    /* Ensure select elements with glass-input get border radius */
+    select.glass-input {
+        border-radius: 0.5rem; /* 8px - rounded-lg */
     }
 
     /* Solid color backgrounds */
