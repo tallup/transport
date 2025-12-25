@@ -24,7 +24,7 @@ class DriverPanelProvider extends PanelProvider
     {
         return $panel
             ->id('driver')
-            ->path('driver')
+            ->path('filament-driver') // Changed to avoid conflict with React driver routes
             ->login()
             ->colors([
                 'primary' => Color::Amber,

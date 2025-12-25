@@ -98,3 +98,4 @@ php artisan route:cache
 - **React Admin Interface:** At `/admin/*` routes (this is what you're using)
 - **Redirect:** `/admin` → `/admin/dashboard` for convenience
 
+

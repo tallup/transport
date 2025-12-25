@@ -16,6 +16,9 @@ Route::get('/', function (Request $request) {
         if (in_array($role, ['super_admin', 'transport_admin'])) {
             return redirect()->route('admin.dashboard');
         }
+        if ($role === 'driver') {
+            return redirect()->route('driver.dashboard');
+        }
         return redirect()->route('parent.dashboard');
     }
     return Inertia::render('Home');
@@ -60,6 +63,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class);
     Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class);
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
+});
+
+// Driver Routes
+Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(function () {
+    // Redirect /driver to /driver/dashboard
+    Route::get('/', function () {
+        return redirect()->route('driver.dashboard');
+    });
+    
+    Route::get('/dashboard', [\App\Http\Controllers\Driver\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/roster', [\App\Http\Controllers\Driver\RosterController::class, 'index'])->name('roster');
 });
 
 Route::middleware('auth')->group(function () {
