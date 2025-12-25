@@ -25,11 +25,11 @@ export default function AdminDashboard({
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
-                    <div className="mb-8">
-                        <h1 className="text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                    <div className="mb-6 sm:mb-8">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                             Welcome, {auth?.user?.name || 'Admin'}!
                         </h1>
-                        <p className="text-lg font-semibold text-white/90">Here's what's happening with your transport system today.</p>
+                        <p className="text-base sm:text-lg font-semibold text-white/90">Here's what's happening with your transport system today.</p>
                     </div>
 
                     {/* Stats Cards */}
@@ -37,8 +37,8 @@ export default function AdminDashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-base font-bold text-white">Total Students</p>
-                                    <p className="text-4xl font-extrabold text-blue-200 mt-2 drop-shadow">{stats?.total_students || 0}</p>
+                                    <p className="text-sm sm:text-base font-bold text-white">Total Students</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-blue-200 mt-2 drop-shadow">{stats?.total_students || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +52,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Active Routes</p>
-                                    <p className="text-4xl font-extrabold text-green-200 mt-2 drop-shadow">{stats?.total_routes || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-green-200 mt-2 drop-shadow">{stats?.total_routes || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Total Vehicles</p>
-                                    <p className="text-4xl font-extrabold text-purple-200 mt-2 drop-shadow">{stats?.total_vehicles || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-purple-200 mt-2 drop-shadow">{stats?.total_vehicles || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Active Bookings</p>
-                                    <p className="text-4xl font-extrabold text-yellow-200 mt-2 drop-shadow">{stats?.active_bookings || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-yellow-200 mt-2 drop-shadow">{stats?.active_bookings || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +94,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Pending Bookings</p>
-                                    <p className="text-4xl font-extrabold text-orange-200 mt-2 drop-shadow">{stats?.pending_bookings || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-orange-200 mt-2 drop-shadow">{stats?.pending_bookings || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Total Drivers</p>
-                                    <p className="text-4xl font-extrabold text-indigo-200 mt-2 drop-shadow">{stats?.total_drivers || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-indigo-200 mt-2 drop-shadow">{stats?.total_drivers || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Total Parents</p>
-                                    <p className="text-4xl font-extrabold text-pink-200 mt-2 drop-shadow">{stats?.total_parents || 0}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-pink-200 mt-2 drop-shadow">{stats?.total_parents || 0}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Total Revenue</p>
-                                    <p className="text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">${stats?.total_revenue?.toLocaleString() || '0.00'}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">${stats?.total_revenue?.toLocaleString() || '0.00'}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

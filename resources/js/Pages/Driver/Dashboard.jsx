@@ -14,11 +14,11 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
-                    <div className="mb-8">
-                        <h1 className="text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                    <div className="mb-6 sm:mb-8">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                             Welcome, {auth?.user?.name || 'Driver'}!
                         </h1>
-                        <p className="text-lg font-semibold text-white/90">Your route information and today's schedule</p>
+                        <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
                     </div>
 
                     {!route ? (
@@ -41,7 +41,7 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-bold text-white">Route Name</p>
-                                            <p className="text-3xl font-extrabold text-teal-200 mt-2 drop-shadow">{stats.route_name}</p>
+                                            <p className="text-2xl sm:text-3xl font-extrabold text-teal-200 mt-2 drop-shadow">{stats.route_name}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-teal-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-bold text-white">Total Students</p>
-                                            <p className="text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">{stats.total_students}</p>
+                                            <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">{stats.total_students}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-bold text-white">Today's Bookings</p>
-                                            <p className="text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">{stats.today_bookings}</p>
+                                            <p className="text-3xl sm:text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">{stats.today_bookings}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                     <div className="space-y-4">
                                         <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
                                             <p className="text-base font-bold text-white">On-Time Percentage</p>
-                                            <p className="text-4xl font-extrabold text-teal-200 mt-2 drop-shadow">
+                                            <p className="text-3xl sm:text-4xl font-extrabold text-teal-200 mt-2 drop-shadow">
                                                 {performanceMetrics?.on_time_percentage || 0}%
                                             </p>
                                         </div>
