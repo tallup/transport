@@ -65,7 +65,7 @@
 
     /* Glass button */
     .glass-button {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(139, 92, 246, 0.8));
+        background: rgba(59, 130, 246, 0.8);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -74,36 +74,33 @@
     }
 
     .glass-button:hover {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(139, 92, 246, 0.9));
+        background: rgba(59, 130, 246, 0.9);
         box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
         transform: translateY(-1px);
     }
 
-    /* Gradient backgrounds */
+    /* Solid color backgrounds */
     .bg-gradient-primary {
-        background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+        background: #3B82F6;
     }
 
     .bg-gradient-secondary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea;
     }
 
     .bg-gradient-glass {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        background: rgba(59, 130, 246, 0.1);
     }
 }
 
-/* Global body background with gradient - only for pages without specific backgrounds */
+/* Global body background with solid color - only for pages without specific backgrounds */
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background: #4f46e5;
     background-attachment: fixed;
     min-height: 100vh;
 }
 
-/* Override for layouts that need transparent backgrounds */
-.min-h-screen {
-    background: transparent;
-}
+/* Layouts with explicit backgrounds will override body background */
 
 /* Smooth transitions for all interactive elements */
 * {

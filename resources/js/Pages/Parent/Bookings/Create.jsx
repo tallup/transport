@@ -1,6 +1,8 @@
 import { Head, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 import axios from 'axios';
 
 export default function CreateBooking({ students, routes }) {
@@ -90,9 +92,9 @@ export default function CreateBooking({ students, routes }) {
 
             <div className="py-12">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6">Book Transport Service</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Book Transport Service</h2>
 
                             {/* Step Indicator */}
                             <div className="mb-8">
@@ -100,10 +102,10 @@ export default function CreateBooking({ students, routes }) {
                                     {[1, 2, 3, 4, 5].map((s) => (
                                         <div key={s} className="flex items-center">
                                             <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                                                     step >= s
                                                         ? 'bg-blue-500 text-white'
-                                                        : 'bg-gray-200 text-gray-600'
+                                                        : 'bg-white/20 text-white/60 border border-white/30'
                                                 }`}
                                             >
                                                 {s}
@@ -111,14 +113,14 @@ export default function CreateBooking({ students, routes }) {
                                             {s < 5 && (
                                                 <div
                                                     className={`w-16 h-1 mx-2 ${
-                                                        step > s ? 'bg-blue-500' : 'bg-gray-200'
+                                                        step > s ? 'bg-blue-500' : 'bg-white/20'
                                                     }`}
                                                 />
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-between mt-2 text-sm text-gray-600">
+                                <div className="flex justify-between mt-2 text-sm font-bold text-white">
                                     <span>Student</span>
                                     <span>Route</span>
                                     <span>Pickup</span>
@@ -131,13 +133,13 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 1: Select Student */}
                                 {step === 1 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold mb-4">Select Student</h3>
+                                        <h3 className="text-xl font-bold text-white mb-4">Select Student</h3>
                                         {students.length === 0 ? (
                                             <div className="text-center py-8">
-                                                <p className="text-gray-500 mb-4">No students registered yet.</p>
+                                                <p className="text-white text-lg font-semibold mb-4">No students registered yet.</p>
                                                 <a
                                                     href="/parent/students/create"
-                                                    className="text-blue-500 hover:underline"
+                                                    className="text-blue-300 hover:text-blue-100 font-bold underline"
                                                 >
                                                     Add a student first
                                                 </a>
@@ -147,10 +149,10 @@ export default function CreateBooking({ students, routes }) {
                                                 {students.map((student) => (
                                                     <label
                                                         key={student.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer ${
+                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                             data.student_id == student.id
-                                                                ? 'border-blue-500 bg-blue-50'
-                                                                : 'border-gray-300'
+                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
                                                         }`}
                                                     >
                                                         <input
@@ -161,12 +163,12 @@ export default function CreateBooking({ students, routes }) {
                                                             onChange={(e) => setData('student_id', e.target.value)}
                                                             className="mr-3"
                                                         />
-                                                        <span className="font-semibold">{student.name}</span>
-                                                        <span className="text-gray-600 ml-2">- {student.school}</span>
+                                                        <span className="font-bold text-white">{student.name}</span>
+                                                        <span className="text-white/90 ml-2 font-semibold">- {student.school}</span>
                                                     </label>
                                                 ))}
                                                 {errors.student_id && (
-                                                    <p className="text-red-500 text-sm">{errors.student_id}</p>
+                                                    <p className="text-red-300 text-sm font-semibold">{errors.student_id}</p>
                                                 )}
                                             </div>
                                         )}
@@ -176,15 +178,15 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 2: Select Route */}
                                 {step === 2 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold mb-4">Select Route</h3>
+                                        <h3 className="text-xl font-bold text-white mb-4">Select Route</h3>
                                         <div className="space-y-4">
                                             {routes.map((route) => (
                                                 <label
                                                     key={route.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer ${
+                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                         data.route_id == route.id
-                                                            ? 'border-blue-500 bg-blue-50'
-                                                            : 'border-gray-300'
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
                                                     }`}
                                                 >
                                                     <input
@@ -197,16 +199,16 @@ export default function CreateBooking({ students, routes }) {
                                                     />
                                                     <div className="flex justify-between items-start">
                                                         <div>
-                                                            <span className="font-semibold">{route.name}</span>
-                                                            <p className="text-sm text-gray-600 mt-1">
+                                                            <span className="font-bold text-white">{route.name}</span>
+                                                            <p className="text-sm text-white/90 mt-1 font-semibold">
                                                                 Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
                                                             </p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <span className={`text-sm px-2 py-1 rounded ${
+                                                            <span className={`text-sm px-2 py-1 rounded border font-semibold ${
                                                                 route.available_seats > 0
-                                                                    ? 'bg-green-100 text-green-800'
-                                                                    : 'bg-red-100 text-red-800'
+                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
+                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
                                                             }`}>
                                                                 {route.available_seats} seats available
                                                             </span>
@@ -215,7 +217,7 @@ export default function CreateBooking({ students, routes }) {
                                                 </label>
                                             ))}
                                             {errors.route_id && (
-                                                <p className="text-red-500 text-sm">{errors.route_id}</p>
+                                                <p className="text-red-300 text-sm font-semibold">{errors.route_id}</p>
                                             )}
                                         </div>
                                     </div>
@@ -224,18 +226,18 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 3: Select Pickup Point */}
                                 {step === 3 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold mb-4">Select Pickup Point</h3>
+                                        <h3 className="text-xl font-bold text-white mb-4">Select Pickup Point</h3>
                                         {pickupPoints.length === 0 ? (
-                                            <p className="text-gray-500">Please select a route first.</p>
+                                            <p className="text-white text-lg font-semibold">Please select a route first.</p>
                                         ) : (
                                             <div className="space-y-2">
                                                 {pickupPoints.map((point) => (
                                                     <label
                                                         key={point.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer ${
+                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                             data.pickup_point_id == point.id
-                                                                ? 'border-blue-500 bg-blue-50'
-                                                                : 'border-gray-300'
+                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
                                                         }`}
                                                     >
                                                         <input
@@ -247,16 +249,16 @@ export default function CreateBooking({ students, routes }) {
                                                             className="mr-3"
                                                         />
                                                         <div>
-                                                            <span className="font-semibold">{point.name}</span>
-                                                            <p className="text-sm text-gray-600 mt-1">{point.address}</p>
-                                                            <p className="text-sm text-gray-600">
+                                                            <span className="font-bold text-white">{point.name}</span>
+                                                            <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
+                                                            <p className="text-sm text-white/80 font-semibold">
                                                                 Pickup: {point.pickup_time} | Dropoff: {point.dropoff_time}
                                                             </p>
                                                         </div>
                                                     </label>
                                                 ))}
                                                 {errors.pickup_point_id && (
-                                                    <p className="text-red-500 text-sm">{errors.pickup_point_id}</p>
+                                                    <p className="text-red-300 text-sm font-semibold">{errors.pickup_point_id}</p>
                                                 )}
                                             </div>
                                         )}
@@ -266,57 +268,61 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 4: Select Plan */}
                                 {step === 4 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold mb-4">Select Plan</h3>
-                                        <div className="space-y-4">
-                                            {['weekly', 'bi_weekly', 'monthly', 'semester', 'annual'].map((plan) => (
-                                                <label
-                                                    key={plan}
-                                                    className={`block p-4 border rounded-lg cursor-pointer ${
-                                                        data.plan_type === plan
-                                                            ? 'border-blue-500 bg-blue-50'
-                                                            : 'border-gray-300'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="plan_type"
-                                                        value={plan}
-                                                        checked={data.plan_type === plan}
-                                                        onChange={(e) => setData('plan_type', e.target.value)}
-                                                        className="mr-3"
-                                                    />
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="font-semibold capitalize">
-                                                            {plan.replace('_', '-')}
-                                                        </span>
-                                                        {price && data.plan_type === plan && (
-                                                            <span className="text-lg font-bold text-green-600">
-                                                                {price.formatted}
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                        <h3 className="text-xl font-bold text-white mb-4">Select Plan</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <div className="space-y-4">
+                                                    {['weekly', 'bi_weekly', 'monthly', 'semester', 'annual'].map((plan) => (
+                                                        <label
+                                                            key={plan}
+                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                                data.plan_type === plan
+                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="plan_type"
+                                                                value={plan}
+                                                                checked={data.plan_type === plan}
+                                                                onChange={(e) => setData('plan_type', e.target.value)}
+                                                                className="mr-3"
+                                                            />
+                                                            <div className="flex justify-between items-center">
+                                                                <span className="font-bold text-white capitalize">
+                                                                    {plan.replace('_', '-')}
+                                                                </span>
+                                                                {price && data.plan_type === plan && (
+                                                                    <span className="text-lg font-bold text-green-200">
+                                                                        {price.formatted}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </label>
+                                                    ))}
+                                                    {loading && <p className="text-white text-base font-semibold">Calculating price...</p>}
+                                                    {errors.plan_type && (
+                                                        <p className="text-red-300 text-sm font-semibold">{errors.plan_type}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-base font-bold text-white mb-2">
+                                                    Start Date
                                                 </label>
-                                            ))}
-                                            {loading && <p className="text-gray-500">Calculating price...</p>}
-                                            {errors.plan_type && (
-                                                <p className="text-red-500 text-sm">{errors.plan_type}</p>
-                                            )}
-                                        </div>
-                                        <div className="mt-4">
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Start Date
-                                            </label>
-                                            <input
-                                                type="date"
-                                                value={data.start_date}
-                                                onChange={(e) => setData('start_date', e.target.value)}
-                                                min={new Date().toISOString().split('T')[0]}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm"
-                                                required
-                                            />
-                                            {errors.start_date && (
-                                                <p className="text-red-500 text-sm mt-1">{errors.start_date}</p>
-                                            )}
+                                                <input
+                                                    type="date"
+                                                    value={data.start_date}
+                                                    onChange={(e) => setData('start_date', e.target.value)}
+                                                    min={new Date().toISOString().split('T')[0]}
+                                                    className="block w-full glass-input text-white"
+                                                    required
+                                                />
+                                                {errors.start_date && (
+                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.start_date}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -324,33 +330,33 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 5: Review */}
                                 {step === 5 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold mb-4">Review Your Booking</h3>
-                                        <div className="bg-gray-50 p-6 rounded-lg space-y-4">
+                                        <h3 className="text-xl font-bold text-white mb-4">Review Your Booking</h3>
+                                        <div className="bg-white/10 backdrop-blur-sm border border-white/30 p-6 rounded-lg space-y-4">
                                             <div>
-                                                <span className="font-semibold">Student:</span>{' '}
-                                                {students.find(s => s.id == data.student_id)?.name}
+                                                <span className="font-bold text-white">Student:</span>{' '}
+                                                <span className="text-white/90 font-semibold">{students.find(s => s.id == data.student_id)?.name}</span>
                                             </div>
                                             <div>
-                                                <span className="font-semibold">Route:</span>{' '}
-                                                {selectedRoute?.name}
+                                                <span className="font-bold text-white">Route:</span>{' '}
+                                                <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
                                             </div>
                                             <div>
-                                                <span className="font-semibold">Pickup Point:</span>{' '}
-                                                {pickupPoints.find(p => p.id == data.pickup_point_id)?.name}
+                                                <span className="font-bold text-white">Pickup Point:</span>{' '}
+                                                <span className="text-white/90 font-semibold">{pickupPoints.find(p => p.id == data.pickup_point_id)?.name}</span>
                                             </div>
                                             <div>
-                                                <span className="font-semibold">Plan:</span>{' '}
-                                                {data.plan_type.replace('_', '-').toUpperCase()}
+                                                <span className="font-bold text-white">Plan:</span>{' '}
+                                                <span className="text-white/90 font-semibold">{data.plan_type.replace('_', '-').toUpperCase()}</span>
                                             </div>
                                             <div>
-                                                <span className="font-semibold">Start Date:</span>{' '}
-                                                {new Date(data.start_date).toLocaleDateString()}
+                                                <span className="font-bold text-white">Start Date:</span>{' '}
+                                                <span className="text-white/90 font-semibold">{new Date(data.start_date).toLocaleDateString()}</span>
                                             </div>
                                             {price && (
-                                                <div className="border-t pt-4">
+                                                <div className="border-t border-white/30 pt-4">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-lg font-semibold">Total:</span>
-                                                        <span className="text-2xl font-bold text-green-600">
+                                                        <span className="text-lg font-bold text-white">Total:</span>
+                                                        <span className="text-2xl font-extrabold text-green-200">
                                                             {price.formatted}
                                                         </span>
                                                     </div>
@@ -366,35 +372,33 @@ export default function CreateBooking({ students, routes }) {
                                         type="button"
                                         onClick={prevStep}
                                         disabled={step === 1}
-                                        className={`px-4 py-2 rounded ${
+                                        className={`px-4 py-2 rounded font-bold transition ${
                                             step === 1
-                                                ? 'bg-gray-300 cursor-not-allowed'
-                                                : 'bg-gray-500 text-white hover:bg-gray-600'
+                                                ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
+                                                : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
                                         }`}
                                     >
                                         Previous
                                     </button>
                                     {step < 5 ? (
-                                        <button
+                                        <GlassButton
                                             type="button"
                                             onClick={nextStep}
-                                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                         >
                                             Next
-                                        </button>
+                                        </GlassButton>
                                     ) : (
-                                        <button
+                                        <GlassButton
                                             type="submit"
                                             disabled={processing}
-                                            className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
                                         >
                                             {processing ? 'Processing...' : 'Proceed to Payment'}
-                                        </button>
+                                        </GlassButton>
                                     )}
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AuthenticatedLayout>

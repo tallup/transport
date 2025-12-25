@@ -1,5 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 
 export default function BookingsIndex({ bookings }) {
     const { auth } = usePage().props;
@@ -9,13 +11,13 @@ export default function BookingsIndex({ bookings }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold">My Bookings</h2>
+                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">My Bookings</h2>
                                 <Link
                                     href="/parent/bookings/create"
-                                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                    className="glass-button px-4 py-2 rounded-lg"
                                 >
                                     New Booking
                                 </Link>
@@ -24,32 +26,32 @@ export default function BookingsIndex({ bookings }) {
                             {bookings && bookings.length > 0 ? (
                                 <div className="space-y-4">
                                     {bookings.map((booking) => (
-                                        <div key={booking.id} className="border rounded-lg p-4 hover:shadow-md transition">
+                                        <div key={booking.id} className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition">
                                             <div className="flex justify-between items-start">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-4 mb-2">
-                                                        <h3 className="text-lg font-semibold">{booking.student?.name}</h3>
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                            booking.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                            booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                            booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                            'bg-gray-100 text-gray-800'
+                                                        <h3 className="text-lg font-bold text-white">{booking.student?.name}</h3>
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                                                            booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                                            booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                            booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
+                                                            'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                                         }`}>
                                                             {booking.status.toUpperCase()}
                                                         </span>
                                                     </div>
-                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-base font-semibold text-white/90">
                                                         <div>
-                                                            <span className="font-medium">Route:</span> {booking.route?.name}
+                                                            <span className="font-bold text-white">Route:</span> {booking.route?.name}
                                                         </div>
                                                         <div>
-                                                            <span className="font-medium">Pickup:</span> {booking.pickup_point?.name}
+                                                            <span className="font-bold text-white">Pickup:</span> {booking.pickup_point?.name}
                                                         </div>
                                                         <div>
-                                                            <span className="font-medium">Plan:</span> {booking.plan_type?.replace('_', '-').toUpperCase()}
+                                                            <span className="font-bold text-white">Plan:</span> {booking.plan_type?.replace('_', '-').toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <span className="font-medium">Start:</span> {new Date(booking.start_date).toLocaleDateString()}
+                                                            <span className="font-bold text-white">Start:</span> {new Date(booking.start_date).toLocaleDateString()}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -59,17 +61,17 @@ export default function BookingsIndex({ bookings }) {
                                 </div>
                             ) : (
                                 <div className="text-center py-12">
-                                    <p className="text-gray-500 mb-4">No bookings yet.</p>
+                                    <p className="text-white text-lg font-semibold mb-4">No bookings yet.</p>
                                     <Link
                                         href="/parent/bookings/create"
-                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block"
+                                        className="glass-button px-4 py-2 rounded-lg inline-block"
                                     >
                                         Create Your First Booking
                                     </Link>
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AuthenticatedLayout>
