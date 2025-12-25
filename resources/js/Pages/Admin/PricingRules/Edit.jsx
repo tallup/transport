@@ -1,10 +1,8 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 import Checkbox from '@/Components/Checkbox';
 
 export default function Edit({ pricingRule, routes }) {
@@ -28,126 +26,143 @@ export default function Edit({ pricingRule, routes }) {
             <Head title="Edit Pricing Rule" />
 
             <div className="py-12">
-                <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6">Edit Pricing Rule</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Pricing Rule</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="plan_type" value="Plan Type *" />
-                                    <Select
-                                        id="plan_type"
-                                        value={data.plan_type}
-                                        onChange={(e) => setData('plan_type', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    >
-                                        <option value="weekly">Weekly</option>
-                                        <option value="bi_weekly">Bi-Weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                        <option value="semester">Semester</option>
-                                        <option value="annual">Annual</option>
-                                    </Select>
-                                    <InputError message={errors.plan_type} className="mt-2" />
-                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="plan_type" className="block text-base font-bold text-white mb-2">
+                                            Plan Type *
+                                        </label>
+                                        <select
+                                            id="plan_type"
+                                            value={data.plan_type}
+                                            onChange={(e) => setData('plan_type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="weekly" className="bg-indigo-700">Weekly</option>
+                                            <option value="bi_weekly" className="bg-indigo-700">Bi-Weekly</option>
+                                            <option value="monthly" className="bg-indigo-700">Monthly</option>
+                                            <option value="semester" className="bg-indigo-700">Semester</option>
+                                            <option value="annual" className="bg-indigo-700">Annual</option>
+                                        </select>
+                                        <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
 
-                                <div>
-                                    <InputLabel htmlFor="route_id" value="Route (Optional)" />
-                                    <Select
-                                        id="route_id"
-                                        value={data.route_id}
-                                        onChange={(e) => setData('route_id', e.target.value)}
-                                        className="mt-1 block w-full"
-                                    >
-                                        <option value="">Global (All Routes)</option>
-                                        {routes.map((route) => (
-                                            <option key={route.id} value={route.id}>
-                                                {route.name}
-                                            </option>
-                                        ))}
-                                    </Select>
-                                    <p className="mt-1 text-sm text-gray-500">Leave empty for global pricing</p>
-                                    <InputError message={errors.route_id} className="mt-2" />
-                                </div>
+                                    <div>
+                                        <label htmlFor="route_id" className="block text-base font-bold text-white mb-2">
+                                            Route (Optional)
+                                        </label>
+                                        <select
+                                            id="route_id"
+                                            value={data.route_id}
+                                            onChange={(e) => setData('route_id', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                        >
+                                            <option value="" className="bg-indigo-700">Global (All Routes)</option>
+                                            {routes.map((route) => (
+                                                <option key={route.id} value={route.id} className="bg-indigo-700">
+                                                    {route.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave empty for global pricing</p>
+                                        <InputError message={errors.route_id} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
 
-                                <div>
-                                    <InputLabel htmlFor="vehicle_type" value="Vehicle Type (Optional)" />
-                                    <Select
-                                        id="vehicle_type"
-                                        value={data.vehicle_type}
-                                        onChange={(e) => setData('vehicle_type', e.target.value)}
-                                        className="mt-1 block w-full"
-                                    >
-                                        <option value="">All Vehicles</option>
-                                        <option value="bus">Bus</option>
-                                        <option value="van">Van</option>
-                                    </Select>
-                                    <p className="mt-1 text-sm text-gray-500">Leave empty for all vehicles</p>
-                                    <InputError message={errors.vehicle_type} className="mt-2" />
-                                </div>
+                                    <div>
+                                        <label htmlFor="vehicle_type" className="block text-base font-bold text-white mb-2">
+                                            Vehicle Type (Optional)
+                                        </label>
+                                        <select
+                                            id="vehicle_type"
+                                            value={data.vehicle_type}
+                                            onChange={(e) => setData('vehicle_type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                        >
+                                            <option value="" className="bg-indigo-700">All Vehicles</option>
+                                            <option value="bus" className="bg-indigo-700">Bus</option>
+                                            <option value="van" className="bg-indigo-700">Van</option>
+                                        </select>
+                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave empty for all vehicles</p>
+                                        <InputError message={errors.vehicle_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
 
-                                <div>
-                                    <InputLabel htmlFor="amount" value="Amount *" />
-                                    <div className="mt-1 relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <span className="text-gray-500 sm:text-sm">$</span>
+                                    <div>
+                                        <label htmlFor="amount" className="block text-base font-bold text-white mb-2">
+                                            Amount *
+                                        </label>
+                                        <div className="mt-1 relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span className="text-white sm:text-sm font-semibold">$</span>
+                                            </div>
+                                            <input
+                                                id="amount"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={data.amount}
+                                                onChange={(e) => setData('amount', e.target.value)}
+                                                className="block w-full glass-input text-white placeholder-gray-300 pl-7"
+                                                required
+                                            />
                                         </div>
-                                        <TextInput
-                                            id="amount"
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={data.amount}
-                                            onChange={(e) => setData('amount', e.target.value)}
-                                            className="block w-full pl-7"
+                                        <InputError message={errors.amount} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="currency" className="block text-base font-bold text-white mb-2">
+                                            Currency *
+                                        </label>
+                                        <input
+                                            id="currency"
+                                            type="text"
+                                            value={data.currency}
+                                            onChange={(e) => setData('currency', e.target.value.toUpperCase())}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            maxLength="3"
                                             required
                                         />
+                                        <InputError message={errors.currency} className="mt-2 text-red-300 font-semibold" />
                                     </div>
-                                    <InputError message={errors.amount} className="mt-2" />
+
+                                    <div className="md:col-span-2">
+                                        <div className="flex items-center">
+                                            <Checkbox
+                                                id="active"
+                                                checked={data.active}
+                                                onChange={(e) => setData('active', e.target.checked)}
+                                            />
+                                            <label htmlFor="active" className="ml-2 text-base font-bold text-white">
+                                                Active
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="currency" value="Currency *" />
-                                    <TextInput
-                                        id="currency"
-                                        type="text"
-                                        value={data.currency}
-                                        onChange={(e) => setData('currency', e.target.value.toUpperCase())}
-                                        className="mt-1 block w-full"
-                                        maxLength="3"
-                                        required
-                                    />
-                                    <InputError message={errors.currency} className="mt-2" />
-                                </div>
-
-                                <div className="flex items-center">
-                                    <Checkbox
-                                        id="active"
-                                        checked={data.active}
-                                        onChange={(e) => setData('active', e.target.checked)}
-                                    />
-                                    <InputLabel htmlFor="active" value="Active" className="ml-2" />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
+                                <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/pricing-rules"
-                                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
                                     >
                                         Cancel
                                     </Link>
-                                    <PrimaryButton disabled={processing}>
+                                    <GlassButton
+                                        type="submit"
+                                        disabled={processing}
+                                    >
                                         {processing ? 'Updating...' : 'Update Pricing Rule'}
-                                    </PrimaryButton>
+                                    </GlassButton>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>
     );
 }
-
-

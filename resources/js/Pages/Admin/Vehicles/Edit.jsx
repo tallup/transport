@@ -1,10 +1,8 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 
 export default function Edit({ vehicle }) {
     const { auth } = usePage().props;
@@ -31,168 +29,187 @@ export default function Edit({ vehicle }) {
             <Head title="Edit Vehicle" />
 
             <div className="py-12">
-                <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6">Edit Vehicle</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Vehicle</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="type" value="Vehicle Type *" />
-                                    <Select
-                                        id="type"
-                                        value={data.type}
-                                        onChange={(e) => setData('type', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    >
-                                        <option value="bus">Bus</option>
-                                        <option value="van">Van</option>
-                                    </Select>
-                                    <InputError message={errors.type} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="license_plate" value="License Plate *" />
-                                    <TextInput
-                                        id="license_plate"
-                                        type="text"
-                                        value={data.license_plate}
-                                        onChange={(e) => setData('license_plate', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    />
-                                    <InputError message={errors.license_plate} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="registration_number" value="Registration Number *" />
-                                    <TextInput
-                                        id="registration_number"
-                                        type="text"
-                                        value={data.registration_number}
-                                        onChange={(e) => setData('registration_number', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    />
-                                    <InputError message={errors.registration_number} className="mt-2" />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <InputLabel htmlFor="make" value="Make *" />
-                                        <TextInput
+                                        <label htmlFor="type" className="block text-base font-bold text-white mb-2">
+                                            Vehicle Type *
+                                        </label>
+                                        <select
+                                            id="type"
+                                            value={data.type}
+                                            onChange={(e) => setData('type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="bus" className="bg-indigo-700">Bus</option>
+                                            <option value="van" className="bg-indigo-700">Van</option>
+                                        </select>
+                                        <InputError message={errors.type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="license_plate" className="block text-base font-bold text-white mb-2">
+                                            License Plate *
+                                        </label>
+                                        <input
+                                            id="license_plate"
+                                            type="text"
+                                            value={data.license_plate}
+                                            onChange={(e) => setData('license_plate', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.license_plate} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="registration_number" className="block text-base font-bold text-white mb-2">
+                                            Registration Number *
+                                        </label>
+                                        <input
+                                            id="registration_number"
+                                            type="text"
+                                            value={data.registration_number}
+                                            onChange={(e) => setData('registration_number', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.registration_number} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="make" className="block text-base font-bold text-white mb-2">
+                                            Make *
+                                        </label>
+                                        <input
                                             id="make"
                                             type="text"
                                             value={data.make}
                                             onChange={(e) => setData('make', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
                                             required
                                         />
-                                        <InputError message={errors.make} className="mt-2" />
+                                        <InputError message={errors.make} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="model" value="Model *" />
-                                        <TextInput
+                                        <label htmlFor="model" className="block text-base font-bold text-white mb-2">
+                                            Model *
+                                        </label>
+                                        <input
                                             id="model"
                                             type="text"
                                             value={data.model}
                                             onChange={(e) => setData('model', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
                                             required
                                         />
-                                        <InputError message={errors.model} className="mt-2" />
+                                        <InputError message={errors.model} className="mt-2 text-red-300 font-semibold" />
                                     </div>
-                                </div>
 
-                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="year" value="Year *" />
-                                        <TextInput
+                                        <label htmlFor="year" className="block text-base font-bold text-white mb-2">
+                                            Year *
+                                        </label>
+                                        <input
                                             id="year"
                                             type="number"
                                             value={data.year}
                                             onChange={(e) => setData('year', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
                                             min="1900"
                                             max={new Date().getFullYear() + 1}
                                             required
                                         />
-                                        <InputError message={errors.year} className="mt-2" />
+                                        <InputError message={errors.year} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="capacity" value="Capacity *" />
-                                        <TextInput
+                                        <label htmlFor="capacity" className="block text-base font-bold text-white mb-2">
+                                            Capacity *
+                                        </label>
+                                        <input
                                             id="capacity"
                                             type="number"
                                             value={data.capacity}
                                             onChange={(e) => setData('capacity', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
                                             min="1"
                                             required
                                         />
-                                        <InputError message={errors.capacity} className="mt-2" />
+                                        <InputError message={errors.capacity} className="mt-2 text-red-300 font-semibold" />
                                     </div>
-                                </div>
 
-                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="last_maintenance_date" value="Last Maintenance Date" />
-                                        <TextInput
+                                        <label htmlFor="last_maintenance_date" className="block text-base font-bold text-white mb-2">
+                                            Last Maintenance Date
+                                        </label>
+                                        <input
                                             id="last_maintenance_date"
                                             type="date"
-                                            value={data.last_maintenance_date ? data.last_maintenance_date.split('T')[0] : ''}
+                                            value={data.last_maintenance_date ? (typeof data.last_maintenance_date === 'string' ? data.last_maintenance_date.split('T')[0] : data.last_maintenance_date) : ''}
                                             onChange={(e) => setData('last_maintenance_date', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white"
                                         />
-                                        <InputError message={errors.last_maintenance_date} className="mt-2" />
+                                        <InputError message={errors.last_maintenance_date} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="next_maintenance_date" value="Next Maintenance Date" />
-                                        <TextInput
+                                        <label htmlFor="next_maintenance_date" className="block text-base font-bold text-white mb-2">
+                                            Next Maintenance Date
+                                        </label>
+                                        <input
                                             id="next_maintenance_date"
                                             type="date"
-                                            value={data.next_maintenance_date ? data.next_maintenance_date.split('T')[0] : ''}
+                                            value={data.next_maintenance_date ? (typeof data.next_maintenance_date === 'string' ? data.next_maintenance_date.split('T')[0] : data.next_maintenance_date) : ''}
                                             onChange={(e) => setData('next_maintenance_date', e.target.value)}
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full glass-input text-white"
                                         />
-                                        <InputError message={errors.next_maintenance_date} className="mt-2" />
+                                        <InputError message={errors.next_maintenance_date} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="status" className="block text-base font-bold text-white mb-2">
+                                            Status *
+                                        </label>
+                                        <select
+                                            id="status"
+                                            value={data.status}
+                                            onChange={(e) => setData('status', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="active" className="bg-indigo-700">Active</option>
+                                            <option value="maintenance" className="bg-indigo-700">Maintenance</option>
+                                            <option value="retired" className="bg-indigo-700">Retired</option>
+                                        </select>
+                                        <InputError message={errors.status} className="mt-2 text-red-300 font-semibold" />
                                     </div>
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="status" value="Status *" />
-                                    <Select
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(e) => setData('status', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    >
-                                        <option value="active">Active</option>
-                                        <option value="maintenance">Maintenance</option>
-                                        <option value="retired">Retired</option>
-                                    </Select>
-                                    <InputError message={errors.status} className="mt-2" />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
+                                <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/vehicles"
-                                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
                                     >
                                         Cancel
                                     </Link>
-                                    <PrimaryButton disabled={processing}>
+                                    <GlassButton
+                                        type="submit"
+                                        disabled={processing}
+                                    >
                                         {processing ? 'Updating...' : 'Update Vehicle'}
-                                    </PrimaryButton>
+                                    </GlassButton>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>

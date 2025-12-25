@@ -1,10 +1,8 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 
 export default function Edit({ user }) {
     const { auth } = usePage().props;
@@ -25,87 +23,96 @@ export default function Edit({ user }) {
             <Head title="Edit User" />
 
             <div className="py-12">
-                <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl overflow-hidden">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6 text-gray-900">Edit User</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit User</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="name" value="Name *" />
-                                    <TextInput
-                                        id="name"
-                                        type="text"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    />
-                                    <InputError message={errors.name} className="mt-2" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                            Name *
+                                        </label>
+                                        <input
+                                            id="name"
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="email" className="block text-base font-bold text-white mb-2">
+                                            Email *
+                                        </label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.email} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="password" className="block text-base font-bold text-white mb-2">
+                                            Password (leave blank to keep current)
+                                        </label>
+                                        <input
+                                            id="password"
+                                            type="password"
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            minLength={8}
+                                        />
+                                        <InputError message={errors.password} className="mt-2 text-red-300 font-semibold" />
+                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave blank to keep current password</p>
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="role" className="block text-base font-bold text-white mb-2">
+                                            Role *
+                                        </label>
+                                        <select
+                                            id="role"
+                                            value={data.role}
+                                            onChange={(e) => setData('role', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="parent" className="bg-indigo-700">Parent</option>
+                                            <option value="driver" className="bg-indigo-700">Driver</option>
+                                        </select>
+                                        <InputError message={errors.role} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="email" value="Email *" />
-                                    <TextInput
-                                        id="email"
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    />
-                                    <InputError message={errors.email} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="password" value="Password (leave blank to keep current)" />
-                                    <TextInput
-                                        id="password"
-                                        type="password"
-                                        value={data.password}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        minLength={8}
-                                    />
-                                    <InputError message={errors.password} className="mt-2" />
-                                    <p className="mt-1 text-sm text-gray-600">Leave blank to keep current password</p>
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="role" value="Role *" />
-                                    <Select
-                                        id="role"
-                                        value={data.role}
-                                        onChange={(e) => setData('role', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    >
-                                        <option value="parent">Parent</option>
-                                        <option value="driver">Driver</option>
-                                    </Select>
-                                    <InputError message={errors.role} className="mt-2" />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
+                                <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/users"
-                                        className="px-4 py-2 border border-white/30 rounded-lg text-gray-700 hover:bg-white/20 backdrop-blur-sm transition"
+                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
                                     >
                                         Cancel
                                     </Link>
-                                    <PrimaryButton 
+                                    <GlassButton
+                                        type="submit"
                                         disabled={processing}
-                                        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
                                     >
                                         {processing ? 'Updating...' : 'Update User'}
-                                    </PrimaryButton>
+                                    </GlassButton>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>
     );
 }
-
