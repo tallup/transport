@@ -179,12 +179,12 @@ export default function AdminDashboard({
                                 {(upcomingEvents || []).length > 0 ? (
                                     upcomingEvents.slice(0, 5).map((event) => (
                                         <div key={event.id} className="p-3 bg-white/10 rounded-lg">
-                                            <p className="font-medium text-gray-900">{event.date_label}</p>
-                                            <p className="text-sm text-gray-600">{event.description || event.type}</p>
+                                            <p className="text-base font-bold text-white">{event.date_label}</p>
+                                            <p className="text-base font-semibold text-white/90">{event.description || event.type}</p>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-500 text-sm">No upcoming events</p>
+                                    <p className="text-white text-base font-semibold">No upcoming events</p>
                                 )}
                             </div>
                         </GlassCard>
@@ -195,8 +195,8 @@ export default function AdminDashboard({
                             <div className="space-y-3">
                                 {(recentActivity || []).map((activity, index) => (
                                     <div key={index} className="p-3 bg-white/10 rounded-lg">
-                                        <p className="text-sm text-gray-900">{activity.message}</p>
-                                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                                        <p className="text-base font-bold text-white">{activity.message}</p>
+                                        <p className="text-sm font-semibold text-white/80 mt-1">{activity.time}</p>
                                     </div>
                                 ))}
                             </div>
@@ -250,31 +250,31 @@ export default function AdminDashboard({
                                 <table className="min-w-full divide-y divide-gray-200/30">
                                     <thead className="bg-white/10">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Student</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Route</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
+                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Student</th>
+                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Route</th>
+                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Status</th>
+                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Date</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white/5 divide-y divide-gray-200/20">
                                         {recentBookings.map((booking) => (
                                             <tr key={booking.id} className="hover:bg-white/10 transition">
-                                                <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                                <td className="px-4 py-3 text-base font-bold text-white">
                                                     {booking.student?.name}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                <td className="px-4 py-3 text-base font-bold text-white/90">
                                                     {booking.route?.name}
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        booking.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                        booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-gray-100 text-gray-800'
+                                                    <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${
+                                                        booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                                        booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                        'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                                     }`}>
                                                         {booking.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                <td className="px-4 py-3 text-base font-bold text-white/90">
                                                     {new Date(booking.created_at).toLocaleDateString()}
                                                 </td>
                                             </tr>
@@ -283,7 +283,7 @@ export default function AdminDashboard({
                                 </table>
                             </div>
                         ) : (
-                            <p className="text-gray-500 text-center py-8">No recent bookings</p>
+                            <p className="text-white text-lg font-semibold text-center py-8">No recent bookings</p>
                         )}
                     </GlassCard>
                 </div>
