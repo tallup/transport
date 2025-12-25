@@ -14,6 +14,7 @@ class Booking extends Model
         'student_id',
         'route_id',
         'pickup_point_id',
+        'dropoff_point_id',
         'plan_type',
         'status',
         'start_date',
@@ -49,5 +50,13 @@ class Booking extends Model
     public function pickupPoint(): BelongsTo
     {
         return $this->belongsTo(PickupPoint::class);
+    }
+
+    /**
+     * Get the dropoff point that owns the booking.
+     */
+    public function dropoffPoint(): BelongsTo
+    {
+        return $this->belongsTo(PickupPoint::class, 'dropoff_point_id');
     }
 }

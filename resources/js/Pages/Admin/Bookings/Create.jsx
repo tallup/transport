@@ -16,6 +16,7 @@ export default function Create({ students, routes }) {
         student_id: '',
         route_id: '',
         pickup_point_id: '',
+        dropoff_point_id: '',
         plan_type: 'weekly',
         status: 'pending',
         start_date: '',
@@ -26,11 +27,12 @@ export default function Create({ students, routes }) {
         if (selectedRouteId) {
             const selectedRoute = routes.find(r => r.id == selectedRouteId);
             if (selectedRoute && selectedRoute.pickup_points) {
-                setAvailablePickupPoints(selectedRoute.pickup_points);
-            } else {
-                setAvailablePickupPoints([]);
-            }
-            setData('pickup_point_id', '');
+            setAvailablePickupPoints(selectedRoute.pickup_points);
+        } else {
+            setAvailablePickupPoints([]);
+        }
+        setData('pickup_point_id', '');
+        setData('dropoff_point_id', '');
         } else {
             setAvailablePickupPoints([]);
         }
@@ -113,6 +115,25 @@ export default function Create({ students, routes }) {
                                         ))}
                                     </Select>
                                     <InputError message={errors.pickup_point_id} className="mt-2" />
+                                </div>
+
+                                <div>
+                                    <InputLabel htmlFor="dropoff_point_id" value="Dropoff Point (Optional)" />
+                                    <Select
+                                        id="dropoff_point_id"
+                                        value={data.dropoff_point_id}
+                                        onChange={(e) => setData('dropoff_point_id', e.target.value)}
+                                        className="mt-1 block w-full"
+                                        disabled={!selectedRouteId}
+                                    >
+                                        <option value="">Select Dropoff Point (Optional)</option>
+                                        {availablePickupPoints.map((point) => (
+                                            <option key={point.id} value={point.id}>
+                                                {point.name}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                    <InputError message={errors.dropoff_point_id} className="mt-2" />
                                 </div>
 
                                 <div>

@@ -13,7 +13,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['student.parent', 'route', 'pickupPoint'])
+        $bookings = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -45,6 +45,7 @@ class BookingController extends Controller
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
             'pickup_point_id' => 'required|exists:pickup_points,id',
+            'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
             'status' => 'required|in:pending,active,expired,cancelled',
             'start_date' => 'required|date',
@@ -59,7 +60,7 @@ class BookingController extends Controller
 
     public function edit(Booking $booking)
     {
-        $booking->load(['student.parent', 'route.pickupPoints', 'pickupPoint']);
+        $booking->load(['student.parent', 'route.pickupPoints', 'pickupPoint', 'dropoffPoint']);
         
         $students = Student::with('parent')
             ->orderBy('name')
@@ -83,6 +84,7 @@ class BookingController extends Controller
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
             'pickup_point_id' => 'required|exists:pickup_points,id',
+            'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
             'status' => 'required|in:pending,active,expired,cancelled',
             'start_date' => 'required|date',
