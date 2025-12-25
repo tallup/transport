@@ -12,31 +12,31 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/parent/dashboard">
-                                    <ApplicationLogo className="block h-9 w-auto" />
+                                    <ApplicationLogo className="block h-9 w-auto text-gray-800" />
                                 </Link>
                             </div>
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/parent/dashboard"
-                                    className="border-transparent text-white hover:text-purple-200 hover:border-purple-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/parent/students/create"
-                                    className="border-transparent text-white hover:text-purple-200 hover:border-purple-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Add Student
                                 </Link>
                                 <Link
                                     href="/parent/bookings/create"
-                                    className="border-transparent text-white hover:text-purple-200 hover:border-purple-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Book Transport
                                 </Link>
                                 <Link
                                     href="/parent/bookings"
-                                    className="border-transparent text-white hover:text-purple-200 hover:border-purple-300 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     My Bookings
                                 </Link>
@@ -48,7 +48,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-3 py-2 border border-white/30 text-base leading-4 font-bold rounded-lg text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150"
+                                            className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-semibold rounded-lg text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150 shadow-sm"
                                         >
                                             {auth?.user?.name || 'User'}
                                             <svg
