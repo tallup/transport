@@ -13,6 +13,7 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/bookings', label: 'Bookings', active: currentUrl?.startsWith('/admin/bookings') },
         { href: '/admin/routes', label: 'Routes', active: currentUrl?.startsWith('/admin/routes') },
         { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl?.startsWith('/admin/pickup-points') },
+        { href: '/filament-admin/schools', label: 'Schools', active: currentUrl?.startsWith('/filament-admin/schools') },
         { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
         { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
@@ -78,6 +79,7 @@ export default function AdminLayout({ header, children }) {
                                     <Dropdown.Content align="left" width="56">
                                         <Dropdown.Link href="/admin/users">Users</Dropdown.Link>
                                         <Dropdown.Link href="/admin/students">Students</Dropdown.Link>
+                                        <Dropdown.Link href="/filament-admin/schools">Schools</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
 
