@@ -51,6 +51,12 @@ export default function Index({ routes }) {
                                                     Capacity
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
+                                                    Service Type
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
+                                                    Schools
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Status
                                                 </th>
                                                 <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
@@ -72,6 +78,34 @@ export default function Index({ routes }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                                         {route.capacity}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                                                            route.service_type === 'am' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                            route.service_type === 'pm' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
+                                                            'bg-green-500/30 text-green-100 border-green-400/50'
+                                                        }`}>
+                                                            {route.service_type === 'am' ? 'AM Only' :
+                                                             route.service_type === 'pm' ? 'PM Only' : 'Both'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                                                        {route.schools && route.schools.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {route.schools.slice(0, 2).map((school) => (
+                                                                    <span key={school.id} className="px-2 py-1 bg-indigo-500/30 text-indigo-100 rounded text-xs">
+                                                                        {school.name}
+                                                                    </span>
+                                                                ))}
+                                                                {route.schools.length > 2 && (
+                                                                    <span className="px-2 py-1 bg-gray-500/30 text-gray-200 rounded text-xs">
+                                                                        +{route.schools.length - 2}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Route;
+use App\Models\School;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class RouteController extends Controller
 {
     public function index()
     {
-        $routes = Route::with(['driver', 'vehicle'])
+        $routes = Route::with(['driver', 'vehicle', 'schools'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -32,9 +33,14 @@ class RouteController extends Controller
             ->orderBy('license_plate')
             ->get(['id', 'license_plate', 'type', 'capacity']);
 
+        $schools = School::where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return Inertia::render('Admin/Routes/Create', [
             'drivers' => $drivers,
             'vehicles' => $vehicles,
+            'schools' => $schools,
         ]);
     }
 
@@ -45,12 +51,21 @@ class RouteController extends Controller
             'driver_id' => 'nullable|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
+            'service_type' => 'required|in:am,pm,both',
             'active' => 'nullable|boolean',
+            'schools' => 'nullable|array',
+            'schools.*' => 'exists:schools,id',
         ]);
 
         $validated['active'] = $request->boolean('active', true);
+        $schools = $validated['schools'] ?? [];
+        unset($validated['schools']);
 
-        Route::create($validated);
+        $route = Route::create($validated);
+        
+        if (!empty($schools)) {
+            $route->schools()->sync($schools);
+        }
 
         return redirect()->route('admin.routes.index')
             ->with('success', 'Route created successfully.');
@@ -58,7 +73,7 @@ class RouteController extends Controller
 
     public function edit(Route $route)
     {
-        $route->load(['driver', 'vehicle']);
+        $route->load(['driver', 'vehicle', 'schools']);
         
         $drivers = User::where('role', 'driver')
             ->orderBy('name')
@@ -68,10 +83,15 @@ class RouteController extends Controller
             ->orderBy('license_plate')
             ->get(['id', 'license_plate', 'type', 'capacity']);
 
+        $schools = School::where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return Inertia::render('Admin/Routes/Edit', [
             'route' => $route,
             'drivers' => $drivers,
             'vehicles' => $vehicles,
+            'schools' => $schools,
         ]);
     }
 
@@ -82,12 +102,21 @@ class RouteController extends Controller
             'driver_id' => 'nullable|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
+            'service_type' => 'required|in:am,pm,both',
             'active' => 'nullable|boolean',
+            'schools' => 'nullable|array',
+            'schools.*' => 'exists:schools,id',
         ]);
 
         $validated['active'] = $request->boolean('active', true);
+        $schools = $validated['schools'] ?? [];
+        unset($validated['schools']);
 
         $route->update($validated);
+        
+        if (isset($schools)) {
+            $route->schools()->sync($schools);
+        }
 
         return redirect()->route('admin.routes.index')
             ->with('success', 'Route updated successfully.');

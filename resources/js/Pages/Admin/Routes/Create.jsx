@@ -5,14 +5,16 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import Checkbox from '@/Components/Checkbox';
 
-export default function Create({ drivers, vehicles }) {
+export default function Create({ drivers, vehicles, schools = [] }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         driver_id: '',
         vehicle_id: '',
         capacity: '',
+        service_type: 'both',
         active: true,
+        schools: [],
     });
 
     const selectedVehicle = vehicles.find(v => v.id == data.vehicle_id);
@@ -114,6 +116,55 @@ export default function Create({ drivers, vehicles }) {
                                         />
                                         <p className="mt-1 text-sm font-semibold text-white/80">Automatically set from vehicle capacity</p>
                                         <InputError message={errors.capacity} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="service_type" className="block text-base font-bold text-white mb-2">
+                                            Service Type *
+                                        </label>
+                                        <select
+                                            id="service_type"
+                                            value={data.service_type}
+                                            onChange={(e) => setData('service_type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="am" className="bg-indigo-700">AM Only</option>
+                                            <option value="pm" className="bg-indigo-700">PM Only</option>
+                                            <option value="both" className="bg-indigo-700">Both AM & PM</option>
+                                        </select>
+                                        <InputError message={errors.service_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <label className="block text-base font-bold text-white mb-2">
+                                            Schools (Select all that apply)
+                                        </label>
+                                        <div className="space-y-2 max-h-48 overflow-y-auto bg-white/5 p-4 rounded-lg border border-white/20">
+                                            {schools.length > 0 ? (
+                                                schools.map((school) => (
+                                                    <label key={school.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 p-2 rounded">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={data.schools?.includes(school.id) || false}
+                                                            onChange={(e) => {
+                                                                const currentSchools = data.schools || [];
+                                                                if (e.target.checked) {
+                                                                    setData('schools', [...currentSchools, school.id]);
+                                                                } else {
+                                                                    setData('schools', currentSchools.filter(id => id !== school.id));
+                                                                }
+                                                            }}
+                                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                        />
+                                                        <span className="text-white font-semibold">{school.name}</span>
+                                                    </label>
+                                                ))
+                                            ) : (
+                                                <p className="text-white/60 text-sm">No schools available. Please add schools first.</p>
+                                            )}
+                                        </div>
+                                        <InputError message={errors.schools} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div className="md:col-span-2">
