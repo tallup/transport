@@ -15,7 +15,7 @@ class Student extends Model
     protected $fillable = [
         'parent_id',
         'name',
-        'school',
+        'school_id',
         'emergency_phone',
         'emergency_contact_name',
         'date_of_birth',
@@ -39,5 +39,13 @@ class Student extends Model
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Get the school that the student attends.
+     */
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
     }
 }

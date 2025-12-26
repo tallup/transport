@@ -33,9 +33,11 @@ class StudentResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('school')
+                Forms\Components\Select::make('school_id')
+                    ->relationship('school', 'name')
                     ->required()
-                    ->maxLength(255),
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\DatePicker::make('date_of_birth')
                     ->native(false),
                 Forms\Components\TextInput::make('emergency_phone')
@@ -58,8 +60,9 @@ class StudentResource extends Resource
                 Tables\Columns\TextColumn::make('parent.name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('school')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('school.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('emergency_phone'),
                 Tables\Columns\TextColumn::make('emergency_contact_name'),
                 Tables\Columns\TextColumn::make('created_at')

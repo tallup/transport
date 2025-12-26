@@ -120,3 +120,4 @@ The only remaining improvements would be:
 - Mobile-specific chart views
 - Additional mobile UX enhancements
 
+

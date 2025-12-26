@@ -5,7 +5,7 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import axios from 'axios';
 
-export default function CreateBooking({ students, schools = [], routes }) {
+export default function Rebook({ previousBooking, students, schools = [], routes }) {
     const { auth } = usePage().props;
     const [step, setStep] = useState(0);
     const [selectedRoute, setSelectedRoute] = useState(null);
@@ -16,11 +16,11 @@ export default function CreateBooking({ students, schools = [], routes }) {
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
 
     const { data, setData, post, errors, processing } = useForm({
-        school_id: '',
-        student_id: '',
-        route_id: '',
-        pickup_point_id: '',
-        plan_type: '',
+        school_id: previousBooking.student?.school_id || '',
+        student_id: previousBooking.student_id || '',
+        route_id: previousBooking.route_id || '',
+        pickup_point_id: previousBooking.pickup_point_id || '',
+        plan_type: previousBooking.plan_type || '',
         start_date: new Date().toISOString().split('T')[0],
     });
 
@@ -31,27 +31,10 @@ export default function CreateBooking({ students, schools = [], routes }) {
                 route.schools && route.schools.some(school => school.id === parseInt(data.school_id))
             );
             setFilteredRoutes(filtered);
-            // Reset route selection if current route doesn't serve selected school
-            if (data.route_id) {
-                const currentRoute = filtered.find(r => r.id === parseInt(data.route_id));
-                if (!currentRoute) {
-                    setData('route_id', '');
-                }
-            }
         } else {
             setFilteredRoutes(routes);
         }
     }, [data.school_id, routes]);
-
-    // Pre-select school based on student's school
-    useEffect(() => {
-        if (data.student_id && !data.school_id) {
-            const student = students.find(s => s.id == data.student_id);
-            if (student?.school_id) {
-                setData('school_id', student.school_id);
-            }
-        }
-    }, [data.student_id, students]);
 
     // Load pickup points when route is selected
     useEffect(() => {
@@ -120,13 +103,14 @@ export default function CreateBooking({ students, schools = [], routes }) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Book Transport" />
+            <Head title="Rebook Transport" />
 
             <div className="py-12">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Book Transport Service</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg">Rebook Transport Service</h2>
+                            <p className="text-white/80 mb-6">Based on your previous booking for {previousBooking.student?.name}</p>
 
                             {/* Step Indicator */}
                             <div className="mb-8">
@@ -193,9 +177,6 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                                     </div>
                                                 </label>
                                             ))}
-                                            {errors.school_id && (
-                                                <p className="text-red-300 text-sm font-semibold">{errors.school_id}</p>
-                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -204,46 +185,31 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                 {step === 1 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Select Student</h3>
-                                        {students.length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <p className="text-white text-lg font-semibold mb-4">No students registered yet.</p>
-                                                <a
-                                                    href="/parent/students/create"
-                                                    className="text-blue-300 hover:text-blue-100 font-bold underline"
+                                        <div className="space-y-2">
+                                            {students.map((student) => (
+                                                <label
+                                                    key={student.id}
+                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        data.student_id == student.id
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                    }`}
                                                 >
-                                                    Add a student first
-                                                </a>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-2">
-                                                {students.map((student) => (
-                                                    <label
-                                                        key={student.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                            data.student_id == student.id
-                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="student_id"
-                                                            value={student.id}
-                                                            checked={data.student_id == student.id}
-                                                            onChange={(e) => setData('student_id', e.target.value)}
-                                                            className="mr-3"
-                                                        />
-                                                        <span className="font-bold text-white">{student.name}</span>
-                                                        {student.school && (
-                                                            <span className="text-white/90 ml-2 font-semibold">- {student.school.name}</span>
-                                                        )}
-                                                    </label>
-                                                ))}
-                                                {errors.student_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.student_id}</p>
-                                                )}
-                                            </div>
-                                        )}
+                                                    <input
+                                                        type="radio"
+                                                        name="student_id"
+                                                        value={student.id}
+                                                        checked={data.student_id == student.id}
+                                                        onChange={(e) => setData('student_id', e.target.value)}
+                                                        className="mr-3"
+                                                    />
+                                                    <span className="font-bold text-white">{student.name}</span>
+                                                    {student.school && (
+                                                        <span className="text-white/90 ml-2 font-semibold">- {student.school.name}</span>
+                                                    )}
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
 
@@ -265,44 +231,41 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                         ) : (
                                             <div className="space-y-4">
                                                 {filteredRoutes.map((route) => (
-                                                <label
-                                                    key={route.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.route_id == route.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="route_id"
-                                                        value={route.id}
-                                                        checked={data.route_id == route.id}
-                                                        onChange={(e) => setData('route_id', e.target.value)}
-                                                        className="mr-3"
-                                                    />
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <span className="font-bold text-white">{route.name}</span>
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">
-                                                                Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
-                                                            </p>
+                                                    <label
+                                                        key={route.id}
+                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                            data.route_id == route.id
+                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name="route_id"
+                                                            value={route.id}
+                                                            checked={data.route_id == route.id}
+                                                            onChange={(e) => setData('route_id', e.target.value)}
+                                                            className="mr-3"
+                                                        />
+                                                        <div className="flex justify-between items-start">
+                                                            <div>
+                                                                <span className="font-bold text-white">{route.name}</span>
+                                                                <p className="text-sm text-white/90 mt-1 font-semibold">
+                                                                    Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
+                                                                </p>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <span className={`text-sm px-2 py-1 rounded border font-semibold ${
+                                                                    route.available_seats > 0
+                                                                        ? 'bg-green-500/30 text-green-100 border-green-400/50'
+                                                                        : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                                }`}>
+                                                                    {route.available_seats} seats available
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <div className="text-right">
-                                                            <span className={`text-sm px-2 py-1 rounded border font-semibold ${
-                                                                route.available_seats > 0
-                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
-                                                            }`}>
-                                                                {route.available_seats} seats available
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </label>
+                                                    </label>
                                                 ))}
-                                                {errors.route_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.route_id}</p>
-                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -342,9 +305,6 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                                         </div>
                                                     </label>
                                                 ))}
-                                                {errors.pickup_point_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.pickup_point_id}</p>
-                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -387,9 +347,6 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                                         </label>
                                                     ))}
                                                     {loading && <p className="text-white text-base font-semibold">Calculating price...</p>}
-                                                    {errors.plan_type && (
-                                                        <p className="text-red-300 text-sm font-semibold">{errors.plan_type}</p>
-                                                    )}
                                                 </div>
                                             </div>
                                             <div>
@@ -404,9 +361,6 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                                     className="block w-full glass-input text-white"
                                                     required
                                                 />
-                                                {errors.start_date && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.start_date}</p>
-                                                )}
                                             </div>
                                         </div>
                                     </div>

@@ -6,11 +6,11 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
-export default function CreateStudent() {
+export default function CreateStudent({ schools = [] }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
-        school: '',
+        school_id: '',
         date_of_birth: '',
         emergency_phone: '',
         emergency_contact_name: '',
@@ -71,19 +71,25 @@ export default function CreateStudent() {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="school" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="school_id" className="block text-base font-bold text-white mb-2">
                                             School *
                                         </label>
-                                        <input
-                                            type="text"
-                                            id="school"
-                                            value={data.school}
-                                            onChange={(e) => setData('school', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                        <select
+                                            id="school_id"
+                                            value={data.school_id}
+                                            onChange={(e) => setData('school_id', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
                                             required
-                                        />
-                                        {errors.school && (
-                                            <p className="mt-1 text-sm text-red-300 font-semibold">{errors.school}</p>
+                                        >
+                                            <option value="">Select a school</option>
+                                            {schools.map((school) => (
+                                                <option key={school.id} value={school.id} className="bg-gray-800 text-white">
+                                                    {school.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.school_id && (
+                                            <p className="mt-1 text-sm text-red-300 font-semibold">{errors.school_id}</p>
                                         )}
                                     </div>
 

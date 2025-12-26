@@ -44,6 +44,19 @@ class RouteResource extends Resource
                     ->numeric()
                     ->disabled()
                     ->dehydrated(),
+                Forms\Components\Select::make('service_type')
+                    ->options([
+                        'am' => 'AM Only',
+                        'pm' => 'PM Only',
+                        'both' => 'Both AM & PM',
+                    ])
+                    ->default('both')
+                    ->required(),
+                Forms\Components\CheckboxList::make('schools')
+                    ->relationship('schools', 'name')
+                    ->searchable()
+                    ->bulkToggleable()
+                    ->columns(2),
                 Forms\Components\Toggle::make('active')
                     ->default(true),
             ]);
@@ -63,6 +76,24 @@ class RouteResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('capacity')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('service_type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'am' => 'AM Only',
+                        'pm' => 'PM Only',
+                        'both' => 'Both',
+                        default => $state,
+                    })
+                    ->colors([
+                        'warning' => 'am',
+                        'info' => 'pm',
+                        'success' => 'both',
+                    ])
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('schools.name')
+                    ->badge()
+                    ->separator(',')
+                    ->limit(3),
                 Tables\Columns\TextColumn::make('bookings_count')
                     ->counts('bookings')
                     ->label('Bookings')

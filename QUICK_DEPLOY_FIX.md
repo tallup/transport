@@ -99,3 +99,4 @@ php artisan route:cache
 - **Redirect:** `/admin` → `/admin/dashboard` for convenience
 
 
+

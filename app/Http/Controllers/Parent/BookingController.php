@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\PickupPoint;
 use App\Models\Route;
+use App\Models\School;
 use App\Notifications\BookingConfirmed;
 use App\Services\BookingService;
+use App\Services\CalendarService;
 use App\Services\CapacityGuard;
 use App\Services\PricingService;
 use Illuminate\Http\Request;
@@ -21,12 +23,14 @@ class BookingController extends Controller
     protected $capacityGuard;
     protected $pricingService;
     protected $bookingService;
+    protected $calendarService;
 
-    public function __construct(CapacityGuard $capacityGuard, PricingService $pricingService, BookingService $bookingService)
+    public function __construct(CapacityGuard $capacityGuard, PricingService $pricingService, BookingService $bookingService, CalendarService $calendarService)
     {
         $this->capacityGuard = $capacityGuard;
         $this->pricingService = $pricingService;
         $this->bookingService = $bookingService;
+        $this->calendarService = $calendarService;
         
         Stripe::setApiKey(config('cashier.secret'));
     }
@@ -34,10 +38,21 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $user = $request->user();
-        $students = $user->students()->get();
-        $routes = Route::where('active', true)
-            ->with(['vehicle', 'pickupPoints'])
-            ->get()
+        $students = $user->students()->with('school')->get();
+        $schools = School::where('active', true)->orderBy('name')->get();
+        
+        // Filter routes by school if provided
+        $schoolId = $request->query('school_id');
+        $routesQuery = Route::where('active', true)
+            ->with(['vehicle', 'pickupPoints', 'schools']);
+        
+        if ($schoolId) {
+            $routesQuery->whereHas('schools', function ($query) use ($schoolId) {
+                $query->where('schools.id', $schoolId);
+            });
+        }
+        
+        $routes = $routesQuery->get()
             ->map(function ($route) {
                 $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
                 // Ensure pickup_points is accessible in frontend
@@ -47,8 +62,26 @@ class BookingController extends Controller
 
         return Inertia::render('Parent/Bookings/Create', [
             'students' => $students,
+            'schools' => $schools,
             'routes' => $routes,
         ]);
+    }
+    
+    public function getRoutesBySchool(Request $request, School $school)
+    {
+        $routes = Route::where('active', true)
+            ->whereHas('schools', function ($query) use ($school) {
+                $query->where('schools.id', $school->id);
+            })
+            ->with(['vehicle', 'pickupPoints', 'schools'])
+            ->get()
+            ->map(function ($route) {
+                $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
+                $route->pickup_points = $route->pickupPoints;
+                return $route;
+            });
+        
+        return response()->json($routes);
     }
 
     public function store(Request $request)
@@ -64,6 +97,13 @@ class BookingController extends Controller
         // Verify student belongs to parent
         $user = $request->user();
         $student = $user->students()->findOrFail($validated['student_id']);
+
+        // Validate booking date against calendar
+        $startDate = \Carbon\Carbon::parse($validated['start_date']);
+        $dateValidation = $this->calendarService->validateBookingDate($startDate);
+        if (!$dateValidation['valid']) {
+            return back()->withErrors(['start_date' => $dateValidation['message']]);
+        }
 
         // Check capacity
         $route = Route::findOrFail($validated['route_id']);
@@ -217,5 +257,41 @@ class BookingController extends Controller
         }
 
         return back()->withErrors(['error' => 'Payment was not successful']);
+    }
+
+    public function rebook(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Load previous booking data
+        $booking->load(['student', 'route', 'pickupPoint', 'student.school']);
+        $students = $user->students()->with('school')->get();
+        $schools = \App\Models\School::where('active', true)->orderBy('name')->get();
+        
+        // Get routes for the student's school
+        $schoolId = $booking->student->school_id;
+        $routes = Route::where('active', true)
+            ->whereHas('schools', function ($query) use ($schoolId) {
+                $query->where('schools.id', $schoolId);
+            })
+            ->with(['vehicle', 'pickupPoints', 'schools'])
+            ->get()
+            ->map(function ($route) {
+                $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
+                $route->pickup_points = $route->pickupPoints;
+                return $route;
+            });
+
+        return Inertia::render('Parent/Bookings/Rebook', [
+            'previousBooking' => $booking,
+            'students' => $students,
+            'schools' => $schools,
+            'routes' => $routes,
+        ]);
     }
 }

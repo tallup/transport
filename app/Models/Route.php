@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Route extends Model
@@ -17,6 +18,7 @@ class Route extends Model
         'vehicle_id',
         'capacity',
         'active',
+        'service_type',
     ];
 
     protected $casts = [
@@ -53,5 +55,13 @@ class Route extends Model
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Get the schools served by this route.
+     */
+    public function schools(): BelongsToMany
+    {
+        return $this->belongsToMany(School::class, 'route_school');
     }
 }

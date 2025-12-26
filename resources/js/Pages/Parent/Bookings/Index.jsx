@@ -55,6 +55,16 @@ export default function BookingsIndex({ bookings }) {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="flex gap-2">
+                                                    {booking.status === 'active' || booking.status === 'expired' ? (
+                                                        <Link
+                                                            href={`/parent/bookings/${booking.id}/rebook`}
+                                                            className="px-4 py-2 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition text-sm"
+                                                        >
+                                                            Rebook
+                                                        </Link>
+                                                    ) : null}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}

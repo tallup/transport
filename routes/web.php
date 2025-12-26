@@ -39,9 +39,11 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
+    Route::get('/bookings/{booking}/rebook', [BookingController::class, 'rebook'])->name('bookings.rebook');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
     Route::post('/bookings/create-payment-intent', [BookingController::class, 'createPaymentIntent'])->name('bookings.create-payment-intent');
     Route::post('/bookings/payment-success', [BookingController::class, 'paymentSuccess'])->name('bookings.payment-success');
+    Route::get('/schools/{school}/routes', [BookingController::class, 'getRoutesBySchool'])->name('schools.routes');
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');
     Route::post('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
@@ -82,5 +84,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Webhook routes (exclude CSRF)
+Route::post('/webhooks/stripe', [\App\Http\Controllers\Webhook\StripeWebhookController::class, 'handleWebhook'])
+    ->middleware('web')
+    ->name('webhooks.stripe');
 
 require __DIR__.'/auth.php';

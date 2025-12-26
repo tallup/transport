@@ -7,6 +7,12 @@ use Carbon\Carbon;
 
 class BookingService
 {
+    protected $calendarService;
+
+    public function __construct(CalendarService $calendarService)
+    {
+        $this->calendarService = $calendarService;
+    }
     /**
      * Handle booking lifecycle and status updates.
      */
@@ -57,6 +63,17 @@ class BookingService
             'annual' => $startDate->copy()->addYear(),
             default => null,
         };
+    }
+
+    /**
+     * Validate booking dates against calendar events.
+     *
+     * @param Carbon $startDate
+     * @return array ['valid' => bool, 'message' => string]
+     */
+    public function validateBookingDates(Carbon $startDate): array
+    {
+        return $this->calendarService->validateBookingDate($startDate);
     }
 }
 

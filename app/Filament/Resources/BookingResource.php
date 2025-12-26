@@ -7,7 +7,9 @@ use App\Filament\Resources\BookingResource\RelationManagers;
 use App\Models\Booking;
 use App\Models\Route;
 use App\Services\CapacityGuard;
+use App\Services\RefundService;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -139,12 +141,114 @@ class BookingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('cancel')
-                    ->label('Cancel')
+                Tables\Actions\Action::make('full_refund')
+                    ->label('Full Refund')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Process Full Refund')
+                    ->modalDescription('Are you sure you want to process a full refund for this booking?')
+                    ->action(function (Booking $record) {
+                        $refundService = app(RefundService::class);
+                        $result = $refundService->processRefund($record);
+                        
+                        if ($result['success']) {
+                            Notification::make()
+                                ->title('Refund Processed')
+                                ->success()
+                                ->body($result['message'])
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Refund Failed')
+                                ->danger()
+                                ->body($result['message'])
+                                ->send();
+                        }
+                    })
+                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending']) && $record->stripe_customer_id),
+                Tables\Actions\Action::make('partial_refund')
+                    ->label('Partial Refund')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Refund Amount ($)')
+                            ->numeric()
+                            ->required()
+                            ->minValue(0.01)
+                            ->prefix('$'),
+                    ])
+                    ->action(function (Booking $record, array $data) {
+                        $refundService = app(RefundService::class);
+                        $result = $refundService->processRefund($record, (float)$data['amount']);
+                        
+                        if ($result['success']) {
+                            Notification::make()
+                                ->title('Refund Processed')
+                                ->success()
+                                ->body($result['message'])
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Refund Failed')
+                                ->danger()
+                                ->body($result['message'])
+                                ->send();
+                        }
+                    })
+                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending']) && $record->stripe_customer_id),
+                Tables\Actions\Action::make('cancel_with_refund')
+                    ->label('Cancel & Refund')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->action(fn (Booking $record) => $record->update(['status' => 'cancelled']))
+                    ->modalHeading('Cancel Booking and Process Refund')
+                    ->modalDescription('This will cancel the booking and process a full refund.')
+                    ->action(function (Booking $record) {
+                        $refundService = app(RefundService::class);
+                        $result = $refundService->cancelBooking($record, true);
+                        
+                        if ($result['success']) {
+                            Notification::make()
+                                ->title('Booking Cancelled')
+                                ->success()
+                                ->body($result['message'])
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Cancellation Failed')
+                                ->danger()
+                                ->body($result['message'])
+                                ->send();
+                        }
+                    })
+                    ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'active']) && $record->stripe_customer_id),
+                Tables\Actions\Action::make('cancel_without_refund')
+                    ->label('Cancel (No Refund)')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Cancel Booking Without Refund')
+                    ->modalDescription('This will cancel the booking without processing a refund.')
+                    ->action(function (Booking $record) {
+                        $refundService = app(RefundService::class);
+                        $result = $refundService->cancelBooking($record, false);
+                        
+                        if ($result['success']) {
+                            Notification::make()
+                                ->title('Booking Cancelled')
+                                ->success()
+                                ->body($result['message'])
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Cancellation Failed')
+                                ->danger()
+                                ->body($result['message'])
+                                ->send();
+                        }
+                    })
                     ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'active'])),
             ])
             ->bulkActions([
