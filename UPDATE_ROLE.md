@@ -52,3 +52,4 @@ After logging back in, try accessing:
 - `/admin/dashboard` - Should work now
 - `/filament-admin/schools` - Should work now
 
+

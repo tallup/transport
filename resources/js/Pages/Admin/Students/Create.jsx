@@ -1,10 +1,8 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
 export default function Create({ parents, schools = [] }) {
@@ -41,118 +39,131 @@ export default function Create({ parents, schools = [] }) {
             <Head title="Create Student" />
 
             <div className="py-12">
-                <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6">Create Student</h2>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Create Student</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="parent_id" value="Parent *" />
-                                    <Select
-                                        id="parent_id"
-                                        value={data.parent_id}
-                                        onChange={(e) => setData('parent_id', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    >
-                                        <option value="">Select Parent</option>
-                                        {parents.map((parent) => (
-                                            <option key={parent.id} value={parent.id}>
-                                                {parent.name} ({parent.email})
-                                            </option>
-                                        ))}
-                                    </Select>
-                                    <InputError message={errors.parent_id} className="mt-2" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="parent_id" className="block text-base font-bold text-white mb-2">
+                                            Parent *
+                                        </label>
+                                        <select
+                                            id="parent_id"
+                                            value={data.parent_id}
+                                            onChange={(e) => setData('parent_id', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="" className="bg-indigo-700">Select Parent</option>
+                                            {parents.map((parent) => (
+                                                <option key={parent.id} value={parent.id} className="bg-indigo-700">
+                                                    {parent.name} ({parent.email})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.parent_id} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                            Student Name *
+                                        </label>
+                                        <input
+                                            id="name"
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="school_id" className="block text-base font-bold text-white mb-2">
+                                            School *
+                                        </label>
+                                        <select
+                                            id="school_id"
+                                            value={data.school_id}
+                                            onChange={(e) => setData('school_id', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="" className="bg-indigo-700">Select School</option>
+                                            {schools.map((school) => (
+                                                <option key={school.id} value={school.id} className="bg-indigo-700">
+                                                    {school.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.school_id} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="date_of_birth" className="block text-base font-bold text-white mb-2">
+                                            Date of Birth *
+                                        </label>
+                                        <input
+                                            id="date_of_birth"
+                                            type="date"
+                                            value={data.date_of_birth}
+                                            onChange={(e) => setData('date_of_birth', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        />
+                                        <InputError message={errors.date_of_birth} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="emergency_contact_name" className="block text-base font-bold text-white mb-2">
+                                            Emergency Contact Name *
+                                        </label>
+                                        <input
+                                            id="emergency_contact_name"
+                                            type="text"
+                                            value={data.emergency_contact_name}
+                                            onChange={(e) => setData('emergency_contact_name', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            required
+                                        />
+                                        <InputError message={errors.emergency_contact_name} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="emergency_phone" className="block text-base font-bold text-white mb-2">
+                                            Emergency Phone *
+                                        </label>
+                                        <input
+                                            id="emergency_phone"
+                                            type="tel"
+                                            value={data.emergency_phone}
+                                            onChange={handlePhoneChange}
+                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            placeholder="(123) 456-7890"
+                                            maxLength="14"
+                                            required
+                                        />
+                                        <InputError message={errors.emergency_phone} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="name" value="Student Name *" />
-                                    <TextInput
-                                        id="name"
-                                        type="text"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    />
-                                    <InputError message={errors.name} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="school_id" value="School *" />
-                                    <Select
-                                        id="school_id"
-                                        value={data.school_id}
-                                        onChange={(e) => setData('school_id', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    >
-                                        <option value="">Select School</option>
-                                        {schools.map((school) => (
-                                            <option key={school.id} value={school.id}>
-                                                {school.name}
-                                            </option>
-                                        ))}
-                                    </Select>
-                                    <InputError message={errors.school_id} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="date_of_birth" value="Date of Birth *" />
-                                    <TextInput
-                                        id="date_of_birth"
-                                        type="date"
-                                        value={data.date_of_birth}
-                                        onChange={(e) => setData('date_of_birth', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    />
-                                    <InputError message={errors.date_of_birth} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="emergency_contact_name" value="Emergency Contact Name *" />
-                                    <TextInput
-                                        id="emergency_contact_name"
-                                        type="text"
-                                        value={data.emergency_contact_name}
-                                        onChange={(e) => setData('emergency_contact_name', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        required
-                                    />
-                                    <InputError message={errors.emergency_contact_name} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="emergency_phone" value="Emergency Phone *" />
-                                    <TextInput
-                                        id="emergency_phone"
-                                        type="tel"
-                                        value={data.emergency_phone}
-                                        onChange={handlePhoneChange}
-                                        className="mt-1 block w-full"
-                                        placeholder="(123) 456-7890"
-                                        maxLength="14"
-                                        required
-                                    />
-                                    <InputError message={errors.emergency_phone} className="mt-2" />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
-                                    <Link
-                                        href="/admin/students"
-                                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                                    >
-                                        Cancel
+                                <div className="flex justify-end gap-4 pt-4">
+                                    <Link href="/admin/students">
+                                        <GlassButton type="button" variant="secondary">
+                                            Cancel
+                                        </GlassButton>
                                     </Link>
-                                    <PrimaryButton disabled={processing}>
+                                    <GlassButton disabled={processing}>
                                         {processing ? 'Creating...' : 'Create Student'}
-                                    </PrimaryButton>
+                                    </GlassButton>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>

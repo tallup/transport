@@ -140,16 +140,29 @@ class StudentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Parent')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('school.name')
+                    ->label('School')
                     ->searchable()
+                    ->sortable()
+                    ->placeholder('No school assigned')
+                    ->default('—'),
+                Tables\Columns\TextColumn::make('date_of_birth')
+                    ->label('Date of Birth')
+                    ->date('n/j/Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('emergency_phone'),
-                Tables\Columns\TextColumn::make('emergency_contact_name'),
+                Tables\Columns\TextColumn::make('emergency_contact')
+                    ->label('Emergency Contact')
+                    ->formatStateUsing(fn ($record) => $record->emergency_contact_name 
+                        ? "{$record->emergency_contact_name} ({$record->emergency_phone})"
+                        : '—')
+                    ->searchable(['emergency_contact_name', 'emergency_phone']),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -192,3 +205,4 @@ class StudentResource extends Resource
         ];
     }
 }
+

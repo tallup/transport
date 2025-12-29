@@ -10,3 +10,4 @@ class CreateSchool extends CreateRecord
     protected static string $resource = SchoolResource::class;
 }
 
+
