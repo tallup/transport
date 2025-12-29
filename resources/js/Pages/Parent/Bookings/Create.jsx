@@ -102,7 +102,29 @@ export default function CreateBooking({ students, schools = [], routes }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/parent/bookings');
+        
+        // Validate required fields before submitting
+        if (!data.student_id || !data.route_id || !data.pickup_point_id || !data.plan_type || !data.start_date) {
+            alert('Please complete all required fields before proceeding to payment.');
+            return;
+        }
+        
+        post('/parent/bookings', {
+            preserveScroll: false,
+            onSuccess: (page) => {
+                // Inertia will automatically navigate to the checkout page
+                // The controller returns Inertia::render('Parent/Bookings/Checkout', ...)
+            },
+            onError: (errors) => {
+                // Errors will be available in the errors object
+                console.log('Form errors:', errors);
+                // Scroll to top to show errors
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            onFinish: () => {
+                // This runs after the request completes (success or error)
+            },
+        });
     };
 
     const nextStep = () => {
@@ -416,6 +438,19 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                 {step === 5 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Review Your Booking</h3>
+                                        
+                                        {/* Display general form errors */}
+                                        {Object.keys(errors).length > 0 && (
+                                            <div className="bg-red-500/30 border border-red-400/50 p-4 rounded-lg mb-4">
+                                                <p className="text-white font-bold mb-2">Please fix the following errors:</p>
+                                                <ul className="list-disc list-inside space-y-1">
+                                                    {Object.entries(errors).map(([key, message]) => (
+                                                        <li key={key} className="text-red-100 text-sm font-semibold">{message}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        
                                         <div className="bg-white/10 backdrop-blur-sm border border-white/30 p-6 rounded-lg space-y-4">
                                             <div>
                                                 <span className="font-bold text-white">Student:</span>{' '}
