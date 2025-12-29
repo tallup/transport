@@ -7,12 +7,12 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import Select from '@/Components/Select';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
-export default function Create({ parents }) {
+export default function Create({ parents, schools = [] }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         parent_id: '',
         name: '',
-        school: '',
+        school_id: '',
         date_of_birth: '',
         emergency_phone: '',
         emergency_contact_name: '',
@@ -80,16 +80,22 @@ export default function Create({ parents }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="school" value="School *" />
-                                    <TextInput
-                                        id="school"
-                                        type="text"
-                                        value={data.school}
-                                        onChange={(e) => setData('school', e.target.value)}
+                                    <InputLabel htmlFor="school_id" value="School *" />
+                                    <Select
+                                        id="school_id"
+                                        value={data.school_id}
+                                        onChange={(e) => setData('school_id', e.target.value)}
                                         className="mt-1 block w-full"
                                         required
-                                    />
-                                    <InputError message={errors.school} className="mt-2" />
+                                    >
+                                        <option value="">Select School</option>
+                                        {schools.map((school) => (
+                                            <option key={school.id} value={school.id}>
+                                                {school.name}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                    <InputError message={errors.school_id} className="mt-2" />
                                 </div>
 
                                 <div>

@@ -26,9 +26,14 @@ class StudentController extends Controller
         $parents = User::where('role', 'parent')
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
+        
+        $schools = \App\Models\School::where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/Students/Create', [
             'parents' => $parents,
+            'schools' => $schools,
         ]);
     }
 
@@ -37,7 +42,7 @@ class StudentController extends Controller
         $validated = $request->validate([
             'parent_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'school' => 'required|string|max:255',
+            'school_id' => 'required|exists:schools,id',
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
@@ -60,13 +65,20 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
+        $student->load('school');
+        
         $parents = User::where('role', 'parent')
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
+        
+        $schools = \App\Models\School::where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/Students/Edit', [
             'student' => $student,
             'parents' => $parents,
+            'schools' => $schools,
         ]);
     }
 
@@ -75,7 +87,7 @@ class StudentController extends Controller
         $validated = $request->validate([
             'parent_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'school' => 'required|string|max:255',
+            'school_id' => 'required|exists:schools,id',
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',

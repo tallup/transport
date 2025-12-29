@@ -6,12 +6,12 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
-export default function Edit({ student, parents }) {
+export default function Edit({ student, parents, schools = [] }) {
     const { auth } = usePage().props;
     const { data, setData, put, processing, errors } = useForm({
         parent_id: student.parent_id || '',
         name: student.name || '',
-        school: student.school || '',
+        school_id: student.school_id || student.school?.id || '',
         date_of_birth: student.date_of_birth ? (typeof student.date_of_birth === 'string' ? student.date_of_birth.split('T')[0] : student.date_of_birth) : '',
         emergency_phone: student.emergency_phone || '',
         emergency_contact_name: student.emergency_contact_name || '',
@@ -92,18 +92,24 @@ export default function Edit({ student, parents }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="school" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="school_id" className="block text-base font-bold text-white mb-2">
                                             School *
                                         </label>
-                                        <input
-                                            id="school"
-                                            type="text"
-                                            value={data.school}
-                                            onChange={(e) => setData('school', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                        <select
+                                            id="school_id"
+                                            value={data.school_id}
+                                            onChange={(e) => setData('school_id', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
                                             required
-                                        />
-                                        <InputError message={errors.school} className="mt-2 text-red-300 font-semibold" />
+                                        >
+                                            <option value="" className="bg-gray-800 text-white">Select School</option>
+                                            {schools.map((school) => (
+                                                <option key={school.id} value={school.id} className="bg-gray-800 text-white">
+                                                    {school.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.school_id} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
