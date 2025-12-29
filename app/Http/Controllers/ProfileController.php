@@ -29,15 +29,29 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit');
+        // Redirect based on user role
+        $role = \Illuminate\Support\Facades\DB::table('users')
+            ->where('id', $user->id)
+            ->value('role');
+        
+        if (in_array($role, ['super_admin', 'transport_admin'])) {
+            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        }
+        
+        if ($role === 'driver') {
+            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
