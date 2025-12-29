@@ -25,28 +25,113 @@ class StudentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_id')
-                    ->relationship('parent', 'name')
-                    ->required()
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('school_id')
-                    ->relationship('school', 'name')
-                    ->required()
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\DatePicker::make('date_of_birth')
-                    ->native(false),
-                Forms\Components\TextInput::make('emergency_phone')
-                    ->required()
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('emergency_contact_name')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Basic Information')
+                    ->schema([
+                        Forms\Components\Select::make('parent_id')
+                            ->relationship('parent', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('school_id')
+                            ->relationship('school', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\DatePicker::make('date_of_birth')
+                            ->native(false),
+                        Forms\Components\Textarea::make('home_address')
+                            ->rows(2)
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('grade')
+                            ->maxLength(50),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Emergency Contacts')
+                    ->schema([
+                        Forms\Components\TextInput::make('emergency_contact_name')
+                            ->label('Emergency Contact #1 Name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('emergency_phone')
+                            ->label('Emergency Contact #1 Phone')
+                            ->required()
+                            ->tel()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('emergency_contact_2_name')
+                            ->label('Emergency Contact #2 Name')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('emergency_contact_2_phone')
+                            ->label('Emergency Contact #2 Phone')
+                            ->tel()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('emergency_contact_2_relationship')
+                            ->label('Emergency Contact #2 Relationship')
+                            ->maxLength(255),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Medical Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('doctor_name')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('doctor_phone')
+                            ->tel()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('medical_notes')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Authorized Pickup Persons')
+                    ->schema([
+                        Forms\Components\Repeater::make('authorized_pickup_persons')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('relationship')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('phone')
+                                    ->tel()
+                                    ->maxLength(255),
+                            ])
+                            ->columns(3)
+                            ->defaultItems(0)
+                            ->collapsible(),
+                    ]),
+                
+                Forms\Components\Section::make('Additional Information')
+                    ->schema([
+                        Forms\Components\Textarea::make('special_instructions')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+                
+                Forms\Components\Section::make('Signatures')
+                    ->schema([
+                        Forms\Components\Placeholder::make('authorization_to_transport')
+                            ->label('Authorization to Transport')
+                            ->content(fn ($record) => $record && $record->hasAuthorizationToTransport()
+                                ? "Signed: {$record->authorization_to_transport_signature} on {$record->authorization_to_transport_signed_at->format('M d, Y')}"
+                                : 'Not signed'),
+                        Forms\Components\Placeholder::make('payment_agreement')
+                            ->label('Payment Agreement')
+                            ->content(fn ($record) => $record && $record->hasPaymentAgreement()
+                                ? "Signed: {$record->payment_agreement_signature} on {$record->payment_agreement_signed_at->format('M d, Y')}"
+                                : 'Not signed'),
+                        Forms\Components\Placeholder::make('liability_waiver')
+                            ->label('Liability Waiver')
+                            ->content(fn ($record) => $record && $record->hasLiabilityWaiver()
+                                ? "Signed: {$record->liability_waiver_signature} on {$record->liability_waiver_signed_at->format('M d, Y')}"
+                                : 'Not signed'),
+                    ])
+                    ->collapsible()
+                    ->collapsed(),
             ]);
     }
 

@@ -19,10 +19,30 @@ class Student extends Model
         'emergency_phone',
         'emergency_contact_name',
         'date_of_birth',
+        'home_address',
+        'grade',
+        'authorized_pickup_persons',
+        'special_instructions',
+        'medical_notes',
+        'emergency_contact_2_name',
+        'emergency_contact_2_phone',
+        'emergency_contact_2_relationship',
+        'doctor_name',
+        'doctor_phone',
+        'authorization_to_transport_signed_at',
+        'authorization_to_transport_signature',
+        'payment_agreement_signed_at',
+        'payment_agreement_signature',
+        'liability_waiver_signed_at',
+        'liability_waiver_signature',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'authorized_pickup_persons' => 'array',
+        'authorization_to_transport_signed_at' => 'datetime',
+        'payment_agreement_signed_at' => 'datetime',
+        'liability_waiver_signed_at' => 'datetime',
     ];
 
     /**
@@ -47,5 +67,39 @@ class Student extends Model
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    /**
+     * Check if authorization to transport is signed.
+     */
+    public function hasAuthorizationToTransport(): bool
+    {
+        return !is_null($this->authorization_to_transport_signed_at) && !is_null($this->authorization_to_transport_signature);
+    }
+
+    /**
+     * Check if payment agreement is signed.
+     */
+    public function hasPaymentAgreement(): bool
+    {
+        return !is_null($this->payment_agreement_signed_at) && !is_null($this->payment_agreement_signature);
+    }
+
+    /**
+     * Check if liability waiver is signed.
+     */
+    public function hasLiabilityWaiver(): bool
+    {
+        return !is_null($this->liability_waiver_signed_at) && !is_null($this->liability_waiver_signature);
+    }
+
+    /**
+     * Check if all required documents are signed.
+     */
+    public function hasAllSignatures(): bool
+    {
+        return $this->hasAuthorizationToTransport() 
+            && $this->hasPaymentAgreement() 
+            && $this->hasLiabilityWaiver();
     }
 }

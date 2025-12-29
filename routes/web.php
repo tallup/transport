@@ -4,6 +4,7 @@ use App\Http\Controllers\Parent\BookingController;
 use App\Http\Controllers\Parent\DashboardController;
 use App\Http\Controllers\Parent\StudentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PolicyController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     
     // Students
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+    Route::get('/students/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     
     // Bookings
@@ -84,6 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Public API routes for policies
+Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');
+Route::get('/api/policies/{policy}', [PolicyController::class, 'show'])->name('api.policies.show');
 
 // Webhook routes (exclude CSRF)
 Route::post('/webhooks/stripe', [\App\Http\Controllers\Webhook\StripeWebhookController::class, 'handleWebhook'])

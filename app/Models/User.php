@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Will be ignored if column doesn't exist
+        'phone_numbers',
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable
         $casts = [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'phone_numbers' => 'array',
         ];
         
         // Only cast role if column exists
@@ -118,5 +120,22 @@ class User extends Authenticatable
         }
 
         return true;
+    }
+
+    /**
+     * Get the primary phone number.
+     */
+    public function getPrimaryPhone(): ?string
+    {
+        $phones = $this->phone_numbers ?? [];
+        return !empty($phones) ? $phones[0] : null;
+    }
+
+    /**
+     * Get all phone numbers.
+     */
+    public function getAllPhones(): array
+    {
+        return $this->phone_numbers ?? [];
     }
 }

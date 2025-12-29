@@ -49,7 +49,15 @@ export default function CreateStudent({ schools = [] }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Add Student</h2>
+                            <div className="mb-6 p-4 bg-blue-500/20 border border-blue-500/50 rounded-md">
+                                <p className="text-white mb-2">
+                                    <strong>Complete Enrollment Available:</strong> For full enrollment with all required forms, policies, and signatures, please use the{' '}
+                                    <Link href="/parent/students/enroll" className="text-blue-300 hover:text-blue-100 underline font-bold">
+                                        Complete Enrollment Form
+                                    </Link>.
+                                </p>
+                            </div>
+                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Add Student (Quick Form)</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
