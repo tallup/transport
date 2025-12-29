@@ -208,7 +208,7 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                             <div className="text-center py-8">
                                                 <p className="text-white text-lg font-semibold mb-4">No students registered yet.</p>
                                                 <a
-                                                    href="/parent/students/create"
+                                                    href="/parent/students/enroll"
                                                     className="text-blue-300 hover:text-blue-100 font-bold underline"
                                                 >
                                                     Add a student first

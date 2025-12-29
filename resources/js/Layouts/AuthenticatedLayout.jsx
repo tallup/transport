@@ -10,7 +10,7 @@ export default function AuthenticatedLayout({ header, children }) {
     // Build navigation items for mobile menu
     const navigationItems = [
         { href: '/parent/dashboard', label: 'Dashboard', active: currentUrl === '/parent/dashboard' },
-        { href: '/parent/students/create', label: 'Add Student', active: currentUrl?.startsWith('/parent/students') },
+        { href: '/parent/students/enroll', label: 'Add Student', active: currentUrl?.startsWith('/parent/students') },
         { href: '/parent/bookings/create', label: 'Book Transport', active: currentUrl === '/parent/bookings/create' },
         { href: '/parent/bookings', label: 'My Bookings', active: currentUrl?.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' },
     ];
@@ -38,7 +38,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Dashboard
                                 </Link>
                                 <Link
-                                    href="/parent/students/create"
+                                    href="/parent/students/enroll"
                                     className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Add Student

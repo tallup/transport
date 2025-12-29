@@ -13,10 +13,8 @@ class StudentController extends Controller
 {
     public function create()
     {
-        $schools = School::where('active', true)->orderBy('name')->get();
-        return Inertia::render('Parent/Students/Create', [
-            'schools' => $schools,
-        ]);
+        // Redirect to complete enrollment form
+        return redirect()->route('parent.students.enroll');
     }
 
     public function enroll()
