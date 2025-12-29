@@ -19,7 +19,7 @@ export default function DriverLayout({ header, children }) {
     ];
     
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-700 via-teal-700 to-green-800">
+        <div className="min-h-screen" style={{ background: '#22304d' }}>
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -32,13 +32,13 @@ export default function DriverLayout({ header, children }) {
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/driver/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-green-700 hover:border-green-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/driver/roster"
-                                    className="border-transparent text-gray-800 hover:text-green-700 hover:border-green-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Daily Roster
                                 </Link>

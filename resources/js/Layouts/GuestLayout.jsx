@@ -3,17 +3,14 @@ import { Link } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="flex min-h-screen flex-col bg-indigo-700">
+        <div className="flex min-h-screen flex-col" style={{ background: '#22304d' }}>
             {/* Navigation Header */}
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
                             <Link href="/" className="flex items-center">
-                                <ApplicationLogo className="h-10 w-10 fill-current text-gray-700" />
-                                <span className="ml-2 text-xl font-semibold text-gray-900">
-                                    Student Transport
-                                </span>
+                                <ApplicationLogo className="h-10 w-auto" />
                             </Link>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -25,7 +22,7 @@ export default function GuestLayout({ children }) {
                             </Link>
                             <Link
                                 href="/parent/register"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg"
+                                className="bg-brand-primary hover:bg-brand-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg"
                             >
                                 Register
                             </Link>

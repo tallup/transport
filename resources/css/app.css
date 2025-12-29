@@ -63,26 +63,26 @@
 
     .glass-input:focus {
         background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(59, 130, 246, 0.5);
+        border-color: rgba(34, 48, 77, 0.5);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.1);
         border-radius: 0.5rem; /* Maintain border radius on focus */
     }
 
     /* Glass button */
     .glass-button {
-        background: rgba(59, 130, 246, 0.8);
+        background: rgba(34, 48, 77, 0.8);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 0.5rem; /* 8px - rounded-lg */
-        box-shadow: 0 4px 16px 0 rgba(59, 130, 246, 0.3);
+        box-shadow: 0 4px 16px 0 rgba(34, 48, 77, 0.3);
         transition: all 0.3s ease;
     }
 
     .glass-button:hover {
-        background: rgba(59, 130, 246, 0.9);
-        box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        background: rgba(42, 58, 92, 0.9);
+        box-shadow: 0 6px 20px 0 rgba(34, 48, 77, 0.4);
         transform: translateY(-1px);
         border-radius: 0.5rem; /* Maintain border radius on hover */
     }
@@ -117,17 +117,17 @@
         border-radius: 0.5rem; /* 8px - rounded-lg */
     }
 
-    /* Solid color backgrounds */
+    /* Solid color backgrounds - Logo brand colors */
     .bg-gradient-primary {
-        background: #3B82F6;
+        background: #22304d;
     }
 
     .bg-gradient-secondary {
-        background: #667eea;
+        background: #1a2a47;
     }
 
     .bg-gradient-glass {
-        background: rgba(59, 130, 246, 0.1);
+        background: rgba(34, 48, 77, 0.1);
     }
 }
 
@@ -150,9 +150,9 @@
     }
 }
 
-/* Global body background with solid color - only for pages without specific backgrounds */
+/* Global body background with solid color - Logo brand color - only for pages without specific backgrounds */
 body {
-    background: #4f46e5;
+    background: #22304d;
     background-attachment: fixed;
     min-height: 100vh;
 }

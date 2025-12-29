@@ -142,7 +142,7 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                                             onClick={closeMenu}
                                             className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition ${
                                                 item.active
-                                                    ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                                                    ? 'bg-brand-light text-brand-primary border-l-4 border-brand-primary'
                                                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
                                         >

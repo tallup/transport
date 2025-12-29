@@ -20,7 +20,7 @@ export default function AuthenticatedLayout({ header, children }) {
         { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
     ];
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-700 via-pink-700 to-purple-800">
+        <div className="min-h-screen" style={{ background: '#22304d' }}>
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -33,25 +33,25 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/parent/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/parent/students/enroll"
-                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Add Student
                                 </Link>
                                 <Link
                                     href="/parent/bookings/create"
-                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     Book Transport
                                 </Link>
                                 <Link
                                     href="/parent/bookings"
-                                    className="border-transparent text-gray-800 hover:text-purple-700 hover:border-purple-600 whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     My Bookings
                                 </Link>

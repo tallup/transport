@@ -27,7 +27,7 @@ export default function AdminLayout({ header, children }) {
     ];
     
     return (
-        <div className="min-h-screen bg-indigo-700">
+        <div className="min-h-screen" style={{ background: '#22304d' }}>
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -40,7 +40,7 @@ export default function AdminLayout({ header, children }) {
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/admin/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20 active:border-indigo-600"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20 active:border-brand-primary"
                                 >
                                     Dashboard
                                 </Link>
@@ -69,7 +69,7 @@ export default function AdminLayout({ header, children }) {
                                 {/* People Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             People
                                             <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -86,7 +86,7 @@ export default function AdminLayout({ header, children }) {
                                 {/* Transport Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             Transport
                                             <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -101,7 +101,7 @@ export default function AdminLayout({ header, children }) {
                                 {/* Operations Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
+                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
                                             Operations
                                             <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
