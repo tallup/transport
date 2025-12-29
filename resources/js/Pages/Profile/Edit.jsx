@@ -40,6 +40,6 @@ export default function Edit({ mustVerifyEmail, status }) {
                     </GlassCard>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </Layout>
     );
 }
