@@ -147,12 +147,25 @@ class StudentResource extends Resource
                     ->label('Parent')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('school.name')
+                Tables\Columns\TextColumn::make('school_name')
                     ->label('School')
-                    ->searchable()
-                    ->sortable()
-                    ->placeholder('No school assigned')
-                    ->default('—'),
+                    ->getStateUsing(function (Student $record): string {
+                        // Load school if not already loaded
+                        if (!$record->relationLoaded('school') && $record->school_id) {
+                            $record->load('school');
+                        }
+                        return $record->school?->name ?? '—';
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('school', fn (Builder $q) => 
+                            $q->where('name', 'like', "%{$search}%")
+                        );
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->join('schools', 'students.school_id', '=', 'schools.id')
+                            ->orderBy('schools.name', $direction)
+                            ->select('students.*');
+                    }),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('Date of Birth')
                     ->date('n/j/Y')
@@ -171,6 +184,11 @@ class StudentResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('parent_id')
                     ->relationship('parent', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('school_id')
+                    ->relationship('school', 'name')
+                    ->label('School')
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TrashedFilter::make(),
