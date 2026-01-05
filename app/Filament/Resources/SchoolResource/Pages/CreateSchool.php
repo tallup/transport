@@ -11,3 +11,4 @@ class CreateSchool extends CreateRecord
 }
 
 
+

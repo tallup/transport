@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Route;
+use App\Models\PickupPoint;
 
 class Student extends Model
 {
@@ -16,6 +18,8 @@ class Student extends Model
         'parent_id',
         'name',
         'school_id',
+        'route_id',
+        'pickup_point_id',
         'emergency_phone',
         'emergency_contact_name',
         'date_of_birth',
@@ -51,6 +55,22 @@ class Student extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    /**
+     * Get the route assigned to the student.
+     */
+    public function route(): BelongsTo
+    {
+        return $this->belongsTo(Route::class);
+    }
+
+    /**
+     * Get the pickup point assigned to the student.
+     */
+    public function pickupPoint(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\PickupPoint::class, 'pickup_point_id');
     }
 
     /**

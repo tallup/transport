@@ -1,5 +1,5 @@
 import { Head, useForm, usePage, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -7,7 +7,7 @@ import PhoneNumbersInput from '@/Components/PhoneNumbersInput';
 import PolicyDisplay from '@/Components/PolicyDisplay';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
 
-export default function EnrollStudent({ schools = [], policies = {} }) {
+export default function EnrollStudent({ schools = [], policies = {}, routes = [] }) {
     const { auth } = usePage().props;
     const [step, setStep] = useState(0);
     const [policiesAcknowledged, setPoliciesAcknowledged] = useState(false);
@@ -34,6 +34,9 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
         
         // Authorized Pickup Persons
         authorized_pickup_persons: [],
+        // Transport assignment
+        route_id: '',
+        pickup_point_id: '',
         
         // Additional Information
         special_instructions: '',
@@ -44,6 +47,27 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
         liability_waiver_signature: '',
         policies_acknowledged: false,
     });
+
+    const [availableRoutes, setAvailableRoutes] = useState([]);
+    const [availablePickupPoints, setAvailablePickupPoints] = useState([]);
+
+    useEffect(() => {
+        if (!data.school_id) {
+            setAvailableRoutes([]);
+            setAvailablePickupPoints([]);
+            return;
+        }
+
+        const filtered = (routes || []).filter(r => {
+            const sch = r.schools || r.schools || [];
+            return sch.some(s => String(s.id) === String(data.school_id));
+        });
+
+        setAvailableRoutes(filtered);
+        setData('route_id', '');
+        setData('pickup_point_id', '');
+        setAvailablePickupPoints([]);
+    }, [data.school_id, routes]);
 
     const steps = [
         { number: 0, label: 'Child Info' },
@@ -418,7 +442,45 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 3: Authorized Pickup Persons */}
                                 {step === 3 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Authorized Pick-Up Persons</h3>
+                                        <h3 className="text-xl font-bold text-white mb-4">Authorized Pick-Up Persons & Transport</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                            <div>
+                                                <label className="block text-base font-bold text-white mb-2">Route</label>
+                                                <select
+                                                    value={data.route_id}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setData('route_id', val);
+                                                        setData('pickup_point_id', '');
+                                                        const selected = routes.find(r => r.id == val) || null;
+                                                        const points = selected ? (selected.pickup_points || selected.pickupPoints || []) : [];
+                                                        setAvailablePickupPoints(points);
+                                                    }}
+                                                    className="w-full glass-input text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
+                                                >
+                                                    <option value="">Select a route (optional)</option>
+                                                    {availableRoutes.map((r) => (
+                                                        <option key={r.id} value={r.id} className="bg-gray-800 text-white">{r.name}</option>
+                                                    ))}
+                                                </select>
+                                                {errors.route_id && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.route_id}</p>}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-base font-bold text-white mb-2">Pickup Point</label>
+                                                <select
+                                                    value={data.pickup_point_id}
+                                                    onChange={(e) => setData('pickup_point_id', e.target.value)}
+                                                    className="w-full glass-input text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
+                                                >
+                                                    <option value="">Select a pickup point (optional)</option>
+                                                    {availablePickupPoints.map((p) => (
+                                                        <option key={p.id} value={p.id} className="bg-gray-800 text-white">{p.name}</option>
+                                                    ))}
+                                                </select>
+                                                {errors.pickup_point_id && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.pickup_point_id}</p>}
+                                            </div>
+                                        </div>
                                         <div className="space-y-4">
                                             {(data.authorized_pickup_persons || []).map((person, index) => (
                                                 <div key={index} className="glass-card p-4">

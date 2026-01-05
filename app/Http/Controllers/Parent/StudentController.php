@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Policy;
 use App\Models\School;
 use App\Models\Student;
+use App\Models\Route as TransportRoute;
+use App\Models\PickupPoint;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,9 +24,13 @@ class StudentController extends Controller
         $schools = School::where('active', true)->orderBy('name')->get();
         $policies = Policy::active()->ordered()->get()->groupBy('category');
         
+        // Load active routes with their pickup points and associated schools
+        $routes = TransportRoute::with(['pickupPoints', 'schools'])->where('active', true)->get();
+
         return Inertia::render('Parent/Students/Enroll', [
             'schools' => $schools,
             'policies' => $policies,
+            'routes' => $routes,
         ]);
     }
 
@@ -63,6 +69,9 @@ class StudentController extends Controller
             'authorization_to_transport_signature' => 'nullable|string|max:255',
             'payment_agreement_signature' => 'nullable|string|max:255',
             'liability_waiver_signature' => 'nullable|string|max:255',
+            // Optional transport assignment
+            'route_id' => 'nullable|exists:routes,id',
+            'pickup_point_id' => 'nullable|exists:pickup_points,id',
             'policies_acknowledged' => 'nullable|boolean',
         ]);
 
@@ -86,7 +95,24 @@ class StudentController extends Controller
             }));
         }
 
+        // Ensure authorized_pickup_persons is properly formatted as JSON
+        if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
+            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], function($person) {
+                return !empty($person['name']);
+            }));
+        }
+
         $student = $user->students()->create($validated);
+
+        // If route & pickup point provided ensure consistency
+        if (!empty($validated['route_id']) && !empty($validated['pickup_point_id'])) {
+            $pp = PickupPoint::find($validated['pickup_point_id']);
+            if ($pp && $pp->route_id != $validated['route_id']) {
+                // rollback created student and return error
+                $student->delete();
+                return redirect()->back()->withInput()->withErrors(['pickup_point_id' => 'Selected pickup point does not belong to the selected route.']);
+            }
+        }
 
         return redirect()->route('parent.dashboard')
             ->with('success', 'Student enrolled successfully!');
