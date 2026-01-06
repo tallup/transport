@@ -61,6 +61,11 @@ class RouteController extends Controller
         $schools = $validated['schools'] ?? [];
         unset($validated['schools']);
 
+        // Handle empty driver_id - convert empty string to null
+        if (isset($validated['driver_id']) && $validated['driver_id'] === '') {
+            $validated['driver_id'] = null;
+        }
+
         $route = Route::create($validated);
         
         if (!empty($schools)) {
@@ -111,6 +116,11 @@ class RouteController extends Controller
         $validated['active'] = $request->boolean('active', true);
         $schools = $validated['schools'] ?? [];
         unset($validated['schools']);
+
+        // Handle empty driver_id - convert empty string to null
+        if (isset($validated['driver_id']) && $validated['driver_id'] === '') {
+            $validated['driver_id'] = null;
+        }
 
         $route->update($validated);
         
