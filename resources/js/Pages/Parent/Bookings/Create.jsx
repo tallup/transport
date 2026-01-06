@@ -5,7 +5,7 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import axios from 'axios';
 
-export default function CreateBooking({ students, schools = [], routes }) {
+export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
     const [step, setStep] = useState(0);
     const [selectedRoute, setSelectedRoute] = useState(null);
@@ -138,14 +138,17 @@ export default function CreateBooking({ students, schools = [], routes }) {
     };
 
     const nextStep = () => {
-        if (step === 0 && !data.school_id) return;
-        if (step === 1 && !data.student_id) return;
-        if (step === 2 && !data.route_id) return;
-        if (step === 3 && !data.pickup_address && !data.pickup_point_id) {
+        // Step 0: Student
+        if (step === 0 && !data.student_id) return;
+        // Step 1: Route
+        if (step === 1 && !data.route_id) return;
+        // Step 2: Pickup
+        if (step === 2 && !data.pickup_address && !data.pickup_point_id) {
             alert('Please enter a pickup address.');
             return;
         }
-        if (step === 4 && !data.plan_type) return;
+        // Step 3: Plan
+        if (step === 3 && !data.plan_type) return;
         setStep(step + 1);
     };
 
@@ -166,7 +169,7 @@ export default function CreateBooking({ students, schools = [], routes }) {
                             {/* Step Indicator */}
                             <div className="mb-8">
                                 <div className="flex justify-between">
-                                    {[0, 1, 2, 3, 4, 5].map((s) => (
+                                    {[0, 1, 2, 3, 4].map((s) => (
                                         <div key={s} className="flex items-center">
                                             <div
                                                 className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
@@ -177,7 +180,7 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                             >
                                                 {s + 1}
                                             </div>
-                                            {s < 5 && (
+                                            {s < 4 && (
                                                 <div
                                                     className={`w-12 h-1 mx-1 ${
                                                         step > s ? 'bg-blue-500' : 'bg-white/20'
@@ -188,7 +191,6 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     ))}
                                 </div>
                                 <div className="flex justify-between mt-2 text-xs font-bold text-white">
-                                    <span>School</span>
                                     <span>Student</span>
                                     <span>Route</span>
                                     <span>Pickup</span>
@@ -198,45 +200,8 @@ export default function CreateBooking({ students, schools = [], routes }) {
                             </div>
 
                             <form onSubmit={handleSubmit}>
-                                {/* Step 0: Select School */}
+                                {/* Step 0: Select Student */}
                                 {step === 0 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select School</h3>
-                                        <div className="space-y-2">
-                                            {schools.map((school) => (
-                                                <label
-                                                    key={school.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.school_id == school.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="school_id"
-                                                        value={school.id}
-                                                        checked={data.school_id == school.id}
-                                                        onChange={(e) => setData('school_id', e.target.value)}
-                                                        className="mr-3"
-                                                    />
-                                                    <div>
-                                                        <span className="font-bold text-white">{school.name}</span>
-                                                        {school.address && (
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">{school.address}</p>
-                                                        )}
-                                                    </div>
-                                                </label>
-                                            ))}
-                                            {errors.school_id && (
-                                                <p className="text-red-300 text-sm font-semibold">{errors.school_id}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Step 1: Select Student */}
-                                {step === 1 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Select Student</h3>
                                         {students.length === 0 ? (
@@ -282,20 +247,16 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     </div>
                                 )}
 
-                                {/* Step 2: Select Route */}
-                                {step === 2 && (
+                                {/* Step 1: Select Route */}
+                                {step === 1 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Select Route</h3>
                                         {filteredRoutes.length === 0 ? (
                                             <div className="text-center py-8">
                                                 <p className="text-white text-lg font-semibold mb-4">No routes available for the selected school.</p>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setStep(0)}
-                                                    className="text-blue-300 hover:text-blue-100 font-bold underline"
-                                                >
-                                                    Select a different school
-                                                </button>
+                                                <p className="text-white text-sm font-semibold">
+                                                    No routes are currently configured for this student's school. Please contact the administrator.
+                                                </p>
                                             </div>
                                         ) : (
                                             <div className="space-y-4">
@@ -343,8 +304,8 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     </div>
                                 )}
 
-                                {/* Step 3: Enter Pickup Address */}
-                                {step === 3 && (
+                                {/* Step 2: Enter Pickup Address */}
+                                {step === 2 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Enter Pickup Location</h3>
                                         <div className="space-y-4">
@@ -409,8 +370,8 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     </div>
                                 )}
 
-                                {/* Step 4: Select Plan */}
-                                {step === 4 && (
+                                {/* Step 3: Select Plan */}
+                                {step === 3 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Select Plan</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -471,8 +432,8 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     </div>
                                 )}
 
-                                {/* Step 5: Review */}
-                                {step === 5 && (
+                                {/* Step 4: Review */}
+                                {step === 4 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Review Your Booking</h3>
                                         
@@ -539,7 +500,7 @@ export default function CreateBooking({ students, schools = [], routes }) {
                                     >
                                         Previous
                                     </button>
-                                    {step < 5 ? (
+                                    {step < 4 ? (
                                         <GlassButton
                                             type="button"
                                             onClick={nextStep}
