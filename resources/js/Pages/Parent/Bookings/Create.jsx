@@ -9,12 +9,10 @@ export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
     
     // Get student_id from URL query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const studentIdParam = urlParams.get('student_id');
+    const [studentIdParam, setStudentIdParam] = useState(null);
+    const [initialized, setInitialized] = useState(false);
     
-    // Initialize step: if student_id is provided, start at route selection (step 1)
-    const initialStep = studentIdParam ? 1 : 0;
-    const [step, setStep] = useState(initialStep);
+    const [step, setStep] = useState(0);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
@@ -23,7 +21,7 @@ export default function CreateBooking({ students, routes }) {
 
     const { data, setData, post, errors, processing } = useForm({
         school_id: '',
-        student_id: studentIdParam || '',
+        student_id: '',
         route_id: '',
         pickup_point_id: '',
         pickup_address: '',
@@ -52,22 +50,6 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [data.school_id, routes]);
 
-    // Pre-select school and student when student_id is provided in URL
-    useEffect(() => {
-        if (studentIdParam && data.student_id === studentIdParam) {
-            const student = students.find(s => s.id == studentIdParam);
-            if (student) {
-                // Pre-select school based on student's school
-                if (student.school_id && !data.school_id) {
-                    setData('school_id', student.school_id);
-                }
-                // Pre-fill pickup address if not already set
-                if (student.home_address && !data.pickup_address) {
-                    setData('pickup_address', student.home_address);
-                }
-            }
-        }
-    }, [studentIdParam, data.student_id, data.school_id, data.pickup_address, students]);
 
     // Pre-fill pickup address with student's home address
     useEffect(() => {
@@ -182,6 +164,32 @@ export default function CreateBooking({ students, routes }) {
             setStep(step - 1);
         }
     };
+
+    // Initialize immediately if window is available (client-side)
+    useEffect(() => {
+        if (typeof window !== 'undefined' && !initialized) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('student_id');
+            setStudentIdParam(studentId);
+            setInitialized(true);
+            
+            // If student_id is provided, set it and move to step 1
+            if (studentId) {
+                setData('student_id', studentId);
+                setStep(1);
+                
+                const student = students.find(s => s.id == studentId);
+                if (student) {
+                    if (student.school_id) {
+                        setData('school_id', student.school_id);
+                    }
+                    if (student.home_address) {
+                        setData('pickup_address', student.home_address);
+                    }
+                }
+            }
+        }
+    }, [initialized, students]);
 
     return (
         <AuthenticatedLayout user={auth.user}>

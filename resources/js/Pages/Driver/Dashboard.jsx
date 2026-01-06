@@ -21,7 +21,7 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                         <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
                     </div>
 
-                    {routes && routes.length === 0 ? (
+                    {(!routes || routes.length === 0) ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,13 +202,15 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <p className="text-base font-bold text-white">Route Name</p>
-                                        <p className="text-lg font-bold text-white/90 mt-1">{route.name}</p>
+                                        <p className="text-lg font-bold text-white/90 mt-1">
+                                            {route?.name || (routes && routes.length > 0 ? routes.map(r => r.name).join(', ') : 'N/A')}
+                                        </p>
                                     </div>
                                     <div>
                                         <p className="text-base font-bold text-white">Pickup Points</p>
                                         <p className="text-lg font-bold text-white/90 mt-1">{stats.pickup_points}</p>
                                     </div>
-                                    {route.vehicle && (
+                                    {route?.vehicle && (
                                         <>
                                             <div>
                                                 <p className="text-base font-bold text-white">Vehicle</p>
