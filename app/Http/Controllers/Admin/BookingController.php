@@ -47,7 +47,7 @@ class BookingController extends Controller
             'pickup_point_id' => 'required|exists:pickup_points,id',
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
-            'status' => 'required|in:pending,active,expired,cancelled',
+            'status' => 'required|in:pending,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
@@ -86,7 +86,7 @@ class BookingController extends Controller
             'pickup_point_id' => 'required|exists:pickup_points,id',
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
-            'status' => 'required|in:pending,active,expired,cancelled',
+            'status' => 'required|in:pending,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);

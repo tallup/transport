@@ -165,6 +165,7 @@ export default function Create({ students, routes }) {
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="active">Active</option>
+                                        <option value="completed">Completed</option>
                                         <option value="expired">Expired</option>
                                         <option value="cancelled">Cancelled</option>
                                     </Select>

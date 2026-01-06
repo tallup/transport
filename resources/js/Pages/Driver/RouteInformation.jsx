@@ -1,9 +1,20 @@
-import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
-export default function RouteInformation({ route, pickupPoints, activeBookingsCount }) {
+export default function RouteInformation({ routes, selectedRoute, pickupPoints, activeBookingsCount }) {
+    const [selectedRouteId, setSelectedRouteId] = useState(selectedRoute?.id || null);
+
+    const handleRouteChange = (e) => {
+        const routeId = e.target.value ? parseInt(e.target.value) : null;
+        setSelectedRouteId(routeId);
+        router.get('/driver/route-information', { route_id: routeId }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
     return (
         <DriverLayout>
             <Head title="Route Information" />
@@ -17,7 +28,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                                     Route Information
                                 </h1>
-                                {route && (
+                                {selectedRoute && (
                                     <p className="text-base sm:text-lg font-semibold text-white/90">
                                         Complete details about your assigned route
                                     </p>
@@ -29,7 +40,29 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                         </div>
                     </div>
 
-                    {!route ? (
+                    {/* Route Selection */}
+                    {routes && routes.length > 1 && (
+                        <GlassCard className="mb-6">
+                            <div>
+                                <label className="block text-base font-bold text-white mb-2">
+                                    Select Route
+                                </label>
+                                <select
+                                    value={selectedRouteId || ''}
+                                    onChange={handleRouteChange}
+                                    className="w-full glass-input text-white font-semibold py-2 px-4 rounded-lg"
+                                >
+                                    {routes.map((route) => (
+                                        <option key={route.id} value={route.id} className="bg-gray-800">
+                                            {route.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {routes && routes.length === 0 ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +74,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 </p>
                             </div>
                         </GlassCard>
-                    ) : (
+                    ) : selectedRoute ? (
                         <>
                             {/* Route Overview */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -49,7 +82,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-bold text-white">Route Name</p>
-                                            <p className="text-xl font-bold text-teal-200 mt-2">{route.name}</p>
+                                            <p className="text-xl font-bold text-teal-200 mt-2">{selectedRoute.name}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-teal-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +97,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                         <div>
                                             <p className="text-base font-bold text-white">Service Type</p>
                                             <p className="text-xl font-bold text-emerald-200 mt-2 capitalize">
-                                                {route.service_type || 'Standard'}
+                                                {selectedRoute.service_type || 'Standard'}
                                             </p>
                                         </div>
                                         <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
@@ -79,7 +112,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-bold text-white">Route Capacity</p>
-                                            <p className="text-xl font-bold text-cyan-200 mt-2">{route.capacity || 'N/A'}</p>
+                                            <p className="text-xl font-bold text-cyan-200 mt-2">{selectedRoute.capacity || 'N/A'}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,66 +138,66 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                             </div>
 
                             {/* Vehicle Information */}
-                            {route.vehicle && (
+                            {selectedRoute.vehicle && (
                                 <GlassCard className="mb-8">
                                     <h3 className="text-2xl font-bold text-white mb-6">Vehicle Information</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Make & Model</p>
-                                            <p className="text-lg font-bold text-white">
-                                                {route.vehicle.make} {route.vehicle.model}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Year</p>
-                                            <p className="text-lg font-bold text-white">{route.vehicle.year || 'N/A'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">License Plate</p>
-                                            <p className="text-lg font-bold text-white">{route.vehicle.license_plate}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Registration Number</p>
-                                            <p className="text-lg font-bold text-white">
-                                                {route.vehicle.registration_number || 'N/A'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Capacity</p>
-                                            <p className="text-lg font-bold text-white">{route.vehicle.capacity || 'N/A'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Type</p>
-                                            <p className="text-lg font-bold text-white capitalize">
-                                                {route.vehicle.type || 'N/A'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Status</p>
-                                            <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                                                route.vehicle.status === 'active' 
-                                                    ? 'bg-green-500/30 text-green-100 border border-green-400/50' 
-                                                    : 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                            }`}>
-                                                {route.vehicle.status || 'N/A'}
-                                            </span>
-                                        </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Make & Model</p>
+                                                <p className="text-lg font-bold text-white">
+                                                    {selectedRoute.vehicle.make} {selectedRoute.vehicle.model}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Year</p>
+                                                <p className="text-lg font-bold text-white">{selectedRoute.vehicle.year || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">License Plate</p>
+                                                <p className="text-lg font-bold text-white">{selectedRoute.vehicle.license_plate}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Registration Number</p>
+                                                <p className="text-lg font-bold text-white">
+                                                    {selectedRoute.vehicle.registration_number || 'N/A'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Capacity</p>
+                                                <p className="text-lg font-bold text-white">{selectedRoute.vehicle.capacity || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Type</p>
+                                                <p className="text-lg font-bold text-white capitalize">
+                                                    {selectedRoute.vehicle.type || 'N/A'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Status</p>
+                                                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                                                    selectedRoute.vehicle.status === 'active' 
+                                                        ? 'bg-green-500/30 text-green-100 border border-green-400/50' 
+                                                        : 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
+                                                }`}>
+                                                    {selectedRoute.vehicle.status || 'N/A'}
+                                                </span>
+                                            </div>
                                     </div>
                                 </GlassCard>
                             )}
 
                             {/* Driver Information */}
-                            {route.driver && (
+                            {selectedRoute.driver && (
                                 <GlassCard className="mb-8">
                                     <h3 className="text-2xl font-bold text-white mb-6">Driver Information</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <p className="text-sm font-semibold text-white/70 mb-1">Driver Name</p>
-                                            <p className="text-lg font-bold text-white">{route.driver.name}</p>
+                                            <p className="text-lg font-bold text-white">{selectedRoute.driver.name}</p>
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-white/70 mb-1">Email</p>
-                                            <p className="text-lg font-bold text-white">{route.driver.email}</p>
+                                            <p className="text-lg font-bold text-white">{selectedRoute.driver.email}</p>
                                         </div>
                                     </div>
                                 </GlassCard>
@@ -238,6 +271,12 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 )}
                             </GlassCard>
                         </>
+                    ) : (
+                        <GlassCard>
+                            <div className="text-center py-8">
+                                <p className="text-lg font-semibold text-white">Please select a route to view information</p>
+                            </div>
+                        </GlassCard>
                     )}
                 </div>
             </div>

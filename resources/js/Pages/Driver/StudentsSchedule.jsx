@@ -1,9 +1,20 @@
-import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
-export default function StudentsSchedule({ route, studentsList }) {
+export default function StudentsSchedule({ routes, selectedRoute, studentsList }) {
+    const [selectedRouteId, setSelectedRouteId] = useState(selectedRoute?.id || null);
+
+    const handleRouteChange = (e) => {
+        const routeId = e.target.value ? parseInt(e.target.value) : null;
+        setSelectedRouteId(routeId);
+        router.get('/driver/students-schedule', { route_id: routeId }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
     return (
         <DriverLayout>
             <Head title="Students & Pickup Schedule" />
@@ -17,9 +28,9 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                                     Students & Pickup Schedule
                                 </h1>
-                                {route && (
+                                {selectedRoute && (
                                     <p className="text-base sm:text-lg font-semibold text-white/90">
-                                        Route: {route.name}
+                                        Route: {selectedRoute.name}
                                     </p>
                                 )}
                             </div>
@@ -29,7 +40,30 @@ export default function StudentsSchedule({ route, studentsList }) {
                         </div>
                     </div>
 
-                    {!route ? (
+                    {/* Route Selection */}
+                    {routes && routes.length > 1 && (
+                        <GlassCard className="mb-6">
+                            <div>
+                                <label className="block text-base font-bold text-white mb-2">
+                                    Select Route
+                                </label>
+                                <select
+                                    value={selectedRouteId || ''}
+                                    onChange={handleRouteChange}
+                                    className="w-full glass-input text-white font-semibold py-2 px-4 rounded-lg"
+                                >
+                                    <option value="">All Routes</option>
+                                    {routes.map((route) => (
+                                        <option key={route.id} value={route.id} className="bg-gray-800">
+                                            {route.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {routes && routes.length === 0 ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +75,7 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 </p>
                             </div>
                         </GlassCard>
-                    ) : (
+                    ) : selectedRoute ? (
                         <>
                             {/* Summary Stats */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -170,6 +204,12 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 )}
                             </GlassCard>
                         </>
+                    ) : (
+                        <GlassCard>
+                            <div className="text-center py-8">
+                                <p className="text-lg font-semibold text-white">Please select a route to view students</p>
+                            </div>
+                        </GlassCard>
                     )}
                 </div>
             </div>

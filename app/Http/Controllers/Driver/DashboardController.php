@@ -17,27 +17,36 @@ class DashboardController extends Controller
     {
         $driver = $request->user();
         
-        // Get driver's assigned route
-        $route = Route::where('driver_id', $driver->id)
+        // Get driver's assigned routes (multiple routes support)
+        $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle', 'pickupPoints'])
-            ->first();
+            ->get();
 
+        $routeIds = $routes->pluck('id')->toArray();
+
+        // Aggregate stats across all routes
         $stats = [
-            'route_name' => $route?->name ?? 'No route assigned',
-            'vehicle' => $route?->vehicle ? "{$route->vehicle->make} {$route->vehicle->model} ({$route->vehicle->license_plate})" : 'No vehicle assigned',
-            'total_students' => $route ? Booking::where('route_id', $route->id)
+            'route_name' => $routes->count() > 1 
+                ? "{$routes->count()} Routes" 
+                : ($routes->first()?->name ?? 'No route assigned'),
+            'vehicle' => $routes->count() === 1 && $routes->first()?->vehicle
+                ? "{$routes->first()->vehicle->make} {$routes->first()->vehicle->model} ({$routes->first()->vehicle->license_plate})"
+                : ($routes->count() > 1 ? "Multiple Vehicles" : 'No vehicle assigned'),
+            'total_students' => !empty($routeIds) ? Booking::whereIn('route_id', $routeIds)
                 ->whereIn('status', ['pending', 'active'])
                 ->distinct()
                 ->count('student_id') : 0,
-            'pickup_points' => $route?->pickupPoints->count() ?? 0,
+            'pickup_points' => $routes->sum(function ($route) {
+                return $route->pickupPoints->count();
+            }),
         ];
 
-        // Get today's bookings count
+        // Get today's bookings count across all routes
         $todayBookings = 0;
-        if ($route) {
+        if (!empty($routeIds)) {
             $today = now()->format('Y-m-d');
-            $todayBookings = Booking::where('route_id', $route->id)
+            $todayBookings = Booking::whereIn('route_id', $routeIds)
                 ->whereIn('status', ['pending', 'active'])
                 ->where('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
@@ -49,83 +58,118 @@ class DashboardController extends Controller
         
         $stats['today_bookings'] = $todayBookings;
 
-        // Today's schedule timeline
+        // Today's schedule timeline (across all routes)
         $todaySchedule = [];
-        if ($route) {
+        if (!empty($routeIds)) {
             $today = Carbon::today();
-            $todayBookingsList = Booking::where('route_id', $route->id)
+            $todayBookingsList = Booking::whereIn('route_id', $routeIds)
                 ->whereIn('status', ['pending', 'active'])
                 ->where('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
                         ->orWhere('end_date', '>=', $today);
                 })
-                ->with(['student', 'pickupPoint'])
+                ->with(['student', 'pickupPoint', 'route'])
                 ->get();
 
-            // Group by pickup point and time
-            $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
-            foreach ($pickupPoints as $pickupPoint) {
-                $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
+            // Get all pickup points from all routes
+            $allPickupPoints = collect();
+            foreach ($routes as $route) {
+                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
+                foreach ($points as $point) {
+                    $allPickupPoints->push([
+                        'id' => $point->id,
+                        'name' => $point->name,
+                        'pickup_time' => $point->pickup_time,
+                        'sequence_order' => $point->sequence_order,
+                        'route_name' => $route->name,
+                    ]);
+                }
+            }
+
+            // Sort by pickup time
+            $allPickupPoints = $allPickupPoints->sortBy('pickup_time');
+
+            foreach ($allPickupPoints as $pickupPointData) {
+                $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPointData['id']);
                 if ($pointBookings->count() > 0) {
+                    $route = $routes->firstWhere('name', $pickupPointData['route_name']);
+                    $allCompleted = $pointBookings->every(function ($booking) {
+                        return $booking->status === 'completed';
+                    });
+                    
                     $todaySchedule[] = [
-                        'time' => $pickupPoint->pickup_time,
-                        'title' => $pickupPoint->name,
-                        'description' => "Pickup {$pointBookings->count()} student(s)",
+                        'time' => $pickupPointData['pickup_time'],
+                        'title' => $pickupPointData['name'],
+                        'description' => "Pickup {$pointBookings->count()} student(s) - {$pickupPointData['route_name']}",
                         'students' => $pointBookings->map(function ($booking) {
                             return $booking->student->name;
                         })->toArray(),
-                        'status' => 'upcoming',
+                        'status' => $allCompleted ? 'completed' : 'upcoming',
+                        'pickup_point_id' => $pickupPointData['id'],
+                        'route_id' => $route?->id,
                     ];
                 }
             }
         }
 
-        // Next 3 pickup points
+        // Next 3 pickup points (across all routes)
         $nextPickupPoints = [];
-        if ($route) {
-            $nextPoints = $route->pickupPoints()
-                ->orderBy('sequence_order')
-                ->limit(3)
-                ->get();
-            
-            foreach ($nextPoints as $point) {
-                $nextPickupPoints[] = [
-                    'id' => $point->id,
-                    'name' => $point->name,
-                    'address' => $point->address,
-                    'pickup_time' => $point->pickup_time,
-                    'dropoff_time' => $point->dropoff_time,
-                    'sequence_order' => $point->sequence_order,
-                ];
+        if (!empty($routeIds)) {
+            $allPoints = collect();
+            foreach ($routes as $route) {
+                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
+                foreach ($points as $point) {
+                    $allPoints->push([
+                        'id' => $point->id,
+                        'name' => $point->name,
+                        'address' => $point->address,
+                        'pickup_time' => $point->pickup_time,
+                        'dropoff_time' => $point->dropoff_time,
+                        'sequence_order' => $point->sequence_order,
+                        'route_name' => $route->name,
+                    ]);
+                }
             }
+            
+            $nextPickupPoints = $allPoints->sortBy('pickup_time')->take(3)->values()->toArray();
         }
 
-        // Route performance metrics
+        // Route performance metrics (aggregated)
         $performanceMetrics = [
             'on_time_percentage' => 95, // Would need tracking data
-            'total_trips' => $route ? Booking::where('route_id', $route->id)->count() : 0,
-            'average_students_per_trip' => $route ? round(Booking::where('route_id', $route->id)->avg('id') ?? 0, 1) : 0,
+            'total_trips' => !empty($routeIds) ? Booking::whereIn('route_id', $routeIds)->count() : 0,
+            'average_students_per_trip' => !empty($routeIds) 
+                ? round(Booking::whereIn('route_id', $routeIds)->count() > 0 
+                    ? Booking::whereIn('route_id', $routeIds)->distinct('student_id')->count() / Booking::whereIn('route_id', $routeIds)->count() 
+                    : 0, 1) 
+                : 0,
         ];
 
-        // Detailed student list with pickup points and times
+        // Detailed student list with pickup points and times (across all routes)
         $studentsList = [];
-        if ($route) {
+        if (!empty($routeIds)) {
             $today = Carbon::today();
-            $activeBookings = Booking::where('route_id', $route->id)
+            $activeBookings = Booking::whereIn('route_id', $routeIds)
                 ->whereIn('status', ['pending', 'active'])
                 ->where('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
                         ->orWhere('end_date', '>=', $today);
                 })
-                ->with(['student', 'pickupPoint'])
+                ->with(['student', 'pickupPoint', 'route'])
                 ->get();
 
-            // Group by pickup point and sort by sequence order
-            $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
-            
-            foreach ($pickupPoints as $pickupPoint) {
+            // Get all pickup points from all routes
+            $allPickupPoints = collect();
+            foreach ($routes as $route) {
+                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
+                foreach ($points as $point) {
+                    $allPickupPoints->push($point);
+                }
+            }
+
+            foreach ($allPickupPoints as $pickupPoint) {
                 $pointBookings = $activeBookings->where('pickup_point_id', $pickupPoint->id);
                 
                 if ($pointBookings->count() > 0) {
@@ -138,29 +182,42 @@ class DashboardController extends Controller
                             'pickup_point_address' => $pickupPoint->address,
                             'pickup_time' => $pickupPoint->pickup_time,
                             'sequence_order' => $pickupPoint->sequence_order,
+                            'route_name' => $booking->route->name,
                             'booking_id' => $booking->id,
                         ];
                     }
                 }
             }
 
-            // Sort by sequence order, then by pickup time
+            // Sort by pickup time, then by sequence order
             usort($studentsList, function ($a, $b) {
-                if ($a['sequence_order'] != $b['sequence_order']) {
-                    return $a['sequence_order'] <=> $b['sequence_order'];
+                $timeCompare = strcmp($a['pickup_time'], $b['pickup_time']);
+                if ($timeCompare !== 0) {
+                    return $timeCompare;
                 }
-                return strcmp($a['pickup_time'], $b['pickup_time']);
+                return $a['sequence_order'] <=> $b['sequence_order'];
             });
         }
 
         return Inertia::render('Driver/Dashboard', [
-            'route' => $route ? [
-                'id' => $route->id,
-                'name' => $route->name,
-                'vehicle' => $route->vehicle ? [
-                    'make' => $route->vehicle->make,
-                    'model' => $route->vehicle->model,
-                    'license_plate' => $route->vehicle->license_plate,
+            'routes' => $routes->map(function ($route) {
+                return [
+                    'id' => $route->id,
+                    'name' => $route->name,
+                    'vehicle' => $route->vehicle ? [
+                        'make' => $route->vehicle->make,
+                        'model' => $route->vehicle->model,
+                        'license_plate' => $route->vehicle->license_plate,
+                    ] : null,
+                ];
+            })->values(),
+            'route' => $routes->count() === 1 ? [
+                'id' => $routes->first()->id,
+                'name' => $routes->first()->name,
+                'vehicle' => $routes->first()->vehicle ? [
+                    'make' => $routes->first()->vehicle->make,
+                    'model' => $routes->first()->vehicle->model,
+                    'license_plate' => $routes->first()->vehicle->license_plate,
                 ] : null,
             ] : null,
             'stats' => $stats,
@@ -174,16 +231,33 @@ class DashboardController extends Controller
     public function studentsSchedule(Request $request)
     {
         $driver = $request->user();
+        $routeId = $request->input('route_id');
         
-        // Get driver's assigned route
-        $route = Route::where('driver_id', $driver->id)
+        // Get driver's assigned routes
+        $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle', 'pickupPoints'])
-            ->first();
+            ->get();
+
+        if ($routes->isEmpty()) {
+            return Inertia::render('Driver/StudentsSchedule', [
+                'routes' => [],
+                'selectedRoute' => null,
+                'studentsList' => [],
+            ]);
+        }
+
+        // If route_id is provided, use it; otherwise use the first route
+        $route = $routeId 
+            ? $routes->firstWhere('id', $routeId) 
+            : $routes->first();
 
         if (!$route) {
             return Inertia::render('Driver/StudentsSchedule', [
-                'route' => null,
+                'routes' => $routes->map(function ($r) {
+                    return ['id' => $r->id, 'name' => $r->name];
+                })->values(),
+                'selectedRoute' => null,
                 'studentsList' => [],
             ]);
         }
@@ -238,7 +312,10 @@ class DashboardController extends Controller
         });
 
         return Inertia::render('Driver/StudentsSchedule', [
-            'route' => [
+            'routes' => $routes->map(function ($r) {
+                return ['id' => $r->id, 'name' => $r->name];
+            })->values(),
+            'selectedRoute' => [
                 'id' => $route->id,
                 'name' => $route->name,
             ],
@@ -249,40 +326,49 @@ class DashboardController extends Controller
     public function routePerformance(Request $request)
     {
         $driver = $request->user();
+        $routeId = $request->input('route_id');
         
-        // Get driver's assigned route
-        $route = Route::where('driver_id', $driver->id)
+        // Get driver's assigned routes
+        $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle'])
-            ->first();
+            ->get();
 
-        if (!$route) {
+        if ($routes->isEmpty()) {
             return Inertia::render('Driver/RoutePerformance', [
-                'route' => null,
+                'routes' => [],
+                'selectedRoute' => null,
                 'performanceMetrics' => [],
                 'weeklyStats' => [],
                 'monthlyStats' => [],
             ]);
         }
 
+        // If route_id is provided, use it; otherwise aggregate across all routes
+        $routeIds = $routeId 
+            ? [$routeId]
+            : $routes->pluck('id')->toArray();
+
+        $selectedRoute = $routeId ? $routes->firstWhere('id', $routeId) : null;
+
         $today = Carbon::today();
         $thisWeekStart = $today->copy()->startOfWeek();
         $thisMonthStart = $today->copy()->startOfMonth();
 
-        // Overall performance metrics
-        $totalBookings = Booking::where('route_id', $route->id)->count();
-        $activeBookings = Booking::where('route_id', $route->id)
+        // Overall performance metrics (aggregated or single route)
+        $totalBookings = Booking::whereIn('route_id', $routeIds)->count();
+        $activeBookings = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
             ->count();
-        $completedBookings = Booking::where('route_id', $route->id)
+        $completedBookings = Booking::whereIn('route_id', $routeIds)
             ->where('status', 'completed')
             ->count();
 
         // Weekly stats
-        $weeklyBookings = Booking::where('route_id', $route->id)
+        $weeklyBookings = Booking::whereIn('route_id', $routeIds)
             ->where('created_at', '>=', $thisWeekStart)
             ->count();
-        $weeklyActive = Booking::where('route_id', $route->id)
+        $weeklyActive = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
             ->where('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
@@ -293,10 +379,10 @@ class DashboardController extends Controller
             ->count();
 
         // Monthly stats
-        $monthlyBookings = Booking::where('route_id', $route->id)
+        $monthlyBookings = Booking::whereIn('route_id', $routeIds)
             ->where('created_at', '>=', $thisMonthStart)
             ->count();
-        $monthlyActive = Booking::where('route_id', $route->id)
+        $monthlyActive = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
             ->where('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
@@ -307,7 +393,7 @@ class DashboardController extends Controller
             ->count();
 
         // Calculate average students per trip
-        $totalStudents = Booking::where('route_id', $route->id)
+        $totalStudents = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
             ->distinct()
             ->count('student_id');
@@ -332,10 +418,13 @@ class DashboardController extends Controller
         ];
 
         return Inertia::render('Driver/RoutePerformance', [
-            'route' => [
-                'id' => $route->id,
-                'name' => $route->name,
-            ],
+            'routes' => $routes->map(function ($r) {
+                return ['id' => $r->id, 'name' => $r->name];
+            })->values(),
+            'selectedRoute' => $selectedRoute ? [
+                'id' => $selectedRoute->id,
+                'name' => $selectedRoute->name,
+            ] : null,
             'performanceMetrics' => $performanceMetrics,
             'weeklyStats' => $weeklyStats,
             'monthlyStats' => $monthlyStats,
@@ -345,16 +434,32 @@ class DashboardController extends Controller
     public function routeInformation(Request $request)
     {
         $driver = $request->user();
+        $routeId = $request->input('route_id');
         
-        // Get driver's assigned route
-        $route = Route::where('driver_id', $driver->id)
+        // Get driver's assigned routes
+        $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle', 'pickupPoints', 'driver'])
-            ->first();
+            ->get();
+
+        if ($routes->isEmpty()) {
+            return Inertia::render('Driver/RouteInformation', [
+                'routes' => [],
+                'selectedRoute' => null,
+            ]);
+        }
+
+        // If route_id is provided, use it; otherwise use the first route
+        $route = $routeId 
+            ? $routes->firstWhere('id', $routeId) 
+            : $routes->first();
 
         if (!$route) {
             return Inertia::render('Driver/RouteInformation', [
-                'route' => null,
+                'routes' => $routes->map(function ($r) {
+                    return ['id' => $r->id, 'name' => $r->name];
+                })->values(),
+                'selectedRoute' => null,
             ]);
         }
 
@@ -382,7 +487,10 @@ class DashboardController extends Controller
             ->count();
 
         return Inertia::render('Driver/RouteInformation', [
-            'route' => [
+            'routes' => $routes->map(function ($r) {
+                return ['id' => $r->id, 'name' => $r->name];
+            })->values(),
+            'selectedRoute' => [
                 'id' => $route->id,
                 'name' => $route->name,
                 'capacity' => $route->capacity,
