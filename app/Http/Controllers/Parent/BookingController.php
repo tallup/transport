@@ -89,10 +89,18 @@ class BookingController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'required|exists:pickup_points,id',
+            'pickup_point_id' => 'nullable|exists:pickup_points,id',
+            'pickup_address' => 'nullable|string|max:500',
+            'pickup_latitude' => 'nullable|numeric|between:-90,90',
+            'pickup_longitude' => 'nullable|numeric|between:-180,180',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
             'start_date' => 'required|date|after_or_equal:today',
         ]);
+
+        // Ensure either pickup_point_id OR pickup_address is provided
+        if (empty($validated['pickup_point_id']) && empty($validated['pickup_address'])) {
+            return back()->withErrors(['pickup_address' => 'Please either select a pickup point or enter a pickup address.']);
+        }
 
         // Verify student belongs to parent
         $user = $request->user();
@@ -131,7 +139,10 @@ class BookingController extends Controller
         $booking = Booking::create([
             'student_id' => $validated['student_id'],
             'route_id' => $validated['route_id'],
-            'pickup_point_id' => $validated['pickup_point_id'],
+            'pickup_point_id' => $validated['pickup_point_id'] ?? null,
+            'pickup_address' => $validated['pickup_address'] ?? null,
+            'pickup_latitude' => $validated['pickup_latitude'] ?? null,
+            'pickup_longitude' => $validated['pickup_longitude'] ?? null,
             'plan_type' => $validated['plan_type'],
             'status' => 'pending',
             'start_date' => $validated['start_date'],

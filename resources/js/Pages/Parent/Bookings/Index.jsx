@@ -45,7 +45,7 @@ export default function BookingsIndex({ bookings }) {
                                                             <span className="font-bold text-white">Route:</span> {booking.route?.name}
                                                         </div>
                                                         <div>
-                                                            <span className="font-bold text-white">Pickup:</span> {booking.pickup_point?.name}
+                                                            <span className="font-bold text-white">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
                                                         </div>
                                                         <div>
                                                             <span className="font-bold text-white">Plan:</span> {booking.plan_type?.replace('_', '-').toUpperCase()}

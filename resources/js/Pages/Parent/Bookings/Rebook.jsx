@@ -9,7 +9,6 @@ export default function Rebook({ previousBooking, students, schools = [], routes
     const { auth } = usePage().props;
     const [step, setStep] = useState(0);
     const [selectedRoute, setSelectedRoute] = useState(null);
-    const [pickupPoints, setPickupPoints] = useState([]);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -20,6 +19,9 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         student_id: previousBooking.student_id || '',
         route_id: previousBooking.route_id || '',
         pickup_point_id: previousBooking.pickup_point_id || '',
+        pickup_address: previousBooking.pickup_address || previousBooking.student?.home_address || '',
+        pickup_latitude: previousBooking.pickup_latitude || '',
+        pickup_longitude: previousBooking.pickup_longitude || '',
         plan_type: previousBooking.plan_type || '',
         start_date: new Date().toISOString().split('T')[0],
     });
@@ -36,15 +38,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         }
     }, [data.school_id, routes]);
 
-    // Load pickup points when route is selected
+    // Load route details when route is selected
     useEffect(() => {
         if (data.route_id) {
             const route = filteredRoutes.find(r => r.id === parseInt(data.route_id));
             setSelectedRoute(route);
-            setPickupPoints(route?.pickup_points || []);
             checkCapacity(data.route_id);
         } else {
-            setPickupPoints([]);
             setSelectedRoute(null);
         }
     }, [data.route_id, filteredRoutes]);
@@ -85,14 +85,33 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/parent/bookings');
+        
+        // Validate required fields before submitting
+        if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
+            alert('Please complete all required fields before proceeding to payment.');
+            return;
+        }
+        
+        post('/parent/bookings', {
+            preserveScroll: false,
+            onSuccess: (page) => {
+                // Inertia will automatically navigate to the checkout page
+            },
+            onError: (errors) => {
+                console.log('Form errors:', errors);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+        });
     };
 
     const nextStep = () => {
         if (step === 0 && !data.school_id) return;
         if (step === 1 && !data.student_id) return;
         if (step === 2 && !data.route_id) return;
-        if (step === 3 && !data.pickup_point_id) return;
+        if (step === 3 && !data.pickup_address && !data.pickup_point_id) {
+            alert('Please enter a pickup address.');
+            return;
+        }
         if (step === 4 && !data.plan_type) return;
         setStep(step + 1);
     };
@@ -271,42 +290,69 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                     </div>
                                 )}
 
-                                {/* Step 3: Select Pickup Point */}
+                                {/* Step 3: Enter Pickup Address */}
                                 {step === 3 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Pickup Point</h3>
-                                        {pickupPoints.length === 0 ? (
-                                            <p className="text-white text-lg font-semibold">Please select a route first.</p>
-                                        ) : (
-                                            <div className="space-y-2">
-                                                {pickupPoints.map((point) => (
-                                                    <label
-                                                        key={point.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                            data.pickup_point_id == point.id
-                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="pickup_point_id"
-                                                            value={point.id}
-                                                            checked={data.pickup_point_id == point.id}
-                                                            onChange={(e) => setData('pickup_point_id', e.target.value)}
-                                                            className="mr-3"
-                                                        />
-                                                        <div>
-                                                            <span className="font-bold text-white">{point.name}</span>
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
-                                                            <p className="text-sm text-white/80 font-semibold">
-                                                                Pickup: {point.pickup_time} | Dropoff: {point.dropoff_time}
-                                                            </p>
-                                                        </div>
-                                                    </label>
-                                                ))}
+                                        <h3 className="text-xl font-bold text-white mb-4">Enter Pickup Location</h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-base font-bold text-white mb-2">
+                                                    Pickup Address <span className="text-red-300">*</span>
+                                                </label>
+                                                <textarea
+                                                    value={data.pickup_address}
+                                                    onChange={(e) => setData('pickup_address', e.target.value)}
+                                                    placeholder="Enter the full address where the student will be picked up"
+                                                    rows={3}
+                                                    className="block w-full glass-input text-white"
+                                                    required
+                                                />
+                                                {errors.pickup_address && (
+                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_address}</p>
+                                                )}
+                                                <p className="text-sm text-white/80 mt-2 font-semibold">
+                                                    This address will be used for daily pickup. Make sure it's accurate and complete.
+                                                </p>
                                             </div>
-                                        )}
+                                            
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-base font-bold text-white mb-2">
+                                                        Latitude (Optional)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        step="any"
+                                                        value={data.pickup_latitude}
+                                                        onChange={(e) => setData('pickup_latitude', e.target.value)}
+                                                        placeholder="e.g., 40.7128"
+                                                        className="block w-full glass-input text-white"
+                                                    />
+                                                    {errors.pickup_latitude && (
+                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_latitude}</p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-base font-bold text-white mb-2">
+                                                        Longitude (Optional)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        step="any"
+                                                        value={data.pickup_longitude}
+                                                        onChange={(e) => setData('pickup_longitude', e.target.value)}
+                                                        placeholder="e.g., -74.0060"
+                                                        className="block w-full glass-input text-white"
+                                                    />
+                                                    {errors.pickup_longitude && (
+                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_longitude}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-white/70 font-semibold">
+                                                Note: Latitude and longitude are optional. They can be used for GPS navigation if provided.
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
@@ -380,8 +426,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                 <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
                                             </div>
                                             <div>
-                                                <span className="font-bold text-white">Pickup Point:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{pickupPoints.find(p => p.id == data.pickup_point_id)?.name}</span>
+                                                <span className="font-bold text-white">Pickup Address:</span>{' '}
+                                                <span className="text-white/90 font-semibold">
+                                                    {data.pickup_address || 'Not set'}
+                                                </span>
                                             </div>
                                             <div>
                                                 <span className="font-bold text-white">Plan:</span>{' '}

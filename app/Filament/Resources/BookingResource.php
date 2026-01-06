@@ -43,10 +43,29 @@ class BookingResource extends Resource
                     ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('pickup_point_id', null)),
                 Forms\Components\Select::make('pickup_point_id')
                     ->relationship('pickupPoint', 'name', fn ($query, $get) => $query->where('route_id', $get('route_id')))
-                    ->required()
                     ->searchable()
                     ->preload()
-                    ->disabled(fn ($get) => !$get('route_id')),
+                    ->disabled(fn ($get) => !$get('route_id'))
+                    ->helperText('Leave empty to use custom address below'),
+                Forms\Components\Textarea::make('pickup_address')
+                    ->label('Custom Pickup Address')
+                    ->rows(2)
+                    ->maxLength(500)
+                    ->helperText('Enter a custom pickup address if not using a predefined pickup point')
+                    ->columnSpanFull(),
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('pickup_latitude')
+                            ->label('Latitude')
+                            ->numeric()
+                            ->step(0.00000001)
+                            ->helperText('Optional: GPS coordinates for navigation'),
+                        Forms\Components\TextInput::make('pickup_longitude')
+                            ->label('Longitude')
+                            ->numeric()
+                            ->step(0.00000001)
+                            ->helperText('Optional: GPS coordinates for navigation'),
+                    ]),
                 Forms\Components\Select::make('plan_type')
                     ->options([
                         'weekly' => 'Weekly',
@@ -82,7 +101,21 @@ class BookingResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('route.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('pickup_point.name'),
+                Tables\Columns\TextColumn::make('pickup_location')
+                    ->label('Pickup Location')
+                    ->getStateUsing(function (Booking $record): string {
+                        if ($record->pickup_address) {
+                            return $record->pickup_address;
+                        }
+                        return $record->pickupPoint?->name ?? '—';
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('pickup_address', 'like', "%{$search}%")
+                            ->orWhereHas('pickupPoint', fn (Builder $q) => 
+                                $q->where('name', 'like', "%{$search}%")
+                            );
+                    })
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('plan_type')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ucfirst(str_replace('_', '-', $state))),

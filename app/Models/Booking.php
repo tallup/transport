@@ -15,6 +15,9 @@ class Booking extends Model
         'route_id',
         'pickup_point_id',
         'dropoff_point_id',
+        'pickup_address',
+        'pickup_latitude',
+        'pickup_longitude',
         'plan_type',
         'status',
         'start_date',
@@ -26,6 +29,8 @@ class Booking extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'pickup_latitude' => 'decimal:8',
+        'pickup_longitude' => 'decimal:8',
     ];
 
     /**
