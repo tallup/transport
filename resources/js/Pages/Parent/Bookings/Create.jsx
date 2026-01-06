@@ -167,29 +167,61 @@ export default function CreateBooking({ students, routes }) {
 
     // Initialize immediately if window is available (client-side)
     useEffect(() => {
-        if (typeof window !== 'undefined' && !initialized) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const studentId = urlParams.get('student_id');
-            setStudentIdParam(studentId);
-            setInitialized(true);
-            
-            // If student_id is provided, set it and move to step 1
-            if (studentId) {
-                setData('student_id', studentId);
-                setStep(1);
+        if (typeof window !== 'undefined' && !initialized && students && students.length > 0) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const studentId = urlParams.get('student_id');
                 
-                const student = students.find(s => s.id == studentId);
-                if (student) {
-                    if (student.school_id) {
-                        setData('school_id', student.school_id);
-                    }
-                    if (student.home_address) {
-                        setData('pickup_address', student.home_address);
+                if (studentId) {
+                    setStudentIdParam(studentId);
+                    
+                    // Parse studentId to integer for comparison
+                    const studentIdInt = parseInt(studentId, 10);
+                    if (!isNaN(studentIdInt)) {
+                        setData('student_id', studentIdInt);
+                        setStep(1);
+                        
+                        // Find student and set school_id and pickup_address
+                        const student = students.find(s => {
+                            // Handle both string and number comparisons
+                            return s.id === studentIdInt || s.id == studentId || String(s.id) === String(studentId);
+                        });
+                        
+                        if (student) {
+                            if (student.school_id) {
+                                setData('school_id', student.school_id);
+                            }
+                            if (student.home_address) {
+                                setData('pickup_address', student.home_address);
+                            }
+                        }
                     }
                 }
+                setInitialized(true);
+            } catch (error) {
+                console.error('Error initializing booking form:', error);
+                setInitialized(true);
             }
         }
-    }, [initialized, students]);
+    }, [initialized, students, setData]);
+
+    // Show loading state if students haven't loaded yet
+    if (!students || students.length === 0) {
+        return (
+            <AuthenticatedLayout user={auth.user}>
+                <Head title="Book Transport" />
+                <div className="py-12">
+                    <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                        <GlassCard className="overflow-hidden">
+                            <div className="p-6">
+                                <p className="text-white text-center">Loading...</p>
+                            </div>
+                        </GlassCard>
+                    </div>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -235,29 +267,34 @@ export default function CreateBooking({ students, routes }) {
                             </div>
 
                             {/* Show selected student info when coming from students list */}
-                            {studentIdParam && data.student_id && (
-                                <div className="mb-6 p-4 bg-blue-500/30 border border-blue-400/50 rounded-lg">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-semibold text-blue-100 mb-1">Booking for:</p>
-                                            <p className="text-lg font-bold text-white">
-                                                {students.find(s => s.id == data.student_id)?.name}
-                                                {students.find(s => s.id == data.student_id)?.school && (
-                                                    <span className="text-base font-semibold text-white/90 ml-2">
-                                                        - {students.find(s => s.id == data.student_id)?.school.name}
-                                                    </span>
-                                                )}
-                                            </p>
+                            {studentIdParam && data.student_id && students && students.length > 0 && (() => {
+                                const selectedStudent = students.find(s => {
+                                    return s.id == data.student_id || s.id === parseInt(data.student_id, 10) || String(s.id) === String(data.student_id);
+                                });
+                                return selectedStudent ? (
+                                    <div className="mb-6 p-4 bg-blue-500/30 border border-blue-400/50 rounded-lg">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-sm font-semibold text-blue-100 mb-1">Booking for:</p>
+                                                <p className="text-lg font-bold text-white">
+                                                    {selectedStudent.name}
+                                                    {selectedStudent.school && (
+                                                        <span className="text-base font-semibold text-white/90 ml-2">
+                                                            - {selectedStudent.school.name}
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <Link
+                                                href="/parent/students"
+                                                className="text-sm font-semibold text-blue-200 hover:text-blue-100 underline"
+                                            >
+                                                Change Student
+                                            </Link>
                                         </div>
-                                        <Link
-                                            href="/parent/students"
-                                            className="text-sm font-semibold text-blue-200 hover:text-blue-100 underline"
-                                        >
-                                            Change Student
-                                        </Link>
                                     </div>
-                                </div>
-                            )}
+                                ) : null;
+                            })()}
 
                             <form onSubmit={handleSubmit}>
                                 {/* Step 0: Select Student */}
