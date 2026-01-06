@@ -344,6 +344,7 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                                                         })}
                                                     </div>
                                                 </div>
+                                                </div>
                                             </GlassCard>
                                         );
                                     })}
