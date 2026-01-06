@@ -144,8 +144,10 @@ export default function Checkout({ booking, price }) {
                                     <span className="font-bold text-white">{booking.route?.name}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white font-semibold">Pickup Point:</span>
-                                    <span className="font-bold text-white">{booking.pickup_point?.name}</span>
+                                    <span className="text-white font-semibold">Pickup Location:</span>
+                                    <span className="font-bold text-white">
+                                        {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
+                                    </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-white font-semibold">Plan:</span>
