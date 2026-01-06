@@ -80,6 +80,9 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     
     Route::get('/dashboard', [\App\Http\Controllers\Driver\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/roster', [\App\Http\Controllers\Driver\RosterController::class, 'index'])->name('roster');
+    Route::get('/students-schedule', [\App\Http\Controllers\Driver\DashboardController::class, 'studentsSchedule'])->name('students-schedule');
+    Route::get('/route-performance', [\App\Http\Controllers\Driver\DashboardController::class, 'routePerformance'])->name('route-performance');
+    Route::get('/route-information', [\App\Http\Controllers\Driver\DashboardController::class, 'routeInformation'])->name('route-information');
 });
 
 Route::middleware('auth')->group(function () {

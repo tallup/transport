@@ -113,7 +113,14 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                                 {/* Students List with Pickup Points */}
                                 <GlassCard>
-                                    <h3 className="text-xl font-bold text-white mb-4">Students & Pickup Schedule</h3>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-xl font-bold text-white">Students & Pickup Schedule</h3>
+                                        <Link href="/driver/students-schedule">
+                                            <GlassButton variant="primary" className="text-sm py-2 px-3">
+                                                View Full Details
+                                            </GlassButton>
+                                        </Link>
+                                    </div>
                                     <div className="space-y-3 max-h-[600px] overflow-y-auto">
                                         {(studentsList || []).length > 0 ? (
                                             studentsList.map((student, index) => (
@@ -148,7 +155,14 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
 
                                 {/* Performance Metrics */}
                                 <GlassCard>
-                                    <h3 className="text-xl font-bold text-white mb-4">Route Performance</h3>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-xl font-bold text-white">Route Performance</h3>
+                                        <Link href="/driver/route-performance">
+                                            <GlassButton variant="primary" className="text-sm py-2 px-3">
+                                                View Full Details
+                                            </GlassButton>
+                                        </Link>
+                                    </div>
                                     <div className="space-y-4">
                                         <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
                                             <p className="text-base font-bold text-white">On-Time Percentage</p>
@@ -174,7 +188,14 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
 
                             {/* Route Information */}
                             <GlassCard>
-                                <h3 className="text-xl font-bold text-white mb-4">Route Information</h3>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold text-white">Route Information</h3>
+                                    <Link href="/driver/route-information">
+                                        <GlassButton variant="primary" className="text-sm py-2 px-3">
+                                            View Full Details
+                                        </GlassButton>
+                                    </Link>
+                                </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <p className="text-base font-bold text-white">Route Name</p>

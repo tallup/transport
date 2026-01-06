@@ -7,7 +7,14 @@ import axios from 'axios';
 
 export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
-    const [step, setStep] = useState(0);
+    
+    // Get student_id from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentIdParam = urlParams.get('student_id');
+    
+    // Initialize step: if student_id is provided, start at route selection (step 1)
+    const initialStep = studentIdParam ? 1 : 0;
+    const [step, setStep] = useState(initialStep);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
@@ -16,7 +23,7 @@ export default function CreateBooking({ students, routes }) {
 
     const { data, setData, post, errors, processing } = useForm({
         school_id: '',
-        student_id: '',
+        student_id: studentIdParam || '',
         route_id: '',
         pickup_point_id: '',
         pickup_address: '',
@@ -45,15 +52,22 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [data.school_id, routes]);
 
-    // Pre-select school based on student's school
+    // Pre-select school and student when student_id is provided in URL
     useEffect(() => {
-        if (data.student_id && !data.school_id) {
-            const student = students.find(s => s.id == data.student_id);
-            if (student?.school_id) {
-                setData('school_id', student.school_id);
+        if (studentIdParam && data.student_id === studentIdParam) {
+            const student = students.find(s => s.id == studentIdParam);
+            if (student) {
+                // Pre-select school based on student's school
+                if (student.school_id && !data.school_id) {
+                    setData('school_id', student.school_id);
+                }
+                // Pre-fill pickup address if not already set
+                if (student.home_address && !data.pickup_address) {
+                    setData('pickup_address', student.home_address);
+                }
             }
         }
-    }, [data.student_id, students]);
+    }, [studentIdParam, data.student_id, data.school_id, data.pickup_address, students]);
 
     // Pre-fill pickup address with student's home address
     useEffect(() => {
@@ -138,22 +152,35 @@ export default function CreateBooking({ students, routes }) {
     };
 
     const nextStep = () => {
-        // Step 0: Student
+        // Step 0: Student (only if not pre-selected)
         if (step === 0 && !data.student_id) return;
         // Step 1: Route
-        if (step === 1 && !data.route_id) return;
+        if (step === 1 && !data.route_id) {
+            alert('Please select a route.');
+            return;
+        }
         // Step 2: Pickup
         if (step === 2 && !data.pickup_address && !data.pickup_point_id) {
             alert('Please enter a pickup address.');
             return;
         }
         // Step 3: Plan
-        if (step === 3 && !data.plan_type) return;
+        if (step === 3 && !data.plan_type) {
+            alert('Please select a plan.');
+            return;
+        }
         setStep(step + 1);
     };
 
     const prevStep = () => {
-        setStep(step - 1);
+        // Don't go back to student selection if student was pre-selected from URL
+        if (step === 1 && studentIdParam) {
+            // If we started at step 1 (route selection) because student was pre-selected,
+            // going back should take us to the students list page
+            window.location.href = '/parent/students';
+        } else {
+            setStep(step - 1);
+        }
     };
 
     return (
@@ -198,6 +225,31 @@ export default function CreateBooking({ students, routes }) {
                                     <span>Review</span>
                                 </div>
                             </div>
+
+                            {/* Show selected student info when coming from students list */}
+                            {studentIdParam && data.student_id && (
+                                <div className="mb-6 p-4 bg-blue-500/30 border border-blue-400/50 rounded-lg">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-semibold text-blue-100 mb-1">Booking for:</p>
+                                            <p className="text-lg font-bold text-white">
+                                                {students.find(s => s.id == data.student_id)?.name}
+                                                {students.find(s => s.id == data.student_id)?.school && (
+                                                    <span className="text-base font-semibold text-white/90 ml-2">
+                                                        - {students.find(s => s.id == data.student_id)?.school.name}
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </div>
+                                        <Link
+                                            href="/parent/students"
+                                            className="text-sm font-semibold text-blue-200 hover:text-blue-100 underline"
+                                        >
+                                            Change Student
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
 
                             <form onSubmit={handleSubmit}>
                                 {/* Step 0: Select Student */}
@@ -491,14 +543,14 @@ export default function CreateBooking({ students, routes }) {
                                     <button
                                         type="button"
                                         onClick={prevStep}
-                                        disabled={step === 0}
+                                        disabled={step === 0 && !studentIdParam}
                                         className={`px-4 py-2 rounded font-bold transition ${
-                                            step === 0
+                                            step === 0 && !studentIdParam
                                                 ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
                                                 : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
                                         }`}
                                     >
-                                        Previous
+                                        {step === 1 && studentIdParam ? 'Back to Students' : 'Previous'}
                                     </button>
                                     {step < 4 ? (
                                         <GlassButton

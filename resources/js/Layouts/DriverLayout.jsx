@@ -11,6 +11,9 @@ export default function DriverLayout({ header, children }) {
     const navigationItems = [
         { href: '/driver/dashboard', label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
         { href: '/driver/roster', label: 'Daily Roster', active: currentUrl?.startsWith('/driver/roster') },
+        { href: '/driver/students-schedule', label: 'Students Schedule', active: currentUrl?.startsWith('/driver/students-schedule') },
+        { href: '/driver/route-performance', label: 'Route Performance', active: currentUrl?.startsWith('/driver/route-performance') },
+        { href: '/driver/route-information', label: 'Route Information', active: currentUrl?.startsWith('/driver/route-information') },
     ];
 
     const userMenuItems = [
@@ -32,15 +35,53 @@ export default function DriverLayout({ header, children }) {
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
                                     href="/driver/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl === '/driver/dashboard'
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     href="/driver/roster"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl?.startsWith('/driver/roster')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
                                 >
                                     Daily Roster
+                                </Link>
+                                <Link
+                                    href="/driver/students-schedule"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl?.startsWith('/driver/students-schedule')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
+                                >
+                                    Students Schedule
+                                </Link>
+                                <Link
+                                    href="/driver/route-performance"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl?.startsWith('/driver/route-performance')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
+                                >
+                                    Performance
+                                </Link>
+                                <Link
+                                    href="/driver/route-information"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl?.startsWith('/driver/route-information')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
+                                >
+                                    Route Info
                                 </Link>
                             </div>
                         </div>
