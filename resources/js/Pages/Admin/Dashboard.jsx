@@ -136,10 +136,10 @@ export default function AdminDashboard({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-base font-bold text-white">Total Revenue</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">${stats?.total_revenue?.toLocaleString() || '0.00'}</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-white mt-2 drop-shadow">${stats?.total_revenue?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
                                 </div>
                                 <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
@@ -154,16 +154,28 @@ export default function AdminDashboard({
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={revenueTrends || []}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
-                                    <XAxis dataKey="label" stroke="#6b7280" />
-                                    <YAxis stroke="#6b7280" />
+                                    <XAxis 
+                                        dataKey="label" 
+                                        stroke="#ffffff" 
+                                        tick={{ fill: '#ffffff' }}
+                                        style={{ fontSize: '12px' }}
+                                    />
+                                    <YAxis 
+                                        stroke="#ffffff" 
+                                        tick={{ fill: '#ffffff' }}
+                                        style={{ fontSize: '12px' }}
+                                    />
                                     <Tooltip 
                                         contentStyle={{ 
                                             backgroundColor: 'rgba(255,255,255,0.9)', 
                                             border: '1px solid rgba(255,255,255,0.3)',
-                                            borderRadius: '8px'
+                                            borderRadius: '8px',
+                                            color: '#000000'
                                         }} 
                                     />
-                                    <Legend />
+                                    <Legend 
+                                        wrapperStyle={{ color: '#ffffff' }}
+                                    />
                                     <Line 
                                         type="monotone" 
                                         dataKey="revenue" 
@@ -193,7 +205,17 @@ export default function AdminDashboard({
                                             <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
-                                    <Tooltip />
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: 'rgba(255,255,255,0.9)', 
+                                            border: '1px solid rgba(255,255,255,0.3)',
+                                            borderRadius: '8px',
+                                            color: '#000000'
+                                        }}
+                                    />
+                                    <Legend 
+                                        wrapperStyle={{ color: '#ffffff' }}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         </ChartCard>

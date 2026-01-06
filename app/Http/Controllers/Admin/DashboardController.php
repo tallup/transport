@@ -9,6 +9,7 @@ use App\Models\Route;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,9 +17,34 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    protected $pricingService;
+
+    public function __construct(PricingService $pricingService)
+    {
+        $this->pricingService = $pricingService;
+    }
+
     public function index(Request $request)
     {
         try {
+            // Calculate total revenue from active and pending bookings
+            $totalRevenue = 0;
+            $activeBookings = Booking::whereIn('status', ['active', 'pending'])
+                ->with('route')
+                ->get();
+            
+            foreach ($activeBookings as $booking) {
+                try {
+                    if ($booking->route) {
+                        $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                        $totalRevenue += $price;
+                    }
+                } catch (\Exception $e) {
+                    // Skip bookings without valid pricing
+                    Log::warning("Could not calculate price for booking {$booking->id}: " . $e->getMessage());
+                }
+            }
+
             // Basic stats
             $stats = [
                 'total_students' => Student::count(),
@@ -28,17 +54,38 @@ class DashboardController extends Controller
                 'pending_bookings' => Booking::where('status', 'pending')->count(),
                 'total_drivers' => User::where('role', 'driver')->count(),
                 'total_parents' => User::where('role', 'parent')->count(),
-                'total_revenue' => 0, // Price calculation would need to be done via pricing rules
+                'total_revenue' => round($totalRevenue, 2),
             ];
 
-            // Revenue trends (last 30 days)
+            // Revenue trends (last 30 days) - calculate based on booking creation dates
             $revenueTrends = [];
             for ($i = 29; $i >= 0; $i--) {
                 $date = Carbon::now()->subDays($i);
+                $dayStart = $date->copy()->startOfDay();
+                $dayEnd = $date->copy()->endOfDay();
+                
+                // Get bookings created on this day
+                $dayBookings = Booking::whereIn('status', ['active', 'pending'])
+                    ->whereBetween('created_at', [$dayStart, $dayEnd])
+                    ->with('route')
+                    ->get();
+                
+                $dayRevenue = 0;
+                foreach ($dayBookings as $booking) {
+                    try {
+                        if ($booking->route) {
+                            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                            $dayRevenue += $price;
+                        }
+                    } catch (\Exception $e) {
+                        // Skip bookings without valid pricing
+                    }
+                }
+                
                 $revenueTrends[] = [
                     'date' => $date->format('Y-m-d'),
                     'label' => $date->format('M d'),
-                    'revenue' => 0, // Would need pricing calculation
+                    'revenue' => round($dayRevenue, 2),
                 ];
             }
 
