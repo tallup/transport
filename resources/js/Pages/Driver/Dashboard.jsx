@@ -4,7 +4,7 @@ import GlassCard from '@/Components/GlassCard';
 import Timeline from '@/Components/Timeline';
 import GlassButton from '@/Components/GlassButton';
 
-export default function Dashboard({ route, stats, todaySchedule, nextPickupPoints, performanceMetrics, studentsList }) {
+export default function Dashboard({ routes, route, stats, todaySchedule, nextPickupPoints, performanceMetrics, studentsList }) {
     const { auth } = usePage().props;
     
     return (
@@ -21,7 +21,7 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                         <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
                     </div>
 
-                    {!route ? (
+                    {routes && routes.length === 0 ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,10 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                 </svg>
                                 <h3 className="mt-4 text-xl font-bold text-white">No Route Assigned</h3>
                                 <p className="mt-2 text-base font-semibold text-white/90">
-                                    No route has been assigned to you yet. Please contact your administrator.
+                                    No active route has been assigned to you yet. Please contact your administrator.
+                                </p>
+                                <p className="mt-2 text-sm font-medium text-white/70">
+                                    Your account: {auth?.user?.email || 'Unknown'}
                                 </p>
                             </div>
                         </GlassCard>

@@ -18,11 +18,13 @@ class DashboardController extends Controller
         $driver = $request->user();
         
         // Get driver's assigned routes (multiple routes support)
-        // Check both active routes and routes that might be inactive but assigned
         $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle', 'pickupPoints'])
             ->get();
+        
+        // Debug: Log driver info and route count
+        \Log::info("Driver Dashboard - User ID: {$driver->id}, Name: {$driver->name}, Email: {$driver->email}, Routes found: " . $routes->count());
         
         // If no active routes found, check for any assigned routes (even inactive) for debugging
         if ($routes->isEmpty()) {
@@ -30,10 +32,13 @@ class DashboardController extends Controller
                 ->where('active', false)
                 ->get(['id', 'name', 'active']);
             
-            // Log for debugging (you can remove this later)
             if ($inactiveRoutes->isNotEmpty()) {
                 \Log::info("Driver {$driver->id} ({$driver->name}) has inactive routes: " . $inactiveRoutes->pluck('name')->join(', '));
             }
+            
+            // Also check if there are any routes at all assigned to this driver (regardless of active status)
+            $allRoutes = Route::where('driver_id', $driver->id)->get(['id', 'name', 'active']);
+            \Log::info("Driver {$driver->id} ({$driver->name}) total routes (active + inactive): " . $allRoutes->count());
         }
 
         $routeIds = $routes->pluck('id')->toArray();
@@ -223,7 +228,7 @@ class DashboardController extends Controller
                         'license_plate' => $route->vehicle->license_plate,
                     ] : null,
                 ];
-            })->values(),
+            })->values()->toArray(),
             'route' => $routes->count() === 1 ? [
                 'id' => $routes->first()->id,
                 'name' => $routes->first()->name,
