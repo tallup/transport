@@ -17,10 +17,22 @@ export default function Timeline({ items = [] }) {
                         {/* Timeline content */}
                         <div className="glass-card rounded-lg p-4">
                             <div className="flex justify-between items-start">
-                                <div>
+                                <div className="flex-1">
                                     <h4 className="text-base font-bold text-white">{item.title}</h4>
                                     {item.description && (
                                         <p className="text-base font-semibold text-white/90 mt-1">{item.description}</p>
+                                    )}
+                                    {item.students && item.students.length > 0 && (
+                                        <div className="mt-2">
+                                            <p className="text-xs font-semibold text-white/80 mb-1">Students:</p>
+                                            <div className="flex flex-wrap gap-1">
+                                                {item.students.map((studentName, idx) => (
+                                                    <span key={idx} className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
+                                                        {studentName}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                                 {item.time && (

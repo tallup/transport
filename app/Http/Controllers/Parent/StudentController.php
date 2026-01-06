@@ -13,6 +13,19 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $students = $user->students()
+            ->with(['school'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Parent/Students/Index', [
+            'students' => $students,
+        ]);
+    }
+
     public function create()
     {
         // Redirect to complete enrollment form

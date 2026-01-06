@@ -108,6 +108,51 @@ class DashboardController extends Controller
             'average_students_per_trip' => $route ? round(Booking::where('route_id', $route->id)->avg('id') ?? 0, 1) : 0,
         ];
 
+        // Detailed student list with pickup points and times
+        $studentsList = [];
+        if ($route) {
+            $today = Carbon::today();
+            $activeBookings = Booking::where('route_id', $route->id)
+                ->whereIn('status', ['pending', 'active'])
+                ->where('start_date', '<=', $today)
+                ->where(function ($query) use ($today) {
+                    $query->whereNull('end_date')
+                        ->orWhere('end_date', '>=', $today);
+                })
+                ->with(['student', 'pickupPoint'])
+                ->get();
+
+            // Group by pickup point and sort by sequence order
+            $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
+            
+            foreach ($pickupPoints as $pickupPoint) {
+                $pointBookings = $activeBookings->where('pickup_point_id', $pickupPoint->id);
+                
+                if ($pointBookings->count() > 0) {
+                    foreach ($pointBookings as $booking) {
+                        $studentsList[] = [
+                            'id' => $booking->student->id,
+                            'name' => $booking->student->name,
+                            'pickup_point_id' => $pickupPoint->id,
+                            'pickup_point_name' => $pickupPoint->name,
+                            'pickup_point_address' => $pickupPoint->address,
+                            'pickup_time' => $pickupPoint->pickup_time,
+                            'sequence_order' => $pickupPoint->sequence_order,
+                            'booking_id' => $booking->id,
+                        ];
+                    }
+                }
+            }
+
+            // Sort by sequence order, then by pickup time
+            usort($studentsList, function ($a, $b) {
+                if ($a['sequence_order'] != $b['sequence_order']) {
+                    return $a['sequence_order'] <=> $b['sequence_order'];
+                }
+                return strcmp($a['pickup_time'], $b['pickup_time']);
+            });
+        }
+
         return Inertia::render('Driver/Dashboard', [
             'route' => $route ? [
                 'id' => $route->id,
@@ -122,6 +167,7 @@ class DashboardController extends Controller
             'todaySchedule' => $todaySchedule,
             'nextPickupPoints' => $nextPickupPoints,
             'performanceMetrics' => $performanceMetrics,
+            'studentsList' => $studentsList,
         ]);
     }
 }

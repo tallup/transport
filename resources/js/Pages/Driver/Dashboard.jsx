@@ -4,7 +4,7 @@ import GlassCard from '@/Components/GlassCard';
 import Timeline from '@/Components/Timeline';
 import GlassButton from '@/Components/GlassButton';
 
-export default function Dashboard({ route, stats, todaySchedule, nextPickupPoints, performanceMetrics }) {
+export default function Dashboard({ route, stats, todaySchedule, nextPickupPoints, performanceMetrics, studentsList }) {
     const { auth } = usePage().props;
     
     return (
@@ -109,35 +109,39 @@ export default function Dashboard({ route, stats, todaySchedule, nextPickupPoint
                                 )}
                             </GlassCard>
 
-                            {/* Next Pickup Points and Performance */}
+                            {/* Students List and Performance */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                                {/* Next Pickup Points */}
+                                {/* Students List with Pickup Points */}
                                 <GlassCard>
-                                    <h3 className="text-xl font-bold text-white mb-4">Next Pickup Points</h3>
-                                    <div className="space-y-4">
-                                        {(nextPickupPoints || []).map((point, index) => (
-                                            <div key={point.id} className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <p className="text-base font-bold text-white">{point.name}</p>
-                                                        <p className="text-base font-semibold text-white/90 mt-1">{point.address}</p>
-                                                        <div className="flex gap-4 mt-2">
-                                                            <span className="text-sm font-semibold text-white/80">
-                                                                Pickup: {point.pickup_time}
-                                                            </span>
-                                                            <span className="text-sm font-semibold text-white/80">
-                                                                Dropoff: {point.dropoff_time}
-                                                            </span>
+                                    <h3 className="text-xl font-bold text-white mb-4">Students & Pickup Schedule</h3>
+                                    <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                                        {(studentsList || []).length > 0 ? (
+                                            studentsList.map((student, index) => (
+                                                <div key={`${student.id}-${student.booking_id}`} className="p-4 glass-card rounded-lg border border-white/20">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div className="flex-1">
+                                                            <p className="text-base font-bold text-white">{student.name}</p>
+                                                            <p className="text-sm font-semibold text-white/90 mt-1">{student.pickup_point_name}</p>
+                                                            {student.pickup_point_address && (
+                                                                <p className="text-xs font-medium text-white/70 mt-1">{student.pickup_point_address}</p>
+                                                            )}
                                                         </div>
+                                                        <span className="px-2 py-1 bg-blue-500/30 text-blue-100 border border-blue-400/50 text-xs font-semibold rounded-full whitespace-nowrap ml-2">
+                                                            #{student.sequence_order}
+                                                        </span>
                                                     </div>
-                                                    <span className="px-2 py-1 bg-blue-500/30 text-blue-100 border border-blue-400/50 text-xs font-semibold rounded-full">
-                                                        #{point.sequence_order}
-                                                    </span>
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <span className="text-sm font-bold text-green-300">
+                                                            Pickup: {student.pickup_time}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                        {(!nextPickupPoints || nextPickupPoints.length === 0) && (
-                                            <p className="text-white text-base font-semibold text-center py-4">No pickup points available</p>
+                                            ))
+                                        ) : (
+                                            <p className="text-white text-base font-semibold text-center py-4">No students assigned</p>
                                         )}
                                     </div>
                                 </GlassCard>
