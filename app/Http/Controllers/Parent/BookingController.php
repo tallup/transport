@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Parent;
 
+use App\Exceptions\CapacityExceededException;
+use App\Exceptions\PricingNotFoundException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreBookingRequest;
 use App\Models\Booking;
 use App\Models\PickupPoint;
 use App\Models\Route;
@@ -84,27 +87,28 @@ class BookingController extends Controller
         return response()->json($routes);
     }
 
-    public function store(Request $request)
+    public function store(StoreBookingRequest $request)
     {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'nullable|exists:pickup_points,id',
-            'pickup_address' => 'nullable|string|max:500',
-            'pickup_latitude' => 'nullable|numeric|between:-90,90',
-            'pickup_longitude' => 'nullable|numeric|between:-180,180',
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
-            'start_date' => 'required|date|after_or_equal:today',
-        ]);
+        $validated = $request->validated();
+        
+        // Sanitize text inputs
+        if (isset($validated['pickup_address'])) {
+            $validated['pickup_address'] = strip_tags($validated['pickup_address']);
+        }
 
         // Ensure either pickup_point_id OR pickup_address is provided
         if (empty($validated['pickup_point_id']) && empty($validated['pickup_address'])) {
             return back()->withErrors(['pickup_address' => 'Please either select a pickup point or enter a pickup address.']);
         }
 
-        // Verify student belongs to parent
+        // Verify student belongs to parent (authorization check)
         $user = $request->user();
         $student = $user->students()->findOrFail($validated['student_id']);
+        
+        // Additional authorization check using policy
+        if (!$request->user()->can('create', Booking::class)) {
+            abort(403, 'Unauthorized to create bookings.');
+        }
 
         // Validate booking date against calendar
         $startDate = \Carbon\Carbon::parse($validated['start_date']);
@@ -113,19 +117,26 @@ class BookingController extends Controller
             return back()->withErrors(['start_date' => $dateValidation['message']]);
         }
 
+        // Check for overlapping bookings
+        $bookingService = app(BookingService::class);
+        $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
+        if ($bookingService->hasOverlappingBooking($validated['student_id'], $startDate, $endDate)) {
+            return back()->withErrors(['start_date' => 'This student already has an active booking for this date range.']);
+        }
+
         // Check capacity
         $route = Route::findOrFail($validated['route_id']);
         try {
             $this->capacityGuard->validateBookingCapacity($route);
-        } catch (\Exception $e) {
+        } catch (CapacityExceededException $e) {
             return back()->withErrors(['route_id' => $e->getMessage()]);
         }
 
         // Calculate price
         try {
             $price = $this->pricingService->calculatePrice($validated['plan_type'], $route);
-        } catch (\Exception $e) {
-            return back()->withErrors(['plan_type' => 'Pricing not configured for this plan type']);
+        } catch (PricingNotFoundException $e) {
+            return back()->withErrors(['plan_type' => $e->getMessage()]);
         }
 
         // Calculate end date based on plan type
@@ -160,9 +171,9 @@ class BookingController extends Controller
         $user = $request->user();
         $students = $user->students;
         $bookings = Booking::whereIn('student_id', $students->pluck('id'))
-            ->with(['student', 'route', 'pickupPoint'])
+            ->with(['student.parent', 'route.vehicle', 'pickupPoint'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
 
         return Inertia::render('Parent/Bookings/Index', [
             'bookings' => $bookings,
@@ -241,6 +252,11 @@ class BookingController extends Controller
         $user = $request->user();
         $booking = Booking::findOrFail($validated['booking_id']);
 
+        // Authorization check using policy
+        if (!$user->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
         // Verify booking belongs to user's student
         if (!$user->students->contains($booking->student_id)) {
             return back()->withErrors(['error' => 'Unauthorized']);
@@ -273,6 +289,11 @@ class BookingController extends Controller
     public function rebook(Request $request, Booking $booking)
     {
         $user = $request->user();
+
+        // Authorization check using policy
+        if (!$user->can('view', $booking)) {
+            abort(403, 'Unauthorized to view this booking.');
+        }
 
         // Verify booking belongs to user's student
         if (!$user->students->contains($booking->student_id)) {

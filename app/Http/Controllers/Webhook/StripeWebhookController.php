@@ -55,7 +55,11 @@ class StripeWebhookController extends Controller
                 break;
 
             default:
-                Log::info('Unhandled Stripe webhook event: ' . $event->type);
+                Log::info('Unhandled Stripe webhook event', [
+                    'event_type' => $event->type,
+                    'event_id' => $event->id ?? null,
+                    'timestamp' => now()->toIso8601String(),
+                ]);
         }
 
         return response()->json(['received' => true]);

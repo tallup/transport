@@ -41,6 +41,11 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check
+        if (!$request->user()->can('create', Booking::class)) {
+            abort(403, 'Unauthorized to create bookings.');
+        }
+        
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
@@ -80,6 +85,11 @@ class BookingController extends Controller
 
     public function update(Request $request, Booking $booking)
     {
+        // Authorization check
+        if (!$request->user()->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+        
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
@@ -99,6 +109,11 @@ class BookingController extends Controller
 
     public function destroy(Booking $booking)
     {
+        // Authorization check
+        if (!$request->user()->can('delete', $booking)) {
+            abort(403, 'Unauthorized to delete this booking.');
+        }
+        
         $booking->delete();
 
         return redirect()->route('admin.bookings.index')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreStudentRequest;
 use App\Models\Policy;
 use App\Models\School;
 use App\Models\Student;
@@ -47,46 +48,35 @@ class StudentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request)
     {
-        $validated = $request->validate([
-            // Basic Information
-            'name' => 'required|string|max:255',
-            'school_id' => 'required|exists:schools,id',
-            'date_of_birth' => 'nullable|date',
-            'home_address' => 'nullable|string',
-            'grade' => 'nullable|string|max:50',
-            
-            // Emergency Contacts
-            'emergency_phone' => 'required|string|max:255',
-            'emergency_contact_name' => 'required|string|max:255',
-            'emergency_contact_2_name' => 'nullable|string|max:255',
-            'emergency_contact_2_phone' => 'nullable|string|max:255',
-            'emergency_contact_2_relationship' => 'nullable|string|max:255',
-            
-            // Medical Information
-            'doctor_name' => 'nullable|string|max:255',
-            'doctor_phone' => 'nullable|string|max:255',
-            'medical_notes' => 'nullable|string',
-            
-            // Authorized Pickup Persons
-            'authorized_pickup_persons' => 'nullable|array',
-            'authorized_pickup_persons.*.name' => 'required_with:authorized_pickup_persons|string|max:255',
-            'authorized_pickup_persons.*.relationship' => 'nullable|string|max:255',
-            'authorized_pickup_persons.*.phone' => 'nullable|string|max:255',
-            
-            // Additional Information
-            'special_instructions' => 'nullable|string',
-            
-            // Signatures
-            'authorization_to_transport_signature' => 'nullable|string|max:255',
-            'payment_agreement_signature' => 'nullable|string|max:255',
-            'liability_waiver_signature' => 'nullable|string|max:255',
-            // Optional transport assignment
-            'route_id' => 'nullable|exists:routes,id',
-            'pickup_point_id' => 'nullable|exists:pickup_points,id',
-            'policies_acknowledged' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
+        
+        // Sanitize text inputs to prevent XSS
+        $textFields = ['name', 'home_address', 'grade', 'emergency_phone', 'emergency_contact_name', 
+                      'emergency_contact_2_name', 'emergency_contact_2_phone', 'emergency_contact_2_relationship',
+                      'doctor_name', 'doctor_phone', 'medical_notes', 'special_instructions'];
+        
+        foreach ($textFields as $field) {
+            if (isset($validated[$field])) {
+                $validated[$field] = strip_tags($validated[$field]);
+            }
+        }
+        
+        // Sanitize authorized pickup persons
+        if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
+            foreach ($validated['authorized_pickup_persons'] as &$person) {
+                if (isset($person['name'])) {
+                    $person['name'] = strip_tags($person['name']);
+                }
+                if (isset($person['relationship'])) {
+                    $person['relationship'] = strip_tags($person['relationship']);
+                }
+                if (isset($person['phone'])) {
+                    $person['phone'] = strip_tags($person['phone']);
+                }
+            }
+        }
 
         $user = $request->user();
 
@@ -99,13 +89,6 @@ class StudentController extends Controller
         }
         if (!empty($validated['liability_waiver_signature'])) {
             $validated['liability_waiver_signed_at'] = now();
-        }
-
-        // Ensure authorized_pickup_persons is properly formatted as JSON
-        if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
-            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], function($person) {
-                return !empty($person['name']);
-            }));
         }
 
         // Ensure authorized_pickup_persons is properly formatted as JSON

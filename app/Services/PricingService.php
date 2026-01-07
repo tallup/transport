@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Exceptions\PricingNotFoundException;
 use App\Models\PricingRule;
 use App\Models\Route;
+use Illuminate\Support\Facades\Cache;
 
 class PricingService
 {
@@ -20,39 +22,48 @@ class PricingService
     {
         $vehicleType = $route->vehicle->type;
 
-        // Priority 1: Route-specific pricing
-        $routePricing = PricingRule::where('plan_type', $planType)
-            ->where('route_id', $route->id)
-            ->where('active', true)
-            ->first();
+        // Cache key for route-specific pricing
+        $routeCacheKey = "pricing_route_{$route->id}_{$planType}";
+        $routePricing = Cache::remember($routeCacheKey, 3600, function () use ($planType, $route) {
+            return PricingRule::where('plan_type', $planType)
+                ->where('route_id', $route->id)
+                ->where('active', true)
+                ->first();
+        });
 
         if ($routePricing) {
             return (float) $routePricing->amount;
         }
 
-        // Priority 2: Vehicle-type-specific pricing
-        $vehiclePricing = PricingRule::where('plan_type', $planType)
-            ->whereNull('route_id')
-            ->where('vehicle_type', $vehicleType)
-            ->where('active', true)
-            ->first();
+        // Cache key for vehicle-type-specific pricing
+        $vehicleCacheKey = "pricing_vehicle_{$vehicleType}_{$planType}";
+        $vehiclePricing = Cache::remember($vehicleCacheKey, 3600, function () use ($planType, $vehicleType) {
+            return PricingRule::where('plan_type', $planType)
+                ->whereNull('route_id')
+                ->where('vehicle_type', $vehicleType)
+                ->where('active', true)
+                ->first();
+        });
 
         if ($vehiclePricing) {
             return (float) $vehiclePricing->amount;
         }
 
-        // Priority 3: Global pricing
-        $globalPricing = PricingRule::where('plan_type', $planType)
-            ->whereNull('route_id')
-            ->whereNull('vehicle_type')
-            ->where('active', true)
-            ->first();
+        // Cache key for global pricing
+        $globalCacheKey = "pricing_global_{$planType}";
+        $globalPricing = Cache::remember($globalCacheKey, 3600, function () use ($planType) {
+            return PricingRule::where('plan_type', $planType)
+                ->whereNull('route_id')
+                ->whereNull('vehicle_type')
+                ->where('active', true)
+                ->first();
+        });
 
         if ($globalPricing) {
             return (float) $globalPricing->amount;
         }
 
-        throw new \Exception("No pricing rule found for plan type: {$planType}");
+        throw new PricingNotFoundException($planType);
     }
 
     /**

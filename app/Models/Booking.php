@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Booking extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'student_id',
@@ -63,5 +66,16 @@ class Booking extends Model
     public function dropoffPoint(): BelongsTo
     {
         return $this->belongsTo(PickupPoint::class, 'dropoff_point_id');
+    }
+
+    /**
+     * Configure activity logging for Booking model.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['status', 'route_id', 'start_date', 'end_date'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

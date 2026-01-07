@@ -30,7 +30,7 @@ class DashboardController extends Controller
             // Calculate total revenue from active and pending bookings
             $totalRevenue = 0;
             $activeBookings = Booking::whereIn('status', ['active', 'pending'])
-                ->with('route')
+                ->with(['route.vehicle', 'student.parent'])
                 ->get();
             
             foreach ($activeBookings as $booking) {
@@ -67,7 +67,7 @@ class DashboardController extends Controller
                 // Get bookings created on this day
                 $dayBookings = Booking::whereIn('status', ['active', 'pending'])
                     ->whereBetween('created_at', [$dayStart, $dayEnd])
-                    ->with('route')
+                    ->with(['route.vehicle', 'student.parent'])
                     ->get();
                 
                 $dayRevenue = 0;
@@ -142,7 +142,7 @@ class DashboardController extends Controller
                 });
 
             // Recent bookings
-            $recent_bookings = Booking::with(['student', 'route', 'pickupPoint'])
+            $recent_bookings = Booking::with(['student.parent', 'route.vehicle', 'pickupPoint'])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get();

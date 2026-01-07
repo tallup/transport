@@ -50,6 +50,7 @@ class BookingResource extends Resource
                 Forms\Components\Textarea::make('pickup_address')
                     ->label('Custom Pickup Address')
                     ->rows(2)
+                    ->dehydrateStateUsing(fn ($state) => $state ? strip_tags($state) : null)
                     ->maxLength(500)
                     ->helperText('Enter a custom pickup address if not using a predefined pickup point')
                     ->columnSpanFull(),

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CalendarEvent;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class CalendarService
 {
@@ -15,12 +16,17 @@ class CalendarService
      */
     public function isServiceDay(Carbon $date): bool
     {
-        // Check if date is a holiday or closure
-        $event = CalendarEvent::whereDate('date', $date->format('Y-m-d'))
-            ->whereIn('type', ['holiday', 'closure'])
-            ->first();
+        $dateKey = $date->format('Y-m-d');
+        $cacheKey = "service_day_{$dateKey}";
+        
+        return Cache::remember($cacheKey, 86400, function () use ($date) {
+            // Check if date is a holiday or closure
+            $event = CalendarEvent::whereDate('date', $date->format('Y-m-d'))
+                ->whereIn('type', ['holiday', 'closure'])
+                ->first();
 
-        return $event === null;
+            return $event === null;
+        });
     }
 
     /**

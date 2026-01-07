@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Route;
 use App\Models\PickupPoint;
 
 class Student extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'parent_id',
@@ -121,5 +123,16 @@ class Student extends Model
         return $this->hasAuthorizationToTransport() 
             && $this->hasPaymentAgreement() 
             && $this->hasLiabilityWaiver();
+    }
+
+    /**
+     * Configure activity logging for Student model.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'school_id', 'route_id', 'grade', 'medical_notes'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

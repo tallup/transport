@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\CapacityExceededException;
 use App\Models\Booking;
 use App\Models\Route;
 
@@ -41,12 +42,12 @@ class CapacityGuard
      *
      * @param Route $route
      * @return bool
-     * @throws \Exception
+     * @throws CapacityExceededException
      */
     public function validateBookingCapacity(Route $route): bool
     {
         if (!$this->hasAvailableCapacity($route)) {
-            throw new \Exception("Route '{$route->name}' is at full capacity. No seats available.");
+            throw new CapacityExceededException("Route '{$route->name}' is at full capacity. No seats available.");
         }
 
         return true;

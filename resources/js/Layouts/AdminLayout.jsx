@@ -75,6 +75,13 @@ export default function AdminLayout({ header, children }) {
                                     Finance
                                 </Link>
                                 
+                                <Link
+                                    href="/admin/vehicles"
+                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
+                                >
+                                    Vehicles
+                                </Link>
+                                
                                 {/* People Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -89,21 +96,6 @@ export default function AdminLayout({ header, children }) {
                                         <Dropdown.Link href="/admin/users">Users</Dropdown.Link>
                                         <Dropdown.Link href="/admin/students">Students</Dropdown.Link>
                                         <Dropdown.Link href="/filament-admin/schools">Schools</Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-
-                                {/* Transport Dropdown */}
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
-                                            Transport
-                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-                                    </Dropdown.Trigger>
-                                    <Dropdown.Content align="left" width="56">
-                                        <Dropdown.Link href="/admin/vehicles">Vehicles</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
 

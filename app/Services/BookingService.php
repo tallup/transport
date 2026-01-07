@@ -75,5 +75,38 @@ class BookingService
     {
         return $this->calendarService->validateBookingDate($startDate);
     }
+
+    /**
+     * Check if a student has overlapping bookings for the same date range.
+     *
+     * @param int $studentId
+     * @param Carbon $startDate
+     * @param Carbon|null $endDate
+     * @param int|null $excludeBookingId Booking ID to exclude from check (for updates)
+     * @return bool
+     */
+    public function hasOverlappingBooking(int $studentId, Carbon $startDate, ?Carbon $endDate = null, ?int $excludeBookingId = null): bool
+    {
+        $query = Booking::where('student_id', $studentId)
+            ->whereIn('status', ['pending', 'active'])
+            ->where(function ($q) use ($startDate, $endDate) {
+                // Check if existing booking overlaps with new booking dates
+                $q->where(function ($subQ) use ($startDate, $endDate) {
+                    // Existing booking starts before new booking ends
+                    $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
+                        // And existing booking ends after new booking starts
+                        ->where(function ($endQ) use ($startDate) {
+                            $endQ->whereNull('end_date')
+                                ->orWhere('end_date', '>=', $startDate);
+                        });
+                });
+            });
+
+        if ($excludeBookingId) {
+            $query->where('id', '!=', $excludeBookingId);
+        }
+
+        return $query->exists();
+    }
 }
 

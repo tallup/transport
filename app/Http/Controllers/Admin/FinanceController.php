@@ -26,7 +26,7 @@ class FinanceController extends Controller
             // Calculate total revenue from active and pending bookings
             $totalRevenue = 0;
             $activeBookings = Booking::whereIn('status', ['active', 'pending'])
-                ->with('route')
+                ->with(['route.vehicle', 'student.parent'])
                 ->get();
             
             foreach ($activeBookings as $booking) {
@@ -47,7 +47,7 @@ class FinanceController extends Controller
             foreach ($planTypes as $planType) {
                 $bookings = Booking::whereIn('status', ['active', 'pending'])
                     ->where('plan_type', $planType)
-                    ->with('route')
+                    ->with(['route.vehicle', 'student.parent'])
                     ->get();
                 
                 $planRevenue = 0;
@@ -79,7 +79,7 @@ class FinanceController extends Controller
                 
                 $dayBookings = Booking::whereIn('status', ['active', 'pending'])
                     ->whereBetween('created_at', [$dayStart, $dayEnd])
-                    ->with('route')
+                    ->with(['route.vehicle', 'student.parent'])
                     ->get();
                 
                 $dayRevenue = 0;
@@ -130,7 +130,7 @@ class FinanceController extends Controller
                 
                 $monthBookings = Booking::whereIn('status', ['active', 'pending'])
                     ->whereBetween('created_at', [$monthStart, $monthEnd])
-                    ->with('route')
+                    ->with(['route.vehicle', 'student.parent'])
                     ->get();
                 
                 $monthRev = 0;

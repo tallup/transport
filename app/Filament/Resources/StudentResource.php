@@ -44,7 +44,8 @@ class StudentResource extends Resource
                             ->native(false),
                         Forms\Components\Textarea::make('home_address')
                             ->rows(2)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->dehydrateStateUsing(fn ($state) => $state ? strip_tags($state) : null),
                         Forms\Components\TextInput::make('grade')
                             ->maxLength(50),
                     ])
@@ -83,7 +84,8 @@ class StudentResource extends Resource
                             ->maxLength(255),
                         Forms\Components\Textarea::make('medical_notes')
                             ->rows(3)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->dehydrateStateUsing(fn ($state) => $state ? strip_tags($state) : null),
                     ])
                     ->columns(2),
                 
@@ -109,7 +111,8 @@ class StudentResource extends Resource
                     ->schema([
                         Forms\Components\Textarea::make('special_instructions')
                             ->rows(3)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->dehydrateStateUsing(fn ($state) => $state ? strip_tags($state) : null),
                     ]),
                 
                 Forms\Components\Section::make('Signatures')

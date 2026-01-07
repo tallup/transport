@@ -39,6 +39,11 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check
+        if (!$request->user()->can('create', Student::class)) {
+            abort(403, 'Unauthorized to create students.');
+        }
+        
         $validated = $request->validate([
             'parent_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
@@ -84,6 +89,11 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
+        // Authorization check
+        if (!$request->user()->can('update', $student)) {
+            abort(403, 'Unauthorized to update this student.');
+        }
+        
         $validated = $request->validate([
             'parent_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
@@ -99,8 +109,13 @@ class StudentController extends Controller
             ->with('success', 'Student updated successfully.');
     }
 
-    public function destroy(Student $student)
+    public function destroy(Request $request, Student $student)
     {
+        // Authorization check
+        if (!$request->user()->can('delete', $student)) {
+            abort(403, 'Unauthorized to delete this student.');
+        }
+        
         $student->delete();
 
         return redirect()->route('admin.students.index')

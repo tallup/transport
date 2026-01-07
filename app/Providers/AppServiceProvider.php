@@ -2,11 +2,26 @@
 
 namespace App\Providers;
 
+use App\Models\Booking;
+use App\Models\Student;
+use App\Policies\BookingPolicy;
+use App\Policies\StudentPolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * The policy mappings for the application.
+     *
+     * @var array<class-string, class-string>
+     */
+    protected $policies = [
+        Booking::class => BookingPolicy::class,
+        Student::class => StudentPolicy::class,
+    ];
+
     /**
      * Register any application services.
      */
@@ -20,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerPolicies();
         Vite::prefetch(concurrency: 3);
     }
 }

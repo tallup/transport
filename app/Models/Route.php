@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Route extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'name',
@@ -63,5 +66,16 @@ class Route extends Model
     public function schools(): BelongsToMany
     {
         return $this->belongsToMany(School::class, 'route_school');
+    }
+
+    /**
+     * Configure activity logging for Route model.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'driver_id', 'vehicle_id', 'capacity', 'active'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

@@ -96,13 +96,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Public API routes for policies
-Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');
-Route::get('/api/policies/{policy}', [PolicyController::class, 'show'])->name('api.policies.show');
+// Public API routes for policies (with rate limiting)
+Route::middleware(['throttle:api'])->group(function () {
+    Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');
+    Route::get('/api/policies/{policy}', [PolicyController::class, 'show'])->name('api.policies.show');
+});
 
-// Webhook routes (exclude CSRF)
+// Webhook routes (exclude CSRF, but with rate limiting)
 Route::post('/webhooks/stripe', [\App\Http\Controllers\Webhook\StripeWebhookController::class, 'handleWebhook'])
-    ->middleware('web')
+    ->middleware(['web', 'throttle:60,1'])
     ->name('webhooks.stripe');
 
 require __DIR__.'/auth.php';
