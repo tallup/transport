@@ -7,6 +7,11 @@
 
         <title inertia>{{ config('app.name', 'Student Transport System') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">
+        <link rel="shortcut icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('on time.jpeg') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
