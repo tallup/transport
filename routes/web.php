@@ -70,6 +70,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class);
     Route::get('/pricing/manage', [\App\Http\Controllers\Admin\PricingController::class, 'manage'])->name('pricing.manage');
     Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
+    Route::get('/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('finance.dashboard');
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
 });
 
