@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Route;
 use App\Models\Student;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -57,6 +58,16 @@ class BookingController extends Controller
             'end_date' => 'nullable|date|after:start_date',
         ]);
 
+        // Auto-calculate end date if not provided
+        if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {
+            $bookingService = app(BookingService::class);
+            $endDate = $bookingService->calculateEndDate(
+                $validated['plan_type'],
+                \Carbon\Carbon::parse($validated['start_date'])
+            );
+            $validated['end_date'] = $endDate?->format('Y-m-d');
+        }
+
         Booking::create($validated);
 
         return redirect()->route('admin.bookings.index')
@@ -100,6 +111,16 @@ class BookingController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
+
+        // Auto-calculate end date if not provided
+        if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {
+            $bookingService = app(BookingService::class);
+            $endDate = $bookingService->calculateEndDate(
+                $validated['plan_type'],
+                \Carbon\Carbon::parse($validated['start_date'])
+            );
+            $validated['end_date'] = $endDate?->format('Y-m-d');
+        }
 
         $booking->update($validated);
 
