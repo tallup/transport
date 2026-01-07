@@ -218,4 +218,14 @@ class PricingRuleResource extends Resource
             'edit' => Pages\EditPricingRule::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Finance';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 }

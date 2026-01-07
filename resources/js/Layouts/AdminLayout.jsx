@@ -17,7 +17,8 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
         { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
-        { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
+        { href: '/filament-admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/filament-admin/pricing-rules') },
+        { href: '/filament-admin/manage-pricing', label: 'Manage Pricing', active: currentUrl?.startsWith('/filament-admin/manage-pricing') },
         { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl?.startsWith('/admin/calendar-events') },
     ];
 

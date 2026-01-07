@@ -16,7 +16,14 @@ class ManagePricing extends Page
 
     protected static ?string $navigationGroup = 'Finance';
 
+    protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.manage-pricing';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 
     public $pricingRules = [];
     public $planTypes = [
