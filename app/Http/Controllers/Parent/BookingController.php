@@ -180,6 +180,40 @@ class BookingController extends Controller
         ]);
     }
 
+    public function showCheckout(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check
+        if (!$user->can('view', $booking)) {
+            abort(403, 'Unauthorized to view this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Only allow checkout for pending bookings
+        if ($booking->status !== 'pending') {
+            return redirect()->route('parent.bookings.index')
+                ->with('error', 'This booking is not pending payment.');
+        }
+
+        // Calculate price
+        try {
+            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+        } catch (PricingNotFoundException $e) {
+            return redirect()->route('parent.bookings.index')
+                ->with('error', 'Unable to calculate price for this booking.');
+        }
+
+        return Inertia::render('Parent/Bookings/Checkout', [
+            'booking' => $booking->load(['student', 'route', 'pickupPoint']),
+            'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+        ]);
+    }
+
     public function getPickupPoints(Request $request, Route $route)
     {
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
@@ -284,6 +318,39 @@ class BookingController extends Controller
         }
 
         return back()->withErrors(['error' => 'Payment was not successful']);
+    }
+
+    public function skipPayment(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+        ]);
+
+        $user = $request->user();
+        $booking = Booking::findOrFail($validated['booking_id']);
+
+        // Authorization check using policy
+        if (!$user->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            return back()->withErrors(['error' => 'Unauthorized']);
+        }
+
+        // Update booking status to active (or keep as pending - depends on business logic)
+        // Keeping as 'pending' so it can be paid later
+        // You can change this to 'active' if you want bookings to work without payment
+        $booking->update([
+            'status' => 'pending', // Keep as pending so payment can be made later
+        ]);
+
+        // Send notification about booking creation (without payment)
+        $user->notify(new BookingConfirmed($booking));
+
+        return redirect()->route('parent.bookings.index')
+            ->with('success', 'Booking created successfully! You can complete payment later from your bookings page.');
     }
 
     public function rebook(Request $request, Booking $booking)

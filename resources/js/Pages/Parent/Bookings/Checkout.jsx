@@ -123,6 +123,12 @@ export default function Checkout({ booking, price }) {
         });
     };
 
+    const handleSkipPayment = () => {
+        post('/parent/bookings/skip-payment', {
+            booking_id: booking.id,
+        });
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title="Checkout" />
@@ -165,6 +171,24 @@ export default function Checkout({ booking, price }) {
                                     onSuccess={handlePaymentSuccess}
                                 />
                             </Elements>
+
+                            {/* Skip Payment Option */}
+                            <div className="mt-6 pt-6 border-t border-white/20">
+                                <div className="text-center">
+                                    <p className="text-sm text-white/70 mb-4 font-medium">
+                                        Don't want to pay now? You can complete payment later.
+                                    </p>
+                                    <GlassButton
+                                        type="button"
+                                        onClick={handleSkipPayment}
+                                        disabled={processing}
+                                        variant="secondary"
+                                        className="w-full py-3 text-lg"
+                                    >
+                                        {processing ? 'Processing...' : 'Skip Payment & Complete Booking'}
+                                    </GlassButton>
+                                </div>
+                            </div>
 
                             <p className="text-xs text-gray-300 mt-4 text-center font-medium">
                                 Your payment is secure and encrypted.
