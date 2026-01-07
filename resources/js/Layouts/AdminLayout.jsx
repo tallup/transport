@@ -67,6 +67,13 @@ export default function AdminLayout({ header, children }) {
                                 >
                                     Pickup Points
                                 </Link>
+
+                                <Link
+                                    href="/admin/finance"
+                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
+                                >
+                                    Finance
+                                </Link>
                                 
                                 {/* People Dropdown */}
                                 <Dropdown>
@@ -112,6 +119,7 @@ export default function AdminLayout({ header, children }) {
                                     </Dropdown.Trigger>
                                     <Dropdown.Content align="left" width="56">
                                         <Dropdown.Link href="/admin/pricing-rules">Pricing Rules</Dropdown.Link>
+                                        <Dropdown.Link href="/admin/pricing/manage">Manage Pricing</Dropdown.Link>
                                         <Dropdown.Link href="/admin/calendar-events">Calendar Events</Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
