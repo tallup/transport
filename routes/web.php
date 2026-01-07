@@ -68,6 +68,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('pickup-points', \App\Http\Controllers\Admin\PickupPointController::class);
     Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class);
     Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class);
+    Route::get('/pricing/manage', [\App\Http\Controllers\Admin\PricingController::class, 'manage'])->name('pricing.manage');
+    Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
 });
 
