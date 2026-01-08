@@ -29,6 +29,7 @@ class StoreBookingRequest extends FormRequest
             'pickup_latitude' => 'nullable|numeric|between:-90,90',
             'pickup_longitude' => 'nullable|numeric|between:-180,180',
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'trip_type' => 'required|in:one_way,two_way',
             'start_date' => 'required|date|after_or_equal:today',
         ];
     }
@@ -51,6 +52,8 @@ class StoreBookingRequest extends FormRequest
             'pickup_longitude.between' => 'The pickup longitude must be between -180 and 180.',
             'plan_type.required' => 'Please select a plan type.',
             'plan_type.in' => 'The selected plan type is invalid.',
+            'trip_type.required' => 'Please select a trip type.',
+            'trip_type.in' => 'The selected trip type is invalid.',
             'start_date.required' => 'Please select a start date.',
             'start_date.date' => 'The start date must be a valid date.',
             'start_date.after_or_equal' => 'The start date must be today or in the future.',
