@@ -28,6 +28,7 @@ export default function CreateBooking({ students, routes }) {
         pickup_latitude: '',
         pickup_longitude: '',
         plan_type: '',
+        trip_type: 'two_way',
         start_date: new Date().toISOString().split('T')[0],
     });
 
@@ -474,7 +475,7 @@ export default function CreateBooking({ students, routes }) {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <div className="space-y-4">
-                                                    {['weekly', 'bi_weekly', 'monthly', 'semester', 'annual'].map((plan) => (
+                                                    {['weekly', 'bi_weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
                                                         <label
                                                             key={plan}
                                                             className={`block p-4 border rounded-lg cursor-pointer transition ${
@@ -493,7 +494,7 @@ export default function CreateBooking({ students, routes }) {
                                                             />
                                                             <div className="flex justify-between items-center">
                                                                 <span className="font-bold text-white capitalize">
-                                                                    {plan.replace('_', '-')}
+                                                                    {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', '-')}
                                                                 </span>
                                                                 {price && data.plan_type === plan && (
                                                                     <span className="text-lg font-bold text-green-200">
@@ -523,6 +524,46 @@ export default function CreateBooking({ students, routes }) {
                                                 />
                                                 {errors.start_date && (
                                                     <p className="text-red-300 text-sm mt-1 font-semibold">{errors.start_date}</p>
+                                                )}
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-base font-bold text-white mb-2">
+                                                    Trip Type *
+                                                </label>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        data.trip_type === 'one_way'
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="trip_type"
+                                                            value="one_way"
+                                                            checked={data.trip_type === 'one_way'}
+                                                            onChange={(e) => setData('trip_type', e.target.value)}
+                                                            className="mr-3"
+                                                        />
+                                                        <span className="font-bold text-white">One Way</span>
+                                                    </label>
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        data.trip_type === 'two_way'
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="trip_type"
+                                                            value="two_way"
+                                                            checked={data.trip_type === 'two_way'}
+                                                            onChange={(e) => setData('trip_type', e.target.value)}
+                                                            className="mr-3"
+                                                        />
+                                                        <span className="font-bold text-white">Two Way</span>
+                                                    </label>
+                                                </div>
+                                                {errors.trip_type && (
+                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_type}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -563,7 +604,15 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                             <div>
                                                 <span className="font-bold text-white">Plan:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{data.plan_type.replace('_', '-').toUpperCase()}</span>
+                                                <span className="text-white/90 font-semibold">
+                                                    {data.plan_type === 'academic_term' ? 'Academic Term' : data.plan_type.replace('_', '-').toUpperCase()}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="font-bold text-white">Trip Type:</span>{' '}
+                                                <span className="text-white/90 font-semibold">
+                                                    {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                </span>
                                             </div>
                                             <div>
                                                 <span className="font-bold text-white">Start Date:</span>{' '}

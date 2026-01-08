@@ -16,6 +16,7 @@ export default function Edit({ booking, students, routes }) {
         pickup_point_id: booking.pickup_point_id || '',
         dropoff_point_id: booking.dropoff_point_id || '',
         plan_type: booking.plan_type || 'weekly',
+        trip_type: booking.trip_type || 'two_way',
         status: booking.status || 'pending',
         start_date: booking.start_date ? (typeof booking.start_date === 'string' ? booking.start_date.split('T')[0] : booking.start_date) : '',
         end_date: booking.end_date ? (typeof booking.end_date === 'string' ? booking.end_date.split('T')[0] : booking.end_date) : '',
@@ -155,10 +156,27 @@ export default function Edit({ booking, students, routes }) {
                                             <option value="weekly" className="bg-indigo-700">Weekly</option>
                                             <option value="bi_weekly" className="bg-indigo-700">Bi-Weekly</option>
                                             <option value="monthly" className="bg-indigo-700">Monthly</option>
-                                            <option value="semester" className="bg-indigo-700">Semester</option>
+                                            <option value="academic_term" className="bg-indigo-700">Academic Term</option>
                                             <option value="annual" className="bg-indigo-700">Annual</option>
                                         </select>
                                         <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="trip_type" className="block text-base font-bold text-white mb-2">
+                                            Trip Type *
+                                        </label>
+                                        <select
+                                            id="trip_type"
+                                            value={data.trip_type}
+                                            onChange={(e) => setData('trip_type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="one_way" className="bg-indigo-700">One Way</option>
+                                            <option value="two_way" className="bg-indigo-700">Two Way</option>
+                                        </select>
+                                        <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>

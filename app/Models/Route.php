@@ -22,6 +22,8 @@ class Route extends Model
         'capacity',
         'active',
         'service_type',
+        'pickup_time',
+        'dropoff_time',
     ];
 
     protected $casts = [

@@ -46,7 +46,7 @@ class BookingSeeder extends Seeder
                 'student_id' => $students->skip(2)->first()->id,
                 'route_id' => $routes->skip(1)->first()->id,
                 'pickup_point_id' => $routes->skip(1)->first()->pickupPoints->first()->id,
-                'plan_type' => 'semester',
+                'plan_type' => 'academic_term',
                 'status' => 'active',
                 'start_date' => $today->copy()->subMonths(2),
             ],

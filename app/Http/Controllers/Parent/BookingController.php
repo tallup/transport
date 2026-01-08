@@ -155,6 +155,7 @@ class BookingController extends Controller
             'pickup_latitude' => $validated['pickup_latitude'] ?? null,
             'pickup_longitude' => $validated['pickup_longitude'] ?? null,
             'plan_type' => $validated['plan_type'],
+            'trip_type' => $validated['trip_type'],
             'status' => 'pending',
             'start_date' => $validated['start_date'],
             'end_date' => $endDate?->format('Y-m-d'),
@@ -233,7 +234,8 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'route_id' => 'required|exists:routes,id',
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'trip_type' => 'required|in:one_way,two_way',
         ]);
 
         try {

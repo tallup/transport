@@ -108,6 +108,8 @@ class RouteController extends Controller
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
             'service_type' => 'required|in:am,pm,both',
+            'pickup_time' => 'nullable|date_format:H:i',
+            'dropoff_time' => 'nullable|date_format:H:i',
             'active' => 'nullable|boolean',
             'schools' => 'nullable|array',
             'schools.*' => 'exists:schools,id',

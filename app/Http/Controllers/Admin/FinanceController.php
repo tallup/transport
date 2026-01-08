@@ -42,7 +42,7 @@ class FinanceController extends Controller
 
             // Revenue by plan type
             $revenueByPlanType = [];
-            $planTypes = ['weekly', 'bi_weekly', 'monthly', 'semester', 'annual'];
+            $planTypes = ['weekly', 'bi_weekly', 'monthly', 'academic_term', 'annual'];
             
             foreach ($planTypes as $planType) {
                 $bookings = Booking::whereIn('status', ['active', 'pending'])

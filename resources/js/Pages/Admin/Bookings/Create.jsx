@@ -19,6 +19,7 @@ export default function Create({ students, routes }) {
         pickup_point_id: '',
         dropoff_point_id: '',
         plan_type: 'weekly',
+        trip_type: 'two_way',
         status: 'pending',
         start_date: '',
         end_date: '',
@@ -55,7 +56,7 @@ export default function Create({ students, routes }) {
                 case 'monthly':
                     endDate.setMonth(endDate.getMonth() + 1);
                     break;
-                case 'semester':
+                case 'academic_term':
                     endDate.setMonth(endDate.getMonth() + 6);
                     break;
                 case 'annual':
@@ -181,10 +182,25 @@ export default function Create({ students, routes }) {
                                         <option value="weekly" className="text-gray-900">Weekly</option>
                                         <option value="bi_weekly" className="text-gray-900">Bi-Weekly</option>
                                         <option value="monthly" className="text-gray-900">Monthly</option>
-                                        <option value="semester" className="text-gray-900">Semester</option>
+                                        <option value="academic_term" className="text-gray-900">Academic Term</option>
                                         <option value="annual" className="text-gray-900">Annual</option>
                                     </Select>
                                     <InputError message={errors.plan_type} className="mt-2" />
+                                </div>
+
+                                <div>
+                                    <InputLabel htmlFor="trip_type" value="Trip Type *" className="text-white font-bold" />
+                                    <Select
+                                        id="trip_type"
+                                        value={data.trip_type}
+                                        onChange={(e) => setData('trip_type', e.target.value)}
+                                        className="mt-1 block w-full glass-input text-white"
+                                        required
+                                    >
+                                        <option value="one_way" className="text-gray-900">One Way</option>
+                                        <option value="two_way" className="text-gray-900">Two Way</option>
+                                    </Select>
+                                    <InputError message={errors.trip_type} className="mt-2" />
                                 </div>
 
                                 <div>

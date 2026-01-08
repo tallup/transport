@@ -34,7 +34,7 @@ class PricingRuleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
             'route_id' => 'nullable|exists:routes,id',
             'vehicle_type' => 'nullable|in:bus,van',
             'amount' => 'required|numeric|min:0',
@@ -64,7 +64,7 @@ class PricingRuleController extends Controller
     public function update(Request $request, PricingRule $pricingRule)
     {
         $validated = $request->validate([
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,semester,annual',
+            'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
             'route_id' => 'nullable|exists:routes,id',
             'vehicle_type' => 'nullable|in:bus,van',
             'amount' => 'required|numeric|min:0',

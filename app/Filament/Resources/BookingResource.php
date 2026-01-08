@@ -72,7 +72,7 @@ class BookingResource extends Resource
                         'weekly' => 'Weekly',
                         'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
-                        'semester' => 'Semester',
+                        'academic_term' => 'Academic Term',
                         'annual' => 'Annual',
                     ])
                     ->required(),
@@ -153,7 +153,7 @@ class BookingResource extends Resource
                         'weekly' => 'Weekly',
                         'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
-                        'semester' => 'Semester',
+                        'academic_term' => 'Academic Term',
                         'annual' => 'Annual',
                     ]),
                 Tables\Filters\Filter::make('start_date')

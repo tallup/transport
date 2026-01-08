@@ -37,7 +37,7 @@ class PricingController extends Controller
             'weekly' => 'Weekly',
             'bi_weekly' => 'Bi-Weekly',
             'monthly' => 'Monthly',
-            'semester' => 'Semester',
+            'academic_term' => 'Academic Term',
             'annual' => 'Annual',
         ];
 
@@ -54,4 +54,5 @@ class PricingController extends Controller
         return back()->with('success', 'Pricing rule updated successfully.');
     }
 }
+
 

@@ -13,6 +13,8 @@ export default function Edit({ route, drivers, vehicles, schools = [] }) {
         vehicle_id: route.vehicle_id || '',
         capacity: route.capacity || '',
         service_type: route.service_type || 'both',
+        pickup_time: route.pickup_time ? (route.pickup_time.includes('T') ? route.pickup_time.split('T')[1].substring(0, 5) : route.pickup_time.substring(0, 5)) : '',
+        dropoff_time: route.dropoff_time ? (route.dropoff_time.includes('T') ? route.dropoff_time.split('T')[1].substring(0, 5) : route.dropoff_time.substring(0, 5)) : '',
         active: route.active ?? true,
         schools: route.schools?.map(s => s.id) || [],
     });
@@ -132,6 +134,34 @@ export default function Edit({ route, drivers, vehicles, schools = [] }) {
                                             <option value="both" className="bg-indigo-700">Both AM & PM</option>
                                         </select>
                                         <InputError message={errors.service_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="pickup_time" className="block text-base font-bold text-white mb-2">
+                                            Pickup Time
+                                        </label>
+                                        <input
+                                            id="pickup_time"
+                                            type="time"
+                                            value={data.pickup_time}
+                                            onChange={(e) => setData('pickup_time', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                        />
+                                        <InputError message={errors.pickup_time} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="dropoff_time" className="block text-base font-bold text-white mb-2">
+                                            Dropoff Time
+                                        </label>
+                                        <input
+                                            id="dropoff_time"
+                                            type="time"
+                                            value={data.dropoff_time}
+                                            onChange={(e) => setData('dropoff_time', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                        />
+                                        <InputError message={errors.dropoff_time} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div className="md:col-span-2">

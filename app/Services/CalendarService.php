@@ -117,7 +117,7 @@ class CalendarService
             'weekly' => $startDate->copy()->addWeek(),
             'bi_weekly' => $startDate->copy()->addWeeks(2),
             'monthly' => $startDate->copy()->addMonth(),
-            'semester' => $startDate->copy()->addMonths(6),
+            'academic_term' => $startDate->copy()->addMonths(6),
             'annual' => $startDate->copy()->addYear(),
             default => $startDate->copy()->addWeek(),
         };
