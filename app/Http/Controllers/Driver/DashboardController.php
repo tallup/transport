@@ -608,5 +608,91 @@ class DashboardController extends Controller
             'activeBookingsCount' => $activeBookingsCount,
         ]);
     }
+
+    /**
+     * Show all completed routes for the driver.
+     */
+    public function completedRoutes(Request $request)
+    {
+        $driver = $request->user();
+
+        // Get all route completions for this driver, ordered by completion date (newest first)
+        $completions = RouteCompletion::where('driver_id', $driver->id)
+            ->with(['route.vehicle', 'route.pickupPoints'])
+            ->orderBy('completion_date', 'desc')
+            ->orderBy('completed_at', 'desc')
+            ->paginate(15);
+
+        // Format the completions data
+        $completedRoutes = $completions->map(function ($completion) {
+            $route = $completion->route;
+            
+            // Get route stats
+            $totalBookings = Booking::where('route_id', $route->id)
+                ->where('start_date', '<=', $completion->completion_date)
+                ->where(function ($query) use ($completion) {
+                    $query->whereNull('end_date')
+                        ->orWhere('end_date', '>=', $completion->completion_date);
+                })
+                ->count();
+
+            $completedBookings = Booking::where('route_id', $route->id)
+                ->where('status', 'completed')
+                ->where('start_date', '<=', $completion->completion_date)
+                ->where(function ($query) use ($completion) {
+                    $query->whereNull('end_date')
+                        ->orWhere('end_date', '>=', $completion->completion_date);
+                })
+                ->count();
+
+            // Format pickup/dropoff times
+            $pickupTimeFormatted = $route->pickup_time 
+                ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i'))
+                : null;
+            
+            $dropoffTimeFormatted = $route->dropoff_time 
+                ? (is_string($route->dropoff_time) ? substr($route->dropoff_time, 0, 5) : $route->dropoff_time->format('H:i'))
+                : null;
+
+            return [
+                'id' => $completion->id,
+                'completion_date' => $completion->completion_date->format('Y-m-d'),
+                'completion_date_formatted' => $completion->completion_date->format('F j, Y'),
+                'completed_at' => $completion->completed_at ? $completion->completed_at->format('Y-m-d H:i:s') : null,
+                'completed_at_formatted' => $completion->completed_at ? $completion->completed_at->format('g:i A') : null,
+                'notes' => $completion->notes,
+                'route' => [
+                    'id' => $route->id,
+                    'name' => $route->name,
+                    'service_type' => $route->service_type,
+                    'service_period' => $route->servicePeriod(),
+                    'pickup_time' => $pickupTimeFormatted,
+                    'dropoff_time' => $dropoffTimeFormatted,
+                    'capacity' => $route->capacity,
+                    'vehicle' => $route->vehicle ? [
+                        'make' => $route->vehicle->make,
+                        'model' => $route->vehicle->model,
+                        'license_plate' => $route->vehicle->license_plate,
+                        'type' => $route->vehicle->type,
+                    ] : null,
+                    'pickup_points_count' => $route->pickupPoints->count(),
+                ],
+                'stats' => [
+                    'total_bookings' => $totalBookings,
+                    'completed_bookings' => $completedBookings,
+                ],
+            ];
+        });
+
+        return Inertia::render('Driver/CompletedRoutes', [
+            'completedRoutes' => $completedRoutes,
+            'pagination' => [
+                'current_page' => $completions->currentPage(),
+                'last_page' => $completions->lastPage(),
+                'per_page' => $completions->perPage(),
+                'total' => $completions->total(),
+            ],
+        ]);
+    }
 }
 

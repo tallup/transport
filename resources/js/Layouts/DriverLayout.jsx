@@ -14,6 +14,7 @@ export default function DriverLayout({ header, children }) {
         { href: '/driver/students-schedule', label: 'Students Schedule', active: currentUrl?.startsWith('/driver/students-schedule') },
         { href: '/driver/route-performance', label: 'Route Performance', active: currentUrl?.startsWith('/driver/route-performance') },
         { href: '/driver/route-information', label: 'Route Information', active: currentUrl?.startsWith('/driver/route-information') },
+        { href: '/driver/completed-routes', label: 'Completed Routes', active: currentUrl?.startsWith('/driver/completed-routes') },
     ];
 
     const userMenuItems = [
@@ -82,6 +83,16 @@ export default function DriverLayout({ header, children }) {
                                     }`}
                                 >
                                     Route Info
+                                </Link>
+                                <Link
+                                    href="/driver/completed-routes"
+                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
+                                        currentUrl?.startsWith('/driver/completed-routes')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
+                                    }`}
+                                >
+                                    Completed
                                 </Link>
                             </div>
                         </div>
