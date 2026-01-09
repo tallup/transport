@@ -14,6 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Use ComprehensiveSeeder to seed all tables with proper relationships
+        // This creates: 5 schools, 10 parents, 50 students, 8 vehicles, 8 drivers, 8 routes, etc.
+        $this->call([
+            ComprehensiveSeeder::class,
+        ]);
+        
+        // Alternative: Use individual seeders if you need more control
+        // Uncomment the lines below and comment out ComprehensiveSeeder if needed
+        /*
         $this->call([
             UserSeeder::class,
             VehicleSeeder::class,
@@ -24,5 +33,6 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             BookingSeeder::class,
         ]);
+        */
     }
 }
