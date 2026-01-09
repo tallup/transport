@@ -8,26 +8,43 @@ import axios from 'axios';
 export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
     
-    // Helper function to format time
+    // Helper function to format time - extract just the time portion
     const formatTime = (timeString) => {
         if (!timeString) return '';
-        // Handle different time formats
-        if (typeof timeString === 'string') {
-            // If it's already formatted or just time (HH:MM:SS or HH:MM)
-            if (timeString.includes(':') && timeString.length <= 8) {
-                try {
-                    return new Date('2000-01-01T' + timeString).toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        hour12: true 
-                    });
-                } catch (e) {
+        
+        try {
+            let date;
+            // Handle different time formats
+            if (typeof timeString === 'string') {
+                // If it's a full datetime string (ISO format)
+                if (timeString.includes('T') || timeString.includes(' ')) {
+                    date = new Date(timeString);
+                }
+                // If it's just time (HH:MM:SS or HH:MM)
+                else if (timeString.includes(':') && timeString.length <= 8) {
+                    date = new Date('2000-01-01T' + timeString);
+                }
+                else {
                     return timeString;
                 }
+            } else {
+                date = new Date(timeString);
             }
+            
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                return timeString;
+            }
+            
+            // Return formatted time in 12-hour format
+            return date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+        } catch (e) {
             return timeString;
         }
-        return timeString;
     };
     
     // Get student_id from URL query parameter
@@ -436,13 +453,13 @@ export default function CreateBooking({ students, routes }) {
                                                             {(route.pickup_time || route.dropoff_time) && (
                                                                 <div className="mt-2 space-y-1">
                                                                     {route.pickup_time && (
-                                                                        <p className="text-xs text-blue-200 font-semibold">
-                                                                            📍 Estimated Pickup: {formatTime(route.pickup_time)}
+                                                                        <p className="text-xs text-white/90">
+                                                                            Pickup: <span className="font-bold text-white">{formatTime(route.pickup_time)}</span>
                                                                         </p>
                                                                     )}
                                                                     {route.dropoff_time && (
-                                                                        <p className="text-xs text-green-200 font-semibold">
-                                                                            🏫 Estimated Dropoff: {formatTime(route.dropoff_time)}
+                                                                        <p className="text-xs text-white/90">
+                                                                            Dropoff: <span className="font-bold text-white">{formatTime(route.dropoff_time)}</span>
                                                                         </p>
                                                                     )}
                                                                 </div>
@@ -553,13 +570,13 @@ export default function CreateBooking({ students, routes }) {
                                                                 <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
                                                                 <div className="mt-2 space-y-1">
                                                                     {point.pickup_time && (
-                                                                        <p className="text-xs text-blue-200 font-semibold">
-                                                                            📍 Pickup Time: {formatTime(point.pickup_time)}
+                                                                        <p className="text-xs text-white/90">
+                                                                            Pickup: <span className="font-bold text-white">{formatTime(point.pickup_time)}</span>
                                                                         </p>
                                                                     )}
                                                                     {point.dropoff_time && (
-                                                                        <p className="text-xs text-green-200 font-semibold">
-                                                                            🏫 Dropoff Time: {formatTime(point.dropoff_time)}
+                                                                        <p className="text-xs text-white/90">
+                                                                            Dropoff: <span className="font-bold text-white">{formatTime(point.dropoff_time)}</span>
                                                                         </p>
                                                                     )}
                                                                 </div>
@@ -765,13 +782,13 @@ export default function CreateBooking({ students, routes }) {
                                                 {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
                                                     <div className="mt-1 ml-4 space-y-0.5">
                                                         {selectedRoute.pickup_time && (
-                                                            <p className="text-xs text-blue-200 font-semibold">
-                                                                📍 Route Pickup: {formatTime(selectedRoute.pickup_time)}
+                                                            <p className="text-xs text-white/90">
+                                                                Pickup: <span className="font-bold text-white">{formatTime(selectedRoute.pickup_time)}</span>
                                                             </p>
                                                         )}
                                                         {selectedRoute.dropoff_time && (
-                                                            <p className="text-xs text-green-200 font-semibold">
-                                                                🏫 Route Dropoff: {formatTime(selectedRoute.dropoff_time)}
+                                                            <p className="text-xs text-white/90">
+                                                                Dropoff: <span className="font-bold text-white">{formatTime(selectedRoute.dropoff_time)}</span>
                                                             </p>
                                                         )}
                                                     </div>
@@ -792,13 +809,13 @@ export default function CreateBooking({ students, routes }) {
                                                     return selectedPoint && (selectedPoint.pickup_time || selectedPoint.dropoff_time) ? (
                                                         <div className="mt-1 ml-4 space-y-0.5">
                                                             {selectedPoint.pickup_time && (
-                                                                <p className="text-xs text-blue-200 font-semibold">
-                                                                    📍 Pickup Time: {formatTime(selectedPoint.pickup_time)}
+                                                                <p className="text-xs text-white/90">
+                                                                    Pickup: <span className="font-bold text-white">{formatTime(selectedPoint.pickup_time)}</span>
                                                                 </p>
                                                             )}
                                                             {selectedPoint.dropoff_time && (
-                                                                <p className="text-xs text-green-200 font-semibold">
-                                                                    🏫 Dropoff Time: {formatTime(selectedPoint.dropoff_time)}
+                                                                <p className="text-xs text-white/90">
+                                                                    Dropoff: <span className="font-bold text-white">{formatTime(selectedPoint.dropoff_time)}</span>
                                                                 </p>
                                                             )}
                                                         </div>
