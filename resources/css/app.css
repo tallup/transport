@@ -150,6 +150,23 @@
     }
 }
 
+/* Mobile Menu Improvements */
+@media (max-width: 640px) {
+    /* Ensure mobile menu has proper touch targets */
+    .mobile-menu-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Prevent body scroll when menu is open */
+    body.menu-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+}
+
 /* Global body background with solid color - Logo brand color - only for pages without specific backgrounds */
 body {
     background: #22304d;

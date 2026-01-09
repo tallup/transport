@@ -27,11 +27,11 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
     return (
         <>
             {/* Hamburger Button - Visible on mobile */}
-            <div className="flex items-center sm:hidden">
+            <div className="flex items-center sm:hidden ml-auto">
                 <button
                     type="button"
                     onClick={toggleMenu}
-                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-800 hover:text-gray-900 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition z-[70] relative"
+                    className="inline-flex items-center justify-center p-2.5 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition z-[70] relative bg-white/80 backdrop-blur-sm shadow-sm"
                     aria-expanded={isOpen}
                     aria-label="Toggle menu"
                 >
@@ -42,11 +42,11 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            strokeWidth={2.5}
                         >
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeWidth={2}
                                 d="M4 6h16M4 12h16M4 18h16"
                             />
                         </svg>
@@ -57,11 +57,11 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            strokeWidth={2.5}
                         >
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeWidth={2}
                                 d="M6 18L18 6M6 6l12 12"
                             />
                         </svg>
@@ -97,7 +97,7 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                     
                     {/* Menu Panel */}
                     <div 
-                        className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] bg-white shadow-2xl"
+                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-hidden"
                         style={{ 
                             animation: 'slideInLeft 0.3s ease-out',
                             position: 'absolute',
@@ -109,11 +109,11 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                     >
                         <div className="flex flex-col h-full">
                             {/* Header */}
-                            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white">
-                                <span className="text-base font-bold text-gray-900">Menu</span>
+                            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+                                <span className="text-lg font-bold text-gray-900">Menu</span>
                                 <button
                                     onClick={closeMenu}
-                                    className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition"
+                                    className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-gray-300"
                                     aria-label="Close menu"
                                 >
                                     <svg
@@ -121,11 +121,11 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
+                                        strokeWidth={2.5}
                                     >
                                         <path
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            strokeWidth={2}
                                             d="M6 18L18 6M6 6l12 12"
                                         />
                                     </svg>
@@ -133,16 +133,16 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                             </div>
 
                             {/* Navigation Items */}
-                            <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto bg-white">
+                            <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto bg-white">
                                 {navigationItems && navigationItems.length > 0 ? (
                                     navigationItems.map((item, index) => (
                                         <Link
                                             key={index}
                                             href={item.href}
                                             onClick={closeMenu}
-                                            className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                                            className={`block px-4 py-3 rounded-lg text-base font-medium transition ${
                                                 item.active
-                                                    ? 'bg-brand-light text-brand-primary border-l-4 border-brand-primary'
+                                                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-semibold'
                                                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
                                         >
@@ -150,16 +150,16 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                                         </Link>
                                     ))
                                 ) : (
-                                    <p className="px-3 py-2 text-sm text-gray-500">No navigation items</p>
+                                    <p className="px-4 py-3 text-sm text-gray-500">No navigation items</p>
                                 )}
                             </nav>
 
                             {/* User Section */}
                             {user && (
-                                <div className="border-t border-gray-200 px-3 py-3 bg-white">
-                                    <div className="mb-2">
-                                        <p className="text-xs font-semibold text-gray-900">{user.name || 'User'}</p>
-                                        <p className="text-xs text-gray-500 truncate">{user.email || ''}</p>
+                                <div className="border-t border-gray-200 px-4 py-4 bg-gray-50 flex-shrink-0">
+                                    <div className="mb-3">
+                                        <p className="text-sm font-semibold text-gray-900">{user.name || 'User'}</p>
+                                        <p className="text-xs text-gray-600 truncate mt-0.5">{user.email || ''}</p>
                                     </div>
                                     <div className="space-y-1">
                                         {userMenuItems && userMenuItems.length > 0 ? (
@@ -170,7 +170,7 @@ export default function MobileMenu({ navigationItems, userMenuItems, user }) {
                                                     onClick={closeMenu}
                                                     method={item.method || 'get'}
                                                     as={item.as || 'a'}
-                                                    className="block px-3 py-2 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition"
+                                                    className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900 transition border border-gray-200 hover:border-gray-300"
                                                 >
                                                     {item.label}
                                                 </Link>

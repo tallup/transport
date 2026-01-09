@@ -7,7 +7,6 @@ use App\Http\Requests\StoreStudentRequest;
 use App\Models\Policy;
 use App\Models\School;
 use App\Models\Student;
-use App\Models\Route as TransportRoute;
 use App\Models\PickupPoint;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -37,14 +36,10 @@ class StudentController extends Controller
     {
         $schools = School::where('active', true)->orderBy('name')->get();
         $policies = Policy::active()->ordered()->get()->groupBy('category');
-        
-        // Load active routes with their pickup points and associated schools
-        $routes = TransportRoute::with(['pickupPoints', 'schools'])->where('active', true)->get();
 
         return Inertia::render('Parent/Students/Enroll', [
             'schools' => $schools,
             'policies' => $policies,
-            'routes' => $routes,
         ]);
     }
 
