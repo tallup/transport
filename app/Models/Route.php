@@ -83,40 +83,48 @@ class Route extends Model
     }
 
     /**
-     * Determine the service period (AM or PM) based on pickup_time.
+     * Determine the service period (AM or PM) based on pickup_time or service_type.
      * 
-     * @return string 'am' or 'pm'
+     * @return string 'am', 'pm', or 'both'
      */
     public function servicePeriod(): string
     {
-        if (!$this->pickup_time) {
-            return 'both'; // Default if no pickup time set
-        }
-
-        // Handle TIME type - extract just the time portion
-        $timeString = null;
-        
-        if ($this->pickup_time instanceof Carbon) {
-            $timeString = $this->pickup_time->format('H:i:s');
-        } elseif (is_string($this->pickup_time)) {
-            // If it's already a time string like '07:30:00' or datetime string
-            if (strpos($this->pickup_time, ' ') !== false) {
-                // It's a datetime string, extract time part
-                $parts = explode(' ', $this->pickup_time);
-                $timeString = $parts[1] ?? $parts[0];
+        // If pickup_time is set, use it to determine period
+        if ($this->pickup_time) {
+            // Handle TIME type - extract just the time portion
+            $timeString = null;
+            
+            if ($this->pickup_time instanceof Carbon) {
+                $timeString = $this->pickup_time->format('H:i:s');
+            } elseif (is_string($this->pickup_time)) {
+                // If it's already a time string like '07:30:00' or datetime string
+                if (strpos($this->pickup_time, ' ') !== false) {
+                    // It's a datetime string, extract time part
+                    $parts = explode(' ', $this->pickup_time);
+                    $timeString = $parts[1] ?? $parts[0];
+                } else {
+                    $timeString = $this->pickup_time;
+                }
             } else {
-                $timeString = $this->pickup_time;
+                $timeString = (string) $this->pickup_time;
             }
-        } else {
-            $timeString = (string) $this->pickup_time;
+
+            // Extract hour from time string (HH:mm:ss format)
+            $parts = explode(':', $timeString);
+            $hour = (int) ($parts[0] ?? 0);
+            
+            // If pickup_time is before 12:00 (noon), it's AM route
+            return $hour < 12 ? 'am' : 'pm';
         }
 
-        // Extract hour from time string (HH:mm:ss format)
-        $parts = explode(':', $timeString);
-        $hour = (int) ($parts[0] ?? 0);
-        
-        // If pickup_time is before 12:00 (noon), it's AM route
-        return $hour < 12 ? 'am' : 'pm';
+        // If no pickup_time, fall back to service_type field
+        if ($this->service_type) {
+            // service_type can be 'am', 'pm', or 'both'
+            return $this->service_type;
+        }
+
+        // Default to 'both' if neither is set
+        return 'both';
     }
 
     /**
@@ -126,7 +134,8 @@ class Route extends Model
      */
     public function isMorningRoute(): bool
     {
-        return $this->servicePeriod() === 'am';
+        $period = $this->servicePeriod();
+        return $period === 'am' || $period === 'both';
     }
 
     /**
@@ -136,7 +145,8 @@ class Route extends Model
      */
     public function isAfternoonRoute(): bool
     {
-        return $this->servicePeriod() === 'pm';
+        $period = $this->servicePeriod();
+        return $period === 'pm' || $period === 'both';
     }
 
     /**

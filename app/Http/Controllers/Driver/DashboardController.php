@@ -34,22 +34,53 @@ class DashboardController extends Controller
             }])
             ->get();
 
+        // Debug logging
+        \Log::info("Driver {$driver->id} ({$driver->name}) - Active routes found: " . $routes->count());
+
         if ($routes->isEmpty()) {
+            // Check if driver has any routes (even inactive ones) for debugging
+            $allRoutes = Route::where('driver_id', $driver->id)->get(['id', 'name', 'active']);
+            if ($allRoutes->isNotEmpty()) {
+                \Log::info("Driver {$driver->id} has routes but none are active: " . $allRoutes->pluck('name')->join(', '));
+            }
             return null;
         }
 
         // Separate AM and PM routes
-        $amRoute = $routes->first(function ($route) {
-            return $route->isMorningRoute();
-        });
+        $amRoute = null;
+        $pmRoute = null;
+        $bothRoute = null; // Route with service_type 'both' or no pickup_time
 
-        $pmRoute = $routes->first(function ($route) {
-            return $route->isAfternoonRoute();
-        });
+        foreach ($routes as $route) {
+            $period = $route->servicePeriod();
+            if ($period === 'am') {
+                if (!$amRoute) {
+                    $amRoute = $route;
+                }
+            } elseif ($period === 'pm') {
+                if (!$pmRoute) {
+                    $pmRoute = $route;
+                }
+            } else {
+                // 'both' or undefined - can work for either period
+                if (!$bothRoute) {
+                    $bothRoute = $route;
+                }
+            }
+        }
 
-        // If it's morning (before 12:00 PM), show AM route
+        // If driver has only one route, show it regardless of period
+        if ($routes->count() === 1) {
+            return $routes->first();
+        }
+
+        // If it's morning (before 12:00 PM), show AM route or 'both' route
         if ($isMorning) {
-            return $amRoute;
+            if ($amRoute) {
+                return $amRoute;
+            }
+            // Fallback to 'both' route or PM route or any route
+            return $bothRoute ?: $pmRoute ?: $routes->first();
         }
 
         // If it's afternoon (after 12:00 PM)
@@ -66,8 +97,9 @@ class DashboardController extends Controller
             }
         }
 
-        // AM route is completed or doesn't exist, show PM route
-        return $pmRoute;
+        // AM route is completed or doesn't exist, show PM route or 'both' route
+        // Final fallback: return first active route if nothing else matches
+        return $pmRoute ?: $bothRoute ?: $routes->first();
     }
 
     /**
