@@ -4,13 +4,47 @@ import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
-export default function Roster({ routes, selectedRoute, date: initialDate, isSchoolDay, groupedBookings, message }) {
-    const [selectedDate, setSelectedDate] = useState(initialDate);
-    const [selectedRouteId, setSelectedRouteId] = useState(selectedRoute?.id || null);
+export default function Roster({ route, date, isSchoolDay, groupedBookings, message, canCompleteRoute, isRouteCompleted }) {
     const [completing, setCompleting] = useState({});
+    const [showCompletionModal, setShowCompletionModal] = useState(false);
+    const [notes, setNotes] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
-    const markPickupPointComplete = async (pickupPointId, routeId) => {
-        const key = `${pickupPointId}-${routeId}`;
+    const handleCompleteRoute = async (e) => {
+        e.preventDefault();
+        if (!route || !canCompleteRoute) return;
+
+        setSubmitting(true);
+        try {
+            const response = await fetch(`/driver/routes/${route.id}/mark-complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ notes }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setShowCompletionModal(false);
+                setNotes('');
+                router.reload();
+            } else {
+                alert(data.message || 'Failed to mark route as complete');
+            }
+        } catch (error) {
+            console.error('Error marking route as complete:', error);
+            alert('An error occurred while marking the route as complete');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const markPickupPointComplete = async (pickupPointId) => {
+        if (!route) return;
+        const key = `${pickupPointId}-${route.id}`;
         setCompleting({ ...completing, [key]: true });
 
         try {
@@ -22,8 +56,8 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                 },
                 body: JSON.stringify({
                     pickup_point_id: pickupPointId,
-                    route_id: routeId,
-                    date: selectedDate,
+                    route_id: route.id,
+                    date: date,
                 }),
             });
 
@@ -31,7 +65,7 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
 
             if (data.success) {
                 // Reload the page to show updated status
-                router.reload({ only: ['groupedBookings'] });
+                router.reload();
             } else {
                 alert(data.message || 'Failed to mark trip as complete');
             }
@@ -59,7 +93,7 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
 
             if (data.success) {
                 // Reload the page to show updated status
-                router.reload({ only: ['groupedBookings'] });
+                router.reload();
             } else {
                 alert(data.message || 'Failed to mark trip as complete');
             }
@@ -69,30 +103,6 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
         } finally {
             setCompleting({ ...completing, [bookingId]: false });
         }
-    };
-
-    const handleDateChange = (e) => {
-        const newDate = e.target.value;
-        setSelectedDate(newDate);
-        router.get('/driver/roster', { 
-            date: newDate,
-            route_id: selectedRouteId 
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
-
-    const handleRouteChange = (e) => {
-        const routeId = e.target.value ? parseInt(e.target.value) : null;
-        setSelectedRouteId(routeId);
-        router.get('/driver/roster', { 
-            date: selectedDate,
-            route_id: routeId 
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
     };
 
     return (
@@ -109,42 +119,6 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                         <p className="text-base sm:text-lg font-semibold text-white/90">View your schedule and student pickups</p>
                     </div>
 
-                    {/* Filters */}
-                    <GlassCard className="mb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-base font-bold text-white mb-2">
-                                    Select Date
-                                </label>
-                                <input
-                                    type="date"
-                                    value={selectedDate}
-                                    onChange={handleDateChange}
-                                    className="w-full glass-input text-white font-semibold py-2 px-4 rounded-lg"
-                                />
-                            </div>
-                            {routes && routes.length > 1 && (
-                                <div>
-                                    <label className="block text-base font-bold text-white mb-2">
-                                        Select Route
-                                    </label>
-                                    <select
-                                        value={selectedRouteId || ''}
-                                        onChange={handleRouteChange}
-                                        className="w-full glass-input text-white font-semibold py-2 px-4 rounded-lg"
-                                    >
-                                        <option value="">All Routes</option>
-                                        {routes.map((route) => (
-                                            <option key={route.id} value={route.id} className="bg-gray-800">
-                                                {route.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
-                        </div>
-                    </GlassCard>
-
                     {message && (
                         <GlassCard className="mb-6">
                             <div className="p-4 bg-yellow-500/20 border border-yellow-400/50 rounded-lg">
@@ -153,7 +127,41 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                         </GlassCard>
                     )}
 
-                    {routes && routes.length === 0 ? (
+                    {/* Route Completion Status */}
+                    {isRouteCompleted && (
+                        <GlassCard className="mb-6">
+                            <div className="p-4 bg-green-500/20 border border-green-400/50 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                    <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <p className="text-green-200 font-semibold text-lg">
+                                        This route has been completed today.
+                                    </p>
+                                </div>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {/* Complete Route Button */}
+                    {canCompleteRoute && (
+                        <GlassCard className="mb-6">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-base font-bold text-white">All pickups and dropoffs are complete!</p>
+                                    <p className="text-sm font-semibold text-white/80 mt-1">Mark this route as complete to proceed.</p>
+                                </div>
+                                <GlassButton 
+                                    variant="success"
+                                    onClick={() => setShowCompletionModal(true)}
+                                >
+                                    Complete Route
+                                </GlassButton>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {!route ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,30 +176,28 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                     ) : (
                         <>
                             {/* Route Information */}
-                            {selectedRoute && (
-                                <GlassCard className="mb-6">
-                                    <div className="p-6">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-white mb-2">Route: {selectedRoute.name}</h3>
-                                                {selectedRoute.vehicle && (
-                                                    <p className="text-base font-semibold text-white/90 mb-1">
-                                                        Vehicle: {selectedRoute.vehicle.make} {selectedRoute.vehicle.model} ({selectedRoute.vehicle.license_plate})
-                                                    </p>
-                                                )}
-                                                <p className="text-sm font-medium text-white/70">
-                                                    Date: {new Date(selectedDate).toLocaleDateString('en-US', { 
-                                                        weekday: 'long', 
-                                                        year: 'numeric', 
-                                                        month: 'long', 
-                                                        day: 'numeric' 
-                                                    })}
+                            <GlassCard className="mb-6">
+                                <div className="p-6">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="text-2xl font-bold text-white mb-2">Route: {route.name}</h3>
+                                            {route.vehicle && (
+                                                <p className="text-base font-semibold text-white/90 mb-1">
+                                                    Vehicle: {route.vehicle.make} {route.vehicle.model} ({route.vehicle.license_plate})
                                                 </p>
-                                            </div>
+                                            )}
+                                            <p className="text-sm font-medium text-white/70">
+                                                Date: {new Date(date).toLocaleDateString('en-US', { 
+                                                    weekday: 'long', 
+                                                    year: 'numeric', 
+                                                    month: 'long', 
+                                                    day: 'numeric' 
+                                                })}
+                                            </p>
                                         </div>
                                     </div>
-                                </GlassCard>
-                            )}
+                                </div>
+                            </GlassCard>
 
                             {!isSchoolDay ? (
                                 <GlassCard>
@@ -223,7 +229,7 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                                     {groupedBookings.map((group, index) => {
                                         const allCompleted = group.bookings.every(b => b.status === 'completed');
                                         const someCompleted = group.bookings.some(b => b.status === 'completed');
-                                        const key = `${group.pickup_point.id}-${selectedRoute?.id}`;
+                                        const key = `${group.pickup_point.id}-${route?.id}`;
                                         const isCompleting = completing[key];
 
                                         return (
@@ -266,11 +272,11 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                                                         </div>
                                                     </div>
 
-                                                    {!allCompleted && selectedRoute && (
+                                                    {!allCompleted && route && (
                                                         <div className="mb-4">
                                                             <GlassButton
                                                                 variant="success"
-                                                                onClick={() => markPickupPointComplete(group.pickup_point.id, selectedRoute.id)}
+                                                                onClick={() => markPickupPointComplete(group.pickup_point.id)}
                                                                 disabled={isCompleting}
                                                                 className="text-sm py-2 px-4"
                                                             >
@@ -354,6 +360,55 @@ export default function Roster({ routes, selectedRoute, date: initialDate, isSch
                     )}
                 </div>
             </div>
+
+            {/* Route Completion Modal */}
+            {showCompletionModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <GlassCard className="max-w-md w-full">
+                        <div className="p-6">
+                            <h3 className="text-2xl font-bold text-white mb-4">Complete Route</h3>
+                            <p className="text-white/90 mb-4">
+                                Are you sure you want to mark this route as complete? All pickups and dropoffs should be finished.
+                            </p>
+                            <form onSubmit={handleCompleteRoute}>
+                                <div className="mb-4">
+                                    <label htmlFor="notes" className="block text-base font-bold text-white mb-2">
+                                        Notes (Optional)
+                                    </label>
+                                    <textarea
+                                        id="notes"
+                                        value={notes}
+                                        onChange={(e) => setNotes(e.target.value)}
+                                        rows={4}
+                                        className="w-full glass-input text-white placeholder-gray-300 resize-none"
+                                        placeholder="Add any notes about the route completion..."
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-3">
+                                    <GlassButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={() => {
+                                            setShowCompletionModal(false);
+                                            setNotes('');
+                                        }}
+                                        disabled={submitting}
+                                    >
+                                        Cancel
+                                    </GlassButton>
+                                    <GlassButton
+                                        type="submit"
+                                        variant="success"
+                                        disabled={submitting}
+                                    >
+                                        {submitting ? 'Completing...' : 'Complete Route'}
+                                    </GlassButton>
+                                </div>
+                            </form>
+                        </div>
+                    </GlassCard>
+                </div>
+            )}
         </DriverLayout>
     );
 }

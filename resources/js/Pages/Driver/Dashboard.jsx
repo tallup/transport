@@ -1,11 +1,48 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import Timeline from '@/Components/Timeline';
 import GlassButton from '@/Components/GlassButton';
 
-export default function Dashboard({ routes, route, stats, todaySchedule, nextPickupPoints, performanceMetrics, studentsList }) {
+export default function Dashboard({ route, currentPeriod, stats, todaySchedule, performanceMetrics, studentsList, canCompleteRoute, isRouteCompleted }) {
     const { auth } = usePage().props;
+    const [showCompletionModal, setShowCompletionModal] = useState(false);
+    const [notes, setNotes] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleCompleteRoute = async (e) => {
+        e.preventDefault();
+        if (!route || !canCompleteRoute) return;
+
+        setSubmitting(true);
+        try {
+            const response = await fetch(`/driver/routes/${route.id}/mark-complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ notes }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setShowCompletionModal(false);
+                setNotes('');
+                // Reload the page to show updated status (may switch to PM route if available)
+                router.reload();
+            } else {
+                alert(data.message || 'Failed to mark route as complete');
+            }
+        } catch (error) {
+            console.error('Error marking route as complete:', error);
+            alert('An error occurred while marking the route as complete');
+        } finally {
+            setSubmitting(false);
+        }
+    };
     
     return (
         <DriverLayout>
@@ -15,13 +52,26 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
                     <div className="mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
-                            Welcome, {auth?.user?.name || 'Driver'}!
-                        </h1>
-                        <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                    Welcome, {auth?.user?.name || 'Driver'}!
+                                </h1>
+                                <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
+                            </div>
+                            {currentPeriod && (
+                                <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                                    currentPeriod === 'am' 
+                                        ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50' 
+                                        : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
+                                }`}>
+                                    {currentPeriod.toUpperCase()} Route
+                                </span>
+                            )}
+                        </div>
                     </div>
 
-                    {(!routes || routes.length === 0) ? (
+                    {!route ? (
                         <GlassCard>
                             <div className="text-center py-8">
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,25 +135,58 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Today's Bookings</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">{stats.today_bookings}</p>
+                                            <p className="text-base font-bold text-white">Pickup Time</p>
+                                            <p className="text-2xl sm:text-3xl font-extrabold text-cyan-200 mt-2 drop-shadow">
+                                                {stats.pickup_time || 'N/A'}
+                                            </p>
+                                            {stats.dropoff_time && (
+                                                <p className="text-sm font-semibold text-cyan-300/80 mt-1">
+                                                    Dropoff: {stats.dropoff_time}
+                                                </p>
+                                            )}
                                         </div>
                                         <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
                                     </div>
                                 </GlassCard>
                             </div>
 
+                            {/* Route Completion Status */}
+                            {isRouteCompleted && (
+                                <GlassCard className="mb-6">
+                                    <div className="p-4 bg-green-500/20 border border-green-400/50 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <p className="text-green-200 font-semibold text-lg">
+                                                This route has been completed today.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+                            )}
+
                             {/* Today's Schedule Timeline */}
                             <GlassCard className="mb-8">
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="text-xl font-bold text-white">Today's Schedule</h3>
-                                    <Link href="/driver/roster">
-                                        <GlassButton variant="primary">View Full Roster</GlassButton>
-                                    </Link>
+                                        <div className="flex gap-3">
+                                        {canCompleteRoute && (
+                                            <GlassButton 
+                                                variant="success"
+                                                onClick={() => setShowCompletionModal(true)}
+                                            >
+                                                Complete Route
+                                            </GlassButton>
+                                        )}
+                                        <Link href="/driver/roster">
+                                            <GlassButton variant="primary">View Full Roster</GlassButton>
+                                        </Link>
+                                    </div>
                                 </div>
                                 {todaySchedule && todaySchedule.length > 0 ? (
                                     <Timeline items={todaySchedule} />
@@ -203,7 +286,7 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                                     <div>
                                         <p className="text-base font-bold text-white">Route Name</p>
                                         <p className="text-lg font-bold text-white/90 mt-1">
-                                            {route?.name || (routes && routes.length > 0 ? routes.map(r => r.name).join(', ') : 'N/A')}
+                                            {route?.name || 'N/A'}
                                         </p>
                                     </div>
                                     <div>
@@ -232,6 +315,55 @@ export default function Dashboard({ routes, route, stats, todaySchedule, nextPic
                     )}
                 </div>
             </div>
+
+            {/* Route Completion Modal */}
+            {showCompletionModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <GlassCard className="max-w-md w-full">
+                        <div className="p-6">
+                            <h3 className="text-2xl font-bold text-white mb-4">Complete Route</h3>
+                            <p className="text-white/90 mb-4">
+                                Are you sure you want to mark this route as complete? All pickups and dropoffs should be finished.
+                            </p>
+                            <form onSubmit={handleCompleteRoute}>
+                                <div className="mb-4">
+                                    <label htmlFor="notes" className="block text-base font-bold text-white mb-2">
+                                        Notes (Optional)
+                                    </label>
+                                    <textarea
+                                        id="notes"
+                                        value={notes}
+                                        onChange={(e) => setNotes(e.target.value)}
+                                        rows={4}
+                                        className="w-full glass-input text-white placeholder-gray-300 resize-none"
+                                        placeholder="Add any notes about the route completion..."
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-3">
+                                    <GlassButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={() => {
+                                            setShowCompletionModal(false);
+                                            setNotes('');
+                                        }}
+                                        disabled={submitting}
+                                    >
+                                        Cancel
+                                    </GlassButton>
+                                    <GlassButton
+                                        type="submit"
+                                        variant="success"
+                                        disabled={submitting}
+                                    >
+                                        {submitting ? 'Completing...' : 'Complete Route'}
+                                    </GlassButton>
+                                </div>
+                            </form>
+                        </div>
+                    </GlassCard>
+                </div>
+            )}
         </DriverLayout>
     );
 }

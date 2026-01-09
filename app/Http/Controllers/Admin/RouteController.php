@@ -12,6 +12,59 @@ use Inertia\Inertia;
 
 class RouteController extends Controller
 {
+    /**
+     * Validate route assignment to ensure driver doesn't exceed limits.
+     * 
+     * @param array $validated
+     * @param \App\Models\Route|null $existingRoute
+     * @return void
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validateRouteAssignment(array $validated, ?Route $existingRoute = null)
+    {
+        // Skip validation if no driver assigned
+        if (empty($validated['driver_id'])) {
+            return;
+        }
+
+        // Determine route period based on pickup_time
+        // If pickup_time is not set, we can't determine period - skip validation
+        if (empty($validated['pickup_time'])) {
+            return;
+        }
+
+        $pickupTime = $validated['pickup_time'];
+        // Extract hour from time (HH:mm format)
+        $parts = explode(':', $pickupTime);
+        $hour = (int) ($parts[0] ?? 0);
+        $routePeriod = $hour < 12 ? 'am' : 'pm';
+
+        // Get driver's existing active routes (excluding the current route being updated)
+        $existingRoutes = Route::where('driver_id', $validated['driver_id'])
+            ->where('active', true)
+            ->when($existingRoute, function ($query) use ($existingRoute) {
+                $query->where('id', '!=', $existingRoute->id);
+            })
+            ->get();
+
+        // Check if driver already has a route of the same period
+        foreach ($existingRoutes as $route) {
+            if ($route->servicePeriod() === $routePeriod) {
+                $periodLabel = strtoupper($routePeriod);
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'driver_id' => "This driver already has an active {$periodLabel} route assigned. A driver can have at most one AM route and one PM route.",
+                ]);
+            }
+        }
+
+        // Check total route limit (max 2 routes: 1 AM + 1 PM)
+        if ($existingRoutes->count() >= 2) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'driver_id' => 'This driver already has the maximum number of routes assigned (2 routes: 1 AM + 1 PM).',
+            ]);
+        }
+    }
+
     public function index()
     {
         $routes = Route::with(['driver', 'vehicle', 'schools'])
@@ -52,6 +105,8 @@ class RouteController extends Controller
             'vehicle_id' => 'required|exists:vehicles,id',
             'capacity' => 'required|integer|min:1',
             'service_type' => 'required|in:am,pm,both',
+            'pickup_time' => 'nullable|date_format:H:i',
+            'dropoff_time' => 'nullable|date_format:H:i',
             'active' => 'nullable|boolean',
             'schools' => 'nullable|array',
             'schools.*' => 'exists:schools,id',
@@ -65,6 +120,9 @@ class RouteController extends Controller
         if (isset($validated['driver_id']) && $validated['driver_id'] === '') {
             $validated['driver_id'] = null;
         }
+
+        // Validate route assignment limits
+        $this->validateRouteAssignment($validated);
 
         $route = Route::create($validated);
         
@@ -123,6 +181,9 @@ class RouteController extends Controller
         if (isset($validated['driver_id']) && $validated['driver_id'] === '') {
             $validated['driver_id'] = null;
         }
+
+        // Validate route assignment limits (pass existing route to exclude from check)
+        $this->validateRouteAssignment($validated, $route);
 
         $route->update($validated);
         

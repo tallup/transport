@@ -6,56 +6,135 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CalendarEvent;
 use App\Models\Route;
+use App\Models\RouteCompletion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RosterController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Get the active route for the driver based on current time and completion status.
+     * Same logic as DashboardController.
+     */
+    private function getActiveRoute($driver)
     {
-        $driver = $request->user();
-        $date = $request->input('date', Carbon::today()->format('Y-m-d'));
-        $routeId = $request->input('route_id');
-        $carbonDate = Carbon::parse($date);
+        $today = Carbon::today();
+        $currentTime = Carbon::now();
+        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
 
-        // Get driver's routes (multiple routes support)
         $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
             ->with(['vehicle', 'pickupPoints'])
             ->get();
 
         if ($routes->isEmpty()) {
+            return null;
+        }
+
+        $amRoute = $routes->first(function ($route) {
+            return $route->isMorningRoute();
+        });
+
+        $pmRoute = $routes->first(function ($route) {
+            return $route->isAfternoonRoute();
+        });
+
+        if ($isMorning) {
+            return $amRoute;
+        }
+
+        if ($amRoute) {
+            $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
+                ->where('driver_id', $driver->id)
+                ->whereDate('completion_date', $today)
+                ->exists();
+
+            if (!$amCompleted) {
+                return $amRoute;
+            }
+        }
+
+        return $pmRoute;
+    }
+
+    /**
+     * Check if all bookings for a route are completed for today.
+     */
+    private function areAllBookingsCompleted($route)
+    {
+        $today = Carbon::today();
+        
+        $totalBookings = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->where('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->count();
+
+        if ($totalBookings === 0) {
+            return false;
+        }
+
+        $completedBookings = Booking::where('route_id', $route->id)
+            ->where('status', 'completed')
+            ->where('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->count();
+
+        return $totalBookings === $completedBookings;
+    }
+
+    public function index(Request $request)
+    {
+        $driver = $request->user();
+        $today = Carbon::today();
+        $todayFormatted = $today->format('Y-m-d');
+
+        // Get the active route (always use today's date)
+        $selectedRoute = $this->getActiveRoute($driver);
+
+        if (!$selectedRoute) {
             return Inertia::render('Driver/Roster', [
-                'routes' => [],
-                'selectedRoute' => null,
-                'date' => $date,
+                'route' => null,
+                'date' => $todayFormatted,
                 'isSchoolDay' => false,
                 'groupedBookings' => [],
-                'message' => 'No routes assigned to you.',
+                'canCompleteRoute' => false,
+                'isRouteCompleted' => false,
+                'message' => 'No active route assigned to you.',
             ]);
         }
 
-        // If route_id is provided, use it; otherwise use the first route
-        $selectedRoute = $routeId 
-            ? $routes->firstWhere('id', $routeId) 
-            : $routes->first();
+        // Check if route is completed today
+        $isRouteCompleted = RouteCompletion::where('route_id', $selectedRoute->id)
+            ->where('driver_id', $driver->id)
+            ->whereDate('completion_date', $today)
+            ->exists();
+
+        // Check if all bookings are completed
+        $canCompleteRoute = $this->areAllBookingsCompleted($selectedRoute) && !$isRouteCompleted;
 
         // Check if it's a school day
-        $isSchoolDay = !CalendarEvent::where('date', $carbonDate->format('Y-m-d'))
+        $isSchoolDay = !CalendarEvent::where('date', $todayFormatted)
             ->whereIn('type', ['holiday', 'closure'])
             ->exists();
 
         $groupedBookings = [];
 
-        if ($isSchoolDay && $selectedRoute) {
-            // Get active bookings for the date
+        if ($isSchoolDay) {
+            // Get active bookings for today
             $bookings = Booking::where('route_id', $selectedRoute->id)
-                ->whereIn('status', ['pending', 'active'])
-                ->where('start_date', '<=', $carbonDate)
-                ->where(function ($query) use ($carbonDate) {
+                ->whereIn('status', ['pending', 'active', 'completed'])
+                ->where('start_date', '<=', $today)
+                ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $carbonDate);
+                        ->orWhere('end_date', '>=', $today);
                 })
                 ->with(['student.school', 'pickupPoint'])
                 ->get();
@@ -95,18 +174,7 @@ class RosterController extends Controller
         }
 
         return Inertia::render('Driver/Roster', [
-            'routes' => $routes->map(function ($route) {
-                return [
-                    'id' => $route->id,
-                    'name' => $route->name,
-                    'vehicle' => $route->vehicle ? [
-                        'make' => $route->vehicle->make,
-                        'model' => $route->vehicle->model,
-                        'license_plate' => $route->vehicle->license_plate,
-                    ] : null,
-                ];
-            })->values(),
-            'selectedRoute' => $selectedRoute ? [
+            'route' => [
                 'id' => $selectedRoute->id,
                 'name' => $selectedRoute->name,
                 'vehicle' => $selectedRoute->vehicle ? [
@@ -114,10 +182,12 @@ class RosterController extends Controller
                     'model' => $selectedRoute->vehicle->model,
                     'license_plate' => $selectedRoute->vehicle->license_plate,
                 ] : null,
-            ] : null,
-            'date' => $date,
+            ],
+            'date' => $todayFormatted,
             'isSchoolDay' => $isSchoolDay,
             'groupedBookings' => $groupedBookings,
+            'canCompleteRoute' => $canCompleteRoute,
+            'isRouteCompleted' => $isRouteCompleted,
         ]);
     }
 

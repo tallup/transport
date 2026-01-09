@@ -7,275 +7,352 @@ use App\Models\Booking;
 use App\Models\CalendarEvent;
 use App\Models\PickupPoint;
 use App\Models\Route;
+use App\Models\RouteCompletion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    /**
+     * Get the active route for the driver based on current time and completion status.
+     * 
+     * @param \App\Models\User $driver
+     * @return \App\Models\Route|null
+     */
+    private function getActiveRoute($driver)
+    {
+        $today = Carbon::today();
+        $currentTime = Carbon::now();
+        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
+
+        // Get all active routes for the driver
+        $routes = Route::where('driver_id', $driver->id)
+            ->where('active', true)
+            ->with(['vehicle', 'pickupPoints', 'completions' => function ($query) use ($today) {
+                $query->whereDate('completion_date', $today);
+            }])
+            ->get();
+
+        if ($routes->isEmpty()) {
+            return null;
+        }
+
+        // Separate AM and PM routes
+        $amRoute = $routes->first(function ($route) {
+            return $route->isMorningRoute();
+        });
+
+        $pmRoute = $routes->first(function ($route) {
+            return $route->isAfternoonRoute();
+        });
+
+        // If it's morning (before 12:00 PM), show AM route
+        if ($isMorning) {
+            return $amRoute;
+        }
+
+        // If it's afternoon (after 12:00 PM)
+        // Check if AM route exists and is completed
+        if ($amRoute) {
+            $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
+                ->where('driver_id', $driver->id)
+                ->whereDate('completion_date', $today)
+                ->exists();
+
+            // If AM route is not completed, show it
+            if (!$amCompleted) {
+                return $amRoute;
+            }
+        }
+
+        // AM route is completed or doesn't exist, show PM route
+        return $pmRoute;
+    }
+
+    /**
+     * Check if all bookings for a route are completed for today.
+     * 
+     * @param \App\Models\Route $route
+     * @return bool
+     */
+    private function areAllBookingsCompleted($route)
+    {
+        $today = Carbon::today();
+        
+        $totalBookings = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->where('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->count();
+
+        if ($totalBookings === 0) {
+            return false; // No bookings to complete
+        }
+
+        $completedBookings = Booking::where('route_id', $route->id)
+            ->where('status', 'completed')
+            ->where('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->count();
+
+        return $totalBookings === $completedBookings;
+    }
+
     public function index(Request $request)
     {
         $driver = $request->user();
         
-        // Get driver's assigned routes (multiple routes support)
-        $routes = Route::where('driver_id', $driver->id)
-            ->where('active', true)
-            ->with(['vehicle', 'pickupPoints'])
-            ->get();
-        
-        // Debug: Log driver info and route count
-        \Log::info("Driver Dashboard - User ID: {$driver->id}, Name: {$driver->name}, Email: {$driver->email}, Routes found: " . $routes->count());
-        
-        // If no active routes found, check for any assigned routes (even inactive) for debugging
-        if ($routes->isEmpty()) {
-            $inactiveRoutes = Route::where('driver_id', $driver->id)
-                ->where('active', false)
-                ->get(['id', 'name', 'active']);
-            
-            if ($inactiveRoutes->isNotEmpty()) {
-                \Log::info("Driver {$driver->id} ({$driver->name}) has inactive routes: " . $inactiveRoutes->pluck('name')->join(', '));
-            }
-            
-            // Also check if there are any routes at all assigned to this driver (regardless of active status)
-            $allRoutes = Route::where('driver_id', $driver->id)->get(['id', 'name', 'active']);
-            \Log::info("Driver {$driver->id} ({$driver->name}) total routes (active + inactive): " . $allRoutes->count());
+        // Get the active route based on time and completion status
+        $route = $this->getActiveRoute($driver);
+
+        // If no active route, return empty dashboard
+        if (!$route) {
+            return Inertia::render('Driver/Dashboard', [
+                'route' => null,
+                'currentPeriod' => null,
+                'stats' => [
+                    'route_name' => 'No route assigned',
+                    'vehicle' => 'No vehicle assigned',
+                    'total_students' => 0,
+                    'pickup_points' => 0,
+                    'pickup_time' => null,
+                    'dropoff_time' => null,
+                ],
+                'todaySchedule' => [],
+                'performanceMetrics' => [
+                    'on_time_percentage' => 0,
+                    'total_trips' => 0,
+                    'average_students_per_trip' => 0,
+                ],
+                'studentsList' => [],
+                'canCompleteRoute' => false,
+                'isRouteCompleted' => false,
+            ]);
         }
 
-        $routeIds = $routes->pluck('id')->toArray();
+        // Determine current period
+        $currentPeriod = $route->servicePeriod(); // 'am' or 'pm'
+        
+        // Check if route is already completed today
+        $today = Carbon::today();
+        $isRouteCompleted = RouteCompletion::where('route_id', $route->id)
+            ->where('driver_id', $driver->id)
+            ->whereDate('completion_date', $today)
+            ->exists();
 
-        // Aggregate stats across all routes
+        // Check if all bookings are completed
+        $canCompleteRoute = $this->areAllBookingsCompleted($route) && !$isRouteCompleted;
+
+        // Calculate stats for the active route
+        $todayFormatted = $today->format('Y-m-d');
+        $totalStudents = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->where('start_date', '<=', $todayFormatted)
+            ->where(function ($query) use ($todayFormatted) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $todayFormatted);
+            })
+            ->distinct()
+            ->count('student_id');
+
+        $todayBookings = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->where('start_date', '<=', $todayFormatted)
+            ->where(function ($query) use ($todayFormatted) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $todayFormatted);
+            })
+            ->count();
+
+        // Format pickup/dropoff times
+        $pickupTimeFormatted = $route->pickup_time 
+            ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i'))
+            : null;
+        
+        $dropoffTimeFormatted = $route->dropoff_time 
+            ? (is_string($route->dropoff_time) ? substr($route->dropoff_time, 0, 5) : $route->dropoff_time->format('H:i'))
+            : null;
+
         $stats = [
-            'route_name' => $routes->count() > 1 
-                ? "{$routes->count()} Routes" 
-                : ($routes->first()?->name ?? 'No route assigned'),
-            'vehicle' => $routes->count() === 1 && $routes->first()?->vehicle
-                ? "{$routes->first()->vehicle->make} {$routes->first()->vehicle->model} ({$routes->first()->vehicle->license_plate})"
-                : ($routes->count() > 1 ? "Multiple Vehicles" : 'No vehicle assigned'),
-            'total_students' => !empty($routeIds) ? Booking::whereIn('route_id', $routeIds)
-                ->whereIn('status', ['pending', 'active'])
-                ->distinct()
-                ->count('student_id') : 0,
-            'pickup_points' => $routes->sum(function ($route) {
-                return $route->pickupPoints->count();
-            }),
+            'route_name' => $route->name,
+            'vehicle' => $route->vehicle 
+                ? "{$route->vehicle->make} {$route->vehicle->model} ({$route->vehicle->license_plate})"
+                : 'No vehicle assigned',
+            'total_students' => $totalStudents,
+            'pickup_points' => $route->pickupPoints->count(),
+            'pickup_time' => $pickupTimeFormatted,
+            'dropoff_time' => $dropoffTimeFormatted,
         ];
 
-        // Get today's bookings count across all routes
-        $todayBookings = 0;
-        if (!empty($routeIds)) {
-            $today = now()->format('Y-m-d');
-            $todayBookings = Booking::whereIn('route_id', $routeIds)
-                ->whereIn('status', ['pending', 'active'])
-                ->where('start_date', '<=', $today)
-                ->where(function ($query) use ($today) {
-                    $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $today);
-                })
-                ->count();
-        }
-        
-        $stats['today_bookings'] = $todayBookings;
-
-        // Today's schedule timeline (across all routes)
+        // Today's schedule timeline
         $todaySchedule = [];
-        if (!empty($routeIds)) {
-            $today = Carbon::today();
-            $todayBookingsList = Booking::whereIn('route_id', $routeIds)
-                ->whereIn('status', ['pending', 'active'])
-                ->where('start_date', '<=', $today)
-                ->where(function ($query) use ($today) {
-                    $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $today);
-                })
-                ->with(['student', 'pickupPoint', 'route'])
-                ->get();
+        $todayBookingsList = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active', 'completed'])
+            ->where('start_date', '<=', $todayFormatted)
+            ->where(function ($query) use ($todayFormatted) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $todayFormatted);
+            })
+            ->with(['student', 'pickupPoint'])
+            ->get();
 
-            // Get all pickup points from all routes
-            $allPickupPoints = collect();
-            foreach ($routes as $route) {
-                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
-                foreach ($points as $point) {
-                    $allPickupPoints->push([
-                        'id' => $point->id,
-                        'name' => $point->name,
-                        'pickup_time' => $point->pickup_time,
-                        'sequence_order' => $point->sequence_order,
-                        'route_name' => $route->name,
-                    ]);
-                }
+        $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
+
+        foreach ($pickupPoints as $pickupPoint) {
+            $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
+            if ($pointBookings->count() > 0) {
+                $allCompleted = $pointBookings->every(function ($booking) {
+                    return $booking->status === 'completed';
+                });
+                
+                $todaySchedule[] = [
+                    'time' => $pickupPoint->pickup_time,
+                    'title' => $pickupPoint->name,
+                    'description' => "Pickup {$pointBookings->count()} student(s)",
+                    'students' => $pointBookings->map(function ($booking) {
+                        return $booking->student->name;
+                    })->toArray(),
+                    'status' => $allCompleted ? 'completed' : 'upcoming',
+                    'pickup_point_id' => $pickupPoint->id,
+                    'route_id' => $route->id,
+                ];
             }
+        }
 
-            // Sort by pickup time
-            $allPickupPoints = $allPickupPoints->sortBy('pickup_time');
+        // Route performance metrics
+        $performanceMetrics = [
+            'on_time_percentage' => 95, // Would need tracking data
+            'total_trips' => Booking::where('route_id', $route->id)->count(),
+            'average_students_per_trip' => $todayBookings > 0 
+                ? round($totalStudents / $todayBookings, 1) 
+                : 0,
+        ];
 
-            foreach ($allPickupPoints as $pickupPointData) {
-                $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPointData['id']);
-                if ($pointBookings->count() > 0) {
-                    $route = $routes->firstWhere('name', $pickupPointData['route_name']);
-                    $allCompleted = $pointBookings->every(function ($booking) {
-                        return $booking->status === 'completed';
-                    });
-                    
-                    $todaySchedule[] = [
-                        'time' => $pickupPointData['pickup_time'],
-                        'title' => $pickupPointData['name'],
-                        'description' => "Pickup {$pointBookings->count()} student(s) - {$pickupPointData['route_name']}",
-                        'students' => $pointBookings->map(function ($booking) {
-                            return $booking->student->name;
-                        })->toArray(),
-                        'status' => $allCompleted ? 'completed' : 'upcoming',
-                        'pickup_point_id' => $pickupPointData['id'],
-                        'route_id' => $route?->id,
+        // Detailed student list
+        $studentsList = [];
+        foreach ($pickupPoints as $pickupPoint) {
+            $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
+            
+            if ($pointBookings->count() > 0) {
+                foreach ($pointBookings as $booking) {
+                    $studentsList[] = [
+                        'id' => $booking->student->id,
+                        'name' => $booking->student->name,
+                        'pickup_point_id' => $pickupPoint->id,
+                        'pickup_point_name' => $pickupPoint->name,
+                        'pickup_point_address' => $pickupPoint->address,
+                        'pickup_time' => $pickupPoint->pickup_time,
+                        'sequence_order' => $pickupPoint->sequence_order,
+                        'booking_id' => $booking->id,
                     ];
                 }
             }
         }
 
-        // Next 3 pickup points (across all routes)
-        $nextPickupPoints = [];
-        if (!empty($routeIds)) {
-            $allPoints = collect();
-            foreach ($routes as $route) {
-                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
-                foreach ($points as $point) {
-                    $allPoints->push([
-                        'id' => $point->id,
-                        'name' => $point->name,
-                        'address' => $point->address,
-                        'pickup_time' => $point->pickup_time,
-                        'dropoff_time' => $point->dropoff_time,
-                        'sequence_order' => $point->sequence_order,
-                        'route_name' => $route->name,
-                    ]);
-                }
+        // Sort by pickup time, then by sequence order
+        usort($studentsList, function ($a, $b) {
+            $timeCompare = strcmp($a['pickup_time'], $b['pickup_time']);
+            if ($timeCompare !== 0) {
+                return $timeCompare;
             }
-            
-            $nextPickupPoints = $allPoints->sortBy('pickup_time')->take(3)->values()->toArray();
-        }
-
-        // Route performance metrics (aggregated)
-        $performanceMetrics = [
-            'on_time_percentage' => 95, // Would need tracking data
-            'total_trips' => !empty($routeIds) ? Booking::whereIn('route_id', $routeIds)->count() : 0,
-            'average_students_per_trip' => !empty($routeIds) 
-                ? round(Booking::whereIn('route_id', $routeIds)->count() > 0 
-                    ? Booking::whereIn('route_id', $routeIds)->distinct('student_id')->count() / Booking::whereIn('route_id', $routeIds)->count() 
-                    : 0, 1) 
-                : 0,
-        ];
-
-        // Detailed student list with pickup points and times (across all routes)
-        $studentsList = [];
-        if (!empty($routeIds)) {
-            $today = Carbon::today();
-            $activeBookings = Booking::whereIn('route_id', $routeIds)
-                ->whereIn('status', ['pending', 'active'])
-                ->where('start_date', '<=', $today)
-                ->where(function ($query) use ($today) {
-                    $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $today);
-                })
-                ->with(['student', 'pickupPoint', 'route'])
-                ->get();
-
-            // Get all pickup points from all routes
-            $allPickupPoints = collect();
-            foreach ($routes as $route) {
-                $points = $route->pickupPoints()->orderBy('sequence_order')->get();
-                foreach ($points as $point) {
-                    $allPickupPoints->push($point);
-                }
-            }
-
-            foreach ($allPickupPoints as $pickupPoint) {
-                $pointBookings = $activeBookings->where('pickup_point_id', $pickupPoint->id);
-                
-                if ($pointBookings->count() > 0) {
-                    foreach ($pointBookings as $booking) {
-                        $studentsList[] = [
-                            'id' => $booking->student->id,
-                            'name' => $booking->student->name,
-                            'pickup_point_id' => $pickupPoint->id,
-                            'pickup_point_name' => $pickupPoint->name,
-                            'pickup_point_address' => $pickupPoint->address,
-                            'pickup_time' => $pickupPoint->pickup_time,
-                            'sequence_order' => $pickupPoint->sequence_order,
-                            'route_name' => $booking->route->name,
-                            'booking_id' => $booking->id,
-                        ];
-                    }
-                }
-            }
-
-            // Sort by pickup time, then by sequence order
-            usort($studentsList, function ($a, $b) {
-                $timeCompare = strcmp($a['pickup_time'], $b['pickup_time']);
-                if ($timeCompare !== 0) {
-                    return $timeCompare;
-                }
-                return $a['sequence_order'] <=> $b['sequence_order'];
-            });
-        }
+            return $a['sequence_order'] <=> $b['sequence_order'];
+        });
 
         return Inertia::render('Driver/Dashboard', [
-            'routes' => $routes->map(function ($route) {
-                return [
-                    'id' => $route->id,
-                    'name' => $route->name,
-                    'vehicle' => $route->vehicle ? [
-                        'make' => $route->vehicle->make,
-                        'model' => $route->vehicle->model,
-                        'license_plate' => $route->vehicle->license_plate,
-                    ] : null,
-                ];
-            })->values()->toArray(),
-            'route' => $routes->count() === 1 ? [
-                'id' => $routes->first()->id,
-                'name' => $routes->first()->name,
-                'vehicle' => $routes->first()->vehicle ? [
-                    'make' => $routes->first()->vehicle->make,
-                    'model' => $routes->first()->vehicle->model,
-                    'license_plate' => $routes->first()->vehicle->license_plate,
+            'route' => [
+                'id' => $route->id,
+                'name' => $route->name,
+                'vehicle' => $route->vehicle ? [
+                    'make' => $route->vehicle->make,
+                    'model' => $route->vehicle->model,
+                    'license_plate' => $route->vehicle->license_plate,
                 ] : null,
-            ] : null,
+                'pickup_time' => $pickupTimeFormatted,
+                'dropoff_time' => $dropoffTimeFormatted,
+            ],
+            'currentPeriod' => $currentPeriod,
             'stats' => $stats,
             'todaySchedule' => $todaySchedule,
-            'nextPickupPoints' => $nextPickupPoints,
             'performanceMetrics' => $performanceMetrics,
             'studentsList' => $studentsList,
+            'canCompleteRoute' => $canCompleteRoute,
+            'isRouteCompleted' => $isRouteCompleted,
+        ]);
+    }
+
+    /**
+     * Mark a route as complete for the current day.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Route $route
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function markRouteComplete(Request $request, Route $route)
+    {
+        $driver = $request->user();
+
+        // Verify the route belongs to the driver
+        if ($route->driver_id !== $driver->id || !$route->active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. This route does not belong to you.',
+            ], 403);
+        }
+
+        // Check if route is already completed today
+        $today = Carbon::today();
+        $existingCompletion = RouteCompletion::where('route_id', $route->id)
+            ->where('driver_id', $driver->id)
+            ->whereDate('completion_date', $today)
+            ->first();
+
+        if ($existingCompletion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This route has already been completed today.',
+            ], 400);
+        }
+
+        // Verify all bookings are completed
+        if (!$this->areAllBookingsCompleted($route)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot complete route. Some bookings are not yet completed.',
+            ], 400);
+        }
+
+        // Create route completion record
+        RouteCompletion::create([
+            'route_id' => $route->id,
+            'driver_id' => $driver->id,
+            'completion_date' => $today,
+            'completed_at' => Carbon::now(),
+            'notes' => $request->input('notes'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Route marked as complete successfully.',
         ]);
     }
 
     public function studentsSchedule(Request $request)
     {
         $driver = $request->user();
-        $routeId = $request->input('route_id');
         
-        // Get driver's assigned routes
-        $routes = Route::where('driver_id', $driver->id)
-            ->where('active', true)
-            ->with(['vehicle', 'pickupPoints'])
-            ->get();
-
-        if ($routes->isEmpty()) {
-            return Inertia::render('Driver/StudentsSchedule', [
-                'routes' => [],
-                'selectedRoute' => null,
-                'studentsList' => [],
-            ]);
-        }
-
-        // If route_id is provided, use it; otherwise use the first route
-        $route = $routeId 
-            ? $routes->firstWhere('id', $routeId) 
-            : $routes->first();
+        // Get the active route
+        $route = $this->getActiveRoute($driver);
 
         if (!$route) {
             return Inertia::render('Driver/StudentsSchedule', [
-                'routes' => $routes->map(function ($r) {
-                    return ['id' => $r->id, 'name' => $r->name];
-                })->values(),
-                'selectedRoute' => null,
+                'route' => null,
                 'studentsList' => [],
             ]);
         }
@@ -330,10 +407,7 @@ class DashboardController extends Controller
         });
 
         return Inertia::render('Driver/StudentsSchedule', [
-            'routes' => $routes->map(function ($r) {
-                return ['id' => $r->id, 'name' => $r->name];
-            })->values(),
-            'selectedRoute' => [
+            'route' => [
                 'id' => $route->id,
                 'name' => $route->name,
             ],
@@ -344,30 +418,20 @@ class DashboardController extends Controller
     public function routePerformance(Request $request)
     {
         $driver = $request->user();
-        $routeId = $request->input('route_id');
         
-        // Get driver's assigned routes
-        $routes = Route::where('driver_id', $driver->id)
-            ->where('active', true)
-            ->with(['vehicle'])
-            ->get();
+        // Get the active route
+        $route = $this->getActiveRoute($driver);
 
-        if ($routes->isEmpty()) {
+        if (!$route) {
             return Inertia::render('Driver/RoutePerformance', [
-                'routes' => [],
-                'selectedRoute' => null,
+                'route' => null,
                 'performanceMetrics' => [],
                 'weeklyStats' => [],
                 'monthlyStats' => [],
             ]);
         }
 
-        // If route_id is provided, use it; otherwise aggregate across all routes
-        $routeIds = $routeId 
-            ? [$routeId]
-            : $routes->pluck('id')->toArray();
-
-        $selectedRoute = $routeId ? $routes->firstWhere('id', $routeId) : null;
+        $routeIds = [$route->id];
 
         $today = Carbon::today();
         $thisWeekStart = $today->copy()->startOfWeek();
@@ -436,13 +500,10 @@ class DashboardController extends Controller
         ];
 
         return Inertia::render('Driver/RoutePerformance', [
-            'routes' => $routes->map(function ($r) {
-                return ['id' => $r->id, 'name' => $r->name];
-            })->values(),
-            'selectedRoute' => $selectedRoute ? [
-                'id' => $selectedRoute->id,
-                'name' => $selectedRoute->name,
-            ] : null,
+            'route' => [
+                'id' => $route->id,
+                'name' => $route->name,
+            ],
             'performanceMetrics' => $performanceMetrics,
             'weeklyStats' => $weeklyStats,
             'monthlyStats' => $monthlyStats,
@@ -452,34 +513,17 @@ class DashboardController extends Controller
     public function routeInformation(Request $request)
     {
         $driver = $request->user();
-        $routeId = $request->input('route_id');
         
-        // Get driver's assigned routes
-        $routes = Route::where('driver_id', $driver->id)
-            ->where('active', true)
-            ->with(['vehicle', 'pickupPoints', 'driver'])
-            ->get();
-
-        if ($routes->isEmpty()) {
-            return Inertia::render('Driver/RouteInformation', [
-                'routes' => [],
-                'selectedRoute' => null,
-            ]);
-        }
-
-        // If route_id is provided, use it; otherwise use the first route
-        $route = $routeId 
-            ? $routes->firstWhere('id', $routeId) 
-            : $routes->first();
+        // Get the active route
+        $route = $this->getActiveRoute($driver);
 
         if (!$route) {
             return Inertia::render('Driver/RouteInformation', [
-                'routes' => $routes->map(function ($r) {
-                    return ['id' => $r->id, 'name' => $r->name];
-                })->values(),
-                'selectedRoute' => null,
+                'route' => null,
             ]);
         }
+
+        $route->load(['vehicle', 'pickupPoints', 'driver']);
 
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get()->map(function ($point) {
             return [
@@ -505,10 +549,7 @@ class DashboardController extends Controller
             ->count();
 
         return Inertia::render('Driver/RouteInformation', [
-            'routes' => $routes->map(function ($r) {
-                return ['id' => $r->id, 'name' => $r->name];
-            })->values(),
-            'selectedRoute' => [
+            'route' => [
                 'id' => $route->id,
                 'name' => $route->name,
                 'capacity' => $route->capacity,

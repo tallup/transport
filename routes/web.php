@@ -90,6 +90,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::get('/route-information', [\App\Http\Controllers\Driver\DashboardController::class, 'routeInformation'])->name('route-information');
     Route::post('/bookings/{booking}/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markComplete'])->name('bookings.mark-complete');
     Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete');
+    Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete');
 });
 
 Route::middleware('auth')->group(function () {
