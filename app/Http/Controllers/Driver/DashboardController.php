@@ -69,18 +69,14 @@ class DashboardController extends Controller
             }
         }
 
-        // If driver has only one route, show it regardless of period
-        if ($routes->count() === 1) {
-            return $routes->first();
-        }
-
-        // If it's morning (before 12:00 PM), show AM route or 'both' route
+        // If it's morning (before 12:00 PM), show AM route or 'both' route only
         if ($isMorning) {
             if ($amRoute) {
                 return $amRoute;
             }
-            // Fallback to 'both' route or PM route or any route
-            return $bothRoute ?: $pmRoute ?: $routes->first();
+            // Only show 'both' route in morning if no AM route exists
+            // Don't show PM-only routes in the morning
+            return $bothRoute;
         }
 
         // If it's afternoon (after 12:00 PM)

@@ -83,12 +83,18 @@ class Route extends Model
     }
 
     /**
-     * Determine the service period (AM or PM) based on pickup_time or service_type.
+     * Determine the service period (AM or PM) based on service_type or pickup_time.
+     * service_type takes precedence if explicitly set to 'am' or 'pm'.
      * 
      * @return string 'am', 'pm', or 'both'
      */
     public function servicePeriod(): string
     {
+        // If service_type is explicitly set to 'am' or 'pm', use it (takes precedence)
+        if ($this->service_type && in_array($this->service_type, ['am', 'pm'])) {
+            return $this->service_type;
+        }
+
         // If pickup_time is set, use it to determine period
         if ($this->pickup_time) {
             // Handle TIME type - extract just the time portion
@@ -117,14 +123,8 @@ class Route extends Model
             return $hour < 12 ? 'am' : 'pm';
         }
 
-        // If no pickup_time, fall back to service_type field
-        if ($this->service_type) {
-            // service_type can be 'am', 'pm', or 'both'
-            return $this->service_type;
-        }
-
-        // Default to 'both' if neither is set
-        return 'both';
+        // If service_type is 'both' or not set, and no pickup_time, return 'both'
+        return $this->service_type ?: 'both';
     }
 
     /**
