@@ -8,6 +8,28 @@ import axios from 'axios';
 export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
     
+    // Helper function to format time
+    const formatTime = (timeString) => {
+        if (!timeString) return '';
+        // Handle different time formats
+        if (typeof timeString === 'string') {
+            // If it's already formatted or just time (HH:MM:SS or HH:MM)
+            if (timeString.includes(':') && timeString.length <= 8) {
+                try {
+                    return new Date('2000-01-01T' + timeString).toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        hour12: true 
+                    });
+                } catch (e) {
+                    return timeString;
+                }
+            }
+            return timeString;
+        }
+        return timeString;
+    };
+    
     // Get student_id from URL query parameter
     const [studentIdParam, setStudentIdParam] = useState(null);
     const [initialized, setInitialized] = useState(false);
@@ -53,11 +75,16 @@ export default function CreateBooking({ students, routes }) {
     }, [data.school_id, routes]);
 
 
-    // Pre-fill pickup address with student's home address
+    // Auto-set school_id and filter routes when student is selected
     useEffect(() => {
-        if (data.student_id && !data.pickup_address) {
+        if (data.student_id) {
             const student = students.find(s => s.id == data.student_id);
-            if (student?.home_address) {
+            if (student?.school_id) {
+                // Automatically set the school_id based on student's school
+                setData('school_id', student.school_id);
+            }
+            // Pre-fill pickup address with student's home address
+            if (!data.pickup_address && student?.home_address) {
                 setData('pickup_address', student.home_address);
             }
         }
@@ -363,7 +390,17 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 1: Select Route */}
                                 {step === 1 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Route</h3>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white mb-2">Select Route</h3>
+                                            {data.student_id && (() => {
+                                                const selectedStudent = students.find(s => s.id == data.student_id);
+                                                return selectedStudent?.school ? (
+                                                    <p className="text-sm text-white/80 font-semibold mb-4">
+                                                        Showing routes for: <span className="text-blue-200 font-bold">{selectedStudent.school.name}</span>
+                                                    </p>
+                                                ) : null;
+                                            })()}
+                                        </div>
                                         {filteredRoutes.length === 0 ? (
                                             <div className="text-center py-8">
                                                 <p className="text-white text-lg font-semibold mb-4">No routes available for the selected school.</p>
@@ -391,13 +428,27 @@ export default function CreateBooking({ students, routes }) {
                                                         className="mr-3"
                                                     />
                                                     <div className="flex justify-between items-start">
-                                                        <div>
+                                                        <div className="flex-1">
                                                             <span className="font-bold text-white">{route.name}</span>
                                                             <p className="text-sm text-white/90 mt-1 font-semibold">
                                                                 Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
                                                             </p>
+                                                            {(route.pickup_time || route.dropoff_time) && (
+                                                                <div className="mt-2 space-y-1">
+                                                                    {route.pickup_time && (
+                                                                        <p className="text-xs text-blue-200 font-semibold">
+                                                                            📍 Estimated Pickup: {formatTime(route.pickup_time)}
+                                                                        </p>
+                                                                    )}
+                                                                    {route.dropoff_time && (
+                                                                        <p className="text-xs text-green-200 font-semibold">
+                                                                            🏫 Estimated Dropoff: {formatTime(route.dropoff_time)}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                        <div className="text-right">
+                                                        <div className="text-right ml-4">
                                                             <span className={`text-sm px-2 py-1 rounded border font-semibold ${
                                                                 route.available_seats > 0
                                                                     ? 'bg-green-500/30 text-green-100 border-green-400/50'
@@ -497,14 +548,21 @@ export default function CreateBooking({ students, routes }) {
                                                                 }}
                                                                 className="mr-3"
                                                             />
-                                                            <div>
+                                                            <div className="flex-1">
                                                                 <span className="font-bold text-white">{point.name}</span>
                                                                 <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
-                                                                {point.pickup_time && (
-                                                                    <p className="text-xs text-white/70 mt-1">
-                                                                        Pickup Time: {point.pickup_time}
-                                                                    </p>
-                                                                )}
+                                                                <div className="mt-2 space-y-1">
+                                                                    {point.pickup_time && (
+                                                                        <p className="text-xs text-blue-200 font-semibold">
+                                                                            📍 Pickup Time: {formatTime(point.pickup_time)}
+                                                                        </p>
+                                                                    )}
+                                                                    {point.dropoff_time && (
+                                                                        <p className="text-xs text-green-200 font-semibold">
+                                                                            🏫 Dropoff Time: {formatTime(point.dropoff_time)}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </label>
                                                     ))}
@@ -704,6 +762,20 @@ export default function CreateBooking({ students, routes }) {
                                             <div>
                                                 <span className="font-bold text-white">Route:</span>{' '}
                                                 <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
+                                                {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
+                                                    <div className="mt-1 ml-4 space-y-0.5">
+                                                        {selectedRoute.pickup_time && (
+                                                            <p className="text-xs text-blue-200 font-semibold">
+                                                                📍 Route Pickup: {formatTime(selectedRoute.pickup_time)}
+                                                            </p>
+                                                        )}
+                                                        {selectedRoute.dropoff_time && (
+                                                            <p className="text-xs text-green-200 font-semibold">
+                                                                🏫 Route Dropoff: {formatTime(selectedRoute.dropoff_time)}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                             <div>
                                                 <span className="font-bold text-white">Pickup Location:</span>{' '}
@@ -715,6 +787,23 @@ export default function CreateBooking({ students, routes }) {
                                                           })()
                                                         : data.pickup_address || 'Not set'}
                                                 </span>
+                                                {data.pickup_point_id && (() => {
+                                                    const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
+                                                    return selectedPoint && (selectedPoint.pickup_time || selectedPoint.dropoff_time) ? (
+                                                        <div className="mt-1 ml-4 space-y-0.5">
+                                                            {selectedPoint.pickup_time && (
+                                                                <p className="text-xs text-blue-200 font-semibold">
+                                                                    📍 Pickup Time: {formatTime(selectedPoint.pickup_time)}
+                                                                </p>
+                                                            )}
+                                                            {selectedPoint.dropoff_time && (
+                                                                <p className="text-xs text-green-200 font-semibold">
+                                                                    🏫 Dropoff Time: {formatTime(selectedPoint.dropoff_time)}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    ) : null;
+                                                })()}
                                             </div>
                                             <div>
                                                 <span className="font-bold text-white">Plan:</span>{' '}

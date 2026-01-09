@@ -220,7 +220,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                         </svg>
                                         <p className="mt-4 text-lg font-semibold text-white">No bookings for this date</p>
                                         <p className="mt-2 text-base font-medium text-white/70">
-                                            {selectedRoute ? `No bookings found for ${selectedRoute.name} on this date.` : 'No bookings found for the selected date.'}
+                                            {route ? `No bookings found for ${route.name} on this date.` : 'No bookings found for the selected date.'}
                                         </p>
                                     </div>
                                 </GlassCard>
