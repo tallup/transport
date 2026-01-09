@@ -167,19 +167,34 @@ class RosterController extends Controller
 
             // Group by pickup point
             $groupedBookings = $bookings
+                ->filter(function ($booking) {
+                    // Only include bookings with valid pickup points and students
+                    return $booking->pickupPoint !== null && $booking->student !== null;
+                })
                 ->groupBy('pickup_point_id')
                 ->map(function ($bookings) {
-                    $pickupPoint = $bookings->first()->pickupPoint;
+                    $firstBooking = $bookings->first();
+                    $pickupPoint = $firstBooking->pickupPoint;
+                    
+                    if (!$pickupPoint) {
+                        return null;
+                    }
+                    
                     return [
                         'pickup_point' => [
                             'id' => $pickupPoint->id,
                             'name' => $pickupPoint->name,
-                            'address' => $pickupPoint->address,
+                            'address' => $pickupPoint->address ?? null,
                             'pickup_time' => $pickupPoint->pickup_time,
-                            'dropoff_time' => $pickupPoint->dropoff_time,
-                            'sequence_order' => $pickupPoint->sequence_order,
+                            'dropoff_time' => $pickupPoint->dropoff_time ?? null,
+                            'sequence_order' => $pickupPoint->sequence_order ?? 999,
                         ],
-                        'bookings' => $bookings->sortBy('student.name')->map(function ($booking) {
+                        'bookings' => $bookings->sortBy(function ($booking) {
+                            return $booking->student ? $booking->student->name : '';
+                        })->map(function ($booking) {
+                            if (!$booking->student) {
+                                return null;
+                            }
                             return [
                                 'id' => $booking->id,
                                 'status' => $booking->status,
@@ -187,13 +202,14 @@ class RosterController extends Controller
                                     'id' => $booking->student->id,
                                     'name' => $booking->student->name,
                                     'school' => $booking->student->school->name ?? 'N/A',
-                                    'emergency_phone' => $booking->student->emergency_phone,
-                                    'grade' => $booking->student->grade,
+                                    'emergency_phone' => $booking->student->emergency_phone ?? null,
+                                    'grade' => $booking->student->grade ?? null,
                                 ],
                             ];
-                        })->values(),
+                        })->filter()->values(),
                     ];
                 })
+                ->filter() // Remove null entries
                 ->sortBy('pickup_point.sequence_order')
                 ->values()
                 ->toArray();

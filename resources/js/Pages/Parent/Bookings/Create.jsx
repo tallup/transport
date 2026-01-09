@@ -1,4 +1,4 @@
-import { Head, useForm, router, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
@@ -18,6 +18,7 @@ export default function CreateBooking({ students, routes }) {
     const [price, setPrice] = useState(null);
     const [loading, setLoading] = useState(false);
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
+    const [pickupOption, setPickupOption] = useState('custom'); // 'pickup_point' or 'custom'
 
     const { data, setData, post, errors, processing } = useForm({
         school_id: '',
@@ -68,8 +69,12 @@ export default function CreateBooking({ students, routes }) {
             const route = filteredRoutes.find(r => r.id === parseInt(data.route_id));
             setSelectedRoute(route);
             checkCapacity(data.route_id);
+            // Reset pickup option and data when route changes
+            setPickupOption('custom');
+            setData('pickup_point_id', '');
         } else {
             setSelectedRoute(null);
+            setPickupOption('custom');
         }
     }, [data.route_id, filteredRoutes]);
 
@@ -111,7 +116,11 @@ export default function CreateBooking({ students, routes }) {
         e.preventDefault();
         
         // Validate required fields before submitting
-        if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
+        const hasPickupLocation = pickupOption === 'pickup_point' 
+            ? data.pickup_point_id 
+            : data.pickup_address;
+        
+        if (!data.student_id || !data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
             alert('Please complete all required fields before proceeding to payment.');
             return;
         }
@@ -143,9 +152,15 @@ export default function CreateBooking({ students, routes }) {
             return;
         }
         // Step 2: Pickup
-        if (step === 2 && !data.pickup_address && !data.pickup_point_id) {
-            alert('Please enter a pickup address.');
-            return;
+        if (step === 2) {
+            if (pickupOption === 'pickup_point' && !data.pickup_point_id) {
+                alert('Please select a pickup point.');
+                return;
+            }
+            if (pickupOption === 'custom' && !data.pickup_address) {
+                alert('Please enter a pickup address.');
+                return;
+            }
         }
         // Step 3: Plan
         if (step === 3 && !data.plan_type) {
@@ -406,65 +421,159 @@ export default function CreateBooking({ students, routes }) {
                                 {step === 2 && (
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-white mb-4">Pickup and Dropoff Location</h3>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Pickup Address <span className="text-red-300">*</span>
+                                        
+                                        {selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 && (
+                                            <div className="mb-6">
+                                                <label className="block text-base font-bold text-white mb-3">
+                                                    Choose Pickup Option <span className="text-red-300">*</span>
                                                 </label>
-                                                <textarea
-                                                    value={data.pickup_address}
-                                                    onChange={(e) => setData('pickup_address', e.target.value)}
-                                                    placeholder="Enter the full address where the student will be picked up"
-                                                    rows={3}
-                                                    className="block w-full glass-input text-white"
-                                                    required
-                                                />
-                                                {errors.pickup_address && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_address}</p>
+                                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        pickupOption === 'pickup_point'
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="pickup_option"
+                                                            value="pickup_point"
+                                                            checked={pickupOption === 'pickup_point'}
+                                                            onChange={(e) => {
+                                                                setPickupOption(e.target.value);
+                                                                setData('pickup_point_id', '');
+                                                                setData('pickup_address', '');
+                                                            }}
+                                                            className="mr-3"
+                                                        />
+                                                        <span className="font-bold text-white">Select from Route</span>
+                                                    </label>
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        pickupOption === 'custom'
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="pickup_option"
+                                                            value="custom"
+                                                            checked={pickupOption === 'custom'}
+                                                            onChange={(e) => {
+                                                                setPickupOption(e.target.value);
+                                                                setData('pickup_point_id', '');
+                                                            }}
+                                                            className="mr-3"
+                                                        />
+                                                        <span className="font-bold text-white">Custom Address</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {pickupOption === 'pickup_point' && selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 ? (
+                                            <div className="space-y-4">
+                                                <label className="block text-base font-bold text-white mb-2">
+                                                    Select Pickup Point <span className="text-red-300">*</span>
+                                                </label>
+                                                <div className="space-y-2">
+                                                    {selectedRoute.pickup_points.map((point) => (
+                                                        <label
+                                                            key={point.id}
+                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                                data.pickup_point_id == point.id
+                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="pickup_point_id"
+                                                                value={point.id}
+                                                                checked={data.pickup_point_id == point.id}
+                                                                onChange={(e) => {
+                                                                    setData('pickup_point_id', e.target.value);
+                                                                    setData('pickup_address', point.address);
+                                                                    setData('pickup_latitude', point.latitude || '');
+                                                                    setData('pickup_longitude', point.longitude || '');
+                                                                }}
+                                                                className="mr-3"
+                                                            />
+                                                            <div>
+                                                                <span className="font-bold text-white">{point.name}</span>
+                                                                <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
+                                                                {point.pickup_time && (
+                                                                    <p className="text-xs text-white/70 mt-1">
+                                                                        Pickup Time: {point.pickup_time}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                                {errors.pickup_point_id && (
+                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_point_id}</p>
                                                 )}
-                                                <p className="text-sm text-white/80 mt-2 font-semibold">
-                                                    This address will be used for daily pickup. Make sure it's accurate and complete.
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-base font-bold text-white mb-2">
+                                                        Pickup Address <span className="text-red-300">*</span>
+                                                    </label>
+                                                    <textarea
+                                                        value={data.pickup_address}
+                                                        onChange={(e) => setData('pickup_address', e.target.value)}
+                                                        placeholder="Enter the full address where the student will be picked up"
+                                                        rows={3}
+                                                        className="block w-full glass-input text-white"
+                                                        required={pickupOption === 'custom'}
+                                                    />
+                                                    {errors.pickup_address && (
+                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_address}</p>
+                                                    )}
+                                                    <p className="text-sm text-white/80 mt-2 font-semibold">
+                                                        This address will be used for daily pickup. Make sure it's accurate and complete.
+                                                    </p>
+                                                </div>
+                                                
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-base font-bold text-white mb-2">
+                                                            Latitude (Optional)
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            step="any"
+                                                            value={data.pickup_latitude}
+                                                            onChange={(e) => setData('pickup_latitude', e.target.value)}
+                                                            placeholder="e.g., 40.7128"
+                                                            className="block w-full glass-input text-white"
+                                                        />
+                                                        {errors.pickup_latitude && (
+                                                            <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_latitude}</p>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-base font-bold text-white mb-2">
+                                                            Longitude (Optional)
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            step="any"
+                                                            value={data.pickup_longitude}
+                                                            onChange={(e) => setData('pickup_longitude', e.target.value)}
+                                                            placeholder="e.g., -74.0060"
+                                                            className="block w-full glass-input text-white"
+                                                        />
+                                                        {errors.pickup_longitude && (
+                                                            <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_longitude}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm text-white/70 font-semibold">
+                                                    Note: Latitude and longitude are optional. They can be used for GPS navigation if provided.
                                                 </p>
                                             </div>
-                                            
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
-                                                        Latitude (Optional)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="any"
-                                                        value={data.pickup_latitude}
-                                                        onChange={(e) => setData('pickup_latitude', e.target.value)}
-                                                        placeholder="e.g., 40.7128"
-                                                        className="block w-full glass-input text-white"
-                                                    />
-                                                    {errors.pickup_latitude && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_latitude}</p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
-                                                        Longitude (Optional)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="any"
-                                                        value={data.pickup_longitude}
-                                                        onChange={(e) => setData('pickup_longitude', e.target.value)}
-                                                        placeholder="e.g., -74.0060"
-                                                        className="block w-full glass-input text-white"
-                                                    />
-                                                    {errors.pickup_longitude && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_longitude}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <p className="text-sm text-white/70 font-semibold">
-                                                Note: Latitude and longitude are optional. They can be used for GPS navigation if provided.
-                                            </p>
-                                        </div>
+                                        )}
                                     </div>
                                 )}
 
@@ -597,9 +706,14 @@ export default function CreateBooking({ students, routes }) {
                                                 <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
                                             </div>
                                             <div>
-                                                <span className="font-bold text-white">Pickup Address:</span>{' '}
+                                                <span className="font-bold text-white">Pickup Location:</span>{' '}
                                                 <span className="text-white/90 font-semibold">
-                                                    {data.pickup_address || pickupPoints.find(p => p.id == data.pickup_point_id)?.name || 'Not set'}
+                                                    {data.pickup_point_id 
+                                                        ? (() => {
+                                                            const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
+                                                            return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
+                                                          })()
+                                                        : data.pickup_address || 'Not set'}
                                                 </span>
                                             </div>
                                             <div>
