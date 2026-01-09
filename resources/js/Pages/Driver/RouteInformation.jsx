@@ -238,12 +238,6 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 )}
                             </GlassCard>
                         </>
-                    ) : (
-                        <GlassCard>
-                            <div className="text-center py-8">
-                                <p className="text-lg font-semibold text-white">Please select a route to view information</p>
-                            </div>
-                        </GlassCard>
                     )}
                 </div>
             </div>
