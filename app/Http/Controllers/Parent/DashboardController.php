@@ -22,12 +22,32 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Active bookings
-        $activeBookings = $bookings->where('status', 'active');
+        // Active bookings: Include both 'pending' and 'active' status, and filter by date range
+        $today = Carbon::today();
+        $activeBookings = $bookings->filter(function ($booking) use ($today) {
+            // Must be pending or active status
+            if (!in_array($booking->status, ['pending', 'active'])) {
+                return false;
+            }
+            
+            // Check if today falls within the booking period
+            $startDate = Carbon::parse($booking->start_date);
+            $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : null;
+            
+            // Booking is active if today is >= start_date AND (end_date is null OR today <= end_date)
+            if ($today->lt($startDate)) {
+                return false; // Booking hasn't started yet
+            }
+            
+            if ($endDate && $today->gt($endDate)) {
+                return false; // Booking has ended
+            }
+            
+            return true;
+        });
 
         // Upcoming pickups calendar (next 14 days)
         $upcomingPickups = [];
-        $today = Carbon::today();
         foreach ($activeBookings as $booking) {
             $startDate = Carbon::parse($booking->start_date);
             $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : $today->copy()->addMonths(6);
