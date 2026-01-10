@@ -6,6 +6,7 @@ use App\Exceptions\CapacityExceededException;
 use App\Exceptions\PricingNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\PickupPoint;
 use App\Models\Route;
@@ -420,6 +421,216 @@ class BookingController extends Controller
             'schools' => $schools,
             'routes' => $routes,
         ]);
+    }
+
+    public function show(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check
+        if (!$user->can('view', $booking)) {
+            abort(403, 'Unauthorized to view this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Calculate price if booking is pending
+        $price = null;
+        if ($booking->status === 'pending' && $booking->route) {
+            try {
+                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
+            } catch (PricingNotFoundException $e) {
+                // Price calculation failed, but still show booking
+            }
+        }
+
+        return Inertia::render('Parent/Bookings/Show', [
+            'booking' => $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']),
+            'price' => $price,
+        ]);
+    }
+
+    public function edit(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check
+        if (!$user->can('update', $booking)) {
+            abort(403, 'Unauthorized to edit this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Only allow editing pending bookings or future active bookings
+        if ($booking->status !== 'pending') {
+            $startDate = \Carbon\Carbon::parse($booking->start_date);
+            if ($startDate->isPast() && $booking->status === 'active') {
+                return redirect()->route('parent.bookings.show', $booking)
+                    ->with('error', 'Cannot edit past or active bookings.');
+            }
+        }
+
+        // Load booking with relationships
+        $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
+        $students = $user->students()->with('school')->get();
+        $schools = \App\Models\School::where('active', true)->orderBy('name')->get();
+        
+        // Get routes for the student's school
+        $schoolId = $booking->student->school_id;
+        $routes = Route::where('active', true)
+            ->whereHas('schools', function ($query) use ($schoolId) {
+                $query->where('schools.id', $schoolId);
+            })
+            ->with(['vehicle', 'pickupPoints', 'schools'])
+            ->get()
+            ->map(function ($route) {
+                $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
+                $route->pickup_points = $route->pickupPoints;
+                return $route;
+            });
+
+        // Calculate price
+        $price = null;
+        if ($booking->route) {
+            try {
+                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
+            } catch (PricingNotFoundException $e) {
+                // Price calculation failed
+            }
+        }
+
+        return Inertia::render('Parent/Bookings/Edit', [
+            'booking' => $booking,
+            'students' => $students,
+            'schools' => $schools,
+            'routes' => $routes,
+            'price' => $price,
+        ]);
+    }
+
+    public function update(UpdateBookingRequest $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check
+        if (!$user->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Only allow updating pending bookings or future active bookings
+        if ($booking->status !== 'pending') {
+            $startDate = \Carbon\Carbon::parse($booking->start_date);
+            if ($startDate->isPast() && $booking->status === 'active') {
+                return back()->withErrors(['error' => 'Cannot update past or active bookings.']);
+            }
+        }
+
+        $validated = $request->validated();
+
+        // Sanitize text inputs
+        if (isset($validated['pickup_address'])) {
+            $validated['pickup_address'] = strip_tags($validated['pickup_address']);
+        }
+
+        // Ensure either pickup_point_id OR pickup_address is provided if route_id is being updated
+        if (isset($validated['route_id']) && empty($validated['pickup_point_id']) && empty($validated['pickup_address'])) {
+            // If no new pickup info provided, keep existing
+            if (!$booking->pickup_point_id && !$booking->pickup_address) {
+                return back()->withErrors(['pickup_address' => 'Please either select a pickup point or enter a pickup address.']);
+            }
+        }
+
+        // Validate booking date against calendar if start_date is being updated
+        if (isset($validated['start_date'])) {
+            $startDate = \Carbon\Carbon::parse($validated['start_date']);
+            $dateValidation = $this->calendarService->validateBookingDate($startDate);
+            if (!$dateValidation['valid']) {
+                return back()->withErrors(['start_date' => $dateValidation['message']]);
+            }
+        }
+
+        // Check for overlapping bookings if dates are being updated (excluding current booking)
+        if (isset($validated['start_date']) || isset($validated['end_date'])) {
+            $startDate = isset($validated['start_date']) 
+                ? \Carbon\Carbon::parse($validated['start_date']) 
+                : \Carbon\Carbon::parse($booking->start_date);
+            
+            $bookingService = app(BookingService::class);
+            $endDate = isset($validated['plan_type']) 
+                ? $bookingService->calculateEndDate($validated['plan_type'], $startDate)
+                : ($booking->end_date ? \Carbon\Carbon::parse($booking->end_date) : null);
+            
+            if (!$endDate && isset($validated['plan_type'])) {
+                $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
+            }
+            
+            $overlappingBooking = Booking::where('student_id', $booking->student_id)
+                ->where('id', '!=', $booking->id)
+                ->whereIn('status', ['pending', 'active'])
+                ->where(function ($q) use ($startDate, $endDate) {
+                    $q->where(function ($subQ) use ($startDate, $endDate) {
+                        $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
+                            ->where(function ($endQ) use ($startDate) {
+                                $endQ->whereNull('end_date')
+                                    ->orWhere('end_date', '>=', $startDate);
+                            });
+                    });
+                })
+                ->with(['route', 'student'])
+                ->first();
+            
+            if ($overlappingBooking) {
+                $bookingInfo = sprintf(
+                    'This student already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
+                    $overlappingBooking->status,
+                    $overlappingBooking->id,
+                    $overlappingBooking->start_date->format('M d, Y'),
+                    $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
+                );
+                return back()->withErrors(['start_date' => $bookingInfo]);
+            }
+        }
+
+        // Check capacity if route is being updated
+        if (isset($validated['route_id']) && $validated['route_id'] != $booking->route_id) {
+            $route = Route::findOrFail($validated['route_id']);
+            try {
+                $this->capacityGuard->validateBookingCapacity($route);
+            } catch (CapacityExceededException $e) {
+                return back()->withErrors(['route_id' => $e->getMessage()]);
+            }
+        }
+
+        // Recalculate end date if plan_type or start_date changed
+        if (isset($validated['plan_type']) || isset($validated['start_date'])) {
+            $planType = $validated['plan_type'] ?? $booking->plan_type;
+            $startDate = isset($validated['start_date']) 
+                ? \Carbon\Carbon::parse($validated['start_date']) 
+                : \Carbon\Carbon::parse($booking->start_date);
+            
+            $bookingService = app(BookingService::class);
+            $newEndDate = $bookingService->calculateEndDate($planType, $startDate);
+            $validated['end_date'] = $newEndDate?->format('Y-m-d');
+        }
+
+        // Update booking
+        $booking->update($validated);
+
+        return redirect()->route('parent.bookings.show', $booking)
+            ->with('success', 'Booking updated successfully.');
     }
 
     public function cancel(Request $request, Booking $booking)

@@ -233,6 +233,7 @@ class DashboardController extends Controller
 
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
 
+        // Group bookings by pickup points
         foreach ($pickupPoints as $pickupPoint) {
             $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
             if ($pointBookings->count() > 0) {
@@ -245,13 +246,45 @@ class DashboardController extends Controller
                     'title' => $pickupPoint->name,
                     'description' => "Pickup {$pointBookings->count()} student(s)",
                     'students' => $pointBookings->map(function ($booking) {
-                        return $booking->student->name;
+                        return [
+                            'name' => $booking->student->name,
+                            'address' => $booking->pickup_address ?? $booking->pickupPoint->address ?? 'Address not set',
+                            'booking_id' => $booking->id,
+                        ];
                     })->toArray(),
                     'status' => $allCompleted ? 'completed' : 'upcoming',
                     'pickup_point_id' => $pickupPoint->id,
                     'route_id' => $route->id,
                 ];
             }
+        }
+
+        // Also show bookings with custom pickup addresses (no pickup_point_id)
+        $customAddressBookings = $todayBookingsList->filter(function ($booking) {
+            return empty($booking->pickup_point_id) && !empty($booking->pickup_address);
+        });
+
+        if ($customAddressBookings->count() > 0) {
+            $allCompleted = $customAddressBookings->every(function ($booking) {
+                return $booking->status === 'completed';
+            });
+            
+            $todaySchedule[] = [
+                'time' => $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD',
+                'title' => 'Custom Pickup Locations',
+                'description' => "Pickup {$customAddressBookings->count()} student(s) at custom locations",
+                'students' => $customAddressBookings->map(function ($booking) {
+                    return [
+                        'name' => $booking->student->name,
+                        'address' => $booking->pickup_address,
+                        'booking_id' => $booking->id,
+                    ];
+                })->toArray(),
+                'status' => $allCompleted ? 'completed' : 'upcoming',
+                'pickup_point_id' => null,
+                'route_id' => $route->id,
+                'is_custom' => true,
+            ];
         }
 
         // Route performance metrics
@@ -276,21 +309,40 @@ class DashboardController extends Controller
                         'pickup_point_id' => $pickupPoint->id,
                         'pickup_point_name' => $pickupPoint->name,
                         'pickup_point_address' => $pickupPoint->address,
+                        'pickup_address' => $booking->pickup_address ?? null,
                         'pickup_time' => $pickupPoint->pickup_time,
                         'sequence_order' => $pickupPoint->sequence_order,
                         'booking_id' => $booking->id,
+                        'status' => $booking->status,
                     ];
                 }
             }
         }
 
+        // Add students with custom pickup addresses (no pickup_point_id)
+        foreach ($customAddressBookings as $booking) {
+            $studentsList[] = [
+                'id' => $booking->student->id,
+                'name' => $booking->student->name,
+                'pickup_point_id' => null,
+                'pickup_point_name' => 'Custom Location',
+                'pickup_point_address' => $booking->pickup_address,
+                'pickup_address' => $booking->pickup_address,
+                'pickup_time' => $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD',
+                'sequence_order' => 9999, // Put custom addresses at the end
+                'booking_id' => $booking->id,
+                'status' => $booking->status,
+                'is_custom' => true,
+            ];
+        }
+
         // Sort by pickup time, then by sequence order
         usort($studentsList, function ($a, $b) {
-            $timeCompare = strcmp($a['pickup_time'], $b['pickup_time']);
+            $timeCompare = strcmp($a['pickup_time'] ?? '', $b['pickup_time'] ?? '');
             if ($timeCompare !== 0) {
                 return $timeCompare;
             }
-            return $a['sequence_order'] <=> $b['sequence_order'];
+            return ($a['sequence_order'] ?? 9999) <=> ($b['sequence_order'] ?? 9999);
         });
 
         return Inertia::render('Driver/Dashboard', [
@@ -413,6 +465,7 @@ class DashboardController extends Controller
                         'pickup_point_id' => $pickupPoint->id,
                         'pickup_point_name' => $pickupPoint->name,
                         'pickup_point_address' => $pickupPoint->address,
+                        'pickup_address' => $booking->pickup_address ?? null,
                         'pickup_time' => $pickupPoint->pickup_time,
                         'dropoff_time' => $pickupPoint->dropoff_time,
                         'dropoff_point_name' => $booking->dropoffPoint->name ?? $pickupPoint->name,
@@ -426,12 +479,39 @@ class DashboardController extends Controller
             }
         }
 
+        // Add bookings with custom pickup addresses (no pickup_point_id)
+        $customAddressBookings = $activeBookings->filter(function ($booking) {
+            return empty($booking->pickup_point_id) && !empty($booking->pickup_address);
+        });
+
+        foreach ($customAddressBookings as $booking) {
+            $studentsList[] = [
+                'id' => $booking->student->id,
+                'name' => $booking->student->name,
+                'grade' => $booking->student->grade,
+                'school' => $booking->student->school->name ?? 'N/A',
+                'pickup_point_id' => null,
+                'pickup_point_name' => 'Custom Location',
+                'pickup_point_address' => $booking->pickup_address,
+                'pickup_address' => $booking->pickup_address,
+                'pickup_time' => $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD',
+                'dropoff_time' => $route->dropoff_time ? (is_string($route->dropoff_time) ? substr($route->dropoff_time, 0, 5) : $route->dropoff_time->format('H:i')) : null,
+                'dropoff_point_name' => $booking->dropoffPoint->name ?? 'Custom Location',
+                'sequence_order' => 9999, // Put custom addresses at the end
+                'booking_id' => $booking->id,
+                'plan_type' => $booking->plan_type,
+                'start_date' => $booking->start_date->format('Y-m-d'),
+                'end_date' => $booking->end_date ? $booking->end_date->format('Y-m-d') : null,
+                'is_custom' => true,
+            ];
+        }
+
         // Sort by sequence order, then by pickup time
         usort($studentsList, function ($a, $b) {
-            if ($a['sequence_order'] != $b['sequence_order']) {
-                return $a['sequence_order'] <=> $b['sequence_order'];
+            if (($a['sequence_order'] ?? 9999) != ($b['sequence_order'] ?? 9999)) {
+                return ($a['sequence_order'] ?? 9999) <=> ($b['sequence_order'] ?? 9999);
             }
-            return strcmp($a['pickup_time'], $b['pickup_time']);
+            return strcmp($a['pickup_time'] ?? '', $b['pickup_time'] ?? '');
         });
 
         return Inertia::render('Driver/StudentsSchedule', [

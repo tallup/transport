@@ -165,12 +165,19 @@ class RosterController extends Controller
                 ->with(['student.school', 'pickupPoint'])
                 ->get();
 
+            // Separate bookings with pickup points and custom addresses
+            $bookingsWithPickupPoints = $bookings->filter(function ($booking) {
+                return $booking->pickupPoint !== null && $booking->student !== null;
+            });
+            
+            $bookingsWithCustomAddresses = $bookings->filter(function ($booking) {
+                return $booking->pickupPoint === null && 
+                       !empty($booking->pickup_address) && 
+                       $booking->student !== null;
+            });
+
             // Group by pickup point
-            $groupedBookings = $bookings
-                ->filter(function ($booking) {
-                    // Only include bookings with valid pickup points and students
-                    return $booking->pickupPoint !== null && $booking->student !== null;
-                })
+            $groupedBookings = $bookingsWithPickupPoints
                 ->groupBy('pickup_point_id')
                 ->map(function ($bookings) {
                     $firstBooking = $bookings->first();
@@ -213,6 +220,40 @@ class RosterController extends Controller
                 ->sortBy('pickup_point.sequence_order')
                 ->values()
                 ->toArray();
+
+            // Add custom address bookings as a separate group
+            if ($bookingsWithCustomAddresses->count() > 0) {
+                $customGroup = [
+                    'pickup_point' => [
+                        'id' => null,
+                        'name' => 'Custom Pickup Locations',
+                        'address' => 'Various addresses',
+                        'pickup_time' => $selectedRoute->pickup_time ? (is_string($selectedRoute->pickup_time) ? substr($selectedRoute->pickup_time, 0, 5) : $selectedRoute->pickup_time->format('H:i')) : 'TBD',
+                        'dropoff_time' => $selectedRoute->dropoff_time ? (is_string($selectedRoute->dropoff_time) ? substr($selectedRoute->dropoff_time, 0, 5) : $selectedRoute->dropoff_time->format('H:i')) : null,
+                        'sequence_order' => 9999,
+                    ],
+                    'bookings' => $bookingsWithCustomAddresses->sortBy(function ($booking) {
+                        return $booking->student ? $booking->student->name : '';
+                    })->map(function ($booking) {
+                        if (!$booking->student) {
+                            return null;
+                        }
+                        return [
+                            'id' => $booking->id,
+                            'status' => $booking->status,
+                            'pickup_address' => $booking->pickup_address,
+                            'student' => [
+                                'id' => $booking->student->id,
+                                'name' => $booking->student->name,
+                                'school' => $booking->student->school->name ?? 'N/A',
+                                'emergency_phone' => $booking->student->emergency_phone ?? null,
+                                'grade' => $booking->student->grade ?? null,
+                            ],
+                        ];
+                    })->filter()->values()->toArray(),
+                ];
+                $groupedBookings[] = $customGroup;
+            }
         }
 
         return Inertia::render('Driver/Roster', [
