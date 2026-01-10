@@ -22,7 +22,8 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Active bookings: Include both 'pending' and 'active' status, and filter by date range
+        // Active bookings: Include both 'pending' and 'active' status
+        // Count all pending and active bookings regardless of date (parent wants to see all their active/pending bookings)
         $today = Carbon::today();
         $activeBookings = $bookings->filter(function ($booking) use ($today) {
             // Must be pending or active status
@@ -30,31 +31,20 @@ class DashboardController extends Controller
                 return false;
             }
             
-            // Check if today falls within the booking period
-            $startDate = Carbon::parse($booking->start_date);
-            $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : null;
-            
-            // For pending bookings: include if not yet started (parent is waiting for it to start)
-            // For active bookings: only include if currently within the booking period
+            // For pending bookings: include all pending bookings (they're waiting for payment or to start)
+            // Don't filter by date - parent wants to see all pending bookings
             if ($booking->status === 'pending') {
-                // Include pending bookings if:
-                // - Haven't ended yet (end_date is null OR end_date >= today)
-                // - We don't exclude future start dates for pending bookings
-                if ($endDate && $today->gt($endDate)) {
-                    return false; // Pending booking has already ended
-                }
-                return true; // Pending booking is valid (may start in future)
+                return true;
             }
             
-            // For active bookings: must be within the booking period
+            // For active bookings: include if not ended yet
             if ($booking->status === 'active') {
-                if ($today->lt($startDate)) {
-                    return false; // Active booking hasn't started yet (shouldn't happen, but check anyway)
-                }
+                $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : null;
+                // Only exclude if booking has a definite end date and it has passed
                 if ($endDate && $today->gt($endDate)) {
                     return false; // Active booking has ended
                 }
-                return true;
+                return true; // Active booking is still valid
             }
             
             return false;
