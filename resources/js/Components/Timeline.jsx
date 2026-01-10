@@ -26,11 +26,16 @@ export default function Timeline({ items = [] }) {
                                         <div className="mt-2">
                                             <p className="text-xs font-semibold text-white/80 mb-1">Students:</p>
                                             <div className="flex flex-wrap gap-1">
-                                                {item.students.map((studentName, idx) => (
-                                                    <span key={idx} className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
-                                                        {studentName}
-                                                    </span>
-                                                ))}
+                                                {item.students.map((student, idx) => {
+                                                    // Handle both string and object formats
+                                                    const studentName = typeof student === 'string' ? student : (student?.name || 'Unknown');
+                                                    const studentKey = typeof student === 'object' && student?.booking_id ? student.booking_id : idx;
+                                                    return (
+                                                        <span key={studentKey} className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
+                                                            {studentName}
+                                                        </span>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
