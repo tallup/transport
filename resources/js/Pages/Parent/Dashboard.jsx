@@ -7,6 +7,7 @@ export default function Dashboard({
     students, 
     bookings, 
     activeBookings, 
+    activeBookingsCount,
     upcomingPickups, 
     paymentHistory, 
     transportHistory,
@@ -51,7 +52,7 @@ export default function Dashboard({
                                 <div>
                                     <p className="text-sm sm:text-base font-bold text-white">Active Bookings</p>
                                     <p className="text-3xl sm:text-4xl font-extrabold text-green-200 mt-2 drop-shadow">
-                                        {activeBookings?.length || 0}
+                                        {activeBookingsCount ?? activeBookings?.length ?? 0}
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">

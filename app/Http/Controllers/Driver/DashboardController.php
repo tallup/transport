@@ -91,6 +91,24 @@ class DashboardController extends Controller
             if (!$amCompleted) {
                 return $amRoute;
             }
+            
+            // AM route is completed - check if PM route exists
+            if ($pmRoute) {
+                // Check if PM route is also completed
+                $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
+                    ->where('driver_id', $driver->id)
+                    ->whereDate('completion_date', $today)
+                    ->exists();
+                
+                // If PM route is not completed, show it
+                if (!$pmCompleted) {
+                    return $pmRoute;
+                }
+            }
+            
+            // Both AM and PM (if exists) are completed, or only AM exists and is completed
+            // Return the AM route so driver can see it's completed
+            return $amRoute;
         }
 
         // AM route is completed or doesn't exist, show PM route or 'both' route

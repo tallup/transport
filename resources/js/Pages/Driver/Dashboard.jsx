@@ -61,11 +61,13 @@ export default function Dashboard({ route, currentPeriod, stats, todaySchedule, 
                             </div>
                             {currentPeriod && (
                                 <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                                    currentPeriod === 'am' 
-                                        ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50' 
-                                        : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
+                                    isRouteCompleted
+                                        ? 'bg-green-500/30 text-green-100 border border-green-400/50'
+                                        : currentPeriod === 'am' 
+                                            ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50' 
+                                            : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
                                 }`}>
-                                    {currentPeriod.toUpperCase()} Route
+                                    {isRouteCompleted ? `${currentPeriod.toUpperCase()} Route - Completed` : `${currentPeriod.toUpperCase()} Route`}
                                 </span>
                             )}
                         </div>
