@@ -53,13 +53,27 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
                 },
                 body: JSON.stringify({
                     pickup_point_id: pickupPointId,
                     route_id: route.id,
-                    date: date,
+                    date: date || new Date().toISOString().split('T')[0],
                 }),
             });
+
+            // Check if response is OK
+            if (!response.ok) {
+                // Try to parse error response
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+                
+                throw new Error(errorData.message || `Failed to mark trip as complete: ${response.status}`);
+            }
 
             const data = await response.json();
 
@@ -68,11 +82,11 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 router.reload();
             } else {
                 alert(data.message || 'Failed to mark trip as complete');
+                setCompleting({ ...completing, [key]: false });
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            alert('An error occurred while marking the trip as complete');
-        } finally {
+            alert(error.message || 'An error occurred while marking the trip as complete');
             setCompleting({ ...completing, [key]: false });
         }
     };
@@ -86,8 +100,22 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
                 },
             });
+
+            // Check if response is OK
+            if (!response.ok) {
+                // Try to parse error response
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+                
+                throw new Error(errorData.message || `Failed to mark trip as complete: ${response.status}`);
+            }
 
             const data = await response.json();
 
@@ -96,11 +124,11 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 router.reload();
             } else {
                 alert(data.message || 'Failed to mark trip as complete');
+                setCompleting({ ...completing, [bookingId]: false });
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            alert('An error occurred while marking the trip as complete');
-        } finally {
+            alert(error.message || 'An error occurred while marking the trip as complete');
             setCompleting({ ...completing, [bookingId]: false });
         }
     };
