@@ -39,6 +39,15 @@ class PricingRuleResource extends Resource
                             ->required()
                             ->live()
                             ->helperText('Select the billing period for this pricing rule'),
+                        Forms\Components\Select::make('trip_type')
+                            ->label('Trip Type')
+                            ->options([
+                                'one_way' => 'One Way',
+                                'two_way' => 'Two Way',
+                            ])
+                            ->required()
+                            ->default('two_way')
+                            ->helperText('One way: pick up only or drop off only. Two way: both pick up and drop off'),
                         Forms\Components\TextInput::make('amount')
                             ->label('Price')
                             ->required()
@@ -97,6 +106,17 @@ class PricingRuleResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => ucfirst(str_replace('_', '-', $state)))
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('trip_type')
+                    ->label('Trip Type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'one_way' => 'warning',
+                        'two_way' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => $state === 'one_way' ? 'One Way' : 'Two Way')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('scope')

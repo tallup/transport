@@ -12,6 +12,7 @@ class PricingRule extends Model
 
     protected $fillable = [
         'plan_type',
+        'trip_type',
         'route_id',
         'vehicle_type',
         'amount',

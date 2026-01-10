@@ -32,7 +32,7 @@ class FinanceController extends Controller
             foreach ($activeBookings as $booking) {
                 try {
                     if ($booking->route) {
-                        $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                        $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
                         $totalRevenue += $price;
                     }
                 } catch (\Exception $e) {
@@ -54,7 +54,7 @@ class FinanceController extends Controller
                 foreach ($bookings as $booking) {
                     try {
                         if ($booking->route) {
-                            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
                             $planRevenue += $price;
                         }
                     } catch (\Exception $e) {

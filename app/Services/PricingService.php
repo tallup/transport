@@ -10,22 +10,24 @@ use Illuminate\Support\Facades\Cache;
 class PricingService
 {
     /**
-     * Calculate price for a booking based on plan type, route, and vehicle type.
+     * Calculate price for a booking based on plan type, trip type, route, and vehicle type.
      * Priority: route-specific > vehicle-type-specific > global pricing
      *
      * @param string $planType
+     * @param string $tripType 'one_way' or 'two_way'
      * @param Route $route
      * @return float
      * @throws \Exception
      */
-    public function calculatePrice(string $planType, Route $route): float
+    public function calculatePrice(string $planType, string $tripType, Route $route): float
     {
         $vehicleType = $route->vehicle->type;
 
         // Cache key for route-specific pricing
-        $routeCacheKey = "pricing_route_{$route->id}_{$planType}";
-        $routePricing = Cache::remember($routeCacheKey, 3600, function () use ($planType, $route) {
+        $routeCacheKey = "pricing_route_{$route->id}_{$planType}_{$tripType}";
+        $routePricing = Cache::remember($routeCacheKey, 3600, function () use ($planType, $tripType, $route) {
             return PricingRule::where('plan_type', $planType)
+                ->where('trip_type', $tripType)
                 ->where('route_id', $route->id)
                 ->where('active', true)
                 ->first();
@@ -36,9 +38,10 @@ class PricingService
         }
 
         // Cache key for vehicle-type-specific pricing
-        $vehicleCacheKey = "pricing_vehicle_{$vehicleType}_{$planType}";
-        $vehiclePricing = Cache::remember($vehicleCacheKey, 3600, function () use ($planType, $vehicleType) {
+        $vehicleCacheKey = "pricing_vehicle_{$vehicleType}_{$planType}_{$tripType}";
+        $vehiclePricing = Cache::remember($vehicleCacheKey, 3600, function () use ($planType, $tripType, $vehicleType) {
             return PricingRule::where('plan_type', $planType)
+                ->where('trip_type', $tripType)
                 ->whereNull('route_id')
                 ->where('vehicle_type', $vehicleType)
                 ->where('active', true)
@@ -50,9 +53,10 @@ class PricingService
         }
 
         // Cache key for global pricing
-        $globalCacheKey = "pricing_global_{$planType}";
-        $globalPricing = Cache::remember($globalCacheKey, 3600, function () use ($planType) {
+        $globalCacheKey = "pricing_global_{$planType}_{$tripType}";
+        $globalPricing = Cache::remember($globalCacheKey, 3600, function () use ($planType, $tripType) {
             return PricingRule::where('plan_type', $planType)
+                ->where('trip_type', $tripType)
                 ->whereNull('route_id')
                 ->whereNull('vehicle_type')
                 ->where('active', true)

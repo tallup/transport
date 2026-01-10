@@ -158,7 +158,7 @@ class BookingController extends Controller
 
         // Calculate price
         try {
-            $price = $this->pricingService->calculatePrice($validated['plan_type'], $route);
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route);
         } catch (PricingNotFoundException $e) {
             return back()->withErrors(['plan_type' => $e->getMessage()]);
         }
@@ -235,7 +235,7 @@ class BookingController extends Controller
 
         // Calculate price
         try {
-            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
         } catch (PricingNotFoundException $e) {
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'Unable to calculate price for this booking.');
@@ -272,7 +272,7 @@ class BookingController extends Controller
 
         try {
             $route = Route::findOrFail($validated['route_id']);
-            $price = $this->pricingService->calculatePrice($validated['plan_type'], $route);
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route);
             return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -446,7 +446,7 @@ class BookingController extends Controller
         $price = null;
         if ($booking->status === 'pending' && $booking->route) {
             try {
-                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
                 $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
             } catch (PricingNotFoundException $e) {
                 // Price calculation failed, but still show booking
@@ -505,7 +505,7 @@ class BookingController extends Controller
         $price = null;
         if ($booking->route) {
             try {
-                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->route);
+                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
                 $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
             } catch (PricingNotFoundException $e) {
                 // Price calculation failed
