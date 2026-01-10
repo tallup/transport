@@ -57,12 +57,31 @@ export default function BookingsIndex({ bookings }) {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     {booking.status === 'pending' ? (
-                                                        <Link
-                                                            href={`/parent/bookings/${booking.id}/checkout`}
-                                                            className="px-4 py-2 bg-green-500/30 backdrop-blur-sm border border-green-400/50 rounded-md text-white font-bold hover:bg-green-500/50 transition text-sm"
-                                                        >
-                                                            Pay Now
-                                                        </Link>
+                                                        <>
+                                                            <Link
+                                                                href={`/parent/bookings/${booking.id}/checkout`}
+                                                                className="px-4 py-2 bg-green-500/30 backdrop-blur-sm border border-green-400/50 rounded-md text-white font-bold hover:bg-green-500/50 transition text-sm"
+                                                            >
+                                                                Pay Now
+                                                            </Link>
+                                                            <form
+                                                                method="POST"
+                                                                action={`/parent/bookings/${booking.id}/cancel`}
+                                                                onSubmit={(e) => {
+                                                                    if (!confirm('Are you sure you want to cancel this booking?')) {
+                                                                        e.preventDefault();
+                                                                    }
+                                                                }}
+                                                                className="inline"
+                                                            >
+                                                                <button
+                                                                    type="submit"
+                                                                    className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </form>
+                                                        </>
                                                     ) : null}
                                                     {booking.status === 'active' || booking.status === 'expired' ? (
                                                         <Link

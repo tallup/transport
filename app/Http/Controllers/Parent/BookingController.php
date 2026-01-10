@@ -120,8 +120,31 @@ class BookingController extends Controller
         // Check for overlapping bookings
         $bookingService = app(BookingService::class);
         $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
-        if ($bookingService->hasOverlappingBooking($validated['student_id'], $startDate, $endDate)) {
-            return back()->withErrors(['start_date' => 'This student already has an active booking for this date range.']);
+        
+        // Get the overlapping booking for better error message
+        $overlappingBooking = Booking::where('student_id', $validated['student_id'])
+            ->whereIn('status', ['pending', 'active'])
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->where(function ($subQ) use ($startDate, $endDate) {
+                    $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
+                        ->where(function ($endQ) use ($startDate) {
+                            $endQ->whereNull('end_date')
+                                ->orWhere('end_date', '>=', $startDate);
+                        });
+                });
+            })
+            ->with(['route', 'student'])
+            ->first();
+        
+        if ($overlappingBooking) {
+            $bookingInfo = sprintf(
+                'This student already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
+                $overlappingBooking->status,
+                $overlappingBooking->id,
+                $overlappingBooking->start_date->format('M d, Y'),
+                $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
+            );
+            return back()->withErrors(['start_date' => $bookingInfo]);
         }
 
         // Check capacity
@@ -171,10 +194,13 @@ class BookingController extends Controller
     {
         $user = $request->user();
         $students = $user->students;
+        
+        // Get all bookings for parent's students, including all statuses and dates
+        // Don't filter by date - show all bookings regardless of start/end date
         $bookings = Booking::whereIn('student_id', $students->pluck('id'))
             ->with(['student.parent', 'route.vehicle', 'pickupPoint'])
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->get(); // Use get() to ensure all bookings are shown, including those that might be blocking
 
         return Inertia::render('Parent/Bookings/Index', [
             'bookings' => $bookings,
@@ -394,5 +420,28 @@ class BookingController extends Controller
             'schools' => $schools,
             'routes' => $routes,
         ]);
+    }
+
+    public function cancel(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check - parent can only cancel their own student's bookings
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized to cancel this booking.');
+        }
+
+        // Only allow cancelling pending bookings
+        if ($booking->status !== 'pending') {
+            return back()->withErrors(['error' => 'Only pending bookings can be cancelled.']);
+        }
+
+        // Cancel the booking
+        $booking->update([
+            'status' => 'cancelled',
+        ]);
+
+        return redirect()->route('parent.bookings.index')
+            ->with('success', 'Booking cancelled successfully.');
     }
 }
