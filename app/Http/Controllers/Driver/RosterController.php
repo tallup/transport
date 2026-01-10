@@ -93,10 +93,10 @@ class RosterController extends Controller
         
         $totalBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -106,10 +106,10 @@ class RosterController extends Controller
 
         $completedBookings = Booking::where('route_id', $route->id)
             ->where('status', 'completed')
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -154,13 +154,14 @@ class RosterController extends Controller
         $groupedBookings = [];
 
         if ($isSchoolDay) {
-            // Get active bookings for today
+            // Get active bookings for today (within their booking period)
+            // This ensures bookings are visible for the entire duration they're valid
             $bookings = Booking::where('route_id', $selectedRoute->id)
                 ->whereIn('status', ['pending', 'active', 'completed'])
-                ->where('start_date', '<=', $today)
+                ->whereDate('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $today);
+                        ->orWhereDate('end_date', '>=', $today);
                 })
                 ->with(['student.school', 'pickupPoint'])
                 ->get();
@@ -336,10 +337,10 @@ class RosterController extends Controller
         $bookings = Booking::where('route_id', $validated['route_id'])
             ->where('pickup_point_id', $validated['pickup_point_id'])
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $date)
+            ->whereDate('start_date', '<=', $date)
             ->where(function ($query) use ($date) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $date);
+                    ->orWhereDate('end_date', '>=', $date);
             })
             ->get();
 

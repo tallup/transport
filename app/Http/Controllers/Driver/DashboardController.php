@@ -110,10 +110,10 @@ class DashboardController extends Controller
         
         $totalBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -123,10 +123,10 @@ class DashboardController extends Controller
 
         $completedBookings = Booking::where('route_id', $route->id)
             ->where('status', 'completed')
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -179,23 +179,23 @@ class DashboardController extends Controller
         $canCompleteRoute = $this->areAllBookingsCompleted($route) && !$isRouteCompleted;
 
         // Calculate stats for the active route
-        $todayFormatted = $today->format('Y-m-d');
+        // Use Carbon instance for date comparison to ensure proper type handling
         $totalStudents = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $todayFormatted)
-            ->where(function ($query) use ($todayFormatted) {
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $todayFormatted);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->distinct()
             ->count('student_id');
 
         $todayBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $todayFormatted)
-            ->where(function ($query) use ($todayFormatted) {
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $todayFormatted);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -220,13 +220,14 @@ class DashboardController extends Controller
         ];
 
         // Today's schedule timeline
+        // Fetch bookings that are active today (within their booking period)
         $todaySchedule = [];
         $todayBookingsList = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active', 'completed'])
-            ->where('start_date', '<=', $todayFormatted)
-            ->where(function ($query) use ($todayFormatted) {
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $todayFormatted);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->with(['student', 'pickupPoint'])
             ->get();
@@ -440,10 +441,10 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $activeBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
             ->get();
@@ -560,12 +561,12 @@ class DashboardController extends Controller
             ->count();
         $weeklyActive = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
-            ->where('start_date', '>=', $thisWeekStart)
+            ->whereDate('start_date', '>=', $thisWeekStart)
             ->count();
 
         // Monthly stats
@@ -574,12 +575,12 @@ class DashboardController extends Controller
             ->count();
         $monthlyActive = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
-            ->where('start_date', '>=', $thisMonthStart)
+            ->whereDate('start_date', '>=', $thisMonthStart)
             ->count();
 
         // Calculate average students per trip
@@ -649,10 +650,10 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $activeBookingsCount = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
-            ->where('start_date', '<=', $today)
+            ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $today);
+                    ->orWhereDate('end_date', '>=', $today);
             })
             ->count();
 
@@ -705,19 +706,19 @@ class DashboardController extends Controller
             
             // Get route stats
             $totalBookings = Booking::where('route_id', $route->id)
-                ->where('start_date', '<=', $completion->completion_date)
+                ->whereDate('start_date', '<=', $completion->completion_date)
                 ->where(function ($query) use ($completion) {
                     $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $completion->completion_date);
+                        ->orWhereDate('end_date', '>=', $completion->completion_date);
                 })
                 ->count();
 
             $completedBookings = Booking::where('route_id', $route->id)
                 ->where('status', 'completed')
-                ->where('start_date', '<=', $completion->completion_date)
+                ->whereDate('start_date', '<=', $completion->completion_date)
                 ->where(function ($query) use ($completion) {
                     $query->whereNull('end_date')
-                        ->orWhere('end_date', '>=', $completion->completion_date);
+                        ->orWhereDate('end_date', '>=', $completion->completion_date);
                 })
                 ->count();
 
