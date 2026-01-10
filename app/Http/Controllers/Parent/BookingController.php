@@ -194,6 +194,11 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        
+        // Auto-update booking statuses (activate pending bookings that have started)
+        $bookingService = app(BookingService::class);
+        $bookingService->updateBookingStatuses();
+        
         $students = $user->students;
         
         // Get all bookings for parent's students, including all statuses and dates

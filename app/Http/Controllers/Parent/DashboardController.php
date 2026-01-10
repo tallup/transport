@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Parent;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Student;
+use App\Services\BookingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,6 +15,10 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        
+        // Auto-update booking statuses (activate pending bookings that have started)
+        $bookingService = app(BookingService::class);
+        $bookingService->updateBookingStatuses();
         
         $students = Student::where('parent_id', $user->id)->get();
             
