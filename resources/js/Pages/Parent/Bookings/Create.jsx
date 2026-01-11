@@ -122,14 +122,14 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [data.route_id, filteredRoutes]);
 
-    // Calculate price when route or plan type changes
+    // Calculate price when route, plan type, or trip type changes
     useEffect(() => {
-        if (data.route_id && data.plan_type) {
+        if (data.route_id && data.plan_type && data.trip_type) {
             calculatePrice();
         } else {
             setPrice(null);
         }
-    }, [data.route_id, data.plan_type]);
+    }, [data.route_id, data.plan_type, data.trip_type]);
 
     const checkCapacity = async (routeId) => {
         try {
@@ -141,12 +141,13 @@ export default function CreateBooking({ students, routes }) {
     };
 
     const calculatePrice = async () => {
-        if (!data.route_id || !data.plan_type) return;
+        if (!data.route_id || !data.plan_type || !data.trip_type) return;
         setLoading(true);
         try {
             const response = await axios.post('/parent/calculate-price', {
                 route_id: data.route_id,
                 plan_type: data.plan_type,
+                trip_type: data.trip_type,
             });
             setPrice(response.data);
         } catch (error) {
