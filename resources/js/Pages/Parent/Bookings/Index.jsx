@@ -76,44 +76,36 @@ export default function BookingsIndex({ bookings }) {
                                                             >
                                                                 Pay Now
                                                             </Link>
-                                                            <form
-                                                                method="POST"
-                                                                action={`/parent/bookings/${booking.id}/cancel`}
-                                                                onSubmit={(e) => {
-                                                                    if (!confirm('Are you sure you want to cancel this booking?')) {
-                                                                        e.preventDefault();
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    if (confirm('Are you sure you want to cancel this booking?')) {
+                                                                        router.post(`/parent/bookings/${booking.id}/cancel`, {}, {
+                                                                            preserveScroll: false,
+                                                                        });
                                                                     }
                                                                 }}
-                                                                className="inline"
+                                                                className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
                                                             >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
-                                                                >
-                                                                    Cancel
-                                                                </button>
-                                                            </form>
+                                                                Cancel
+                                                            </button>
                                                         </>
                                                     ) : null}
                                                     {booking.status === 'active' && (
                                                         <>
-                                                            <form
-                                                                method="POST"
-                                                                action={`/parent/bookings/${booking.id}/cancel`}
-                                                                onSubmit={(e) => {
-                                                                    if (!confirm('Are you sure you want to cancel this active booking?')) {
-                                                                        e.preventDefault();
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    if (confirm('Are you sure you want to cancel this active booking?')) {
+                                                                        router.post(`/parent/bookings/${booking.id}/cancel`, {}, {
+                                                                            preserveScroll: false,
+                                                                        });
                                                                     }
                                                                 }}
-                                                                className="inline"
+                                                                className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
                                                             >
-                                                                <button
-                                                                    type="submit"
-                                                                    className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
-                                                                >
-                                                                    Cancel
-                                                                </button>
-                                                            </form>
+                                                                Cancel
+                                                            </button>
                                                             <Link
                                                                 href={`/parent/bookings/${booking.id}/rebook`}
                                                                 className="px-4 py-2 bg-purple-500/30 backdrop-blur-sm border border-purple-400/50 rounded-md text-white font-bold hover:bg-purple-500/50 transition text-sm"
