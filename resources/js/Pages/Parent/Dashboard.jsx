@@ -57,14 +57,14 @@ export default function Dashboard({
                     </div>
 
                     {/* Stats Cards - Enhanced */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         {/* Students Card */}
                         <Link href="/parent/students">
                             <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-transparent hover:border-blue-400/50">
-                                <div className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-blue-400/30">
-                                            <svg className="w-7 h-7 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-blue-400/30">
+                                            <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                             </svg>
                                         </div>
@@ -72,8 +72,12 @@ export default function Dashboard({
                                             Total
                                         </span>
                                     </div>
-                                    <p className="text-4xl font-extrabold text-white mb-1">{students?.length || 0}</p>
-                                    <p className="text-sm font-semibold text-white/70">Registered Students</p>
+                                    <div className="flex items-end justify-between">
+                                        <div>
+                                            <p className="text-3xl font-extrabold text-white">{students?.length || 0}</p>
+                                            <p className="text-sm font-semibold text-white/70 mt-1">Registered Students</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </GlassCard>
                         </Link>
@@ -81,10 +85,10 @@ export default function Dashboard({
                         {/* Active Bookings Card */}
                         <Link href="/parent/bookings">
                             <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-transparent hover:border-green-400/50">
-                                <div className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-green-500/30 to-green-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-green-400/30">
-                                            <svg className="w-7 h-7 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-green-500/30 to-green-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-green-400/30">
+                                            <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
@@ -92,40 +96,22 @@ export default function Dashboard({
                                             Active
                                         </span>
                                     </div>
-                                    <p className="text-4xl font-extrabold text-white mb-1">{activeBookingsCount ?? activeBookings?.length ?? 0}</p>
-                                    <p className="text-sm font-semibold text-white/70">Active Bookings</p>
+                                    <div className="flex items-end justify-between">
+                                        <div>
+                                            <p className="text-3xl font-extrabold text-white">{activeBookingsCount ?? activeBookings?.length ?? 0}</p>
+                                            <p className="text-sm font-semibold text-white/70 mt-1">Active Bookings</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </GlassCard>
                         </Link>
 
-                        {/* Pending Bookings Card */}
-                        {pendingBookings.length > 0 && (
-                            <Link href="/parent/bookings">
-                                <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-transparent hover:border-yellow-400/50">
-                                    <div className="p-6">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="w-14 h-14 bg-gradient-to-br from-yellow-500/30 to-yellow-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-yellow-400/30">
-                                                <svg className="w-7 h-7 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </div>
-                                            <span className="text-xs font-semibold text-yellow-200/80 bg-yellow-500/20 px-2 py-1 rounded-full">
-                                                Pending
-                                            </span>
-                                        </div>
-                                        <p className="text-4xl font-extrabold text-white mb-1">{pendingBookings.length}</p>
-                                        <p className="text-sm font-semibold text-white/70">Pending Payment</p>
-                                    </div>
-                                </GlassCard>
-                            </Link>
-                        )}
-
                         {/* Upcoming Pickups Card */}
                         <GlassCard className="border-2 border-transparent hover:border-cyan-400/50 transition-all">
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/30 to-cyan-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-cyan-400/30">
-                                        <svg className="w-7 h-7 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-500/30 to-cyan-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-cyan-400/30">
+                                        <svg className="w-6 h-6 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
@@ -133,8 +119,12 @@ export default function Dashboard({
                                         Next 14 Days
                                     </span>
                                 </div>
-                                <p className="text-4xl font-extrabold text-white mb-1">{upcomingPickups?.length || 0}</p>
-                                <p className="text-sm font-semibold text-white/70">Upcoming Pickups</p>
+                                <div className="flex items-end justify-between">
+                                    <div>
+                                        <p className="text-3xl font-extrabold text-white">{upcomingPickups?.length || 0}</p>
+                                        <p className="text-sm font-semibold text-white/70 mt-1">Upcoming Pickups</p>
+                                    </div>
+                                </div>
                             </div>
                         </GlassCard>
                     </div>

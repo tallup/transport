@@ -129,7 +129,7 @@ export default function Home({ auth }) {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">Flexible Plans</h3>
                             <p className="text-gray-600">
-                                Choose from weekly, bi-weekly, monthly, academic term, or annual plans that fit your schedule.
+                                Choose from weekly, monthly, academic term, or annual plans that fit your schedule.
                             </p>
                         </div>
 

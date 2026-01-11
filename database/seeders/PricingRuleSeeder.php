@@ -12,7 +12,6 @@ class PricingRuleSeeder extends Seeder
         // Global pricing rules (no route_id, no vehicle_type)
         $globalPricing = [
             ['plan_type' => 'weekly', 'amount' => 50.00],
-            ['plan_type' => 'bi_weekly', 'amount' => 95.00],
             ['plan_type' => 'monthly', 'amount' => 180.00],
             ['plan_type' => 'academic_term', 'amount' => 800.00],
             ['plan_type' => 'annual', 'amount' => 1500.00],

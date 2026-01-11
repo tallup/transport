@@ -509,10 +509,9 @@ class ComprehensiveSeeder extends Seeder
         $driverName = DB::connection()->getDriverName();
         $termPlanType = ($driverName === 'sqlite') ? 'semester' : 'academic_term';
         
-        $planTypes = ['weekly', 'bi_weekly', 'monthly', $termPlanType, 'annual'];
+        $planTypes = ['weekly', 'monthly', $termPlanType, 'annual'];
         $basePrices = [
             'weekly' => 50,
-            'bi_weekly' => 90,
             'monthly' => 180,
             $termPlanType => 500,
             'annual' => 1800,
@@ -637,7 +636,7 @@ class ComprehensiveSeeder extends Seeder
         $driverName = DB::connection()->getDriverName();
         $termPlanType = ($driverName === 'sqlite') ? 'semester' : 'academic_term';
         
-        $planTypes = ['weekly', 'bi_weekly', 'monthly', $termPlanType, 'annual'];
+        $planTypes = ['weekly', 'monthly', $termPlanType, 'annual'];
         $statuses = ['pending', 'active', 'active', 'active', 'completed']; // More active than others
         
         // Create bookings for about 60% of students
@@ -651,7 +650,6 @@ class ComprehensiveSeeder extends Seeder
             // Calculate end date based on plan type
             $endDate = match($planType) {
                 'weekly' => $startDate->copy()->addWeek(),
-                'bi_weekly' => $startDate->copy()->addWeeks(2),
                 'monthly' => $startDate->copy()->addMonth(),
                 'semester', 'academic_term' => $startDate->copy()->addMonths(4),
                 'annual' => $startDate->copy()->addYear(),

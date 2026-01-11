@@ -77,9 +77,9 @@ class BookingSeeder extends Seeder
             ],
             [
                 'pickup_point_id' => $routes->first()->pickupPoints->skip(2)->first()->id,
-                'plan_type' => 'bi_weekly',
+                'plan_type' => 'monthly',
                 'start_date' => $today->copy()->addDays(3),
-                'end_date' => $bookingService->calculateEndDate('bi_weekly', $today->copy()->addDays(3))?->format('Y-m-d'),
+                'end_date' => $bookingService->calculateEndDate('monthly', $today->copy()->addDays(3))?->format('Y-m-d'),
             ]
         );
     }

@@ -70,7 +70,6 @@ class BookingResource extends Resource
                 Forms\Components\Select::make('plan_type')
                     ->options([
                         'weekly' => 'Weekly',
-                        'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
                         'academic_term' => 'Academic Term',
                         'annual' => 'Annual',
@@ -151,7 +150,6 @@ class BookingResource extends Resource
                 Tables\Filters\SelectFilter::make('plan_type')
                     ->options([
                         'weekly' => 'Weekly',
-                        'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
                         'academic_term' => 'Academic Term',
                         'annual' => 'Annual',

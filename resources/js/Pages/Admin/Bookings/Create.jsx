@@ -50,9 +50,6 @@ export default function Create({ students, routes }) {
                 case 'weekly':
                     endDate.setDate(endDate.getDate() + 7);
                     break;
-                case 'bi_weekly':
-                    endDate.setDate(endDate.getDate() + 14);
-                    break;
                 case 'monthly':
                     endDate.setMonth(endDate.getMonth() + 1);
                     break;
@@ -180,7 +177,6 @@ export default function Create({ students, routes }) {
                                         required
                                     >
                                         <option value="weekly" className="text-gray-900">Weekly</option>
-                                        <option value="bi_weekly" className="text-gray-900">Bi-Weekly</option>
                                         <option value="monthly" className="text-gray-900">Monthly</option>
                                         <option value="academic_term" className="text-gray-900">Academic Term</option>
                                         <option value="annual" className="text-gray-900">Annual</option>

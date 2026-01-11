@@ -35,7 +35,6 @@ class PricingController extends Controller
 
         $planTypes = [
             'weekly' => 'Weekly',
-            'bi_weekly' => 'Bi-Weekly',
             'monthly' => 'Monthly',
             'academic_term' => 'Academic Term',
             'annual' => 'Annual',

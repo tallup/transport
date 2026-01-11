@@ -266,7 +266,7 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'route_id' => 'required|exists:routes,id',
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
         ]);
 

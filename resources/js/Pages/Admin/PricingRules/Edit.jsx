@@ -46,7 +46,6 @@ export default function Edit({ pricingRule, routes }) {
                                             required
                                         >
                                             <option value="weekly" className="bg-indigo-700">Weekly</option>
-                                            <option value="bi_weekly" className="bg-indigo-700">Bi-Weekly</option>
                                             <option value="monthly" className="bg-indigo-700">Monthly</option>
                                             <option value="academic_term" className="bg-indigo-700">Academic Term</option>
                                             <option value="annual" className="bg-indigo-700">Annual</option>

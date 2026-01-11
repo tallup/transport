@@ -29,7 +29,7 @@
 - **Student Onboarding**: A React-based multi-step form to register and create student profiles
 - **Transport Booking**: A selector for routes and pickup points with real-time seat availability checks
 - **Stripe Integration**: Use Stripe Elements for U.S. PCI-compliant checkout
-- **Plan Selection**: Logic for Weekly, Bi-Weekly, Monthly, Semester, and Annual pricing
+- **Plan Selection**: Logic for Weekly, Monthly, Academic Term, and Annual pricing
 
 ## 3. Data Schema & Relationships
 

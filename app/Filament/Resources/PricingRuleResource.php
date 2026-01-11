@@ -31,7 +31,6 @@ class PricingRuleResource extends Resource
                             ->label('Plan Type')
                             ->options([
                                 'weekly' => 'Weekly',
-                                'bi_weekly' => 'Bi-Weekly',
                                 'monthly' => 'Monthly',
                                 'academic_term' => 'Academic Term',
                                 'annual' => 'Annual',
@@ -99,7 +98,6 @@ class PricingRuleResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'weekly' => 'info',
-                        'bi_weekly' => 'success',
                         'monthly' => 'warning',
                         'academic_term' => 'danger',
                         'annual' => 'primary',
@@ -160,7 +158,6 @@ class PricingRuleResource extends Resource
                     ->label('Plan Type')
                     ->options([
                         'weekly' => 'Weekly',
-                        'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
                         'academic_term' => 'Academic Term',
                         'annual' => 'Annual',

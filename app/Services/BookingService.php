@@ -57,7 +57,6 @@ class BookingService
     {
         return match ($planType) {
             'weekly' => $startDate->copy()->addWeek(),
-            'bi_weekly' => $startDate->copy()->addWeeks(2),
             'monthly' => $startDate->copy()->addMonth(),
             'academic_term' => $startDate->copy()->addMonths(6),
             'annual' => $startDate->copy()->addYear(),

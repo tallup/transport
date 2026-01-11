@@ -28,7 +28,7 @@ class StoreBookingRequest extends FormRequest
             'pickup_address' => 'nullable|string|max:500',
             'pickup_latitude' => 'nullable|numeric|between:-90,90',
             'pickup_longitude' => 'nullable|numeric|between:-180,180',
-            'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
             'start_date' => 'required|date|after_or_equal:today',
         ];

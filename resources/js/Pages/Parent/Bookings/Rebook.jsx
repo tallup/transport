@@ -364,7 +364,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <div className="space-y-4">
-                                                    {['weekly', 'bi_weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
+                                                    {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
                                                         <label
                                                             key={plan}
                                                             className={`block p-4 border rounded-lg cursor-pointer transition ${
