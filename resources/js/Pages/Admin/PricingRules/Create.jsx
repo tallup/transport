@@ -9,6 +9,7 @@ export default function Create({ routes }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         plan_type: 'weekly',
+        trip_type: 'two_way',
         route_id: '',
         vehicle_type: '',
         amount: '',
@@ -51,6 +52,24 @@ export default function Create({ routes }) {
                                             <option value="annual" className="bg-indigo-700">Annual</option>
                                         </select>
                                         <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="trip_type" className="block text-base font-bold text-white mb-2">
+                                            Trip Type *
+                                        </label>
+                                        <select
+                                            id="trip_type"
+                                            value={data.trip_type}
+                                            onChange={(e) => setData('trip_type', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                            required
+                                        >
+                                            <option value="one_way" className="bg-indigo-700">One Way</option>
+                                            <option value="two_way" className="bg-indigo-700">Two Way</option>
+                                        </select>
+                                        <p className="mt-1 text-sm font-semibold text-white/80">One way: pick up only or drop off only. Two way: both pick up and drop off</p>
+                                        <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>

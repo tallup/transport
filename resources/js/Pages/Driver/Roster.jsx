@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
+import axios from 'axios';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -48,45 +49,23 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         setCompleting({ ...completing, [key]: true });
 
         try {
-            const response = await fetch('/driver/pickup-points/mark-complete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    pickup_point_id: pickupPointId,
-                    route_id: route.id,
-                    date: date || new Date().toISOString().split('T')[0],
-                }),
+            const response = await axios.post('/driver/pickup-points/mark-complete', {
+                pickup_point_id: pickupPointId,
+                route_id: route.id,
+                date: date || new Date().toISOString().split('T')[0],
             });
 
-            // Check if response is OK
-            if (!response.ok) {
-                // Try to parse error response
-                let errorData;
-                try {
-                    errorData = await response.json();
-                } catch (e) {
-                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
-                }
-                
-                throw new Error(errorData.message || `Failed to mark trip as complete: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.data.success) {
                 // Reload the page to show updated status
                 router.reload();
             } else {
-                alert(data.message || 'Failed to mark trip as complete');
+                alert(response.data.message || 'Failed to mark trip as complete');
                 setCompleting({ ...completing, [key]: false });
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            alert(error.message || 'An error occurred while marking the trip as complete');
+            const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
+            alert(errorMessage);
             setCompleting({ ...completing, [key]: false });
         }
     };
@@ -95,40 +74,19 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         setCompleting({ ...completing, [bookingId]: true });
 
         try {
-            const response = await fetch(`/driver/bookings/${bookingId}/mark-complete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                },
-            });
+            const response = await axios.post(`/driver/bookings/${bookingId}/mark-complete`);
 
-            // Check if response is OK
-            if (!response.ok) {
-                // Try to parse error response
-                let errorData;
-                try {
-                    errorData = await response.json();
-                } catch (e) {
-                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
-                }
-                
-                throw new Error(errorData.message || `Failed to mark trip as complete: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.data.success) {
                 // Reload the page to show updated status
                 router.reload();
             } else {
-                alert(data.message || 'Failed to mark trip as complete');
+                alert(response.data.message || 'Failed to mark trip as complete');
                 setCompleting({ ...completing, [bookingId]: false });
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            alert(error.message || 'An error occurred while marking the trip as complete');
+            const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
+            alert(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });
         }
     };

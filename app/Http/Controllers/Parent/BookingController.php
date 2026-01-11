@@ -647,9 +647,9 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to cancel this booking.');
         }
 
-        // Only allow cancelling pending bookings
-        if ($booking->status !== 'pending') {
-            return back()->withErrors(['error' => 'Only pending bookings can be cancelled.']);
+        // Allow cancelling pending or active bookings
+        if (!in_array($booking->status, ['pending', 'active'])) {
+            return back()->withErrors(['error' => 'Only pending or active bookings can be cancelled.']);
         }
 
         // Cancel the booking
@@ -659,5 +659,27 @@ class BookingController extends Controller
 
         return redirect()->route('parent.bookings.index')
             ->with('success', 'Booking cancelled successfully.');
+    }
+
+    public function destroy(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check - parent can only delete their own student's bookings
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized to delete this booking.');
+        }
+
+        // Only allow deleting cancelled or completed bookings
+        // Prevent deleting pending or active bookings (they should be cancelled first)
+        if (!in_array($booking->status, ['cancelled', 'completed', 'expired'])) {
+            return back()->withErrors(['error' => 'Cannot delete pending or active bookings. Please cancel them first.']);
+        }
+
+        // Delete the booking
+        $booking->delete();
+
+        return redirect()->route('parent.bookings.index')
+            ->with('success', 'Booking deleted successfully.');
     }
 }

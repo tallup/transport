@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -95,6 +95,33 @@ export default function BookingsIndex({ bookings }) {
                                                             </form>
                                                         </>
                                                     ) : null}
+                                                    {booking.status === 'active' && (
+                                                        <>
+                                                            <form
+                                                                method="POST"
+                                                                action={`/parent/bookings/${booking.id}/cancel`}
+                                                                onSubmit={(e) => {
+                                                                    if (!confirm('Are you sure you want to cancel this active booking?')) {
+                                                                        e.preventDefault();
+                                                                    }
+                                                                }}
+                                                                className="inline"
+                                                            >
+                                                                <button
+                                                                    type="submit"
+                                                                    className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </form>
+                                                            <Link
+                                                                href={`/parent/bookings/${booking.id}/rebook`}
+                                                                className="px-4 py-2 bg-purple-500/30 backdrop-blur-sm border border-purple-400/50 rounded-md text-white font-bold hover:bg-purple-500/50 transition text-sm"
+                                                            >
+                                                                Rebook
+                                                            </Link>
+                                                        </>
+                                                    )}
                                                     {(booking.status === 'active' || booking.status === 'expired') && new Date(booking.start_date) > new Date() ? (
                                                         <Link
                                                             href={`/parent/bookings/${booking.id}/edit`}
@@ -103,14 +130,29 @@ export default function BookingsIndex({ bookings }) {
                                                             Edit
                                                         </Link>
                                                     ) : null}
-                                                    {booking.status === 'active' || booking.status === 'expired' ? (
+                                                    {booking.status === 'expired' && (
                                                         <Link
                                                             href={`/parent/bookings/${booking.id}/rebook`}
                                                             className="px-4 py-2 bg-purple-500/30 backdrop-blur-sm border border-purple-400/50 rounded-md text-white font-bold hover:bg-purple-500/50 transition text-sm"
                                                         >
                                                             Rebook
                                                         </Link>
-                                                    ) : null}
+                                                    )}
+                                                    {(booking.status === 'cancelled' || booking.status === 'completed') && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (confirm(`Are you sure you want to permanently delete this ${booking.status} booking? This action cannot be undone.`)) {
+                                                                    router.delete(`/parent/bookings/${booking.id}`, {
+                                                                        preserveScroll: false,
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="px-4 py-2 bg-red-600/30 backdrop-blur-sm border border-red-500/50 rounded-md text-white font-bold hover:bg-red-600/50 transition text-sm"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
