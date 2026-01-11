@@ -6,6 +6,38 @@ import GlassButton from '@/Components/GlassButton';
 export default function StudentsIndex({ students }) {
     const { auth } = usePage().props;
     
+    // Helper function to format time
+    const formatTime = (timeString) => {
+        if (!timeString) return 'N/A';
+        
+        try {
+            let date;
+            if (typeof timeString === 'string') {
+                if (timeString.includes('T') || timeString.includes(' ')) {
+                    date = new Date(timeString);
+                } else if (timeString.includes(':') && timeString.length <= 8) {
+                    date = new Date('2000-01-01T' + timeString);
+                } else {
+                    return timeString;
+                }
+            } else {
+                date = new Date(timeString);
+            }
+            
+            if (isNaN(date.getTime())) {
+                return timeString;
+            }
+            
+            return date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+        } catch (e) {
+            return timeString;
+        }
+    };
+    
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="My Students" />
@@ -68,6 +100,76 @@ export default function StudentsIndex({ students }) {
                                                             </div>
                                                         )}
                                                     </div>
+
+                                                    {/* Pickup and Dropoff Times */}
+                                                    {student.active_booking && (
+                                                        <div className="mt-4 pt-4 border-t border-white/20">
+                                                            <span className="font-bold text-white block mb-3">Transport Schedule:</span>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                {/* Pickup Information */}
+                                                                <div className="bg-green-500/10 border border-green-400/30 rounded-lg p-3">
+                                                                    <div className="flex items-center gap-2 mb-2">
+                                                                        <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                                        </svg>
+                                                                        <span className="font-bold text-green-200 text-sm">Pickup</span>
+                                                                    </div>
+                                                                    {student.active_booking.pickup_point ? (
+                                                                        <>
+                                                                            <p className="text-white font-semibold text-sm mb-1">{student.active_booking.pickup_point.name}</p>
+                                                                            <p className="text-white/80 text-xs mb-2">{student.active_booking.pickup_point.address}</p>
+                                                                            {student.active_booking.pickup_point.pickup_time && (
+                                                                                <p className="text-green-200 font-bold">{formatTime(student.active_booking.pickup_point.pickup_time)}</p>
+                                                                            )}
+                                                                        </>
+                                                                    ) : student.active_booking.pickup_address ? (
+                                                                        <>
+                                                                            <p className="text-white/80 text-xs mb-2">{student.active_booking.pickup_address}</p>
+                                                                            {student.active_booking.route?.pickup_time && (
+                                                                                <p className="text-green-200 font-bold">{formatTime(student.active_booking.route.pickup_time)}</p>
+                                                                            )}
+                                                                        </>
+                                                                    ) : student.active_booking.route?.pickup_time ? (
+                                                                        <p className="text-green-200 font-bold">{formatTime(student.active_booking.route.pickup_time)}</p>
+                                                                    ) : (
+                                                                        <p className="text-white/70 text-sm">Time not set</p>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Dropoff Information */}
+                                                                <div className="bg-blue-500/10 border border-blue-400/30 rounded-lg p-3">
+                                                                    <div className="flex items-center gap-2 mb-2">
+                                                                        <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                        </svg>
+                                                                        <span className="font-bold text-blue-200 text-sm">Dropoff</span>
+                                                                    </div>
+                                                                    {student.active_booking.dropoff_point ? (
+                                                                        <>
+                                                                            <p className="text-white font-semibold text-sm mb-1">{student.active_booking.dropoff_point.name}</p>
+                                                                            <p className="text-white/80 text-xs mb-2">{student.active_booking.dropoff_point.address}</p>
+                                                                            {student.active_booking.dropoff_point.dropoff_time && (
+                                                                                <p className="text-blue-200 font-bold">{formatTime(student.active_booking.dropoff_point.dropoff_time)}</p>
+                                                                            )}
+                                                                        </>
+                                                                    ) : student.active_booking.pickup_point?.dropoff_time ? (
+                                                                        <>
+                                                                            <p className="text-white font-semibold text-sm mb-1">{student.active_booking.pickup_point.name}</p>
+                                                                            <p className="text-blue-200 font-bold">{formatTime(student.active_booking.pickup_point.dropoff_time)}</p>
+                                                                        </>
+                                                                    ) : student.active_booking.route?.dropoff_time ? (
+                                                                        <>
+                                                                            <p className="text-white font-semibold text-sm mb-1">{student.school?.name || 'School'}</p>
+                                                                            <p className="text-blue-200 font-bold">{formatTime(student.active_booking.route.dropoff_time)}</p>
+                                                                        </>
+                                                                    ) : (
+                                                                        <p className="text-white/70 text-sm">Time not set</p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
 
                                                     {/* Authorized Pickup Persons */}
                                                     {student.authorized_pickup_persons && Array.isArray(student.authorized_pickup_persons) && student.authorized_pickup_persons.length > 0 && (

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
+use App\Models\Booking;
 use App\Models\Policy;
 use App\Models\School;
 use App\Models\Student;
@@ -17,9 +18,24 @@ class StudentController extends Controller
     {
         $user = $request->user();
         $students = $user->students()
-            ->with(['school'])
+            ->with(['school', 'route', 'pickupPoint'])
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // Load active bookings for all students in one query to avoid N+1
+        $studentIds = $students->pluck('id');
+        $activeBookings = Booking::whereIn('student_id', $studentIds)
+            ->whereIn('status', ['pending', 'active'])
+            ->with(['route', 'pickupPoint', 'dropoffPoint'])
+            ->orderBy('start_date', 'desc')
+            ->get()
+            ->groupBy('student_id');
+
+        // Map active bookings to students
+        $students = $students->map(function ($student) use ($activeBookings) {
+            $student->active_booking = $activeBookings->get($student->id)?->first();
+            return $student;
+        });
 
         return Inertia::render('Parent/Students/Index', [
             'students' => $students,

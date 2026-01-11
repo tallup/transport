@@ -171,6 +171,51 @@ export default function ShowBooking({ booking, price }) {
                                                     <p className="text-white font-semibold">{formatTime(booking.pickup_point.pickup_time)}</p>
                                                 </div>
                                             )}
+                                        </>
+                                    ) : booking.pickup_address ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Pickup Address:</span>
+                                                <p className="text-white font-bold text-lg">{booking.pickup_address}</p>
+                                            </div>
+                                            {booking.route?.pickup_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Pickup Time:</span>
+                                                    <p className="text-white font-semibold">{formatTime(booking.route.pickup_time)}</p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p className="text-white/70">No pickup information provided</p>
+                                    )}
+                                </div>
+
+                                {/* Dropoff Information */}
+                                <div className="space-y-4">
+                                    <h3 className="text-xl font-bold text-white border-b border-white/30 pb-2">
+                                        Dropoff Information
+                                    </h3>
+                                    {booking.dropoff_point ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Dropoff Point:</span>
+                                                <p className="text-white font-bold text-lg">{booking.dropoff_point.name}</p>
+                                                <p className="text-white/80 text-sm mt-1">{booking.dropoff_point.address}</p>
+                                            </div>
+                                            {booking.dropoff_point.dropoff_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Dropoff Time:</span>
+                                                    <p className="text-white font-semibold">{formatTime(booking.dropoff_point.dropoff_time)}</p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : booking.pickup_point ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Dropoff Point:</span>
+                                                <p className="text-white font-bold text-lg">{booking.pickup_point.name}</p>
+                                                <p className="text-white/80 text-sm mt-1">{booking.pickup_point.address}</p>
+                                            </div>
                                             {booking.pickup_point.dropoff_time && (
                                                 <div>
                                                     <span className="text-white/70 font-semibold">Dropoff Time:</span>
@@ -178,13 +223,17 @@ export default function ShowBooking({ booking, price }) {
                                                 </div>
                                             )}
                                         </>
-                                    ) : booking.pickup_address ? (
+                                    ) : booking.route?.dropoff_time ? (
                                         <div>
-                                            <span className="text-white/70 font-semibold">Pickup Address:</span>
-                                            <p className="text-white font-bold text-lg">{booking.pickup_address}</p>
+                                            <span className="text-white/70 font-semibold">Dropoff Location:</span>
+                                            <p className="text-white font-semibold">{booking.student?.school?.name || 'School'}</p>
+                                            <div className="mt-2">
+                                                <span className="text-white/70 font-semibold">Dropoff Time:</span>
+                                                <p className="text-white font-semibold">{formatTime(booking.route.dropoff_time)}</p>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <p className="text-white/70">No pickup information provided</p>
+                                        <p className="text-white/70">Dropoff information not specified</p>
                                     )}
                                 </div>
 
