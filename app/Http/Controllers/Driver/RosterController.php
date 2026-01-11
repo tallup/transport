@@ -314,7 +314,7 @@ class RosterController extends Controller
         $driver = $request->user();
         
         $validated = $request->validate([
-            'pickup_point_id' => 'required|exists:pickup_points,id',
+            'pickup_point_id' => 'nullable|exists:pickup_points,id',
             'route_id' => 'required|exists:routes,id',
             'date' => 'required|date',
         ]);
@@ -335,7 +335,16 @@ class RosterController extends Controller
         // Get all active bookings for this pickup point on this date
         $date = Carbon::parse($validated['date']);
         $bookings = Booking::where('route_id', $validated['route_id'])
-            ->where('pickup_point_id', $validated['pickup_point_id'])
+            ->where(function ($query) use ($validated) {
+                // Match bookings with this pickup_point_id, or bookings with custom addresses if pickup_point_id is null
+                if ($validated['pickup_point_id']) {
+                    $query->where('pickup_point_id', $validated['pickup_point_id']);
+                } else {
+                    // If pickup_point_id is null, we're trying to complete custom address bookings
+                    $query->whereNull('pickup_point_id')
+                        ->whereNotNull('pickup_address');
+                }
+            })
             ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $date)
             ->where(function ($query) use ($date) {

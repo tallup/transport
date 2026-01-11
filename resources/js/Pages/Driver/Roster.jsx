@@ -300,7 +300,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         </div>
                                                     </div>
 
-                                                    {!allCompleted && route && (
+                                                    {!allCompleted && route && group.pickup_point.id && (
                                                         <div className="mb-4">
                                                             <GlassButton
                                                                 variant="success"
@@ -310,6 +310,13 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                             >
                                                                 {isCompleting ? 'Marking...' : 'Mark All as Complete'}
                                                             </GlassButton>
+                                                        </div>
+                                                    )}
+                                                    {!group.pickup_point.id && (
+                                                        <div className="mb-4">
+                                                            <p className="text-sm text-yellow-300 font-semibold">
+                                                                Custom addresses must be marked individually
+                                                            </p>
                                                         </div>
                                                     )}
 
