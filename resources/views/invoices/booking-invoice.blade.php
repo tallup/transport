@@ -139,7 +139,7 @@
         <h2>Payment Information</h2>
         @php
             $pricingService = app(\App\Services\PricingService::class);
-            $price = $pricingService->calculatePrice($booking->plan_type, $booking->route);
+            $price = $pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
         @endphp
         <table>
             <tr>

@@ -162,8 +162,15 @@ class PricingRuleResource extends Resource
                         'weekly' => 'Weekly',
                         'bi_weekly' => 'Bi-Weekly',
                         'monthly' => 'Monthly',
-                        'semester' => 'Semester',
+                        'academic_term' => 'Academic Term',
                         'annual' => 'Annual',
+                    ])
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('trip_type')
+                    ->label('Trip Type')
+                    ->options([
+                        'one_way' => 'One Way',
+                        'two_way' => 'Two Way',
                     ])
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('scope')

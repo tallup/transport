@@ -523,20 +523,24 @@ class ComprehensiveSeeder extends Seeder
             'van' => 1.2, // Vans are slightly more expensive
         ];
         
-        // Create global pricing rules (no route_id, no vehicle_type)
+        // Create global pricing rules (no route_id, no vehicle_type) for both trip types
         foreach ($planTypes as $planType) {
-            PricingRule::firstOrCreate(
-                [
-                    'plan_type' => $planType,
-                    'route_id' => null,
-                    'vehicle_type' => null,
-                ],
-                [
-                    'amount' => $basePrices[$planType],
-                    'currency' => 'USD',
-                    'active' => true,
-                ]
-            );
+            foreach (['one_way', 'two_way'] as $tripType) {
+                $multiplier = $tripType === 'one_way' ? 0.6 : 1.0; // One-way is 60% of two-way price
+                PricingRule::firstOrCreate(
+                    [
+                        'plan_type' => $planType,
+                        'trip_type' => $tripType,
+                        'route_id' => null,
+                        'vehicle_type' => null,
+                    ],
+                    [
+                        'amount' => round($basePrices[$planType] * $multiplier, 2),
+                        'currency' => 'USD',
+                        'active' => true,
+                    ]
+                );
+            }
         }
         
         // Create route-specific pricing rules
@@ -545,42 +549,50 @@ class ComprehensiveSeeder extends Seeder
             if (!$vehicle) continue;
             
             foreach ($planTypes as $planType) {
-                $multiplier = $vehicleTypeMultipliers[$vehicle->type] ?? 1.0;
-                $amount = $basePrices[$planType] * $multiplier;
-                
-                PricingRule::firstOrCreate(
-                    [
-                        'plan_type' => $planType,
-                        'route_id' => $route->id,
-                        'vehicle_type' => null,
-                    ],
-                    [
-                        'amount' => round($amount, 2),
-                        'currency' => 'USD',
-                        'active' => true,
-                    ]
-                );
+                foreach (['one_way', 'two_way'] as $tripType) {
+                    $vehicleMultiplier = $vehicleTypeMultipliers[$vehicle->type] ?? 1.0;
+                    $tripMultiplier = $tripType === 'one_way' ? 0.6 : 1.0; // One-way is 60% of two-way price
+                    $amount = $basePrices[$planType] * $vehicleMultiplier * $tripMultiplier;
+                    
+                    PricingRule::firstOrCreate(
+                        [
+                            'plan_type' => $planType,
+                            'trip_type' => $tripType,
+                            'route_id' => $route->id,
+                            'vehicle_type' => null,
+                        ],
+                        [
+                            'amount' => round($amount, 2),
+                            'currency' => 'USD',
+                            'active' => true,
+                        ]
+                    );
+                }
             }
         }
         
         // Create vehicle-type-specific pricing rules
         foreach (['bus', 'van'] as $vehicleType) {
             foreach ($planTypes as $planType) {
-                $multiplier = $vehicleTypeMultipliers[$vehicleType] ?? 1.0;
-                $amount = $basePrices[$planType] * $multiplier;
-                
-                PricingRule::firstOrCreate(
-                    [
-                        'plan_type' => $planType,
-                        'route_id' => null,
-                        'vehicle_type' => $vehicleType,
-                    ],
-                    [
-                        'amount' => round($amount, 2),
-                        'currency' => 'USD',
-                        'active' => true,
-                    ]
-                );
+                foreach (['one_way', 'two_way'] as $tripType) {
+                    $vehicleMultiplier = $vehicleTypeMultipliers[$vehicleType] ?? 1.0;
+                    $tripMultiplier = $tripType === 'one_way' ? 0.6 : 1.0; // One-way is 60% of two-way price
+                    $amount = $basePrices[$planType] * $vehicleMultiplier * $tripMultiplier;
+                    
+                    PricingRule::firstOrCreate(
+                        [
+                            'plan_type' => $planType,
+                            'trip_type' => $tripType,
+                            'route_id' => null,
+                            'vehicle_type' => $vehicleType,
+                        ],
+                        [
+                            'amount' => round($amount, 2),
+                            'currency' => 'USD',
+                            'active' => true,
+                        ]
+                    );
+                }
             }
         }
     }

@@ -35,6 +35,7 @@ class PricingRuleController extends Controller
     {
         $validated = $request->validate([
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'trip_type' => 'required|in:one_way,two_way',
             'route_id' => 'nullable|exists:routes,id',
             'vehicle_type' => 'nullable|in:bus,van',
             'amount' => 'required|numeric|min:0',
@@ -65,6 +66,7 @@ class PricingRuleController extends Controller
     {
         $validated = $request->validate([
             'plan_type' => 'required|in:weekly,bi_weekly,monthly,academic_term,annual',
+            'trip_type' => 'required|in:one_way,two_way',
             'route_id' => 'nullable|exists:routes,id',
             'vehicle_type' => 'nullable|in:bus,van',
             'amount' => 'required|numeric|min:0',
