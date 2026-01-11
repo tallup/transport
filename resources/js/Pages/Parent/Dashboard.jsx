@@ -129,66 +129,6 @@ export default function Dashboard({
                         </GlassCard>
                     </div>
 
-                    {/* Quick Actions - Redesigned */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <Link href="/parent/students/enroll">
-                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 group">
-                                <div className="p-6 flex items-center">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500/40 to-purple-500/40 rounded-2xl flex items-center justify-center mr-5 group-hover:scale-110 transition-transform border border-blue-400/30">
-                                        <svg className="w-8 h-8 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-white mb-1">Add Student</h3>
-                                        <p className="text-sm font-semibold text-white/70">Register a new student</p>
-                                    </div>
-                                    <svg className="w-5 h-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </GlassCard>
-                        </Link>
-
-                        <Link href="/parent/bookings">
-                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 group">
-                                <div className="p-6 flex items-center">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-green-500/40 to-emerald-500/40 rounded-2xl flex items-center justify-center mr-5 group-hover:scale-110 transition-transform border border-green-400/30">
-                                        <svg className="w-8 h-8 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-white mb-1">My Bookings</h3>
-                                        <p className="text-sm font-semibold text-white/70">View all bookings</p>
-                                    </div>
-                                    <svg className="w-5 h-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </GlassCard>
-                        </Link>
-
-                        <Link href="/parent/students">
-                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 group">
-                                <div className="p-6 flex items-center">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500/40 to-pink-500/40 rounded-2xl flex items-center justify-center mr-5 group-hover:scale-110 transition-transform border border-purple-400/30">
-                                        <svg className="w-8 h-8 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                        </svg>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-white mb-1">My Students</h3>
-                                        <p className="text-sm font-semibold text-white/70">Manage students</p>
-                                    </div>
-                                    <svg className="w-5 h-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </GlassCard>
-                        </Link>
-                    </div>
-
                     {/* Main Content Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                         {/* Upcoming Pickups - Enhanced */}
