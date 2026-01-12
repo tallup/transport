@@ -55,32 +55,45 @@ class RosterController extends Controller
             }
         }
 
-        // If it's morning (before 12:00 PM), show AM route or 'both' route only
-        if ($isMorning) {
-            if ($amRoute) {
-                return $amRoute;
-            }
-            // Only show 'both' route in morning if no AM route exists
-            // Don't show PM-only routes in the morning
-            return $bothRoute;
-        }
-
-        // If it's afternoon (after 12:00 PM)
-        // Check if AM route exists and is completed
+        // Check completion status first (regardless of time of day)
+        // If AM route exists, check if it's completed
         if ($amRoute) {
             $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
                 ->where('driver_id', $driver->id)
                 ->whereDate('completion_date', $today)
                 ->exists();
 
-            // If AM route is not completed, show it
+            // If AM route is not completed, show it (regardless of time)
             if (!$amCompleted) {
                 return $amRoute;
             }
+            
+            // AM route is completed - check if PM route exists
+            if ($pmRoute) {
+                // Check if PM route is also completed
+                $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
+                    ->where('driver_id', $driver->id)
+                    ->whereDate('completion_date', $today)
+                    ->exists();
+                
+                // If PM route is not completed, show it (driver completed AM, now show PM)
+                if (!$pmCompleted) {
+                    return $pmRoute;
+                }
+            }
+            
+            // AM route is completed, but no PM route or PM is also completed
+            // Return the AM route so driver can see it's completed
+            return $amRoute;
         }
 
-        // AM route is completed or doesn't exist, show PM route or 'both' route
-        // Final fallback: return first active route if nothing else matches
+        // No AM route exists - use time-based logic
+        // If it's morning (before 12:00 PM), show 'both' route only
+        if ($isMorning) {
+            return $bothRoute;
+        }
+
+        // It's afternoon and no AM route - show PM route or 'both' route
         return $pmRoute ?: $bothRoute ?: $routes->first();
     }
 
