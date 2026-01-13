@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
-export default function ShowBooking({ booking, price }) {
+export default function ShowBooking({ booking, price, dailyPickups }) {
     const { auth, flash } = usePage().props;
 
     // Helper function to format time
@@ -324,6 +324,254 @@ export default function ShowBooking({ booking, price }) {
                                     </Link>
                                 )}
                             </div>
+                        </div>
+                    </GlassCard>
+
+                    {/* Daily Pickup History */}
+                    {dailyPickups && Object.keys(dailyPickups).length > 0 && (
+                        <GlassCard className="mb-6">
+                            <div className="p-6">
+                                <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-6">
+                                    Pickup History
+                                </h3>
+                                
+                                <div className="space-y-4">
+                                    {Object.entries(dailyPickups)
+                                        .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+                                        .map(([date, pickups]) => (
+                                            <div key={date} className="glass-card rounded-lg p-4 border border-white/20">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h4 className="text-lg font-bold text-white">
+                                                        {new Date(date).toLocaleDateString('en-US', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </h4>
+                                                    <span className="text-sm font-semibold text-white/70">
+                                                        {pickups.length} pickup{pickups.length !== 1 ? 's' : ''}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div className="space-y-3">
+                                                    {pickups.map((pickup) => (
+                                                        <div key={pickup.id} className="flex items-start gap-4 p-3 bg-white/5 rounded-lg border border-white/10">
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center gap-3 mb-2">
+                                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                                                        pickup.period === 'am'
+                                                                            ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
+                                                                            : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
+                                                                    }`}>
+                                                                        {pickup.period?.toUpperCase() || 'AM'}
+                                                                    </span>
+                                                                    {pickup.completed_at && (
+                                                                        <span className="flex items-center gap-1 text-green-300 text-sm font-semibold">
+                                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                            </svg>
+                                                                            Completed
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                                                    {pickup.pickup_point && (
+                                                                        <div>
+                                                                            <span className="text-white/70 font-semibold">Pickup Point:</span>
+                                                                            <p className="text-white font-bold">{pickup.pickup_point.name}</p>
+                                                                            <p className="text-white/80 text-xs mt-1">{pickup.pickup_point.address}</p>
+                                                                        </div>
+                                                                    )}
+                                                                    
+                                                                    {pickup.driver && (
+                                                                        <div>
+                                                                            <span className="text-white/70 font-semibold">Driver:</span>
+                                                                            <p className="text-white font-bold">{pickup.driver.name}</p>
+                                                                        </div>
+                                                                    )}
+                                                                    
+                                                                    {pickup.completed_at && (
+                                                                        <div>
+                                                                            <span className="text-white/70 font-semibold">Completed At:</span>
+                                                                            <p className="text-white font-semibold">
+                                                                                {new Date(pickup.completed_at).toLocaleTimeString('en-US', {
+                                                                                    hour: '2-digit',
+                                                                                    minute: '2-digit',
+                                                                                    hour12: true
+                                                                                })}
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                
+                                                                {pickup.notes && (
+                                                                    <div className="mt-3 pt-3 border-t border-white/10">
+                                                                        <span className="text-white/70 font-semibold text-sm">Notes:</span>
+                                                                        <p className="text-white/90 text-sm mt-1">{pickup.notes}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {/* Enhanced Pickup Details Section */}
+                    <GlassCard>
+                        <div className="p-6">
+                            <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-6">
+                                Pickup & Dropoff Schedule
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Pickup Details */}
+                                <div className="space-y-4">
+                                    <h4 className="text-xl font-bold text-white border-b border-white/30 pb-2">
+                                        Morning Pickup
+                                    </h4>
+                                    {booking.pickup_point ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Location:</span>
+                                                <p className="text-white font-bold text-lg">{booking.pickup_point.name}</p>
+                                                <p className="text-white/80 text-sm mt-1">{booking.pickup_point.address}</p>
+                                                {booking.pickup_point.latitude && booking.pickup_point.longitude && (
+                                                    <p className="text-white/60 text-xs mt-1">
+                                                        Coordinates: {booking.pickup_point.latitude}, {booking.pickup_point.longitude}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {booking.pickup_point.pickup_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
+                                                    <p className="text-white font-bold text-lg text-green-300">
+                                                        {formatTime(booking.pickup_point.pickup_time)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : booking.pickup_address ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Location:</span>
+                                                <p className="text-white font-bold text-lg">{booking.pickup_address}</p>
+                                                {booking.pickup_latitude && booking.pickup_longitude && (
+                                                    <p className="text-white/60 text-xs mt-1">
+                                                        Coordinates: {booking.pickup_latitude}, {booking.pickup_longitude}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {booking.route?.pickup_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
+                                                    <p className="text-white font-bold text-lg text-green-300">
+                                                        {formatTime(booking.route.pickup_time)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p className="text-white/70">Pickup location not specified</p>
+                                    )}
+                                </div>
+
+                                {/* Dropoff Details */}
+                                <div className="space-y-4">
+                                    <h4 className="text-xl font-bold text-white border-b border-white/30 pb-2">
+                                        Afternoon Dropoff
+                                    </h4>
+                                    {booking.dropoff_point ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Location:</span>
+                                                <p className="text-white font-bold text-lg">{booking.dropoff_point.name}</p>
+                                                <p className="text-white/80 text-sm mt-1">{booking.dropoff_point.address}</p>
+                                                {booking.dropoff_point.latitude && booking.dropoff_point.longitude && (
+                                                    <p className="text-white/60 text-xs mt-1">
+                                                        Coordinates: {booking.dropoff_point.latitude}, {booking.dropoff_point.longitude}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {booking.dropoff_point.dropoff_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
+                                                    <p className="text-white font-bold text-lg text-green-300">
+                                                        {formatTime(booking.dropoff_point.dropoff_time)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : booking.pickup_point ? (
+                                        <>
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Location:</span>
+                                                <p className="text-white font-bold text-lg">{booking.pickup_point.name}</p>
+                                                <p className="text-white/80 text-sm mt-1">{booking.pickup_point.address}</p>
+                                            </div>
+                                            {booking.pickup_point.dropoff_time && (
+                                                <div>
+                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
+                                                    <p className="text-white font-bold text-lg text-green-300">
+                                                        {formatTime(booking.pickup_point.dropoff_time)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : booking.student?.school ? (
+                                        <div>
+                                            <span className="text-white/70 font-semibold">Location:</span>
+                                            <p className="text-white font-bold text-lg">{booking.student.school.name}</p>
+                                            {booking.route?.dropoff_time && (
+                                                <div className="mt-3">
+                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
+                                                    <p className="text-white font-bold text-lg text-green-300">
+                                                        {formatTime(booking.route.dropoff_time)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="text-white/70">Dropoff location not specified</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Route Information */}
+                            {booking.route && (
+                                <div className="mt-6 pt-6 border-t border-white/30">
+                                    <h4 className="text-xl font-bold text-white mb-4">Route Information</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <span className="text-white/70 font-semibold">Route Name:</span>
+                                            <p className="text-white font-bold">{booking.route.name}</p>
+                                        </div>
+                                        {booking.route.vehicle && (
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Vehicle:</span>
+                                                <p className="text-white font-bold">
+                                                    {booking.route.vehicle.make} {booking.route.vehicle.model}
+                                                </p>
+                                                {booking.route.vehicle.license_plate && (
+                                                    <p className="text-white/80 text-sm">Plate: {booking.route.vehicle.license_plate}</p>
+                                                )}
+                                            </div>
+                                        )}
+                                        {booking.route.driver && (
+                                            <div>
+                                                <span className="text-white/70 font-semibold">Driver:</span>
+                                                <p className="text-white font-bold">{booking.route.driver.name}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </GlassCard>
                 </div>

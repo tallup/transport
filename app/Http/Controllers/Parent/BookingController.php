@@ -453,9 +453,38 @@ class BookingController extends Controller
             }
         }
 
+        // Load daily pickups for this booking with formatted data
+        $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
+            ->with(['driver', 'pickupPoint'])
+            ->orderBy('pickup_date', 'desc')
+            ->orderBy('period', 'asc')
+            ->get()
+            ->map(function ($pickup) {
+                return [
+                    'id' => $pickup->id,
+                    'pickup_date' => $pickup->pickup_date->format('Y-m-d'),
+                    'period' => $pickup->period,
+                    'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
+                    'notes' => $pickup->notes,
+                    'driver' => $pickup->driver ? [
+                        'id' => $pickup->driver->id,
+                        'name' => $pickup->driver->name,
+                    ] : null,
+                    'pickup_point' => $pickup->pickupPoint ? [
+                        'id' => $pickup->pickupPoint->id,
+                        'name' => $pickup->pickupPoint->name,
+                        'address' => $pickup->pickupPoint->address,
+                        'latitude' => $pickup->pickupPoint->latitude,
+                        'longitude' => $pickup->pickupPoint->longitude,
+                    ] : null,
+                ];
+            })
+            ->groupBy('pickup_date');
+
         return Inertia::render('Parent/Bookings/Show', [
-            'booking' => $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']),
+            'booking' => $booking->load(['student.parent', 'student.school', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint']),
             'price' => $price,
+            'dailyPickups' => $dailyPickups,
         ]);
     }
 
