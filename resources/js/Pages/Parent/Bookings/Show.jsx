@@ -328,7 +328,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                     </GlassCard>
 
                     {/* Pickup History Link */}
-                    {dailyPickups && Object.keys(dailyPickups).length > 0 && (
+                    {dailyPickups && typeof dailyPickups === 'object' && dailyPickups !== null && Object.keys(dailyPickups).length > 0 && (
                         <GlassCard className="mb-6">
                             <div className="p-6">
                                 <div className="flex items-center justify-between">
@@ -337,11 +337,11 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                             Pickup History
                                         </h3>
                                         <p className="text-white/70 font-semibold">
-                                            {Object.values(dailyPickups).flat().length} pickup{Object.values(dailyPickups).flat().length !== 1 ? 's' : ''} recorded
+                                            {Object.values(dailyPickups || {}).flat().length} pickup{Object.values(dailyPickups || {}).flat().length !== 1 ? 's' : ''} recorded
                                         </p>
                                     </div>
                                     <Link
-                                        href={`/parent/bookings/${booking.id}/pickup-history`}
+                                        href={`/parent/bookings/${booking?.id}/pickup-history`}
                                         className="px-6 py-3 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition inline-flex items-center gap-2"
                                     >
                                         View Full History
@@ -494,7 +494,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                                 )}
                                             </div>
                                         )}
-                                        {booking.route.driver && (
+                                        {booking.route?.driver && (
                                             <div>
                                                 <span className="text-white/70 font-semibold">Driver:</span>
                                                 <p className="text-white font-bold">{booking.route.driver.name}</p>

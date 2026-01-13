@@ -454,35 +454,52 @@ class BookingController extends Controller
         }
 
         // Load daily pickups for this booking with formatted data
-        $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
-            ->with(['driver', 'pickupPoint'])
-            ->orderBy('pickup_date', 'desc')
-            ->orderBy('period', 'asc')
-            ->get()
-            ->map(function ($pickup) {
-                return [
-                    'id' => $pickup->id,
-                    'pickup_date' => $pickup->pickup_date->format('Y-m-d'),
-                    'period' => $pickup->period,
-                    'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
-                    'notes' => $pickup->notes,
-                    'driver' => $pickup->driver ? [
-                        'id' => $pickup->driver->id,
-                        'name' => $pickup->driver->name,
-                    ] : null,
-                    'pickup_point' => $pickup->pickupPoint ? [
-                        'id' => $pickup->pickupPoint->id,
-                        'name' => $pickup->pickupPoint->name,
-                        'address' => $pickup->pickupPoint->address,
-                        'latitude' => $pickup->pickupPoint->latitude,
-                        'longitude' => $pickup->pickupPoint->longitude,
-                    ] : null,
-                ];
-            })
-            ->groupBy('pickup_date');
+        try {
+            $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
+                ->with(['driver', 'pickupPoint'])
+                ->orderBy('pickup_date', 'desc')
+                ->orderBy('period', 'asc')
+                ->get()
+                ->map(function ($pickup) {
+                    return [
+                        'id' => $pickup->id,
+                        'pickup_date' => $pickup->pickup_date ? $pickup->pickup_date->format('Y-m-d') : null,
+                        'period' => $pickup->period ?? 'am',
+                        'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
+                        'notes' => $pickup->notes,
+                        'driver' => $pickup->driver ? [
+                            'id' => $pickup->driver->id,
+                            'name' => $pickup->driver->name,
+                        ] : null,
+                        'pickup_point' => $pickup->pickupPoint ? [
+                            'id' => $pickup->pickupPoint->id,
+                            'name' => $pickup->pickupPoint->name,
+                            'address' => $pickup->pickupPoint->address ?? null,
+                            'latitude' => $pickup->pickupPoint->latitude,
+                            'longitude' => $pickup->pickupPoint->longitude,
+                        ] : null,
+                    ];
+                })
+                ->filter(function ($pickup) {
+                    return $pickup['pickup_date'] !== null;
+                })
+                ->groupBy('pickup_date');
+        } catch (\Exception $e) {
+            // If there's an error loading pickups, use empty collection
+            \Log::error('Error loading daily pickups: ' . $e->getMessage());
+            $dailyPickups = collect([]);
+        }
+
+        // Load booking with relationships (safely handle missing relationships)
+        $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
+        
+        // Load driver separately if route exists
+        if ($booking->route) {
+            $booking->route->load('driver');
+        }
 
         return Inertia::render('Parent/Bookings/Show', [
-            'booking' => $booking->load(['student.parent', 'student.school', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint']),
+            'booking' => $booking,
             'price' => $price,
             'dailyPickups' => $dailyPickups,
         ]);
@@ -502,16 +519,21 @@ class BookingController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Load booking with relationships
-        $booking->load(['student.parent', 'student.school', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint']);
+        // Load booking with relationships (safely handle missing relationships)
+        $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
+        
+        // Load driver separately if route exists
+        if ($booking->route) {
+            $booking->route->load('driver');
+        }
 
         // Load all daily pickups for this booking with comprehensive data
         $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
-            ->with(['driver', 'pickupPoint', 'route'])
+            ->with(['driver', 'pickupPoint'])
             ->orderBy('pickup_date', 'desc')
             ->orderBy('period', 'asc')
             ->get()
-            ->map(function ($pickup) {
+            ->map(function ($pickup) use ($booking) {
                 return [
                     'id' => $pickup->id,
                     'pickup_date' => $pickup->pickup_date->format('Y-m-d'),
@@ -534,9 +556,9 @@ class BookingController extends Controller
                         'pickup_time' => $pickup->pickupPoint->pickup_time,
                         'dropoff_time' => $pickup->pickupPoint->dropoff_time,
                     ] : null,
-                    'route' => $pickup->route ? [
-                        'id' => $pickup->route->id,
-                        'name' => $pickup->route->name,
+                    'route' => $booking->route ? [
+                        'id' => $booking->route->id,
+                        'name' => $booking->route->name,
                     ] : null,
                 ];
             })
