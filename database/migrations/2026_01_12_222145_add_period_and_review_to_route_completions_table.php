@@ -14,7 +14,31 @@ return new class extends Migration
     {
         $driverName = DB::connection()->getDriverName();
 
-        // First, add the new columns
+        // For MySQL/MariaDB, we need to drop foreign key constraints first
+        // because they might be using the unique index
+        if ($driverName === 'mysql' || $driverName === 'mariadb') {
+            // Get foreign key constraint names
+            $foreignKeys = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                AND TABLE_NAME = 'route_completions' 
+                AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
+
+            // Drop foreign key constraints
+            foreach ($foreignKeys as $fk) {
+                $constraintName = $fk->CONSTRAINT_NAME;
+                DB::statement("ALTER TABLE route_completions DROP FOREIGN KEY {$constraintName}");
+            }
+        }
+
+        // Drop the old unique constraint
+        Schema::table('route_completions', function (Blueprint $table) use ($driverName) {
+            $table->dropUnique('unique_route_driver_date');
+        });
+
+        // Add the new columns
         Schema::table('route_completions', function (Blueprint $table) use ($driverName) {
             // Add period field
             if ($driverName === 'mysql' || $driverName === 'mariadb') {
@@ -33,26 +57,11 @@ return new class extends Migration
         // Update existing records to have period = 'am' (default)
         DB::table('route_completions')->whereNull('period')->update(['period' => 'am']);
 
-        // For MySQL/MariaDB, use raw SQL to drop the unique index
-        // This handles foreign key dependencies better
+        // Re-add foreign key constraints for MySQL/MariaDB
         if ($driverName === 'mysql' || $driverName === 'mariadb') {
-            // Check if the index exists before trying to drop it
-            $indexExists = DB::select("
-                SELECT COUNT(*) as count 
-                FROM information_schema.statistics 
-                WHERE table_schema = DATABASE() 
-                AND table_name = 'route_completions' 
-                AND index_name = 'unique_route_driver_date'
-            ");
-            
-            if (isset($indexExists[0]) && $indexExists[0]->count > 0) {
-                // Drop the unique index using raw SQL
-                DB::statement('ALTER TABLE route_completions DROP INDEX unique_route_driver_date');
-            }
-        } else {
-            // For other databases, use Schema builder
             Schema::table('route_completions', function (Blueprint $table) {
-                $table->dropUnique('unique_route_driver_date');
+                $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
+                $table->foreign('driver_id')->references('id')->on('users')->onDelete('cascade');
             });
         }
 
