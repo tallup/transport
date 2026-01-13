@@ -46,9 +46,9 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     Route::get('/bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
     Route::get('/bookings/{booking}/checkout', [BookingController::class, 'showCheckout'])->name('bookings.checkout');
+    Route::get('/pickup-history', [BookingController::class, 'allPickupHistory'])->name('pickup-history');
     Route::get('/bookings/{booking}/rebook', [BookingController::class, 'rebook'])->name('bookings.rebook');
     Route::get('/bookings/{booking}/pickup-history', [BookingController::class, 'pickupHistory'])->name('bookings.pickup-history');
-    Route::get('/pickup-history', [BookingController::class, 'allPickupHistory'])->name('pickup-history');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');

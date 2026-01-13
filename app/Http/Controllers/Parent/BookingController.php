@@ -588,6 +588,21 @@ class BookingController extends Controller
 
         // Get all bookings for the parent's students
         $studentIds = $user->students->pluck('id');
+        
+        if ($studentIds->isEmpty()) {
+            return Inertia::render('Parent/Bookings/AllPickupHistory', [
+                'bookings' => collect([]),
+                'dailyPickups' => collect([]),
+                'pickupsByBooking' => collect([]),
+                'statistics' => [
+                    'total' => 0,
+                    'completed' => 0,
+                    'am' => 0,
+                    'pm' => 0,
+                ],
+            ]);
+        }
+        
         $bookings = Booking::whereIn('student_id', $studentIds)
             ->with(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint'])
             ->get();
@@ -595,8 +610,22 @@ class BookingController extends Controller
         // Load all daily pickups for all bookings
         $bookingIds = $bookings->pluck('id');
         
+        if ($bookingIds->isEmpty()) {
+            return Inertia::render('Parent/Bookings/AllPickupHistory', [
+                'bookings' => $bookings,
+                'dailyPickups' => collect([]),
+                'pickupsByBooking' => collect([]),
+                'statistics' => [
+                    'total' => 0,
+                    'completed' => 0,
+                    'am' => 0,
+                    'pm' => 0,
+                ],
+            ]);
+        }
+        
         try {
-            $dailyPickups = \App\Models\DailyPickup::whereIn('booking_id', $bookingIds)
+            $dailyPickups = \App\Models\DailyPickup::whereIn('booking_id', $bookingIds->toArray())
                 ->with(['driver', 'pickupPoint', 'booking.student', 'booking.route'])
                 ->orderBy('pickup_date', 'desc')
                 ->orderBy('period', 'asc')
