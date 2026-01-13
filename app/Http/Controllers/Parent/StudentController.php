@@ -24,12 +24,16 @@ class StudentController extends Controller
 
         // Load active bookings for all students in one query to avoid N+1
         $studentIds = $students->pluck('id');
-        $activeBookings = Booking::whereIn('student_id', $studentIds)
-            ->whereIn('status', ['pending', 'active'])
-            ->with(['route', 'pickupPoint', 'dropoffPoint'])
-            ->orderBy('start_date', 'desc')
-            ->get()
-            ->groupBy('student_id');
+        $activeBookings = collect();
+        
+        if ($studentIds->isNotEmpty()) {
+            $activeBookings = Booking::whereIn('student_id', $studentIds)
+                ->whereIn('status', ['pending', 'active'])
+                ->with(['route', 'pickupPoint', 'dropoffPoint'])
+                ->orderBy('start_date', 'desc')
+                ->get()
+                ->groupBy('student_id');
+        }
 
         // Map active bookings to students
         $students = $students->map(function ($student) use ($activeBookings) {
