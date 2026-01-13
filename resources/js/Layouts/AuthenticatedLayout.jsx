@@ -13,7 +13,8 @@ export default function AuthenticatedLayout({ header, children }) {
         { href: '/parent/students', label: 'My Students', active: currentUrl === '/parent/students' },
         { href: '/parent/students/enroll', label: 'Add Student', active: currentUrl === '/parent/students/enroll' },
         { href: '/parent/bookings/create', label: 'Book Transport', active: currentUrl === '/parent/bookings/create' },
-        { href: '/parent/bookings', label: 'My Bookings', active: currentUrl?.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' },
+        { href: '/parent/bookings', label: 'My Bookings', active: currentUrl?.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' && currentUrl !== '/parent/pickup-history' },
+        { href: '/parent/pickup-history', label: 'Pickup History', active: currentUrl === '/parent/pickup-history' },
     ];
 
     const userMenuItems = [
@@ -61,6 +62,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                     className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
                                 >
                                     My Bookings
+                                </Link>
+                                <Link
+                                    href="/parent/pickup-history"
+                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
+                                >
+                                    Pickup History
                                 </Link>
                             </div>
                         </div>
