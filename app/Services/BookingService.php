@@ -18,15 +18,26 @@ class BookingService
      */
     public function updateBookingStatuses(): void
     {
-        // Auto-expire bookings past end_date
-        Booking::where('status', 'active')
+        $today = Carbon::today();
+        
+        // Fix bookings marked as 'completed' - they should be 'active' until plan period ends
+        // If end_date has passed, mark as expired; otherwise mark as active
+        Booking::where('status', 'completed')
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', $today);
+            })
+            ->update(['status' => 'active']);
+        
+        // Auto-expire bookings past end_date (including those that were 'completed')
+        Booking::whereIn('status', ['active', 'completed'])
             ->whereNotNull('end_date')
-            ->where('end_date', '<', Carbon::now())
+            ->where('end_date', '<', $today)
             ->update(['status' => 'expired']);
 
         // Activate pending bookings that have passed start_date
         Booking::where('status', 'pending')
-            ->where('start_date', '<=', Carbon::now())
+            ->where('start_date', '<=', $today)
             ->update(['status' => 'active']);
     }
 

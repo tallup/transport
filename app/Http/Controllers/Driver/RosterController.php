@@ -134,8 +134,9 @@ class RosterController extends Controller
         $period = $period ?? $this->getRoutePeriod($route);
         
         // Get all active bookings for this route on this date
+        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
         $totalBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -148,8 +149,9 @@ class RosterController extends Controller
         }
 
         // Check if all bookings have daily pickup records for today and period
+        // Only check 'active' bookings (not 'pending' - those haven't been paid yet)
         $bookingsWithPickups = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -207,9 +209,10 @@ class RosterController extends Controller
 
         if ($isSchoolDay) {
             // Get active bookings for today (within their booking period)
+            // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
             // This ensures bookings are visible for the entire duration they're valid
             $bookings = Booking::where('route_id', $selectedRoute->id)
-                ->whereIn('status', ['pending', 'active'])
+                ->where('status', 'active')
                 ->whereDate('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
@@ -424,6 +427,7 @@ class RosterController extends Controller
         $period = $this->getRoutePeriod($route);
 
         // Get all active bookings for this pickup point on this date
+        // Only show 'active' bookings (not 'pending' - those haven't been paid yet)
         $date = Carbon::parse($validated['date']);
         $bookings = Booking::where('route_id', $validated['route_id'])
             ->where(function ($query) use ($validated) {
@@ -436,7 +440,7 @@ class RosterController extends Controller
                         ->whereNotNull('pickup_address');
                 }
             })
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $date)
             ->where(function ($query) use ($date) {
                 $query->whereNull('end_date')

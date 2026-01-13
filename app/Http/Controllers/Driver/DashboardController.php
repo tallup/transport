@@ -156,8 +156,9 @@ class DashboardController extends Controller
         $period = $period ?? $this->getRoutePeriod($route);
         
         // Get all active bookings for this route on this date
+        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
         $totalBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -170,8 +171,9 @@ class DashboardController extends Controller
         }
 
         // Check if all bookings have daily pickup records for today and period
+        // Only check 'active' bookings (not 'pending' - those haven't been paid yet)
         $bookingsWithPickups = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -275,9 +277,10 @@ class DashboardController extends Controller
 
         // Today's schedule timeline
         // Fetch bookings that are active today (within their booking period)
+        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
         $todaySchedule = [];
         $todayBookingsList = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -508,8 +511,9 @@ class DashboardController extends Controller
         }
 
         $today = Carbon::today();
+        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
         $activeBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->where('status', 'active')
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
