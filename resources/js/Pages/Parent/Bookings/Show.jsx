@@ -327,97 +327,28 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                         </div>
                     </GlassCard>
 
-                    {/* Daily Pickup History */}
+                    {/* Pickup History Link */}
                     {dailyPickups && Object.keys(dailyPickups).length > 0 && (
                         <GlassCard className="mb-6">
                             <div className="p-6">
-                                <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-6">
-                                    Pickup History
-                                </h3>
-                                
-                                <div className="space-y-4">
-                                    {Object.entries(dailyPickups)
-                                        .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
-                                        .map(([date, pickups]) => (
-                                            <div key={date} className="glass-card rounded-lg p-4 border border-white/20">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <h4 className="text-lg font-bold text-white">
-                                                        {new Date(date).toLocaleDateString('en-US', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric'
-                                                        })}
-                                                    </h4>
-                                                    <span className="text-sm font-semibold text-white/70">
-                                                        {pickups.length} pickup{pickups.length !== 1 ? 's' : ''}
-                                                    </span>
-                                                </div>
-                                                
-                                                <div className="space-y-3">
-                                                    {pickups.map((pickup) => (
-                                                        <div key={pickup.id} className="flex items-start gap-4 p-3 bg-white/5 rounded-lg border border-white/10">
-                                                            <div className="flex-1">
-                                                                <div className="flex items-center gap-3 mb-2">
-                                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                                                        pickup.period === 'am'
-                                                                            ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                                            : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
-                                                                    }`}>
-                                                                        {pickup.period?.toUpperCase() || 'AM'}
-                                                                    </span>
-                                                                    {pickup.completed_at && (
-                                                                        <span className="flex items-center gap-1 text-green-300 text-sm font-semibold">
-                                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                            </svg>
-                                                                            Completed
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                
-                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                                                    {pickup.pickup_point && (
-                                                                        <div>
-                                                                            <span className="text-white/70 font-semibold">Pickup Point:</span>
-                                                                            <p className="text-white font-bold">{pickup.pickup_point.name}</p>
-                                                                            <p className="text-white/80 text-xs mt-1">{pickup.pickup_point.address}</p>
-                                                                        </div>
-                                                                    )}
-                                                                    
-                                                                    {pickup.driver && (
-                                                                        <div>
-                                                                            <span className="text-white/70 font-semibold">Driver:</span>
-                                                                            <p className="text-white font-bold">{pickup.driver.name}</p>
-                                                                        </div>
-                                                                    )}
-                                                                    
-                                                                    {pickup.completed_at && (
-                                                                        <div>
-                                                                            <span className="text-white/70 font-semibold">Completed At:</span>
-                                                                            <p className="text-white font-semibold">
-                                                                                {new Date(pickup.completed_at).toLocaleTimeString('en-US', {
-                                                                                    hour: '2-digit',
-                                                                                    minute: '2-digit',
-                                                                                    hour12: true
-                                                                                })}
-                                                                            </p>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                                
-                                                                {pickup.notes && (
-                                                                    <div className="mt-3 pt-3 border-t border-white/10">
-                                                                        <span className="text-white/70 font-semibold text-sm">Notes:</span>
-                                                                        <p className="text-white/90 text-sm mt-1">{pickup.notes}</p>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-2">
+                                            Pickup History
+                                        </h3>
+                                        <p className="text-white/70 font-semibold">
+                                            {Object.values(dailyPickups).flat().length} pickup{Object.values(dailyPickups).flat().length !== 1 ? 's' : ''} recorded
+                                        </p>
+                                    </div>
+                                    <Link
+                                        href={`/parent/bookings/${booking.id}/pickup-history`}
+                                        className="px-6 py-3 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition inline-flex items-center gap-2"
+                                    >
+                                        View Full History
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </Link>
                                 </div>
                             </div>
                         </GlassCard>

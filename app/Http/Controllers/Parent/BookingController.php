@@ -488,6 +488,78 @@ class BookingController extends Controller
         ]);
     }
 
+    public function pickupHistory(Request $request, Booking $booking)
+    {
+        $user = $request->user();
+
+        // Authorization check
+        if (!$user->can('view', $booking)) {
+            abort(403, 'Unauthorized to view this booking.');
+        }
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Load booking with relationships
+        $booking->load(['student.parent', 'student.school', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint']);
+
+        // Load all daily pickups for this booking with comprehensive data
+        $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
+            ->with(['driver', 'pickupPoint', 'route'])
+            ->orderBy('pickup_date', 'desc')
+            ->orderBy('period', 'asc')
+            ->get()
+            ->map(function ($pickup) {
+                return [
+                    'id' => $pickup->id,
+                    'pickup_date' => $pickup->pickup_date->format('Y-m-d'),
+                    'pickup_date_formatted' => $pickup->pickup_date->format('l, F j, Y'),
+                    'period' => $pickup->period,
+                    'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
+                    'completed_at_formatted' => $pickup->completed_at ? $pickup->completed_at->format('g:i A') : null,
+                    'notes' => $pickup->notes,
+                    'driver' => $pickup->driver ? [
+                        'id' => $pickup->driver->id,
+                        'name' => $pickup->driver->name,
+                        'email' => $pickup->driver->email,
+                    ] : null,
+                    'pickup_point' => $pickup->pickupPoint ? [
+                        'id' => $pickup->pickupPoint->id,
+                        'name' => $pickup->pickupPoint->name,
+                        'address' => $pickup->pickupPoint->address,
+                        'latitude' => $pickup->pickupPoint->latitude,
+                        'longitude' => $pickup->pickupPoint->longitude,
+                        'pickup_time' => $pickup->pickupPoint->pickup_time,
+                        'dropoff_time' => $pickup->pickupPoint->dropoff_time,
+                    ] : null,
+                    'route' => $pickup->route ? [
+                        'id' => $pickup->route->id,
+                        'name' => $pickup->route->name,
+                    ] : null,
+                ];
+            })
+            ->groupBy('pickup_date');
+
+        // Calculate statistics
+        $totalPickups = $dailyPickups->flatten()->count();
+        $completedPickups = $dailyPickups->flatten()->filter(fn($p) => $p['completed_at'] !== null)->count();
+        $amPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'am')->count();
+        $pmPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'pm')->count();
+
+        return Inertia::render('Parent/Bookings/PickupHistory', [
+            'booking' => $booking,
+            'dailyPickups' => $dailyPickups,
+            'statistics' => [
+                'total' => $totalPickups,
+                'completed' => $completedPickups,
+                'am' => $amPickups,
+                'pm' => $pmPickups,
+            ],
+        ]);
+    }
+
     public function edit(Request $request, Booking $booking)
     {
         $user = $request->user();
