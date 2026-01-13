@@ -102,13 +102,13 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                                         {completion.route.name}
                                                     </h3>
                                                     <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                                                        completion.route.service_period === 'am'
+                                                        completion.period === 'am'
                                                             ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                            : completion.route.service_period === 'pm'
+                                                            : completion.period === 'pm'
                                                             ? 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
                                                             : 'bg-green-500/30 text-green-100 border border-green-400/50'
                                                     }`}>
-                                                        {completion.route.service_period?.toUpperCase() || 'BOTH'}
+                                                        {completion.period?.toUpperCase() || 'AM'}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-4 mt-2">
@@ -176,20 +176,32 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                             </div>
 
                                             <div className="p-3 glass-card rounded-lg">
-                                                <p className="text-xs font-semibold text-white/70 mb-1">Students Completed</p>
+                                                <p className="text-xs font-semibold text-white/70 mb-1">Pickups Completed</p>
                                                 <p className="text-sm font-bold text-white">
-                                                    {completion.stats.completed_bookings} / {completion.stats.total_bookings}
+                                                    {completion.stats.completed_pickups} / {completion.stats.total_bookings}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* Notes */}
-                                        {completion.notes && (
-                                            <div className="mt-4 p-4 glass-card rounded-lg border border-white/20">
-                                                <p className="text-xs font-bold text-white/70 mb-2">Completion Notes</p>
-                                                <p className="text-sm font-semibold text-white/90 whitespace-pre-wrap">
-                                                    {completion.notes}
-                                                </p>
+                                        {/* Notes and Review */}
+                                        {(completion.notes || completion.review) && (
+                                            <div className="mt-4 space-y-3">
+                                                {completion.notes && (
+                                                    <div className="p-4 glass-card rounded-lg border border-white/20">
+                                                        <p className="text-xs font-bold text-white/70 mb-2">Completion Notes</p>
+                                                        <p className="text-sm font-semibold text-white/90 whitespace-pre-wrap">
+                                                            {completion.notes}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                                {completion.review && (
+                                                    <div className="p-4 glass-card rounded-lg border border-blue-400/30 bg-blue-500/10">
+                                                        <p className="text-xs font-bold text-blue-200 mb-2">Driver Review</p>
+                                                        <p className="text-sm font-semibold text-white/90 whitespace-pre-wrap">
+                                                            {completion.review}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>

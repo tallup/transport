@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\DailyPickup;
 use App\Models\PricingRule;
 use App\Services\PricingService;
 use Carbon\Carbon;
@@ -118,7 +119,7 @@ class FinanceController extends Controller
                 'active' => Booking::where('status', 'active')->count(),
                 'pending' => Booking::where('status', 'pending')->count(),
                 'cancelled' => Booking::where('status', 'cancelled')->count(),
-                'completed' => Booking::where('status', 'completed')->count(),
+                'completed' => DailyPickup::count(),
             ];
 
             // Monthly revenue (last 6 months)

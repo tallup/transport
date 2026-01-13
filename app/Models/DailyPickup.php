@@ -6,27 +6,36 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RouteCompletion extends Model
+class DailyPickup extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'booking_id',
         'route_id',
         'driver_id',
-        'completion_date',
+        'pickup_date',
+        'pickup_point_id',
         'period',
         'completed_at',
         'notes',
-        'review',
     ];
 
     protected $casts = [
-        'completion_date' => 'date',
+        'pickup_date' => 'date',
         'completed_at' => 'datetime',
     ];
 
     /**
-     * Get the route that was completed.
+     * Get the booking for this daily pickup.
+     */
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * Get the route for this daily pickup.
      */
     public function route(): BelongsTo
     {
@@ -34,10 +43,18 @@ class RouteCompletion extends Model
     }
 
     /**
-     * Get the driver who completed the route.
+     * Get the driver who completed this pickup.
      */
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'driver_id');
+    }
+
+    /**
+     * Get the pickup point for this daily pickup.
+     */
+    public function pickupPoint(): BelongsTo
+    {
+        return $this->belongsTo(PickupPoint::class);
     }
 }

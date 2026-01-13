@@ -213,8 +213,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                             ) : (
                                 <div className="space-y-6">
                                     {groupedBookings.map((group, index) => {
-                                        const allCompleted = group.bookings.every(b => b.status === 'completed');
-                                        const someCompleted = group.bookings.some(b => b.status === 'completed');
+                                        const allCompleted = group.bookings.every(b => b.hasDailyPickup);
+                                        const someCompleted = group.bookings.some(b => b.hasDailyPickup);
                                         const key = `${group.pickup_point.id}-${route?.id}`;
                                         const isCompleting = completing[key];
 
@@ -285,7 +285,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                         {group.bookings.map((booking) => {
                                                             const isBookingCompleting = completing[booking.id];
-                                                            const isCompleted = booking.status === 'completed';
+                                                            const isCompleted = booking.hasDailyPickup;
 
                                                             return (
                                                                 <div

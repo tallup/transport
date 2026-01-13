@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Driver;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CalendarEvent;
+use App\Models\DailyPickup;
 use App\Models\Route;
 use App\Models\RouteCompletion;
 use Carbon\Carbon;
@@ -63,27 +64,37 @@ class RosterController extends Controller
                 ->whereDate('completion_date', $today)
                 ->exists();
 
+            \Log::info("RosterController - Driver {$driver->id} - AM Route ID: {$amRoute->id}, Completed: " . ($amCompleted ? 'Yes' : 'No'));
+
             // If AM route is not completed, show it (regardless of time)
             if (!$amCompleted) {
+                \Log::info("RosterController - Driver {$driver->id} - Returning AM route (not completed)");
                 return $amRoute;
             }
             
             // AM route is completed - check if PM route exists
             if ($pmRoute) {
+                \Log::info("RosterController - Driver {$driver->id} - PM Route ID: {$pmRoute->id} exists");
                 // Check if PM route is also completed
                 $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
                     ->where('driver_id', $driver->id)
                     ->whereDate('completion_date', $today)
                     ->exists();
                 
+                \Log::info("RosterController - Driver {$driver->id} - PM Route ID: {$pmRoute->id}, Completed: " . ($pmCompleted ? 'Yes' : 'No'));
+                
                 // If PM route is not completed, show it (driver completed AM, now show PM)
                 if (!$pmCompleted) {
+                    \Log::info("RosterController - Driver {$driver->id} - Returning PM route (AM completed, PM not completed)");
                     return $pmRoute;
                 }
+            } else {
+                \Log::info("RosterController - Driver {$driver->id} - No PM route found");
             }
             
             // AM route is completed, but no PM route or PM is also completed
             // Return the AM route so driver can see it's completed
+            \Log::info("RosterController - Driver {$driver->id} - Returning AM route (completed, no PM or PM also completed)");
             return $amRoute;
         }
 
@@ -98,12 +109,31 @@ class RosterController extends Controller
     }
 
     /**
-     * Check if all bookings for a route are completed for today.
+     * Get the period (AM/PM) for a route based on current time and route service period.
      */
-    private function areAllBookingsCompleted($route)
+    private function getRoutePeriod($route)
+    {
+        $period = $route->servicePeriod();
+        
+        // If route has explicit period, use it
+        if (in_array($period, ['am', 'pm'])) {
+            return $period;
+        }
+        
+        // If route is 'both' or undefined, determine by current time
+        $currentTime = Carbon::now();
+        return $currentTime->format('H:i:s') < '12:00:00' ? 'am' : 'pm';
+    }
+
+    /**
+     * Check if all bookings for a route are completed for today and period.
+     */
+    private function areAllBookingsCompleted($route, $period = null)
     {
         $today = Carbon::today();
+        $period = $period ?? $this->getRoutePeriod($route);
         
+        // Get all active bookings for this route on this date
         $totalBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $today)
@@ -117,16 +147,21 @@ class RosterController extends Controller
             return false;
         }
 
-        $completedBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'completed')
+        // Check if all bookings have daily pickup records for today and period
+        $bookingsWithPickups = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
                     ->orWhereDate('end_date', '>=', $today);
             })
+            ->whereHas('dailyPickups', function ($query) use ($today, $period) {
+                $query->whereDate('pickup_date', $today)
+                    ->where('period', $period);
+            })
             ->count();
 
-        return $totalBookings === $completedBookings;
+        return $totalBookings === $bookingsWithPickups;
     }
 
     public function index(Request $request)
@@ -150,14 +185,18 @@ class RosterController extends Controller
             ]);
         }
 
-        // Check if route is completed today
+        // Determine the period for this route
+        $routePeriod = $this->getRoutePeriod($selectedRoute);
+
+        // Check if route is completed today for this period
         $isRouteCompleted = RouteCompletion::where('route_id', $selectedRoute->id)
             ->where('driver_id', $driver->id)
             ->whereDate('completion_date', $today)
+            ->where('period', $routePeriod)
             ->exists();
 
-        // Check if all bookings are completed
-        $canCompleteRoute = $this->areAllBookingsCompleted($selectedRoute) && !$isRouteCompleted;
+        // Check if all bookings are completed for this period
+        $canCompleteRoute = $this->areAllBookingsCompleted($selectedRoute, $routePeriod) && !$isRouteCompleted;
 
         // Check if it's a school day
         $isSchoolDay = !CalendarEvent::where('date', $todayFormatted)
@@ -170,13 +209,16 @@ class RosterController extends Controller
             // Get active bookings for today (within their booking period)
             // This ensures bookings are visible for the entire duration they're valid
             $bookings = Booking::where('route_id', $selectedRoute->id)
-                ->whereIn('status', ['pending', 'active', 'completed'])
+                ->whereIn('status', ['pending', 'active'])
                 ->whereDate('start_date', '<=', $today)
                 ->where(function ($query) use ($today) {
                     $query->whereNull('end_date')
                         ->orWhereDate('end_date', '>=', $today);
                 })
-                ->with(['student.school', 'pickupPoint'])
+                ->with(['student.school', 'pickupPoint', 'dailyPickups' => function ($query) use ($today, $routePeriod) {
+                    $query->whereDate('pickup_date', $today)
+                        ->where('period', $routePeriod);
+                }])
                 ->get();
 
             // Separate bookings with pickup points and custom addresses
@@ -216,9 +258,12 @@ class RosterController extends Controller
                             if (!$booking->student) {
                                 return null;
                             }
+                            // Check if this booking has a daily pickup for today
+                            $hasDailyPickup = $booking->dailyPickups->isNotEmpty();
                             return [
                                 'id' => $booking->id,
                                 'status' => $booking->status,
+                                'hasDailyPickup' => $hasDailyPickup,
                                 'student' => [
                                     'id' => $booking->student->id,
                                     'name' => $booking->student->name,
@@ -252,9 +297,12 @@ class RosterController extends Controller
                         if (!$booking->student) {
                             return null;
                         }
+                        // Check if this booking has a daily pickup for today
+                        $hasDailyPickup = $booking->dailyPickups->isNotEmpty();
                         return [
                             'id' => $booking->id,
                             'status' => $booking->status,
+                            'hasDailyPickup' => $hasDailyPickup,
                             'pickup_address' => $booking->pickup_address,
                             'student' => [
                                 'id' => $booking->student->id,
@@ -291,6 +339,7 @@ class RosterController extends Controller
     public function markComplete(Request $request, Booking $booking)
     {
         $driver = $request->user();
+        $today = Carbon::today();
 
         // Verify the booking belongs to one of the driver's routes
         $driverRoutes = Route::where('driver_id', $driver->id)
@@ -313,12 +362,38 @@ class RosterController extends Controller
             ], 400);
         }
 
-        // Mark booking as completed
-        $booking->update(['status' => 'completed']);
+        // Get the route to determine period
+        $route = Route::find($booking->route_id);
+        $period = $this->getRoutePeriod($route);
+
+        // Check if daily pickup already exists for today and period
+        $existingPickup = DailyPickup::where('booking_id', $booking->id)
+            ->whereDate('pickup_date', $today)
+            ->where('period', $period)
+            ->first();
+
+        if ($existingPickup) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This pickup has already been marked as complete for today.',
+            ], 400);
+        }
+
+        // Create daily pickup record instead of updating booking status
+        DailyPickup::create([
+            'booking_id' => $booking->id,
+            'route_id' => $booking->route_id,
+            'driver_id' => $driver->id,
+            'pickup_date' => $today,
+            'pickup_point_id' => $booking->pickup_point_id,
+            'period' => $period,
+            'completed_at' => Carbon::now(),
+            'notes' => $request->input('notes'),
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Trip marked as complete successfully.',
+            'message' => 'Pickup marked as complete successfully.',
         ]);
     }
 
@@ -344,6 +419,9 @@ class RosterController extends Controller
                 'message' => 'Unauthorized. This route does not belong to you.',
             ], 403);
         }
+
+        // Get the period for this route
+        $period = $this->getRoutePeriod($route);
 
         // Get all active bookings for this pickup point on this date
         $date = Carbon::parse($validated['date']);
@@ -373,15 +451,33 @@ class RosterController extends Controller
             ], 404);
         }
 
-        // Mark all bookings as completed
-        $bookings->each(function ($booking) {
-            $booking->update(['status' => 'completed']);
+        // Create daily pickup records for all bookings instead of updating booking status
+        $createdCount = 0;
+        $bookings->each(function ($booking) use ($driver, $route, $date, $period, &$createdCount) {
+            // Check if daily pickup already exists
+            $existingPickup = DailyPickup::where('booking_id', $booking->id)
+                ->whereDate('pickup_date', $date)
+                ->where('period', $period)
+                ->first();
+
+            if (!$existingPickup) {
+                DailyPickup::create([
+                    'booking_id' => $booking->id,
+                    'route_id' => $booking->route_id,
+                    'driver_id' => $driver->id,
+                    'pickup_date' => $date,
+                    'pickup_point_id' => $booking->pickup_point_id,
+                    'period' => $period,
+                    'completed_at' => Carbon::now(),
+                ]);
+                $createdCount++;
+            }
         });
 
         return response()->json([
             'success' => true,
-            'message' => "Successfully marked {$bookings->count()} trip(s) as complete.",
-            'count' => $bookings->count(),
+            'message' => "Successfully marked {$createdCount} pickup(s) as complete.",
+            'count' => $createdCount,
         ]);
     }
 }

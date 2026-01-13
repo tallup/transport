@@ -83,6 +83,14 @@ class Route extends Model
     }
 
     /**
+     * Get the daily pickups for this route.
+     */
+    public function dailyPickups(): HasMany
+    {
+        return $this->hasMany(DailyPickup::class);
+    }
+
+    /**
      * Determine the service period (AM or PM) based on service_type or pickup_time.
      * service_type takes precedence if explicitly set to 'am' or 'pm'.
      * 

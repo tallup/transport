@@ -39,7 +39,7 @@ export default function Dashboard({
                             <div>
                                 <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                                     Welcome back, {auth?.user?.name?.split(' ')[0] || 'User'}!
-                                </h1>
+                        </h1>
                                 <p className="text-lg font-semibold text-white/80">{formattedDate}</p>
                             </div>
                             <div className="mt-4 sm:mt-0 flex gap-3">
@@ -64,16 +64,16 @@ export default function Dashboard({
                                 <div className="p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="w-12 h-12 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-blue-400/30">
-                                            <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span className="text-xs font-semibold text-blue-200/80 bg-blue-500/20 px-2 py-1 rounded-full">
                                             Total
                                         </span>
                                     </div>
                                     <div className="flex items-end justify-between">
-                                        <div>
+                                    <div>
                                             <p className="text-3xl font-extrabold text-white">{students?.length || 0}</p>
                                             <p className="text-sm font-semibold text-white/70 mt-1">Registered Students</p>
                                         </div>
@@ -88,16 +88,16 @@ export default function Dashboard({
                                 <div className="p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="w-12 h-12 bg-gradient-to-br from-green-500/30 to-green-600/30 rounded-xl flex items-center justify-center backdrop-blur-sm border border-green-400/30">
-                                            <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span className="text-xs font-semibold text-green-200/80 bg-green-500/20 px-2 py-1 rounded-full">
                                             Active
                                         </span>
                                     </div>
                                     <div className="flex items-end justify-between">
-                                        <div>
+                                    <div>
                                             <p className="text-3xl font-extrabold text-white">{activeBookingsCount ?? activeBookings?.length ?? 0}</p>
                                             <p className="text-sm font-semibold text-white/70 mt-1">Active Bookings</p>
                                         </div>
@@ -254,7 +254,7 @@ export default function Dashboard({
                     </div>
 
                     {/* Recent Bookings */}
-                    <GlassCard>
+                        <GlassCard>
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-2xl font-bold text-white">Recent Bookings</h3>
                             <Link 
@@ -281,14 +281,14 @@ export default function Dashboard({
                                                                 {booking.student}
                                                             </p>
                                                             <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                                                                booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
-                                                                booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                                booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
                                                                 booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
-                                                                'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                            }`}>
+                                                'bg-gray-500/30 text-gray-200 border-gray-400/50'
+                                            }`}>
                                                                 {booking.status.toUpperCase()}
-                                                            </span>
-                                                        </div>
+                                            </span>
+                                        </div>
                                                         <p className="text-sm font-semibold text-white/80 mb-1">{booking.route}</p>
                                                         <p className="text-xs font-medium text-white/60">
                                                             {booking.start_date} - {booking.end_date}
@@ -316,8 +316,8 @@ export default function Dashboard({
                                     </div>
                                 )}
                             </div>
-                        </div>
-                    </GlassCard>
+                            </div>
+                        </GlassCard>
                 </div>
             </div>
         </AuthenticatedLayout>

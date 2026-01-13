@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Driver;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CalendarEvent;
+use App\Models\DailyPickup;
 use App\Models\PickupPoint;
 use App\Models\Route;
 use App\Models\RouteCompletion;
@@ -75,29 +76,41 @@ class DashboardController extends Controller
             $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
                 ->where('driver_id', $driver->id)
                 ->whereDate('completion_date', $today)
+                ->where('period', 'am')
                 ->exists();
+
+            \Log::info("Driver {$driver->id} - AM Route ID: {$amRoute->id}, Completed: " . ($amCompleted ? 'Yes' : 'No'));
 
             // If AM route is not completed, show it (regardless of time)
             if (!$amCompleted) {
+                \Log::info("Driver {$driver->id} - Returning AM route (not completed)");
                 return $amRoute;
             }
             
             // AM route is completed - check if PM route exists
             if ($pmRoute) {
+                \Log::info("Driver {$driver->id} - PM Route ID: {$pmRoute->id} exists");
                 // Check if PM route is also completed
                 $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
                     ->where('driver_id', $driver->id)
                     ->whereDate('completion_date', $today)
+                    ->where('period', 'pm')
                     ->exists();
+                
+                \Log::info("Driver {$driver->id} - PM Route ID: {$pmRoute->id}, Completed: " . ($pmCompleted ? 'Yes' : 'No'));
                 
                 // If PM route is not completed, show it (driver completed AM, now show PM)
                 if (!$pmCompleted) {
+                    \Log::info("Driver {$driver->id} - Returning PM route (AM completed, PM not completed)");
                     return $pmRoute;
                 }
+            } else {
+                \Log::info("Driver {$driver->id} - No PM route found");
             }
             
             // Both AM and PM (if exists) are completed, or only AM exists and is completed
             // Return the AM route so driver can see it's completed
+            \Log::info("Driver {$driver->id} - Returning AM route (completed, no PM or PM also completed)");
             return $amRoute;
         }
 
@@ -117,10 +130,32 @@ class DashboardController extends Controller
      * @param \App\Models\Route $route
      * @return bool
      */
-    private function areAllBookingsCompleted($route)
+    /**
+     * Get the period (AM/PM) for a route based on current time and route service period.
+     */
+    private function getRoutePeriod($route)
+    {
+        $period = $route->servicePeriod();
+        
+        // If route has explicit period, use it
+        if (in_array($period, ['am', 'pm'])) {
+            return $period;
+        }
+        
+        // If route is 'both' or undefined, determine by current time
+        $currentTime = Carbon::now();
+        return $currentTime->format('H:i:s') < '12:00:00' ? 'am' : 'pm';
+    }
+
+    /**
+     * Check if all bookings for a route are completed for today and period.
+     */
+    private function areAllBookingsCompleted($route, $period = null)
     {
         $today = Carbon::today();
+        $period = $period ?? $this->getRoutePeriod($route);
         
+        // Get all active bookings for this route on this date
         $totalBookings = Booking::where('route_id', $route->id)
             ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $today)
@@ -134,16 +169,21 @@ class DashboardController extends Controller
             return false; // No bookings to complete
         }
 
-        $completedBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'completed')
+        // Check if all bookings have daily pickup records for today and period
+        $bookingsWithPickups = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
                     ->orWhereDate('end_date', '>=', $today);
             })
+            ->whereHas('dailyPickups', function ($query) use ($today, $period) {
+                $query->whereDate('pickup_date', $today)
+                    ->where('period', $period);
+            })
             ->count();
 
-        return $totalBookings === $completedBookings;
+        return $totalBookings === $bookingsWithPickups;
     }
 
     public function index(Request $request)
@@ -179,17 +219,18 @@ class DashboardController extends Controller
         }
 
         // Determine current period
-        $currentPeriod = $route->servicePeriod(); // 'am' or 'pm'
+        $currentPeriod = $this->getRoutePeriod($route); // 'am' or 'pm'
         
-        // Check if route is already completed today
+        // Check if route is already completed today for this period
         $today = Carbon::today();
         $isRouteCompleted = RouteCompletion::where('route_id', $route->id)
             ->where('driver_id', $driver->id)
             ->whereDate('completion_date', $today)
+            ->where('period', $currentPeriod)
             ->exists();
 
-        // Check if all bookings are completed
-        $canCompleteRoute = $this->areAllBookingsCompleted($route) && !$isRouteCompleted;
+        // Check if all bookings are completed for this period
+        $canCompleteRoute = $this->areAllBookingsCompleted($route, $currentPeriod) && !$isRouteCompleted;
 
         // Calculate stats for the active route
         // Use Carbon instance for date comparison to ensure proper type handling
@@ -236,13 +277,16 @@ class DashboardController extends Controller
         // Fetch bookings that are active today (within their booking period)
         $todaySchedule = [];
         $todayBookingsList = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active', 'completed'])
+            ->whereIn('status', ['pending', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
                     ->orWhereDate('end_date', '>=', $today);
             })
-            ->with(['student', 'pickupPoint'])
+            ->with(['student', 'pickupPoint', 'dailyPickups' => function ($query) use ($today, $currentPeriod) {
+                $query->whereDate('pickup_date', $today)
+                    ->where('period', $currentPeriod);
+            }])
             ->get();
 
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
@@ -252,7 +296,7 @@ class DashboardController extends Controller
             $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
             if ($pointBookings->count() > 0) {
                 $allCompleted = $pointBookings->every(function ($booking) {
-                    return $booking->status === 'completed';
+                    return $booking->dailyPickups->isNotEmpty();
                 });
                 
                 $todaySchedule[] = [
@@ -280,7 +324,7 @@ class DashboardController extends Controller
 
         if ($customAddressBookings->count() > 0) {
             $allCompleted = $customAddressBookings->every(function ($booking) {
-                return $booking->status === 'completed';
+                return $booking->dailyPickups->isNotEmpty();
             });
             
             $todaySchedule[] = [
@@ -302,11 +346,17 @@ class DashboardController extends Controller
         }
 
         // Route performance metrics
+        // Count daily pickups for today and current period
+        $todayPickups = DailyPickup::where('route_id', $route->id)
+            ->whereDate('pickup_date', $today)
+            ->where('period', $currentPeriod)
+            ->count();
+
         $performanceMetrics = [
             'on_time_percentage' => 95, // Would need tracking data
-            'total_trips' => Booking::where('route_id', $route->id)->count(),
-            'average_students_per_trip' => $todayBookings > 0 
-                ? round($totalStudents / $todayBookings, 1) 
+            'total_trips' => $todayPickups,
+            'average_students_per_trip' => $todayPickups > 0 
+                ? round($totalStudents / $todayPickups, 1) 
                 : 0,
         ];
 
@@ -400,35 +450,41 @@ class DashboardController extends Controller
             ], 403);
         }
 
-        // Check if route is already completed today
+        // Get the period for this route
+        $period = $this->getRoutePeriod($route);
+
+        // Check if route is already completed today for this period
         $today = Carbon::today();
         $existingCompletion = RouteCompletion::where('route_id', $route->id)
             ->where('driver_id', $driver->id)
             ->whereDate('completion_date', $today)
+            ->where('period', $period)
             ->first();
 
         if ($existingCompletion) {
             return response()->json([
                 'success' => false,
-                'message' => 'This route has already been completed today.',
+                'message' => 'This route has already been completed today for this period.',
             ], 400);
         }
 
-        // Verify all bookings are completed
-        if (!$this->areAllBookingsCompleted($route)) {
+        // Verify all bookings are completed for this period
+        if (!$this->areAllBookingsCompleted($route, $period)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot complete route. Some bookings are not yet completed.',
+                'message' => 'Cannot complete route. Some pickups are not yet completed.',
             ], 400);
         }
 
-        // Create route completion record
+        // Create route completion record (daily pickup completion)
         RouteCompletion::create([
             'route_id' => $route->id,
             'driver_id' => $driver->id,
             'completion_date' => $today,
+            'period' => $period,
             'completed_at' => Carbon::now(),
             'notes' => $request->input('notes'),
+            'review' => $request->input('review'),
         ]);
 
         return response()->json([
@@ -564,8 +620,8 @@ class DashboardController extends Controller
         $activeBookings = Booking::whereIn('route_id', $routeIds)
             ->whereIn('status', ['pending', 'active'])
             ->count();
-        $completedBookings = Booking::whereIn('route_id', $routeIds)
-            ->where('status', 'completed')
+        // Count daily pickups instead of completed bookings
+        $completedPickups = DailyPickup::whereIn('route_id', $routeIds)
             ->count();
 
         // Weekly stats
@@ -606,9 +662,9 @@ class DashboardController extends Controller
             'on_time_percentage' => 95, // Would need tracking data
             'total_trips' => $totalBookings,
             'active_trips' => $activeBookings,
-            'completed_trips' => $completedBookings,
+            'completed_trips' => $completedPickups,
             'total_students' => $totalStudents,
-            'average_students_per_trip' => $totalBookings > 0 ? round($totalStudents / $totalBookings, 1) : 0,
+            'average_students_per_trip' => $completedPickups > 0 ? round($totalStudents / $completedPickups, 1) : 0,
         ];
 
         $weeklyStats = [
@@ -726,13 +782,10 @@ class DashboardController extends Controller
                 })
                 ->count();
 
-            $completedBookings = Booking::where('route_id', $route->id)
-                ->where('status', 'completed')
-                ->whereDate('start_date', '<=', $completion->completion_date)
-                ->where(function ($query) use ($completion) {
-                    $query->whereNull('end_date')
-                        ->orWhereDate('end_date', '>=', $completion->completion_date);
-                })
+            // Count daily pickups for this completion date and period
+            $completedPickups = DailyPickup::where('route_id', $route->id)
+                ->whereDate('pickup_date', $completion->completion_date)
+                ->where('period', $completion->period ?? 'am')
                 ->count();
 
             // Format pickup/dropoff times
@@ -751,6 +804,8 @@ class DashboardController extends Controller
                 'completed_at' => $completion->completed_at ? $completion->completed_at->format('Y-m-d H:i:s') : null,
                 'completed_at_formatted' => $completion->completed_at ? $completion->completed_at->format('g:i A') : null,
                 'notes' => $completion->notes,
+                'review' => $completion->review,
+                'period' => $completion->period ?? 'am',
                 'route' => [
                     'id' => $route->id,
                     'name' => $route->name,
@@ -769,7 +824,7 @@ class DashboardController extends Controller
                 ],
                 'stats' => [
                     'total_bookings' => $totalBookings,
-                    'completed_bookings' => $completedBookings,
+                    'completed_pickups' => $completedPickups,
                 ],
             ];
         });
