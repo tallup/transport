@@ -23,12 +23,19 @@
         border-radius: 0.75rem; /* 12px - rounded-xl */
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         transition: all 0.3s ease;
+        /* Ensure text stays crisp during transforms */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        backface-visibility: hidden;
+        transform: translateZ(0); /* Force GPU acceleration */
     }
 
     .glass-card:hover {
         background: rgba(255, 255, 255, 0.2);
         box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-        transform: translateY(-2px);
+        /* Use translate3d for better GPU acceleration and less blur */
+        transform: translate3d(0, -2px, 0);
     }
 
     /* Glass navigation variant */
@@ -83,7 +90,8 @@
     .glass-button:hover {
         background: rgba(42, 58, 92, 0.9);
         box-shadow: 0 6px 20px 0 rgba(34, 48, 77, 0.4);
-        transform: translateY(-1px);
+        /* Use translate3d for better GPU acceleration and less blur */
+        transform: translate3d(0, -1px, 0);
         border-radius: 0.5rem; /* Maintain border radius on hover */
     }
 
