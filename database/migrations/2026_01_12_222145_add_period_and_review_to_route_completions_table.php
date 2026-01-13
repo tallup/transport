@@ -14,10 +14,8 @@ return new class extends Migration
     {
         $driverName = DB::connection()->getDriverName();
 
+        // First, add the new columns
         Schema::table('route_completions', function (Blueprint $table) use ($driverName) {
-            // Drop the old unique constraint
-            $table->dropUnique('unique_route_driver_date');
-
             // Add period field
             if ($driverName === 'mysql' || $driverName === 'mariadb') {
                 $table->enum('period', ['am', 'pm'])->default('am')->after('completion_date');
@@ -34,6 +32,29 @@ return new class extends Migration
 
         // Update existing records to have period = 'am' (default)
         DB::table('route_completions')->whereNull('period')->update(['period' => 'am']);
+
+        // For MySQL/MariaDB, use raw SQL to drop the unique index
+        // This handles foreign key dependencies better
+        if ($driverName === 'mysql' || $driverName === 'mariadb') {
+            // Check if the index exists before trying to drop it
+            $indexExists = DB::select("
+                SELECT COUNT(*) as count 
+                FROM information_schema.statistics 
+                WHERE table_schema = DATABASE() 
+                AND table_name = 'route_completions' 
+                AND index_name = 'unique_route_driver_date'
+            ");
+            
+            if (isset($indexExists[0]) && $indexExists[0]->count > 0) {
+                // Drop the unique index using raw SQL
+                DB::statement('ALTER TABLE route_completions DROP INDEX unique_route_driver_date');
+            }
+        } else {
+            // For other databases, use Schema builder
+            Schema::table('route_completions', function (Blueprint $table) {
+                $table->dropUnique('unique_route_driver_date');
+            });
+        }
 
         // Re-add unique constraint with period included
         Schema::table('route_completions', function (Blueprint $table) {
