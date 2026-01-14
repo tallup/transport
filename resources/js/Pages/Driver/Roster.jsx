@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
-import axios from 'axios';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+
+// Use the configured axios instance from bootstrap.js which has CSRF token
+const axios = window.axios;
 
 export default function Roster({ route, date, isSchoolDay, groupedBookings, message, canCompleteRoute, isRouteCompleted }) {
     const [completing, setCompleting] = useState({});
