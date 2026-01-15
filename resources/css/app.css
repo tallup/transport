@@ -184,6 +184,48 @@ body {
 
 /* Layouts with explicit backgrounds will override body background */
 
+/* Logo Background Pattern */
+.logo-background {
+    position: relative;
+    background: #22304d;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.logo-background::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/on time.jpeg');
+    background-size: 70% auto;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.08;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.logo-background::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(34, 48, 77, 0.75);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.logo-background > * {
+    position: relative;
+    z-index: 1;
+}
+
 /* Smooth transitions for all interactive elements */
 * {
     transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;

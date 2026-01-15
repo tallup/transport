@@ -22,7 +22,7 @@ export default function AuthenticatedLayout({ header, children }) {
         { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
     ];
     return (
-        <div className="min-h-screen" style={{ background: '#22304d' }}>
+        <div className="min-h-screen logo-background">
             <nav className="glass-nav fixed w-full top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">

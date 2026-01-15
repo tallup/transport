@@ -4,7 +4,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 export default function Home({ auth }) {
     return (
         <>
-            <Head title="Home - School Transport System" />
+            <Head title="Home - On-Time Transportation" />
             
             {/* Navigation */}
             <nav className="bg-white shadow-sm fixed w-full top-0 z-50">
@@ -14,7 +14,7 @@ export default function Home({ auth }) {
                             <Link href="/" className="flex items-center">
                                 <ApplicationLogo className="h-10 w-10 fill-current text-blue-600" />
                                 <span className="ml-2 text-xl font-bold text-gray-900">
-                                    School Transport
+                                    On-Time Transportation
                                 </span>
                             </Link>
                         </div>
@@ -52,11 +52,11 @@ export default function Home({ auth }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                            Safe, Reliable School Transport
+                            Safe, Reliable Private Transportation
                             <span className="block text-blue-200 mt-2">For Your Children</span>
                         </h1>
                         <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                            Book and manage your child's school transportation with ease. 
+                            Private child transportation services between approved locations with parent authorization. 
                             Real-time tracking, flexible plans, and secure payments.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -89,7 +89,7 @@ export default function Home({ auth }) {
                             Why Choose Our Transport Service?
                         </h2>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                            We provide a comprehensive solution for school transportation management
+                            We provide private child transportation services between approved locations with parent authorization
                         </p>
                     </div>
                     
@@ -346,10 +346,10 @@ export default function Home({ auth }) {
                         <div>
                             <div className="flex items-center mb-4">
                                 <ApplicationLogo className="h-8 w-8 fill-current text-white" />
-                                <span className="ml-2 text-lg font-bold">School Transport</span>
+                                <span className="ml-2 text-lg font-bold">On-Time Transportation</span>
                             </div>
                             <p className="text-gray-400">
-                                Safe, reliable, and convenient school transportation services for your children.
+                                Private child transportation services between approved locations with parent authorization.
                             </p>
                         </div>
                         
@@ -382,8 +382,13 @@ export default function Home({ auth }) {
                         </div>
                     </div>
                     
-                    <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                        <p>&copy; {new Date().getFullYear()} School Transport System. All rights reserved.</p>
+                    <div className="border-t border-gray-800 mt-8 pt-8">
+                        <p className="text-center text-gray-400 mb-3">
+                            &copy; {new Date().getFullYear()} School Transport System. All rights reserved.
+                        </p>
+                        <p className="text-center text-xs text-gray-500 italic">
+                            <strong>Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
+                        </p>
                     </div>
                 </div>
             </footer>

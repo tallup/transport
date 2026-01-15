@@ -98,6 +98,13 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
                     </label>
                 </div>
             )}
+            
+            {/* Disclaimer Footer */}
+            <div className="glass-card p-4 mt-4">
+                <p className="text-xs text-white/70 italic text-center">
+                    <strong className="text-white/90">Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
+                </p>
+            </div>
         </div>
     );
 }
