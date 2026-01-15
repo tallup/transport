@@ -528,41 +528,65 @@ class BookingController extends Controller
         }
 
         // Load all daily pickups for this booking with comprehensive data
-        $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
-            ->with(['driver', 'pickupPoint'])
-            ->orderBy('pickup_date', 'desc')
-            ->orderBy('period', 'asc')
-            ->get()
-            ->map(function ($pickup) use ($booking) {
-                return [
-                    'id' => $pickup->id,
-                    'pickup_date' => $pickup->pickup_date->format('Y-m-d'),
-                    'pickup_date_formatted' => $pickup->pickup_date->format('l, F j, Y'),
-                    'period' => $pickup->period,
-                    'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
-                    'completed_at_formatted' => $pickup->completed_at ? $pickup->completed_at->format('g:i A') : null,
-                    'notes' => $pickup->notes,
-                    'driver' => $pickup->driver ? [
-                        'id' => $pickup->driver->id,
-                        'name' => $pickup->driver->name,
-                        'email' => $pickup->driver->email,
-                    ] : null,
-                    'pickup_point' => $pickup->pickupPoint ? [
-                        'id' => $pickup->pickupPoint->id,
-                        'name' => $pickup->pickupPoint->name,
-                        'address' => $pickup->pickupPoint->address,
-                        'latitude' => $pickup->pickupPoint->latitude,
-                        'longitude' => $pickup->pickupPoint->longitude,
-                        'pickup_time' => $pickup->pickupPoint->pickup_time,
-                        'dropoff_time' => $pickup->pickupPoint->dropoff_time,
-                    ] : null,
-                    'route' => $booking->route ? [
-                        'id' => $booking->route->id,
-                        'name' => $booking->route->name,
-                    ] : null,
-                ];
-            })
-            ->groupBy('pickup_date');
+        try {
+            $dailyPickups = \App\Models\DailyPickup::where('booking_id', $booking->id)
+                ->with(['driver', 'pickupPoint'])
+                ->orderBy('pickup_date', 'desc')
+                ->orderBy('period', 'asc')
+                ->get()
+                ->filter(function ($pickup) {
+                    // Filter out pickups with null pickup_date
+                    return $pickup->pickup_date !== null;
+                })
+                ->map(function ($pickup) use ($booking) {
+                    try {
+                        return [
+                            'id' => $pickup->id,
+                            'pickup_date' => $pickup->pickup_date ? $pickup->pickup_date->format('Y-m-d') : null,
+                            'pickup_date_formatted' => $pickup->pickup_date ? $pickup->pickup_date->format('l, F j, Y') : 'Date not set',
+                            'period' => $pickup->period ?? 'am',
+                            'completed_at' => $pickup->completed_at ? $pickup->completed_at->toDateTimeString() : null,
+                            'completed_at_formatted' => $pickup->completed_at ? $pickup->completed_at->format('g:i A') : null,
+                            'notes' => $pickup->notes,
+                            'driver' => $pickup->driver ? [
+                                'id' => $pickup->driver->id,
+                                'name' => $pickup->driver->name ?? 'Unknown',
+                                'email' => $pickup->driver->email ?? null,
+                            ] : null,
+                            'pickup_point' => $pickup->pickupPoint ? [
+                                'id' => $pickup->pickupPoint->id,
+                                'name' => $pickup->pickupPoint->name ?? 'Unknown',
+                                'address' => $pickup->pickupPoint->address ?? null,
+                                'latitude' => $pickup->pickupPoint->latitude ?? null,
+                                'longitude' => $pickup->pickupPoint->longitude ?? null,
+                                'pickup_time' => $pickup->pickupPoint->pickup_time ?? null,
+                                'dropoff_time' => $pickup->pickupPoint->dropoff_time ?? null,
+                            ] : null,
+                            'route' => $booking->route ? [
+                                'id' => $booking->route->id,
+                                'name' => $booking->route->name ?? 'Unknown',
+                            ] : null,
+                        ];
+                    } catch (\Exception $e) {
+                        \Log::error('Error mapping daily pickup: ' . $e->getMessage(), [
+                            'pickup_id' => $pickup->id ?? null,
+                            'booking_id' => $booking->id ?? null,
+                        ]);
+                        return null;
+                    }
+                })
+                ->filter(function ($pickup) {
+                    // Filter out null pickups and pickups with null pickup_date after mapping
+                    return $pickup !== null && isset($pickup['pickup_date']) && $pickup['pickup_date'] !== null;
+                })
+                ->groupBy('pickup_date');
+        } catch (\Exception $e) {
+            \Log::error('Error loading daily pickups: ' . $e->getMessage(), [
+                'booking_id' => $booking->id ?? null,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $dailyPickups = collect([]);
+        }
 
         // Calculate statistics
         $totalPickups = $dailyPickups->flatten()->count();
