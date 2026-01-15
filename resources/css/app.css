@@ -45,7 +45,7 @@
         background-size: 35% auto;
         background-position: center center;
         background-repeat: no-repeat;
-        opacity: 0.04;
+        opacity: 0.08;
         z-index: 0;
         pointer-events: none;
         border-radius: 0.75rem; /* Match card border radius */
@@ -65,7 +65,7 @@
     }
 
     .glass-card:hover::before {
-        opacity: 0.06; /* Slightly more visible on hover */
+        opacity: 0.08; /* Keep same transparency on hover */
     }
 
     /* Glass navigation variant */
