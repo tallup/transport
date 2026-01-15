@@ -730,6 +730,43 @@ class DashboardController extends Controller
             })
             ->count();
 
+        // Get all bookings for this route (active and pending)
+        $bookings = Booking::where('route_id', $route->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
+            ->orderBy('start_date', 'desc')
+            ->get()
+            ->map(function ($booking) {
+                return [
+                    'id' => $booking->id,
+                    'status' => $booking->status,
+                    'plan_type' => $booking->plan_type,
+                    'trip_type' => $booking->trip_type,
+                    'start_date' => $booking->start_date->format('Y-m-d'),
+                    'start_date_formatted' => $booking->start_date->format('M d, Y'),
+                    'end_date' => $booking->end_date ? $booking->end_date->format('Y-m-d') : null,
+                    'end_date_formatted' => $booking->end_date ? $booking->end_date->format('M d, Y') : 'Ongoing',
+                    'pickup_address' => $booking->pickup_address,
+                    'student' => $booking->student ? [
+                        'id' => $booking->student->id,
+                        'name' => $booking->student->name,
+                        'grade' => $booking->student->grade,
+                        'school' => $booking->student->school ? $booking->student->school->name : null,
+                    ] : null,
+                    'pickup_point' => $booking->pickupPoint ? [
+                        'id' => $booking->pickupPoint->id,
+                        'name' => $booking->pickupPoint->name,
+                        'address' => $booking->pickupPoint->address,
+                        'pickup_time' => $booking->pickupPoint->pickup_time,
+                    ] : null,
+                    'dropoff_point' => $booking->dropoffPoint ? [
+                        'id' => $booking->dropoffPoint->id,
+                        'name' => $booking->dropoffPoint->name,
+                        'address' => $booking->dropoffPoint->address,
+                    ] : null,
+                ];
+            });
+
         return Inertia::render('Driver/RouteInformation', [
             'route' => [
                 'id' => $route->id,
@@ -756,6 +793,7 @@ class DashboardController extends Controller
             ],
             'pickupPoints' => $pickupPoints,
             'activeBookingsCount' => $activeBookingsCount,
+            'bookings' => $bookings,
         ]);
     }
 

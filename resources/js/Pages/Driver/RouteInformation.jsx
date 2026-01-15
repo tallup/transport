@@ -3,7 +3,7 @@ import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
-export default function RouteInformation({ route, pickupPoints, activeBookingsCount }) {
+export default function RouteInformation({ route, pickupPoints, activeBookingsCount, bookings }) {
     return (
         <DriverLayout>
             <Head title="Route Information" />
@@ -169,6 +169,97 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                     </div>
                                 </GlassCard>
                             )}
+
+                            {/* Bookings */}
+                            <GlassCard className="mb-8">
+                                <h3 className="text-2xl font-bold text-white mb-6">Bookings ({bookings?.length || 0})</h3>
+                                
+                                {bookings && bookings.length > 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead>
+                                                <tr className="border-b border-white/20">
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Student</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">School</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Pickup Location</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Plan Type</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Trip Type</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Date Range</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-white/10">
+                                                {bookings.map((booking) => (
+                                                    <tr key={booking.id} className="hover:bg-white/5 transition">
+                                                        <td className="px-4 py-4">
+                                                            <p className="text-base font-bold text-white">{booking.student?.name || 'N/A'}</p>
+                                                            {booking.student?.grade && (
+                                                                <p className="text-xs font-medium text-white/70 mt-1">Grade: {booking.student.grade}</p>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            <p className="text-sm font-semibold text-white/90">{booking.student?.school || 'N/A'}</p>
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            {booking.pickup_point ? (
+                                                                <>
+                                                                    <p className="text-sm font-bold text-white">{booking.pickup_point.name}</p>
+                                                                    <p className="text-xs font-medium text-white/70 mt-1">{booking.pickup_point.address}</p>
+                                                                    {booking.pickup_point.pickup_time && (
+                                                                        <p className="text-xs font-medium text-green-300 mt-1">
+                                                                            Time: {booking.pickup_point.pickup_time}
+                                                                        </p>
+                                                                    )}
+                                                                </>
+                                                            ) : booking.pickup_address ? (
+                                                                <>
+                                                                    <p className="text-sm font-bold text-white">Custom Address</p>
+                                                                    <p className="text-xs font-medium text-white/70 mt-1">{booking.pickup_address}</p>
+                                                                </>
+                                                            ) : (
+                                                                <p className="text-sm font-medium text-white/50">N/A</p>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            <span className="text-sm font-semibold text-white capitalize">
+                                                                {booking.plan_type === 'academic_term' ? 'Academic Term' : booking.plan_type?.replace('_', ' ')}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            <span className="text-sm font-semibold text-white capitalize">
+                                                                {booking.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            <p className="text-sm font-semibold text-white">{booking.start_date_formatted}</p>
+                                                            <p className="text-xs font-medium text-white/70 mt-1">to {booking.end_date_formatted}</p>
+                                                        </td>
+                                                        <td className="px-4 py-4">
+                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                                                booking.status === 'active' 
+                                                                    ? 'bg-green-500/30 text-green-100 border border-green-400/50' 
+                                                                    : booking.status === 'pending'
+                                                                    ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
+                                                                    : 'bg-gray-500/30 text-gray-100 border border-gray-400/50'
+                                                            }`}>
+                                                                {booking.status?.toUpperCase() || 'N/A'}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                        <p className="mt-4 text-lg font-semibold text-white">No bookings found</p>
+                                        <p className="mt-2 text-base font-medium text-white/70">This route has no active or pending bookings.</p>
+                                    </div>
+                                )}
+                            </GlassCard>
 
                             {/* Pickup Points */}
                             <GlassCard>
