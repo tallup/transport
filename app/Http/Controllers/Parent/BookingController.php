@@ -591,9 +591,9 @@ class BookingController extends Controller
         
         if ($studentIds->isEmpty()) {
             return Inertia::render('Parent/Bookings/AllPickupHistory', [
-                'bookings' => collect([]),
-                'dailyPickups' => collect([]),
-                'pickupsByBooking' => collect([]),
+                'bookings' => [],
+                'dailyPickups' => [],
+                'pickupsByBooking' => [],
                 'statistics' => [
                     'total' => 0,
                     'completed' => 0,
@@ -612,9 +612,21 @@ class BookingController extends Controller
         
         if ($bookingIds->isEmpty()) {
             return Inertia::render('Parent/Bookings/AllPickupHistory', [
-                'bookings' => $bookings,
-                'dailyPickups' => collect([]),
-                'pickupsByBooking' => collect([]),
+                'bookings' => $bookings->map(function ($booking) {
+                    return [
+                        'id' => $booking->id,
+                        'student' => $booking->student ? [
+                            'id' => $booking->student->id,
+                            'name' => $booking->student->name,
+                        ] : null,
+                        'route' => $booking->route ? [
+                            'id' => $booking->route->id,
+                            'name' => $booking->route->name,
+                        ] : null,
+                    ];
+                })->values()->all(),
+                'dailyPickups' => [],
+                'pickupsByBooking' => [],
                 'statistics' => [
                     'total' => 0,
                     'completed' => 0,
@@ -671,23 +683,45 @@ class BookingController extends Controller
                 ->filter(function ($pickup) {
                     return $pickup['pickup_date'] !== null;
                 })
-                ->groupBy('pickup_date');
+                ->groupBy('pickup_date')
+                ->map(function ($group) {
+                    return $group->values()->all();
+                })
+                ->toArray();
         } catch (\Exception $e) {
             \Log::error('Error loading daily pickups: ' . $e->getMessage());
-            $dailyPickups = collect([]);
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            $dailyPickups = [];
         }
 
         // Calculate overall statistics
-        $totalPickups = $dailyPickups->flatten()->count();
-        $completedPickups = $dailyPickups->flatten()->filter(fn($p) => $p['completed_at'] !== null)->count();
-        $amPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'am')->count();
-        $pmPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'pm')->count();
+        $allPickups = collect($dailyPickups)->flatten(1);
+        $totalPickups = $allPickups->count();
+        $completedPickups = $allPickups->filter(fn($p) => isset($p['completed_at']) && $p['completed_at'] !== null)->count();
+        $amPickups = $allPickups->filter(fn($p) => isset($p['period']) && $p['period'] === 'am')->count();
+        $pmPickups = $allPickups->filter(fn($p) => isset($p['period']) && $p['period'] === 'pm')->count();
 
         // Group by booking for easier navigation
-        $pickupsByBooking = $dailyPickups->flatten()->groupBy('booking_id');
+        $pickupsByBooking = $allPickups->groupBy('booking_id')
+            ->map(function ($group) {
+                return $group->values()->all();
+            })
+            ->toArray();
 
         return Inertia::render('Parent/Bookings/AllPickupHistory', [
-            'bookings' => $bookings,
+            'bookings' => $bookings->map(function ($booking) {
+                return [
+                    'id' => $booking->id,
+                    'student' => $booking->student ? [
+                        'id' => $booking->student->id,
+                        'name' => $booking->student->name,
+                    ] : null,
+                    'route' => $booking->route ? [
+                        'id' => $booking->route->id,
+                        'name' => $booking->route->name,
+                    ] : null,
+                ];
+            })->values()->all(),
             'dailyPickups' => $dailyPickups,
             'pickupsByBooking' => $pickupsByBooking,
             'statistics' => [
