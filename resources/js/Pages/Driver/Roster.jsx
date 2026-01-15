@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
@@ -7,26 +7,63 @@ import GlassButton from '@/Components/GlassButton';
 // Use the configured axios instance from bootstrap.js which has CSRF token
 const axios = window.axios;
 
+// Helper function to get fresh CSRF token
+const getCsrfToken = () => {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    return token ? token.content : null;
+};
+
+// Helper function to update axios CSRF token
+const updateAxiosToken = () => {
+    const token = getCsrfToken();
+    if (token) {
+        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+    }
+};
+
 export default function Roster({ route, date, isSchoolDay, groupedBookings, message, canCompleteRoute, isRouteCompleted }) {
     const [completing, setCompleting] = useState({});
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [notes, setNotes] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
+    // Update CSRF token on component mount and before requests
+    React.useEffect(() => {
+        updateAxiosToken();
+    }, []);
+
     const handleCompleteRoute = async (e) => {
         e.preventDefault();
         if (!route || !canCompleteRoute) return;
 
         setSubmitting(true);
+        updateAxiosToken(); // Refresh token before request
+        
         try {
+            const csrfToken = getCsrfToken();
+            if (!csrfToken) {
+                alert('CSRF token not found. Please refresh the page.');
+                setSubmitting(false);
+                return;
+            }
+
             const response = await fetch(`/driver/routes/${route.id}/mark-complete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({ notes }),
             });
+
+            if (response.status === 419) {
+                // CSRF token mismatch - reload page
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+                return;
+            }
 
             const data = await response.json();
 
@@ -39,7 +76,12 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking route as complete:', error);
-            alert('An error occurred while marking the route as complete');
+            if (error.message?.includes('419') || error.message?.includes('CSRF')) {
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+            } else {
+                alert('An error occurred while marking the route as complete');
+            }
         } finally {
             setSubmitting(false);
         }
@@ -49,6 +91,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         if (!route) return;
         const key = `${pickupPointId}-${route.id}`;
         setCompleting({ ...completing, [key]: true });
+        updateAxiosToken(); // Refresh token before request
 
         try {
             const response = await axios.post('/driver/pickup-points/mark-complete', {
@@ -66,6 +109,14 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
+            
+            // Handle CSRF token mismatch
+            if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+                return;
+            }
+            
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
             alert(errorMessage);
             setCompleting({ ...completing, [key]: false });
@@ -74,6 +125,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
     const markBookingComplete = async (bookingId) => {
         setCompleting({ ...completing, [bookingId]: true });
+        updateAxiosToken(); // Refresh token before request
 
         try {
             const response = await axios.post(`/driver/bookings/${bookingId}/mark-complete`);
@@ -87,6 +139,14 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
+            
+            // Handle CSRF token mismatch
+            if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+                return;
+            }
+            
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
             alert(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });
