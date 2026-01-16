@@ -17,9 +17,6 @@ export default function Home({ auth }) {
                                     <div className="transform group-hover:scale-110 transition-transform">
                                         <ApplicationLogo className="h-10 w-auto" />
                                     </div>
-                                    <span className="ml-3 text-xl font-bold text-gray-800 group-hover:text-brand-primary transition">
-                                        ON-TIME TRANSPORTATION
-                                    </span>
                                 </Link>
                             </div>
                             <div className="flex items-center space-x-4">
@@ -51,7 +48,7 @@ export default function Home({ auth }) {
                     </div>
                 </nav>
 
-                {/* Hero Section - Full Width with Gradient Overlay */}
+                {/* Hero Section - Redesigned with School Bus */}
                 <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
                     {/* Animated Background Elements */}
                     <div className="absolute inset-0 opacity-10">
@@ -60,67 +57,187 @@ export default function Home({ auth }) {
                     </div>
                     
                     <div className="max-w-7xl mx-auto relative z-10">
-                        <div className="text-center max-w-5xl mx-auto">
-                            {/* Badge */}
-                            <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/20 backdrop-blur-sm border border-brand-primary/30 mb-6">
-                                <span className="text-brand-primary font-bold text-sm">Trusted by Hundreds of Families</span>
-                            </div>
-                            
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
-                                Safe, Reliable
-                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-primary to-white mt-2">
-                                    Transportation
-                                </span>
-                                <span className="block text-brand-primary mt-2">For Your Children</span>
-                            </h1>
-                            
-                            <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto font-semibold leading-relaxed">
-                                Private child transportation services with real-time tracking, flexible plans, and secure payments. 
-                                <span className="block mt-2 text-white/80">Your peace of mind is our priority.</span>
-                            </p>
-                            
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                                {!auth?.user && (
-                                    <>
-                                        <Link
-                                            href="/parent/register"
-                                            className="group bg-brand-primary hover:bg-brand-secondary text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-brand-primary/50 transform hover:scale-105 flex items-center gap-2"
-                                        >
-                                            <span>Get Started Today</span>
-                                            <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                            </svg>
-                                        </Link>
-                                        <Link
-                                            href="/login"
-                                            className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/20 hover:border-white/50 transition-all shadow-xl flex items-center gap-2"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                            </svg>
-                                            <span>Sign In</span>
-                                        </Link>
-                                    </>
-                                )}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            {/* Left Column - Text Content */}
+                            <div className="text-center lg:text-left">
+                                {/* Badge */}
+                                <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/20 backdrop-blur-sm border border-brand-primary/30 mb-6">
+                                    <span className="text-brand-primary font-bold text-sm">Trusted by Hundreds of Families</span>
+                                </div>
+                                
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
+                                    Safe, Reliable
+                                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-primary to-white mt-2">
+                                        Transportation
+                                    </span>
+                                    <span className="block text-brand-primary mt-2">For Your Children</span>
+                                </h1>
+                                
+                                <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto lg:mx-0 font-semibold leading-relaxed">
+                                    Private child transportation services with real-time tracking, flexible plans, and secure payments. 
+                                    <span className="block mt-2 text-white/80">Your peace of mind is our priority.</span>
+                                </p>
+                                
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-12">
+                                    {!auth?.user && (
+                                        <>
+                                            <Link
+                                                href="/parent/register"
+                                                className="group bg-brand-primary hover:bg-brand-secondary text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-brand-primary/50 transform hover:scale-105 flex items-center gap-2"
+                                            >
+                                                <span>Get Started Today</span>
+                                                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                            </Link>
+                                            <Link
+                                                href="/login"
+                                                className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/20 hover:border-white/50 transition-all shadow-xl flex items-center gap-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                                </svg>
+                                                <span>Sign In</span>
+                                            </Link>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Trust Indicators */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-6 max-w-2xl mx-auto lg:mx-0">
+                                    <div className="text-center lg:text-left">
+                                        <div className="text-3xl font-extrabold text-white mb-1">100%</div>
+                                        <div className="text-sm text-white/70 font-semibold">Safe & Secure</div>
+                                    </div>
+                                    <div className="text-center lg:text-left">
+                                        <div className="text-3xl font-extrabold text-white mb-1">24/7</div>
+                                        <div className="text-sm text-white/70 font-semibold">Support</div>
+                                    </div>
+                                    <div className="text-center lg:text-left">
+                                        <div className="text-3xl font-extrabold text-white mb-1">99%</div>
+                                        <div className="text-sm text-white/70 font-semibold">On-Time</div>
+                                    </div>
+                                    <div className="text-center lg:text-left">
+                                        <div className="text-3xl font-extrabold text-white mb-1">500+</div>
+                                        <div className="text-sm text-white/70 font-semibold">Families</div>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Trust Indicators */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-                                <div className="text-center">
-                                    <div className="text-3xl font-extrabold text-white mb-1">100%</div>
-                                    <div className="text-sm text-white/70 font-semibold">Safe & Secure</div>
+                            {/* Right Column - School Bus Illustration */}
+                            <div className="relative lg:block hidden">
+                                <div className="relative w-full h-full min-h-[500px] flex items-center justify-center">
+                                    {/* School Bus SVG Illustration */}
+                                    <div className="relative w-full max-w-lg">
+                                        {/* Bus Body */}
+                                        <svg viewBox="0 0 400 300" className="w-full h-auto drop-shadow-2xl">
+                                            {/* Road */}
+                                            <rect x="0" y="250" width="400" height="50" fill="#2d3748" opacity="0.3"/>
+                                            <rect x="0" y="270" width="400" height="5" fill="#4a5568"/>
+                                            
+                                            {/* School Bus */}
+                                            <g transform="translate(50, 100)">
+                                                {/* Bus Body - Yellow */}
+                                                <rect x="0" y="0" width="300" height="120" rx="10" fill="#FFD700" stroke="#FFA500" strokeWidth="3"/>
+                                                
+                                                {/* Bus Windows */}
+                                                <rect x="20" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                                <rect x="90" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                                <rect x="160" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                                <rect x="230" y="20" width="50" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                                
+                                                {/* Students in Windows */}
+                                                {/* Student 1 */}
+                                                <circle cx="50" cy="45" r="12" fill="#FFB6C1"/>
+                                                <circle cx="50" cy="40" r="8" fill="#FFDBAC"/>
+                                                
+                                                {/* Student 2 */}
+                                                <circle cx="120" cy="45" r="12" fill="#ADD8E6"/>
+                                                <circle cx="120" cy="40" r="8" fill="#FFDBAC"/>
+                                                
+                                                {/* Student 3 */}
+                                                <circle cx="190" cy="45" r="12" fill="#FFB6C1"/>
+                                                <circle cx="190" cy="40" r="8" fill="#FFDBAC"/>
+                                                
+                                                {/* Student 4 */}
+                                                <circle cx="255" cy="45" r="12" fill="#ADD8E6"/>
+                                                <circle cx="255" cy="40" r="8" fill="#FFDBAC"/>
+                                                
+                                                {/* Bus Door */}
+                                                <rect x="20" y="80" width="40" height="40" rx="5" fill="#8B4513"/>
+                                                <circle cx="55" cy="100" r="3" fill="#FFD700"/>
+                                                
+                                                {/* Wheels */}
+                                                <circle cx="60" cy="120" r="25" fill="#1a1a1a"/>
+                                                <circle cx="60" cy="120" r="15" fill="#4a4a4a"/>
+                                                <circle cx="240" cy="120" r="25" fill="#1a1a1a"/>
+                                                <circle cx="240" cy="120" r="15" fill="#4a4a4a"/>
+                                                
+                                                {/* School Bus Text */}
+                                                <text x="150" y="70" fontSize="20" fontWeight="bold" fill="#1a1a1a" textAnchor="middle">SCHOOL BUS</text>
+                                                
+                                                {/* Stop Sign */}
+                                                <polygon points="320,50 340,50 350,60 350,80 340,90 320,90 310,80 310,60" fill="#DC2626"/>
+                                                <text x="330" y="75" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">STOP</text>
+                                            </g>
+                                        </svg>
+                                        
+                                        {/* Floating Animation */}
+                                        <div className="absolute inset-0 animate-bounce" style={{ animationDuration: '3s', animationTimingFunction: 'ease-in-out' }}>
+                                            <div className="absolute top-10 left-10 w-20 h-20 bg-brand-primary/20 rounded-full blur-xl"></div>
+                                            <div className="absolute bottom-10 right-10 w-24 h-24 bg-brand-secondary/20 rounded-full blur-xl"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-extrabold text-white mb-1">24/7</div>
-                                    <div className="text-sm text-white/70 font-semibold">Support</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-extrabold text-white mb-1">99%</div>
-                                    <div className="text-sm text-white/70 font-semibold">On-Time</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-extrabold text-white mb-1">500+</div>
-                                    <div className="text-sm text-white/70 font-semibold">Families</div>
+                            </div>
+
+                            {/* Mobile School Bus - Smaller Version */}
+                            <div className="relative lg:hidden block mt-8">
+                                <div className="relative w-full flex items-center justify-center">
+                                    <svg viewBox="0 0 400 300" className="w-full max-w-md h-auto drop-shadow-2xl">
+                                        {/* Road */}
+                                        <rect x="0" y="250" width="400" height="50" fill="#2d3748" opacity="0.3"/>
+                                        <rect x="0" y="270" width="400" height="5" fill="#4a5568"/>
+                                        
+                                        {/* School Bus */}
+                                        <g transform="translate(50, 100)">
+                                            {/* Bus Body */}
+                                            <rect x="0" y="0" width="300" height="120" rx="10" fill="#FFD700" stroke="#FFA500" strokeWidth="3"/>
+                                            
+                                            {/* Bus Windows */}
+                                            <rect x="20" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                            <rect x="90" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                            <rect x="160" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                            <rect x="230" y="20" width="50" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                            
+                                            {/* Students in Windows */}
+                                            <circle cx="50" cy="45" r="12" fill="#FFB6C1"/>
+                                            <circle cx="50" cy="40" r="8" fill="#FFDBAC"/>
+                                            <circle cx="120" cy="45" r="12" fill="#ADD8E6"/>
+                                            <circle cx="120" cy="40" r="8" fill="#FFDBAC"/>
+                                            <circle cx="190" cy="45" r="12" fill="#FFB6C1"/>
+                                            <circle cx="190" cy="40" r="8" fill="#FFDBAC"/>
+                                            <circle cx="255" cy="45" r="12" fill="#ADD8E6"/>
+                                            <circle cx="255" cy="40" r="8" fill="#FFDBAC"/>
+                                            
+                                            {/* Bus Door */}
+                                            <rect x="20" y="80" width="40" height="40" rx="5" fill="#8B4513"/>
+                                            <circle cx="55" cy="100" r="3" fill="#FFD700"/>
+                                            
+                                            {/* Wheels */}
+                                            <circle cx="60" cy="120" r="25" fill="#1a1a1a"/>
+                                            <circle cx="60" cy="120" r="15" fill="#4a4a4a"/>
+                                            <circle cx="240" cy="120" r="25" fill="#1a1a1a"/>
+                                            <circle cx="240" cy="120" r="15" fill="#4a4a4a"/>
+                                            
+                                            {/* School Bus Text */}
+                                            <text x="150" y="70" fontSize="20" fontWeight="bold" fill="#1a1a1a" textAnchor="middle">SCHOOL BUS</text>
+                                            
+                                            {/* Stop Sign */}
+                                            <polygon points="320,50 340,50 350,60 350,80 340,90 320,90 310,80 310,60" fill="#DC2626"/>
+                                            <text x="330" y="75" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">STOP</text>
+                                        </g>
+                                    </svg>
                                 </div>
                             </div>
                         </div>
