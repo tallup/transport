@@ -60,20 +60,22 @@ export default function Home({ auth }) {
                         <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-brand-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
                     </div>
                     
-                    <div className="max-w-6xl mx-auto relative z-10 pt-8 pb-12">
+                    <div className="max-w-6xl mx-auto relative z-10 pt-4 pb-12">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                             {/* Left Content - 7 columns */}
-                            <div className="lg:col-span-7 space-y-6">
+                            <div className="lg:col-span-7 space-y-4">
                                 {/* Badge */}
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-primary/20 to-brand-secondary/20 backdrop-blur-sm border border-brand-primary/30">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-primary/20 to-brand-secondary/20 backdrop-blur-sm border border-brand-primary/30 animate-fade-in">
                                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                     <span className="text-white/90 font-semibold text-sm">Trusted by 500+ Families</span>
                                 </div>
                                 
-                                {/* Main Heading */}
+                                {/* Main Heading - Animated */}
                                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1]">
-                                    Safe & Reliable
-                                    <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary">
+                                    <span className="block animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                                        Safe & Reliable
+                                    </span>
+                                    <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary animate-slide-up animate-gradient" style={{ animationDelay: '0.4s', backgroundSize: '200% 200%' }}>
                                         Child Transportation
                                     </span>
                                 </h1>
