@@ -48,86 +48,88 @@ export default function Home({ auth }) {
                     </div>
                 </nav>
 
-                {/* Hero Section - Redesigned */}
-                <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[85vh] flex items-center">
-                    {/* Animated Background Elements */}
-                    <div className="absolute inset-0 opacity-15">
-                        <div className="absolute top-20 left-10 w-72 h-72 bg-brand-primary rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute bottom-20 right-10 w-96 h-96 bg-brand-secondary rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-primary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+                {/* Hero Section - Modern Design */}
+                <section className="relative pt-28 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                    {/* Gradient Background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#1a2332] via-[#22304d] to-[#1a2332]"></div>
+                    
+                    {/* Animated Orbs */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute -top-40 -left-40 w-80 h-80 bg-brand-primary/20 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-brand-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                        <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-brand-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
                     </div>
                     
-                    <div className="max-w-5xl mx-auto relative z-10 w-full">
-                        {/* Centered Content */}
-                        <div className="text-center space-y-6">
-                            {/* Badge */}
-                            <div className="inline-flex items-center px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
-                                <svg className="w-5 h-5 text-brand-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className="text-white font-bold text-sm">Trusted by 500+ Families</span>
-                            </div>
-                            
-                            {/* Main Heading */}
-                            <div className="space-y-4">
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight">
-                                    <span className="block">Safe &</span>
-                                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-primary to-white">
-                                        Reliable
+                    <div className="max-w-6xl mx-auto relative z-10 pt-8 pb-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            {/* Left Content - 7 columns */}
+                            <div className="lg:col-span-7 space-y-6">
+                                {/* Badge */}
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-primary/20 to-brand-secondary/20 backdrop-blur-sm border border-brand-primary/30">
+                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                    <span className="text-white/90 font-semibold text-sm">Trusted by 500+ Families</span>
+                                </div>
+                                
+                                {/* Main Heading */}
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1]">
+                                    Safe & Reliable
+                                    <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary">
+                                        Child Transportation
                                     </span>
-                                    <span className="block">Transportation</span>
                                 </h1>
                                 
-                                <p className="text-xl md:text-2xl text-white/90 font-medium leading-relaxed max-w-3xl mx-auto">
+                                {/* Description */}
+                                <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl">
                                     Private child transportation services between approved locations with parent authorization. Real-time tracking and flexible plans.
                                 </p>
+                                
+                                {/* CTA Buttons */}
+                                <div className="flex flex-wrap gap-4 pt-2">
+                                    {!auth?.user && (
+                                        <>
+                                            <Link
+                                                href="/parent/register"
+                                                className="group relative bg-gradient-to-r from-brand-primary to-brand-secondary text-white px-8 py-3.5 rounded-lg font-bold text-base transition-all shadow-lg hover:shadow-xl hover:shadow-brand-primary/30 transform hover:scale-[1.02] flex items-center gap-2 overflow-hidden"
+                                            >
+                                                <span>Get Started</span>
+                                                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                            </Link>
+                                            <Link
+                                                href="/login"
+                                                className="bg-white/5 backdrop-blur-sm border border-white/20 text-white px-8 py-3.5 rounded-lg font-bold text-base hover:bg-white/10 hover:border-white/30 transition-all flex items-center gap-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                                </svg>
+                                                <span>Sign In</span>
+                                            </Link>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                             
-                            {/* CTA Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2">
-                                {!auth?.user && (
-                                    <>
-                                        <Link
-                                            href="/parent/register"
-                                            className="group relative bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-secondary hover:to-brand-primary text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-brand-primary/50 transform hover:scale-105 flex items-center gap-2 overflow-hidden"
-                                        >
-                                            <span className="relative z-10">Get Started</span>
-                                            <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                            </svg>
-                                            <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-                                        </Link>
-                                        <Link
-                                            href="/login"
-                                            className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/20 hover:border-white/50 transition-all shadow-lg flex items-center gap-2"
-                                        >
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                            </svg>
-                                            <span>Sign In</span>
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-
-                            {/* Trust Indicators */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-6 max-w-4xl mx-auto">
-                                <GlassCard className="p-4 text-center hover:scale-105 transition-transform">
-                                    <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">100%</div>
-                                    <div className="text-sm text-white/80 font-semibold">Safe & Secure</div>
-                                </GlassCard>
-                                <GlassCard className="p-4 text-center hover:scale-105 transition-transform">
-                                    <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">24/7</div>
-                                    <div className="text-sm text-white/80 font-semibold">Support</div>
-                                </GlassCard>
-                                <GlassCard className="p-4 text-center hover:scale-105 transition-transform">
-                                    <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">99%</div>
-                                    <div className="text-sm text-white/80 font-semibold">On-Time</div>
-                                </GlassCard>
-                                <GlassCard className="p-4 text-center hover:scale-105 transition-transform">
-                                    <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">500+</div>
-                                    <div className="text-sm text-white/80 font-semibold">Families</div>
-                                </GlassCard>
+                            {/* Right Stats - 5 columns */}
+                            <div className="lg:col-span-5">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">100%</div>
+                                        <div className="text-sm text-white/70 font-medium">Safe & Secure</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">24/7</div>
+                                        <div className="text-sm text-white/70 font-medium">Support</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">99%</div>
+                                        <div className="text-sm text-white/70 font-medium">On-Time</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">500+</div>
+                                        <div className="text-sm text-white/70 font-medium">Families</div>
+                                    </GlassCard>
+                                </div>
                             </div>
                         </div>
                     </div>
