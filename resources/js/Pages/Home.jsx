@@ -48,53 +48,59 @@ export default function Home({ auth }) {
                     </div>
                 </nav>
 
-                {/* Hero Section - Redesigned with School Bus */}
-                <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                {/* Hero Section - Completely Redesigned */}
+                <section className="relative pt-40 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[90vh] flex items-center">
                     {/* Animated Background Elements */}
-                    <div className="absolute inset-0 opacity-10">
-                        <div className="absolute top-20 left-10 w-72 h-72 bg-brand-primary rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute bottom-20 right-10 w-96 h-96 bg-brand-secondary rounded-full blur-3xl animate-pulse delay-1000"></div>
+                    <div className="absolute inset-0 opacity-20">
+                        <div className="absolute top-0 left-0 w-96 h-96 bg-brand-primary rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-secondary rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-brand-primary/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
                     </div>
                     
-                    <div className="max-w-7xl mx-auto relative z-10">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                            {/* Left Column - Text Content */}
-                            <div className="text-center lg:text-left">
+                    <div className="max-w-7xl mx-auto relative z-10 w-full">
+                        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-center">
+                            {/* Left Column - Text Content (3 columns) */}
+                            <div className="lg:col-span-3 text-center lg:text-left space-y-8">
                                 {/* Badge */}
-                                <div className="inline-flex items-center px-4 py-2 rounded-full bg-brand-primary/20 backdrop-blur-sm border border-brand-primary/30 mb-6">
-                                    <span className="text-brand-primary font-bold text-sm">Trusted by Hundreds of Families</span>
+                                <div className="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-primary/30 to-brand-secondary/30 backdrop-blur-md border border-brand-primary/40 mb-4 shadow-lg">
+                                    <svg className="w-5 h-5 text-brand-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="text-brand-primary font-bold text-sm">Trusted by 500+ Families</span>
                                 </div>
                                 
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
-                                    Safe, Reliable
-                                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-primary to-white mt-2">
-                                        Transportation
-                                    </span>
-                                    <span className="block text-brand-primary mt-2">For Your Children</span>
-                                </h1>
+                                <div className="space-y-6">
+                                    <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-[1.1]">
+                                        <span className="block">Safe &</span>
+                                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-primary to-white">
+                                            Reliable
+                                        </span>
+                                        <span className="block text-brand-primary">Transportation</span>
+                                    </h1>
+                                    
+                                    <p className="text-xl md:text-2xl lg:text-3xl text-white/90 font-semibold leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                                        Ensuring your children's safety with professional drivers, real-time tracking, and flexible transportation plans.
+                                    </p>
+                                </div>
                                 
-                                <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto lg:mx-0 font-semibold leading-relaxed">
-                                    Private child transportation services with real-time tracking, flexible plans, and secure payments. 
-                                    <span className="block mt-2 text-white/80">Your peace of mind is our priority.</span>
-                                </p>
-                                
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-12">
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center pt-4">
                                     {!auth?.user && (
                                         <>
                                             <Link
                                                 href="/parent/register"
-                                                className="group bg-brand-primary hover:bg-brand-secondary text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-brand-primary/50 transform hover:scale-105 flex items-center gap-2"
+                                                className="group relative bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-secondary hover:to-brand-primary text-white px-12 py-5 rounded-2xl font-bold text-lg transition-all shadow-2xl hover:shadow-brand-primary/50 transform hover:scale-105 flex items-center gap-3 overflow-hidden"
                                             >
-                                                <span>Get Started Today</span>
-                                                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span className="relative z-10">Get Started Today</span>
+                                                <svg className="w-6 h-6 transform group-hover:translate-x-2 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                                 </svg>
+                                                <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                                             </Link>
                                             <Link
                                                 href="/login"
-                                                className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/20 hover:border-white/50 transition-all shadow-xl flex items-center gap-2"
+                                                className="bg-white/10 backdrop-blur-md border-2 border-white/40 text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white/20 hover:border-white/60 transition-all shadow-xl hover:shadow-2xl flex items-center gap-3"
                                             >
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                                 </svg>
                                                 <span>Sign In</span>
@@ -103,139 +109,143 @@ export default function Home({ auth }) {
                                     )}
                                 </div>
 
-                                {/* Trust Indicators */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-6 max-w-2xl mx-auto lg:mx-0">
-                                    <div className="text-center lg:text-left">
-                                        <div className="text-3xl font-extrabold text-white mb-1">100%</div>
-                                        <div className="text-sm text-white/70 font-semibold">Safe & Secure</div>
-                                    </div>
-                                    <div className="text-center lg:text-left">
-                                        <div className="text-3xl font-extrabold text-white mb-1">24/7</div>
-                                        <div className="text-sm text-white/70 font-semibold">Support</div>
-                                    </div>
-                                    <div className="text-center lg:text-left">
-                                        <div className="text-3xl font-extrabold text-white mb-1">99%</div>
-                                        <div className="text-sm text-white/70 font-semibold">On-Time</div>
-                                    </div>
-                                    <div className="text-center lg:text-left">
-                                        <div className="text-3xl font-extrabold text-white mb-1">500+</div>
-                                        <div className="text-sm text-white/70 font-semibold">Families</div>
-                                    </div>
+                                {/* Trust Indicators - Redesigned */}
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8 max-w-3xl mx-auto lg:mx-0">
+                                    <GlassCard className="p-4 text-center lg:text-left hover:scale-105 transition-transform">
+                                        <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">100%</div>
+                                        <div className="text-sm text-white/80 font-semibold">Safe & Secure</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-4 text-center lg:text-left hover:scale-105 transition-transform">
+                                        <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">24/7</div>
+                                        <div className="text-sm text-white/80 font-semibold">Support</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-4 text-center lg:text-left hover:scale-105 transition-transform">
+                                        <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">99%</div>
+                                        <div className="text-sm text-white/80 font-semibold">On-Time</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-4 text-center lg:text-left hover:scale-105 transition-transform">
+                                        <div className="text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-brand-primary bg-clip-text text-transparent">500+</div>
+                                        <div className="text-sm text-white/80 font-semibold">Families</div>
+                                    </GlassCard>
                                 </div>
                             </div>
 
-                            {/* Right Column - School Bus Illustration */}
-                            <div className="relative lg:block hidden">
-                                <div className="relative w-full h-full min-h-[500px] flex items-center justify-center">
-                                    {/* School Bus SVG Illustration */}
-                                    <div className="relative w-full max-w-lg">
-                                        {/* Bus Body */}
-                                        <svg viewBox="0 0 400 300" className="w-full h-auto drop-shadow-2xl">
-                                            {/* Road */}
-                                            <rect x="0" y="250" width="400" height="50" fill="#2d3748" opacity="0.3"/>
-                                            <rect x="0" y="270" width="400" height="5" fill="#4a5568"/>
+                            {/* Right Column - School Bus Illustration (2 columns) */}
+                            <div className="lg:col-span-2 relative lg:block hidden">
+                                <div className="relative w-full h-full flex items-center justify-center">
+                                    <div className="relative w-full max-w-xl">
+                                        <svg viewBox="0 0 500 400" className="w-full h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-500">
+                                            {/* Road with gradient */}
+                                            <defs>
+                                                <linearGradient id="roadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                    <stop offset="0%" style={{ stopColor: '#2d3748', stopOpacity: 0.4 }} />
+                                                    <stop offset="100%" style={{ stopColor: '#1a202c', stopOpacity: 0.6 }} />
+                                                </linearGradient>
+                                            </defs>
+                                            <rect x="0" y="320" width="500" height="80" fill="url(#roadGradient)"/>
+                                            <rect x="0" y="350" width="500" height="8" fill="#4a5568"/>
                                             
-                                            {/* School Bus */}
-                                            <g transform="translate(50, 100)">
-                                                {/* Bus Body - Yellow */}
-                                                <rect x="0" y="0" width="300" height="120" rx="10" fill="#FFD700" stroke="#FFA500" strokeWidth="3"/>
+                                            {/* School Bus - Enhanced */}
+                                            <g transform="translate(80, 120)">
+                                                {/* Bus Body - Yellow with gradient */}
+                                                <defs>
+                                                    <linearGradient id="busGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                        <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
+                                                        <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <rect x="0" y="0" width="340" height="140" rx="12" fill="url(#busGradient)" stroke="#FF8C00" strokeWidth="4"/>
                                                 
-                                                {/* Bus Windows */}
-                                                <rect x="20" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                                <rect x="90" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                                <rect x="160" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                                <rect x="230" y="20" width="50" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
+                                                {/* Bus Windows - More detailed */}
+                                                <rect x="25" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85" stroke="#4682B4" strokeWidth="2"/>
+                                                <rect x="105" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85" stroke="#4682B4" strokeWidth="2"/>
+                                                <rect x="185" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85" stroke="#4682B4" strokeWidth="2"/>
+                                                <rect x="265" y="25" width="60" height="60" rx="6" fill="#87CEEB" opacity="0.85" stroke="#4682B4" strokeWidth="2"/>
                                                 
-                                                {/* Students in Windows */}
-                                                {/* Student 1 */}
-                                                <circle cx="50" cy="45" r="12" fill="#FFB6C1"/>
-                                                <circle cx="50" cy="40" r="8" fill="#FFDBAC"/>
+                                                {/* Students in Windows - More detailed */}
+                                                {/* Student 1 - Girl */}
+                                                <circle cx="60" cy="55" r="15" fill="#FFB6C1"/>
+                                                <circle cx="60" cy="48" r="10" fill="#FFDBAC"/>
+                                                <circle cx="57" cy="46" r="2" fill="#000"/>
+                                                <circle cx="63" cy="46" r="2" fill="#000"/>
+                                                <path d="M 58 52 Q 60 54 62 52" stroke="#000" strokeWidth="1.5" fill="none"/>
                                                 
-                                                {/* Student 2 */}
-                                                <circle cx="120" cy="45" r="12" fill="#ADD8E6"/>
-                                                <circle cx="120" cy="40" r="8" fill="#FFDBAC"/>
+                                                {/* Student 2 - Boy */}
+                                                <circle cx="140" cy="55" r="15" fill="#ADD8E6"/>
+                                                <circle cx="140" cy="48" r="10" fill="#FFDBAC"/>
+                                                <circle cx="137" cy="46" r="2" fill="#000"/>
+                                                <circle cx="143" cy="46" r="2" fill="#000"/>
+                                                <path d="M 138 52 Q 140 54 142 52" stroke="#000" strokeWidth="1.5" fill="none"/>
                                                 
-                                                {/* Student 3 */}
-                                                <circle cx="190" cy="45" r="12" fill="#FFB6C1"/>
-                                                <circle cx="190" cy="40" r="8" fill="#FFDBAC"/>
+                                                {/* Student 3 - Girl */}
+                                                <circle cx="220" cy="55" r="15" fill="#FFB6C1"/>
+                                                <circle cx="220" cy="48" r="10" fill="#FFDBAC"/>
+                                                <circle cx="217" cy="46" r="2" fill="#000"/>
+                                                <circle cx="223" cy="46" r="2" fill="#000"/>
+                                                <path d="M 218 52 Q 220 54 222 52" stroke="#000" strokeWidth="1.5" fill="none"/>
                                                 
-                                                {/* Student 4 */}
-                                                <circle cx="255" cy="45" r="12" fill="#ADD8E6"/>
-                                                <circle cx="255" cy="40" r="8" fill="#FFDBAC"/>
+                                                {/* Student 4 - Boy */}
+                                                <circle cx="295" cy="55" r="15" fill="#ADD8E6"/>
+                                                <circle cx="295" cy="48" r="10" fill="#FFDBAC"/>
+                                                <circle cx="292" cy="46" r="2" fill="#000"/>
+                                                <circle cx="298" cy="46" r="2" fill="#000"/>
+                                                <path d="M 293 52 Q 295 54 297 52" stroke="#000" strokeWidth="1.5" fill="none"/>
                                                 
                                                 {/* Bus Door */}
-                                                <rect x="20" y="80" width="40" height="40" rx="5" fill="#8B4513"/>
-                                                <circle cx="55" cy="100" r="3" fill="#FFD700"/>
+                                                <rect x="25" y="95" width="50" height="45" rx="6" fill="#8B4513" stroke="#654321" strokeWidth="2"/>
+                                                <circle cx="70" cy="117" r="4" fill="#FFD700"/>
                                                 
-                                                {/* Wheels */}
-                                                <circle cx="60" cy="120" r="25" fill="#1a1a1a"/>
-                                                <circle cx="60" cy="120" r="15" fill="#4a4a4a"/>
-                                                <circle cx="240" cy="120" r="25" fill="#1a1a1a"/>
-                                                <circle cx="240" cy="120" r="15" fill="#4a4a4a"/>
+                                                {/* Wheels - Enhanced */}
+                                                <circle cx="80" cy="140" r="30" fill="#1a1a1a" stroke="#000" strokeWidth="3"/>
+                                                <circle cx="80" cy="140" r="18" fill="#4a4a4a"/>
+                                                <circle cx="80" cy="140" r="8" fill="#1a1a1a"/>
+                                                <circle cx="260" cy="140" r="30" fill="#1a1a1a" stroke="#000" strokeWidth="3"/>
+                                                <circle cx="260" cy="140" r="18" fill="#4a4a4a"/>
+                                                <circle cx="260" cy="140" r="8" fill="#1a1a1a"/>
                                                 
                                                 {/* School Bus Text */}
-                                                <text x="150" y="70" fontSize="20" fontWeight="bold" fill="#1a1a1a" textAnchor="middle">SCHOOL BUS</text>
+                                                <text x="170" y="80" fontSize="24" fontWeight="bold" fill="#1a1a1a" textAnchor="middle" fontFamily="Arial, sans-serif">SCHOOL BUS</text>
                                                 
-                                                {/* Stop Sign */}
-                                                <polygon points="320,50 340,50 350,60 350,80 340,90 320,90 310,80 310,60" fill="#DC2626"/>
-                                                <text x="330" y="75" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">STOP</text>
+                                                {/* Stop Sign - Enhanced */}
+                                                <polygon points="380,60 410,60 420,75 420,105 410,120 380,120 370,105 370,75" fill="#DC2626" stroke="#B91C1C" strokeWidth="3"/>
+                                                <text x="395" y="95" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">STOP</text>
                                             </g>
                                         </svg>
                                         
-                                        {/* Floating Animation */}
-                                        <div className="absolute inset-0 animate-bounce" style={{ animationDuration: '3s', animationTimingFunction: 'ease-in-out' }}>
-                                            <div className="absolute top-10 left-10 w-20 h-20 bg-brand-primary/20 rounded-full blur-xl"></div>
-                                            <div className="absolute bottom-10 right-10 w-24 h-24 bg-brand-secondary/20 rounded-full blur-xl"></div>
-                                        </div>
+                                        {/* Floating decorative elements */}
+                                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-brand-primary/20 rounded-full blur-2xl animate-pulse"></div>
+                                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-brand-secondary/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Mobile School Bus - Smaller Version */}
-                            <div className="relative lg:hidden block mt-8">
+                            {/* Mobile School Bus */}
+                            <div className="lg:hidden block mt-12">
                                 <div className="relative w-full flex items-center justify-center">
-                                    <svg viewBox="0 0 400 300" className="w-full max-w-md h-auto drop-shadow-2xl">
-                                        {/* Road */}
-                                        <rect x="0" y="250" width="400" height="50" fill="#2d3748" opacity="0.3"/>
-                                        <rect x="0" y="270" width="400" height="5" fill="#4a5568"/>
-                                        
-                                        {/* School Bus */}
-                                        <g transform="translate(50, 100)">
-                                            {/* Bus Body */}
-                                            <rect x="0" y="0" width="300" height="120" rx="10" fill="#FFD700" stroke="#FFA500" strokeWidth="3"/>
-                                            
-                                            {/* Bus Windows */}
-                                            <rect x="20" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                            <rect x="90" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                            <rect x="160" y="20" width="60" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                            <rect x="230" y="20" width="50" height="50" rx="5" fill="#87CEEB" opacity="0.8"/>
-                                            
-                                            {/* Students in Windows */}
-                                            <circle cx="50" cy="45" r="12" fill="#FFB6C1"/>
-                                            <circle cx="50" cy="40" r="8" fill="#FFDBAC"/>
-                                            <circle cx="120" cy="45" r="12" fill="#ADD8E6"/>
-                                            <circle cx="120" cy="40" r="8" fill="#FFDBAC"/>
-                                            <circle cx="190" cy="45" r="12" fill="#FFB6C1"/>
-                                            <circle cx="190" cy="40" r="8" fill="#FFDBAC"/>
-                                            <circle cx="255" cy="45" r="12" fill="#ADD8E6"/>
-                                            <circle cx="255" cy="40" r="8" fill="#FFDBAC"/>
-                                            
-                                            {/* Bus Door */}
-                                            <rect x="20" y="80" width="40" height="40" rx="5" fill="#8B4513"/>
-                                            <circle cx="55" cy="100" r="3" fill="#FFD700"/>
-                                            
-                                            {/* Wheels */}
-                                            <circle cx="60" cy="120" r="25" fill="#1a1a1a"/>
-                                            <circle cx="60" cy="120" r="15" fill="#4a4a4a"/>
-                                            <circle cx="240" cy="120" r="25" fill="#1a1a1a"/>
-                                            <circle cx="240" cy="120" r="15" fill="#4a4a4a"/>
-                                            
-                                            {/* School Bus Text */}
-                                            <text x="150" y="70" fontSize="20" fontWeight="bold" fill="#1a1a1a" textAnchor="middle">SCHOOL BUS</text>
-                                            
-                                            {/* Stop Sign */}
-                                            <polygon points="320,50 340,50 350,60 350,80 340,90 320,90 310,80 310,60" fill="#DC2626"/>
-                                            <text x="330" y="75" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">STOP</text>
+                                    <svg viewBox="0 0 500 400" className="w-full max-w-md h-auto drop-shadow-2xl">
+                                        <rect x="0" y="320" width="500" height="80" fill="url(#roadGradient)"/>
+                                        <rect x="0" y="350" width="500" height="8" fill="#4a5568"/>
+                                        <g transform="translate(80, 120)">
+                                            <rect x="0" y="0" width="340" height="140" rx="12" fill="url(#busGradient)" stroke="#FF8C00" strokeWidth="4"/>
+                                            <rect x="25" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85"/>
+                                            <rect x="105" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85"/>
+                                            <rect x="185" y="25" width="70" height="60" rx="6" fill="#87CEEB" opacity="0.85"/>
+                                            <rect x="265" y="25" width="60" height="60" rx="6" fill="#87CEEB" opacity="0.85"/>
+                                            <circle cx="60" cy="55" r="15" fill="#FFB6C1"/>
+                                            <circle cx="60" cy="48" r="10" fill="#FFDBAC"/>
+                                            <circle cx="140" cy="55" r="15" fill="#ADD8E6"/>
+                                            <circle cx="140" cy="48" r="10" fill="#FFDBAC"/>
+                                            <circle cx="220" cy="55" r="15" fill="#FFB6C1"/>
+                                            <circle cx="220" cy="48" r="10" fill="#FFDBAC"/>
+                                            <circle cx="295" cy="55" r="15" fill="#ADD8E6"/>
+                                            <circle cx="295" cy="48" r="10" fill="#FFDBAC"/>
+                                            <rect x="25" y="95" width="50" height="45" rx="6" fill="#8B4513"/>
+                                            <circle cx="70" cy="117" r="4" fill="#FFD700"/>
+                                            <circle cx="80" cy="140" r="30" fill="#1a1a1a"/>
+                                            <circle cx="80" cy="140" r="18" fill="#4a4a4a"/>
+                                            <circle cx="260" cy="140" r="30" fill="#1a1a1a"/>
+                                            <circle cx="260" cy="140" r="18" fill="#4a4a4a"/>
+                                            <text x="170" y="80" fontSize="24" fontWeight="bold" fill="#1a1a1a" textAnchor="middle">SCHOOL BUS</text>
                                         </g>
                                     </svg>
                                 </div>
@@ -515,12 +525,6 @@ export default function Home({ auth }) {
                                 <h3 className="text-lg font-bold text-white mb-6">Quick Links</h3>
                                 <ul className="space-y-3 text-white/70">
                                     <li>
-                                        <Link href="/" className="hover:text-white transition flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
-                                            Home
-                                        </Link>
-                                    </li>
-                                    <li>
                                         <Link href="/login" className="hover:text-white transition flex items-center gap-2">
                                             <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
                                             Login
@@ -530,6 +534,24 @@ export default function Home({ auth }) {
                                         <Link href="/parent/register" className="hover:text-white transition flex items-center gap-2">
                                             <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
                                             Register
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/faq" className="hover:text-white transition flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                                            FAQ
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/privacy-policy" className="hover:text-white transition flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                                            Privacy Policy
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/terms-and-conditions" className="hover:text-white transition flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                                            Terms & Conditions
                                         </Link>
                                     </li>
                                     <li>

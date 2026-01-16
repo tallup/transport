@@ -107,6 +107,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Public static pages
+Route::get('/privacy-policy', function (Request $request) {
+    return Inertia::render('PrivacyPolicy', ['auth' => ['user' => $request->user()]]);
+})->name('privacy-policy');
+
+Route::get('/terms-and-conditions', function (Request $request) {
+    return Inertia::render('TermsAndConditions', ['auth' => ['user' => $request->user()]]);
+})->name('terms-and-conditions');
+
+Route::get('/faq', function (Request $request) {
+    return Inertia::render('FAQ', ['auth' => ['user' => $request->user()]]);
+})->name('faq');
+
 // Public API routes for policies (with rate limiting)
 Route::middleware(['throttle:api'])->group(function () {
     Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');
