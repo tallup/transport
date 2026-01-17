@@ -61,3 +61,5 @@ class BookingCancelled extends Notification implements ShouldQueue
     }
 }
 
+
+
