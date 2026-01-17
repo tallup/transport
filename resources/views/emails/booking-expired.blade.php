@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #059669;
+            background-color: #DC2626;
             color: white;
             padding: 20px;
             text-align: center;
@@ -55,70 +55,82 @@
             border-radius: 5px;
             margin: 20px 0;
         }
-        .success-badge {
-            background-color: #D1FAE5;
-            color: #065F46;
+        .expired-badge {
+            background-color: #FEE2E2;
+            color: #991B1B;
             padding: 10px 20px;
             border-radius: 5px;
             display: inline-block;
             margin: 10px 0;
             font-weight: bold;
         }
+        .info-box {
+            background-color: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            padding: 15px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>✓ {{ $period === 'am' ? 'Student Picked Up' : 'Student Dropped Off' }}</h1>
+            <h1>❌ Booking Has Expired</h1>
         </div>
         <div class="content">
             <p>Hello {{ $user->name }},</p>
             
-            <div class="success-badge">
-                Your student has been {{ $period === 'am' ? 'picked up' : 'dropped off' }}!
+            <div class="expired-badge">
+                This booking has expired and is no longer active
             </div>
             
-            <p>This is to notify you that <strong>{{ $booking->student->name }}</strong> has been {{ $period === 'am' ? 'picked up by our driver' : 'safely dropped off' }}.</p>
+            <p>Your transport booking has reached its end date and transportation services have been discontinued for this booking.</p>
             
             <div class="booking-details">
-                <h3>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Details</h3>
+                <h3>Expired Booking Details</h3>
                 <div class="detail-row">
                     <strong>Student:</strong>
                     <span>{{ $booking->student->name }}</span>
                 </div>
                 <div class="detail-row">
-                    <strong>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Location:</strong>
-                    <span>{{ $pickupLocation }}</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Period:</strong>
-                    <span>{{ strtoupper($period) }} ({{ $period === 'am' ? 'Morning Pickup' : 'Afternoon Drop-off' }})</span>
-                </div>
-                <div class="detail-row">
-                    <strong>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Time:</strong>
-                    <span>{{ $completedAt->format('F d, Y g:i A') }}</span>
-                </div>
-                <div class="detail-row">
                     <strong>Route:</strong>
                     <span>{{ $booking->route->name }}</span>
                 </div>
-                @if($booking->route->driver)
+                @if($booking->pickupPoint)
                 <div class="detail-row">
-                    <strong>Driver:</strong>
-                    <span>{{ $booking->route->driver->name }}</span>
+                    <strong>Pickup Point:</strong>
+                    <span>{{ $booking->pickupPoint->name }}</span>
                 </div>
                 @endif
+                <div class="detail-row">
+                    <strong>Plan Type:</strong>
+                    <span>{{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Start Date:</strong>
+                    <span>{{ \Carbon\Carbon::parse($booking->start_date)->format('F d, Y') }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>End Date:</strong>
+                    <span>{{ \Carbon\Carbon::parse($booking->end_date)->format('F d, Y') }}</span>
+                </div>
             </div>
             
-            @if($period === 'am')
-            <p>Your student is now on their way to their destination. We will ensure they arrive safely.</p>
-            @else
-            <p>Your student has been safely dropped off at the specified location.</p>
-            @endif
+            <div class="info-box">
+                <strong>What This Means:</strong>
+                <ul style="margin: 10px 0;">
+                    <li>Your student has been removed from the route roster</li>
+                    <li>No further transportation services will be provided</li>
+                    <li>You will not be charged for this booking anymore</li>
+                </ul>
+            </div>
             
-            <a href="{{ url('/parent/bookings/pickup-history/' . $booking->id) }}" class="button">View Full Pickup History</a>
+            <p><strong>Want to Continue Service?</strong></p>
+            <p>If you'd like to resume transportation services for {{ $booking->student->name }}, you can create a new booking at any time.</p>
             
-            <p>Thank you for trusting us with your child's transportation!</p>
+            <a href="{{ url('/parent/bookings/create') }}" class="button">Create New Booking</a>
+            
+            <p>Thank you for using our services! If you have any questions or feedback, please don't hesitate to contact us.</p>
         </div>
         <div class="footer">
             <p><strong>On-Time Transportation for Kids</strong></p>

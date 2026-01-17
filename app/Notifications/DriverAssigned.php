@@ -32,25 +32,40 @@ class DriverAssigned extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): Mailable
     {
-        return (new class($this->booking, $this->driver, $this->route) extends Mailable {
+        return (new class($this->booking, $this->driver, $this->route, $notifiable) extends Mailable {
             public $booking;
             public $driver;
             public $route;
+            public $notifiable;
             
-            public function __construct($booking, $driver, $route) {
+            public function __construct($booking, $driver, $route, $notifiable) {
                 $this->booking = $booking;
                 $this->driver = $driver;
                 $this->route = $route;
+                $this->notifiable = $notifiable;
             }
             
             public function build() {
-                return $this->subject('Driver Assigned to Your Route')
-                    ->view('emails.driver-assigned', [
-                        'booking' => $this->booking,
-                        'driver' => $this->driver,
-                        'route' => $this->route,
-                        'user' => $this->booking->student->parent,
-                    ]);
+                // Check if notifiable is a driver (no booking) or parent (has booking)
+                $isDriver = $this->notifiable->role === 'driver';
+                
+                if ($isDriver) {
+                    // Email for driver
+                    return $this->subject('Route Assignment - You've Been Assigned')
+                        ->view('emails.driver-route-assigned', [
+                            'driver' => $this->driver,
+                            'route' => $this->route,
+                        ]);
+                } else {
+                    // Email for parent
+                    return $this->subject('Driver Assigned to Your Route')
+                        ->view('emails.driver-assigned', [
+                            'booking' => $this->booking,
+                            'driver' => $this->driver,
+                            'route' => $this->route,
+                            'user' => $this->booking->student->parent,
+                        ]);
+                }
             }
         });
     }

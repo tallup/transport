@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #059669;
+            background-color: #4F46E5;
             color: white;
             padding: 20px;
             text-align: center;
@@ -25,7 +25,7 @@
             padding: 30px;
             border: 1px solid #e5e7eb;
         }
-        .booking-details {
+        .route-details {
             background-color: white;
             padding: 20px;
             border-radius: 5px;
@@ -69,62 +69,74 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✓ {{ $period === 'am' ? 'Student Picked Up' : 'Student Dropped Off' }}</h1>
+            <h1>🚌 You've Been Assigned to a Route!</h1>
         </div>
         <div class="content">
-            <p>Hello {{ $user->name }},</p>
+            <p>Hello {{ $driver->name }},</p>
             
             <div class="success-badge">
-                Your student has been {{ $period === 'am' ? 'picked up' : 'dropped off' }}!
+                New Route Assignment
             </div>
             
-            <p>This is to notify you that <strong>{{ $booking->student->name }}</strong> has been {{ $period === 'am' ? 'picked up by our driver' : 'safely dropped off' }}.</p>
+            <p>You have been assigned to drive the following route. Please review the route details carefully.</p>
             
-            <div class="booking-details">
-                <h3>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Details</h3>
+            <div class="route-details">
+                <h3>Route Information</h3>
                 <div class="detail-row">
-                    <strong>Student:</strong>
-                    <span>{{ $booking->student->name }}</span>
+                    <strong>Route Name:</strong>
+                    <span>{{ $route->name }}</span>
                 </div>
                 <div class="detail-row">
-                    <strong>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Location:</strong>
-                    <span>{{ $pickupLocation }}</span>
+                    <strong>Service Type:</strong>
+                    <span>{{ strtoupper($route->service_type) }}</span>
                 </div>
+                @if($route->pickup_time)
                 <div class="detail-row">
-                    <strong>Period:</strong>
-                    <span>{{ strtoupper($period) }} ({{ $period === 'am' ? 'Morning Pickup' : 'Afternoon Drop-off' }})</span>
-                </div>
-                <div class="detail-row">
-                    <strong>{{ $period === 'am' ? 'Pickup' : 'Drop-off' }} Time:</strong>
-                    <span>{{ $completedAt->format('F d, Y g:i A') }}</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Route:</strong>
-                    <span>{{ $booking->route->name }}</span>
-                </div>
-                @if($booking->route->driver)
-                <div class="detail-row">
-                    <strong>Driver:</strong>
-                    <span>{{ $booking->route->driver->name }}</span>
+                    <strong>Pickup Time (AM):</strong>
+                    <span>{{ \Carbon\Carbon::parse($route->pickup_time)->format('g:i A') }}</span>
                 </div>
                 @endif
+                @if($route->dropoff_time)
+                <div class="detail-row">
+                    <strong>Dropoff Time (PM):</strong>
+                    <span>{{ \Carbon\Carbon::parse($route->dropoff_time)->format('g:i A') }}</span>
+                </div>
+                @endif
+                <div class="detail-row">
+                    <strong>Capacity:</strong>
+                    <span>{{ $route->capacity }} students</span>
+                </div>
+                @if($route->vehicle)
+                <div class="detail-row">
+                    <strong>Vehicle:</strong>
+                    <span>{{ $route->vehicle->license_plate }} ({{ $route->vehicle->type }})</span>
+                </div>
+                @endif
+                <div class="detail-row">
+                    <strong>Status:</strong>
+                    <span style="color: {{ $route->active ? '#059669' : '#DC2626' }}; font-weight: bold;">
+                        {{ $route->active ? 'ACTIVE' : 'INACTIVE' }}
+                    </span>
+                </div>
             </div>
             
-            @if($period === 'am')
-            <p>Your student is now on their way to their destination. We will ensure they arrive safely.</p>
-            @else
-            <p>Your student has been safely dropped off at the specified location.</p>
-            @endif
+            <p><strong>Your Responsibilities:</strong></p>
+            <ul>
+                <li>Follow the designated route and schedule</li>
+                <li>Mark each student pickup as complete in the driver app</li>
+                <li>Ensure all students arrive safely at their destinations</li>
+                <li>Complete the route after all students are dropped off</li>
+                <li>Report any issues immediately to administration</li>
+            </ul>
             
-            <a href="{{ url('/parent/bookings/pickup-history/' . $booking->id) }}" class="button">View Full Pickup History</a>
+            <a href="{{ url('/driver/dashboard') }}" class="button">View Driver Dashboard</a>
             
-            <p>Thank you for trusting us with your child's transportation!</p>
+            <p>If you have any questions about this route assignment, please contact the administration team.</p>
         </div>
         <div class="footer">
             <p><strong>On-Time Transportation for Kids</strong></p>
             <p>Private child transportation services</p>
-            <p>This is a private transportation company and is not a school bus service.</p>
-            <p>If you have any questions, please contact us at support@ontimetransport.awsapps.com</p>
+            <p>Driver Support: support@ontimetransport.awsapps.com</p>
         </div>
     </div>
 </body>

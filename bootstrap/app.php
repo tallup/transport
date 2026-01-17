@@ -25,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withSchedule(function ($schedule) {
+        // Update booking statuses (activate pending, expire ended) - runs every hour
+        $schedule->command('bookings:update-statuses')->hourly();
+        
         // Send booking expiring notifications daily at 9 AM
         $schedule->command('bookings:notify-expiring --days=3')->dailyAt('09:00');
         

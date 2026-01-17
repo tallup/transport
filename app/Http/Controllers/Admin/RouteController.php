@@ -130,6 +130,15 @@ class RouteController extends Controller
             $route->schools()->sync($schools);
         }
 
+        // Send driver assignment notification if driver was assigned during creation
+        if (!empty($validated['driver_id'])) {
+            $driver = User::find($validated['driver_id']);
+            if ($driver) {
+                // Notify the driver about the new route assignment
+                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
+            }
+        }
+
         return redirect()->route('admin.routes.index')
             ->with('success', 'Route created successfully.');
     }
@@ -185,10 +194,45 @@ class RouteController extends Controller
         // Validate route assignment limits (pass existing route to exclude from check)
         $this->validateRouteAssignment($validated, $route);
 
+        // Check if driver is being assigned or changed
+        $oldDriverId = $route->driver_id;
+        $newDriverId = $validated['driver_id'] ?? null;
+        $driverChanged = $oldDriverId != $newDriverId && $newDriverId !== null;
+
         $route->update($validated);
         
         if (isset($schools)) {
             $route->schools()->sync($schools);
+        }
+
+        // Send driver assignment notification if driver was assigned or changed
+        if ($driverChanged) {
+            $driver = User::find($newDriverId);
+            if ($driver) {
+                // Notify the driver
+                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
+                
+                // Notify all parents with active bookings on this route
+                $activeBookings = \App\Models\Booking::where('route_id', $route->id)
+                    ->where('status', 'active')
+                    ->whereDate('start_date', '<=', now())
+                    ->where(function ($query) {
+                        $query->whereNull('end_date')
+                            ->orWhereDate('end_date', '>=', now());
+                    })
+                    ->with(['student.parent'])
+                    ->get();
+
+                foreach ($activeBookings as $booking) {
+                    if ($booking->student && $booking->student->parent) {
+                        $booking->student->parent->notify(new \App\Notifications\DriverAssigned(
+                            $booking,
+                            $driver,
+                            $route
+                        ));
+                    }
+                }
+            }
         }
 
         return redirect()->route('admin.routes.index')

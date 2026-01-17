@@ -29,11 +29,26 @@ class BookingService
             })
             ->update(['status' => 'active']);
         
+        // Get bookings that are expiring today (before updating status)
+        // so we can send notifications to parents
+        $expiringBookings = Booking::whereIn('status', ['active', 'completed'])
+            ->whereNotNull('end_date')
+            ->where('end_date', '<', $today)
+            ->with(['student.parent', 'route', 'pickupPoint'])
+            ->get();
+        
         // Auto-expire bookings past end_date (including those that were 'completed')
         Booking::whereIn('status', ['active', 'completed'])
             ->whereNotNull('end_date')
             ->where('end_date', '<', $today)
             ->update(['status' => 'expired']);
+        
+        // Send expiration notifications to parents
+        foreach ($expiringBookings as $booking) {
+            if ($booking->student && $booking->student->parent) {
+                $booking->student->parent->notify(new \App\Notifications\BookingExpired($booking));
+            }
+        }
 
         // Activate pending bookings that have passed start_date
         Booking::where('status', 'pending')
