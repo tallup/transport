@@ -116,6 +116,12 @@ export default function Index({ routes }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <Link
+                                                            href={`/admin/routes/${route.id}`}
+                                                            className="text-green-300 hover:text-green-100 mr-4"
+                                                        >
+                                                            View
+                                                        </Link>
+                                                        <Link
                                                             href={`/admin/routes/${route.id}/edit`}
                                                             className="text-blue-300 hover:text-blue-100 mr-4"
                                                         >

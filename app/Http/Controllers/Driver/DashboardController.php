@@ -501,6 +501,8 @@ class DashboardController extends Controller
             ->with(['student.parent'])
             ->get();
 
+        $studentsCount = $activeBookings->count();
+
         foreach ($activeBookings as $booking) {
             if ($booking->student && $booking->student->parent) {
                 $booking->student->parent->notify(new \App\Notifications\RouteCompleted(
@@ -511,6 +513,16 @@ class DashboardController extends Controller
                 ));
             }
         }
+
+        // Notify admins of route completion
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\RouteCompletedAlert(
+            $route,
+            $driver,
+            $period,
+            $routeCompletion->completed_at,
+            $studentsCount
+        ));
 
         return response()->json([
             'success' => true,

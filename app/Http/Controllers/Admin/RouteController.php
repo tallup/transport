@@ -143,6 +143,83 @@ class RouteController extends Controller
             ->with('success', 'Route created successfully.');
     }
 
+    public function show(Route $route)
+    {
+        // Load all relationships
+        $route->load([
+            'driver', 
+            'vehicle', 
+            'schools',
+            'pickupPoints' => function ($query) {
+                $query->orderBy('sequence_order');
+            },
+            'completions' => function ($query) {
+                $query->with('driver')->latest()->take(10);
+            }
+        ]);
+
+        // Get active bookings with student details
+        $activeBookings = \App\Models\Booking::where('route_id', $route->id)
+            ->whereIn('status', ['active', 'pending'])
+            ->whereDate('start_date', '<=', now())
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', now());
+            })
+            ->with(['student.parent', 'pickupPoint'])
+            ->get();
+
+        // Calculate statistics
+        $totalBookings = $activeBookings->count();
+        $capacityUtilization = $route->capacity > 0 
+            ? round(($totalBookings / $route->capacity) * 100, 1) 
+            : 0;
+
+        // Get completion statistics (last 30 days)
+        $completionStats = \App\Models\RouteCompletion::where('route_id', $route->id)
+            ->where('completion_date', '>=', now()->subDays(30))
+            ->selectRaw('
+                COUNT(*) as total_completions,
+                AVG(TIME_TO_SEC(TIMEDIFF(completed_at, completion_date))) as avg_completion_time
+            ')
+            ->first();
+
+        // Get upcoming bookings (starting soon)
+        $upcomingBookings = \App\Models\Booking::where('route_id', $route->id)
+            ->where('status', 'pending')
+            ->whereDate('start_date', '>', now())
+            ->whereDate('start_date', '<=', now()->addDays(7))
+            ->with(['student.parent'])
+            ->get();
+
+        // Get expired bookings (for reference)
+        $recentExpired = \App\Models\Booking::where('route_id', $route->id)
+            ->where('status', 'expired')
+            ->whereDate('end_date', '>=', now()->subDays(7))
+            ->with(['student'])
+            ->get();
+
+        $statistics = [
+            'total_bookings' => $totalBookings,
+            'capacity_utilization' => $capacityUtilization,
+            'available_seats' => max(0, $route->capacity - $totalBookings),
+            'total_completions' => $completionStats->total_completions ?? 0,
+            'avg_completion_time_minutes' => $completionStats->avg_completion_time 
+                ? round($completionStats->avg_completion_time / 60, 1) 
+                : null,
+            'upcoming_bookings_count' => $upcomingBookings->count(),
+            'recent_expired_count' => $recentExpired->count(),
+        ];
+
+        return Inertia::render('Admin/Routes/Show', [
+            'route' => $route,
+            'activeBookings' => $activeBookings,
+            'upcomingBookings' => $upcomingBookings,
+            'recentExpired' => $recentExpired,
+            'statistics' => $statistics,
+        ]);
+    }
+
     public function edit(Route $route)
     {
         $route->load(['driver', 'vehicle', 'schools']);
