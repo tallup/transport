@@ -67,9 +67,6 @@ export default function Index({ bookings }) {
                                                     Pickup Point
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Dropoff Point
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Plan Type
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
@@ -97,9 +94,6 @@ export default function Index({ bookings }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
                                                         {booking.pickupPoint?.name || booking.pickup_address || '-'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.dropoffPoint?.name || '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
