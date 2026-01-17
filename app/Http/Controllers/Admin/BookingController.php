@@ -15,6 +15,11 @@ class BookingController extends Controller
     public function index()
     {
         $bookings = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint'])
+            ->select([
+                'id', 'student_id', 'route_id', 'pickup_point_id', 'dropoff_point_id',
+                'pickup_address', 'plan_type', 'trip_type',
+                'status', 'start_date', 'end_date', 'created_at', 'updated_at'
+            ])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 

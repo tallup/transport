@@ -61,6 +61,35 @@ class DashboardController extends Controller
             $startDate = Carbon::parse($booking->start_date);
             $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : $today->copy()->addMonths(6);
             
+            // Determine pickup location and time
+            $pickupLocation = 'N/A';
+            $pickupTime = 'N/A';
+            
+            if ($booking->pickupPoint) {
+                // Use assigned pickup point
+                $pickupLocation = $booking->pickupPoint->name;
+                if ($booking->pickupPoint->pickup_time) {
+                    try {
+                        $pickupTime = Carbon::parse($booking->pickupPoint->pickup_time)->format('g:i A');
+                    } catch (\Exception $e) {
+                        $pickupTime = $booking->pickupPoint->pickup_time;
+                    }
+                }
+            } elseif ($booking->pickup_address) {
+                // Use custom pickup address
+                $pickupLocation = $booking->pickup_address;
+                // Try to get time from route
+                if ($booking->route && $booking->route->pickup_time) {
+                    try {
+                        $pickupTime = Carbon::parse($booking->route->pickup_time)->format('g:i A');
+                    } catch (\Exception $e) {
+                        $pickupTime = 'TBD';
+                    }
+                } else {
+                    $pickupTime = 'TBD';
+                }
+            }
+            
             for ($date = $today->copy(); $date <= $today->copy()->addDays(14) && $date <= $endDate; $date->addDay()) {
                 if ($date >= $startDate) {
                     $upcomingPickups[] = [
@@ -68,8 +97,8 @@ class DashboardController extends Controller
                         'date_label' => $date->format('M d'),
                         'student' => $booking->student->name,
                         'route' => $booking->route->name ?? 'N/A',
-                        'pickup_point' => $booking->pickupPoint->name ?? 'N/A',
-                        'pickup_time' => $booking->pickupPoint->pickup_time ?? 'N/A',
+                        'pickup_point' => $pickupLocation,
+                        'pickup_time' => $pickupTime,
                     ];
                 }
             }

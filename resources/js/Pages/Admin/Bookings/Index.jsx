@@ -96,10 +96,10 @@ export default function Index({ bookings }) {
                                                         {booking.route?.name}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.pickup_point?.name || '-'}
+                                                        {booking.pickupPoint?.name || booking.pickup_address || '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {booking.dropoff_point?.name || '-'}
+                                                        {booking.dropoffPoint?.name || '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
