@@ -19,6 +19,7 @@ use App\Services\PricingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Cashier\Exceptions\IncompletePayment;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 
@@ -385,6 +386,139 @@ class BookingController extends Controller
 
         return redirect()->route('parent.bookings.index')
             ->with('success', 'Booking created successfully! You can complete payment later from your bookings page.');
+    }
+
+    public function createPayPalOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'amount' => 'required|numeric|min:0.01',
+        ]);
+
+        $user = $request->user();
+        $booking = Booking::findOrFail($validated['booking_id']);
+
+        // Verify booking belongs to user's student
+        if (!$user->students->contains($booking->student_id)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $accessToken = $provider->getAccessToken();
+
+            $order = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "purchase_units" => [
+                    [
+                        "reference_id" => "booking_{$booking->id}",
+                        "amount" => [
+                            "currency_code" => config('paypal.currency', 'USD'),
+                            "value" => number_format($validated['amount'], 2, '.', '')
+                        ],
+                        "description" => "Transport booking for {$booking->student->name}"
+                    ]
+                ],
+                "application_context" => [
+                    "return_url" => route('parent.bookings.paypal.success'),
+                    "cancel_url" => route('parent.bookings.paypal.cancel'),
+                ]
+            ]);
+
+            // Store order ID in booking temporarily
+            $booking->update([
+                'paypal_order_id' => $order['id'],
+            ]);
+
+            // Find the approval link
+            $approvalUrl = null;
+            if (isset($order['links'])) {
+                foreach ($order['links'] as $link) {
+                    if ($link['rel'] === 'approve') {
+                        $approvalUrl = $link['href'];
+                        break;
+                    }
+                }
+            }
+
+            if ($approvalUrl) {
+                return response()->json([
+                    'orderId' => $order['id'],
+                    'approvalUrl' => $approvalUrl
+                ]);
+            }
+
+            return response()->json(['error' => 'Failed to create PayPal order'], 500);
+        } catch (\Exception $e) {
+            \Log::error('PayPal order creation failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create payment order: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function paypalSuccess(Request $request)
+    {
+        $validated = $request->validate([
+            'token' => 'required|string',
+            'PayerID' => 'required|string',
+        ]);
+
+        $user = $request->user();
+
+        try {
+            // Find booking by PayPal order ID
+            $booking = Booking::where('paypal_order_id', $validated['token'])->firstOrFail();
+
+            // Verify booking belongs to user's student
+            if (!$user->students->contains($booking->student_id)) {
+                abort(403, 'Unauthorized');
+            }
+
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
+
+            // Capture the payment
+            $capture = $provider->capturePaymentOrder($validated['token']);
+
+            if ($capture && isset($capture['status']) && $capture['status'] === 'COMPLETED') {
+                // Update booking status
+                $booking->update([
+                    'status' => 'active',
+                    'payment_method' => 'paypal',
+                    'payment_id' => $capture['id'] ?? null,
+                    'paypal_order_id' => null, // Clear after successful payment
+                ]);
+
+                // Send confirmation notification
+                $user->notify(new BookingConfirmed($booking));
+
+                return redirect()->route('parent.bookings.index')
+                    ->with('success', 'Booking confirmed! Check your email for details.');
+            }
+
+            return redirect()->route('parent.bookings.show', $booking)
+                ->with('error', 'Payment was not completed successfully.');
+        } catch (\Exception $e) {
+            \Log::error('PayPal payment capture failed: ' . $e->getMessage());
+            return redirect()->route('parent.bookings.index')
+                ->with('error', 'Payment verification failed. Please contact support.');
+        }
+    }
+
+    public function paypalCancel(Request $request)
+    {
+        $token = $request->input('token');
+        
+        if ($token) {
+            $booking = Booking::where('paypal_order_id', $token)->first();
+            if ($booking) {
+                $booking->update(['paypal_order_id' => null]);
+            }
+        }
+
+        return redirect()->route('parent.bookings.index')
+            ->with('info', 'Payment was cancelled. You can try again later.');
     }
 
     public function rebook(Request $request, Booking $booking)
@@ -955,8 +1089,11 @@ class BookingController extends Controller
             'status' => 'cancelled',
         ]);
 
+        // Send cancellation notification
+        $user->notify(new \App\Notifications\BookingCancelled($booking));
+
         return redirect()->route('parent.bookings.index')
-            ->with('success', 'Booking cancelled successfully.');
+            ->with('success', 'Booking cancelled successfully. A confirmation email has been sent.');
     }
 
     public function destroy(Request $request, Booking $booking)

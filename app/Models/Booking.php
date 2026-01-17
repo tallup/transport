@@ -29,6 +29,9 @@ class Booking extends Model
         'end_date',
         'stripe_subscription_id',
         'stripe_customer_id',
+        'payment_method',
+        'payment_id',
+        'paypal_order_id',
     ];
 
     protected $casts = [

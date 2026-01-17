@@ -55,6 +55,9 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     Route::post('/bookings/create-payment-intent', [BookingController::class, 'createPaymentIntent'])->name('bookings.create-payment-intent');
     Route::post('/bookings/payment-success', [BookingController::class, 'paymentSuccess'])->name('bookings.payment-success');
     Route::post('/bookings/skip-payment', [BookingController::class, 'skipPayment'])->name('bookings.skip-payment');
+    Route::post('/bookings/create-paypal-order', [BookingController::class, 'createPayPalOrder'])->name('bookings.create-paypal-order');
+    Route::get('/bookings/paypal/success', [BookingController::class, 'paypalSuccess'])->name('bookings.paypal.success');
+    Route::get('/bookings/paypal/cancel', [BookingController::class, 'paypalCancel'])->name('bookings.paypal.cancel');
     Route::get('/schools/{school}/routes', [BookingController::class, 'getRoutesBySchool'])->name('schools.routes');
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');

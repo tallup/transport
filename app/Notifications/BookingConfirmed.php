@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
-class BookingConfirmed extends Notification
+class BookingConfirmed extends Notification implements ShouldQueue
 {
     use Queueable;
 

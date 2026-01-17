@@ -480,7 +480,7 @@ class DashboardController extends Controller
         }
 
         // Create route completion record (daily pickup completion)
-        RouteCompletion::create([
+        $routeCompletion = RouteCompletion::create([
             'route_id' => $route->id,
             'driver_id' => $driver->id,
             'completion_date' => $today,
@@ -489,6 +489,28 @@ class DashboardController extends Controller
             'notes' => $request->input('notes'),
             'review' => $request->input('review'),
         ]);
+
+        // Send route completed notification to all parents with active bookings on this route
+        $activeBookings = Booking::where('route_id', $route->id)
+            ->where('status', 'active')
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', $today);
+            })
+            ->with(['student.parent'])
+            ->get();
+
+        foreach ($activeBookings as $booking) {
+            if ($booking->student && $booking->student->parent) {
+                $booking->student->parent->notify(new \App\Notifications\RouteCompleted(
+                    $booking,
+                    $route,
+                    $period,
+                    $routeCompletion->completed_at
+                ));
+            }
+        }
 
         return response()->json([
             'success' => true,

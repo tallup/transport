@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'driver' => \App\Http\Middleware\EnsureUserIsDriver::class,
         ]);
     })
+    ->withSchedule(function ($schedule) {
+        // Send booking expiring notifications daily at 9 AM
+        $schedule->command('bookings:notify-expiring --days=3')->dailyAt('09:00');
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

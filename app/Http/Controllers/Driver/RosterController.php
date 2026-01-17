@@ -383,7 +383,7 @@ class RosterController extends Controller
         }
 
         // Create daily pickup record instead of updating booking status
-        DailyPickup::create([
+        $dailyPickup = DailyPickup::create([
             'booking_id' => $booking->id,
             'route_id' => $booking->route_id,
             'driver_id' => $driver->id,
@@ -393,6 +393,15 @@ class RosterController extends Controller
             'completed_at' => Carbon::now(),
             'notes' => $request->input('notes'),
         ]);
+
+        // Send pickup completed notification to parent
+        $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
+        $booking->student->parent->notify(new \App\Notifications\PickupCompleted(
+            $booking,
+            $pickupLocation,
+            $period,
+            $dailyPickup->completed_at
+        ));
 
         return response()->json([
             'success' => true,
@@ -465,7 +474,7 @@ class RosterController extends Controller
                 ->first();
 
             if (!$existingPickup) {
-                DailyPickup::create([
+                $dailyPickup = DailyPickup::create([
                     'booking_id' => $booking->id,
                     'route_id' => $booking->route_id,
                     'driver_id' => $driver->id,
@@ -475,6 +484,15 @@ class RosterController extends Controller
                     'completed_at' => Carbon::now(),
                 ]);
                 $createdCount++;
+
+                // Send pickup completed notification to parent
+                $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
+                $booking->student->parent->notify(new \App\Notifications\PickupCompleted(
+                    $booking,
+                    $pickupLocation,
+                    $period,
+                    $dailyPickup->completed_at
+                ));
             }
         });
 
