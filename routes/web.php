@@ -123,6 +123,13 @@ Route::get('/faq', function (Request $request) {
     return Inertia::render('FAQ', ['auth' => ['user' => $request->user()]]);
 })->name('faq');
 
+// Keep-alive endpoint to prevent session expiration during active use
+Route::middleware(['auth'])->get('/api/keep-alive', function (Request $request) {
+    // This endpoint simply touches the session to keep it alive
+    // Return minimal response
+    return response()->json(['status' => 'ok'], 200);
+})->name('api.keep-alive');
+
 // Public API routes for policies (with rate limiting)
 Route::middleware(['throttle:api'])->group(function () {
     Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');

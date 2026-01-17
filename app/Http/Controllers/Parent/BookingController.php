@@ -336,14 +336,25 @@ class BookingController extends Controller
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
 
             if ($paymentIntent->status === 'succeeded') {
+                // Calculate amount from payment intent
+                $amount = $paymentIntent->amount / 100; // Convert from cents
+                
                 // Update booking status
                 $booking->update([
                     'status' => 'active',
                     'stripe_customer_id' => $user->stripe_id,
                 ]);
 
-                // Send confirmation notification
+                // Send confirmation notification to parent
                 $user->notify(new BookingConfirmed($booking));
+                
+                // Notify admins of payment received
+                $adminService = app(\App\Services\AdminNotificationService::class);
+                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
+                    $booking,
+                    $amount,
+                    'stripe'
+                ));
 
                 return redirect()->route('parent.bookings.index')
                     ->with('success', 'Booking confirmed! Check your email for details.');
@@ -381,8 +392,15 @@ class BookingController extends Controller
             'status' => 'pending', // Keep as pending so payment can be made later
         ]);
 
-        // Send notification about booking creation (without payment)
+        // Send notification about booking creation (without payment) to parent
         $user->notify(new BookingConfirmed($booking));
+        
+        // Notify admins of new booking
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
+            $booking,
+            $user
+        ));
 
         return redirect()->route('parent.bookings.index')
             ->with('success', 'Booking created successfully! You can complete payment later from your bookings page.');
@@ -482,6 +500,12 @@ class BookingController extends Controller
             $capture = $provider->capturePaymentOrder($validated['token']);
 
             if ($capture && isset($capture['status']) && $capture['status'] === 'COMPLETED') {
+                // Extract payment amount
+                $amount = 0;
+                if (isset($capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'])) {
+                    $amount = (float) $capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
+                }
+                
                 // Update booking status
                 $booking->update([
                     'status' => 'active',
@@ -490,8 +514,16 @@ class BookingController extends Controller
                     'paypal_order_id' => null, // Clear after successful payment
                 ]);
 
-                // Send confirmation notification
+                // Send confirmation notification to parent
                 $user->notify(new BookingConfirmed($booking));
+                
+                // Notify admins of payment received
+                $adminService = app(\App\Services\AdminNotificationService::class);
+                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
+                    $booking,
+                    $amount,
+                    'paypal'
+                ));
 
                 return redirect()->route('parent.bookings.index')
                     ->with('success', 'Booking confirmed! Check your email for details.');
@@ -1089,8 +1121,15 @@ class BookingController extends Controller
             'status' => 'cancelled',
         ]);
 
-        // Send cancellation notification
+        // Send cancellation notification to parent
         $user->notify(new \App\Notifications\BookingCancelled($booking));
+        
+        // Notify admins of cancellation
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\BookingCancelledAlert(
+            $booking,
+            $user
+        ));
 
         return redirect()->route('parent.bookings.index')
             ->with('success', 'Booking cancelled successfully. A confirmation email has been sent.');

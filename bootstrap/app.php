@@ -27,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function ($schedule) {
         // Send booking expiring notifications daily at 9 AM
         $schedule->command('bookings:notify-expiring --days=3')->dailyAt('09:00');
+        
+        // Send daily activity summary to admins at 6 PM
+        $schedule->command('admin:daily-summary')->dailyAt('18:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
