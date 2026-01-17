@@ -37,5 +37,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Vite::prefetch(concurrency: 3);
+        
+        // Register model observers
+        \App\Models\Route::observe(\App\Observers\RouteObserver::class);
     }
 }

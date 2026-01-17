@@ -106,7 +106,11 @@
                 @endif
             </div>
             
-            <p>All students on this route have been safely {{ $period === 'am' ? 'picked up and delivered to their destinations' : 'picked up from their locations and delivered home' }}.</p>
+            @if($period === 'am')
+            <p>All students on this route have been safely picked up and delivered to their destinations.</p>
+            @else
+            <p>All students on this route have been safely picked up from their locations and dropped off at their designated drop-off points.</p>
+            @endif
             
             <a href="{{ url('/parent/bookings/pickup-history/' . $booking->id) }}" class="button">View Pickup History</a>
             
