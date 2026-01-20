@@ -403,6 +403,16 @@ class RosterController extends Controller
             $dailyPickup->completed_at
         ));
 
+        // Notify admins of pickup/drop-off completion
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\PickupCompletedAlert(
+            $booking,
+            $driver,
+            $period,
+            $dailyPickup->completed_at,
+            $pickupLocation
+        ));
+
         return response()->json([
             'success' => true,
             'message' => 'Pickup marked as complete successfully.',
@@ -492,6 +502,16 @@ class RosterController extends Controller
                     $pickupLocation,
                     $period,
                     $dailyPickup->completed_at
+                ));
+
+                // Notify admins of pickup/drop-off completion
+                $adminService = app(\App\Services\AdminNotificationService::class);
+                $adminService->notifyAdmins(new \App\Notifications\Admin\PickupCompletedAlert(
+                    $booking,
+                    $driver,
+                    $period,
+                    $dailyPickup->completed_at,
+                    $pickupLocation
                 ));
             }
         });

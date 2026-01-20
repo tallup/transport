@@ -32,6 +32,7 @@ function StripeCheckoutForm({ booking, price, onSuccess }) {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     booking_id: booking.id,
                     amount: price.price * 100, // Convert to cents
@@ -126,6 +127,7 @@ function PayPalCheckoutButton({ booking, price }) {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     booking_id: booking.id,
                     amount: price.price,

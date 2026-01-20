@@ -47,7 +47,8 @@ class PickupCompleted extends Notification implements ShouldQueue
             }
             
             public function build() {
-                return $this->subject('Student Picked Up - ' . strtoupper($this->period) . ' Service')
+                $subjectPrefix = $this->period === 'pm' ? 'Student Drop-off Completed' : 'Student Picked Up';
+                return $this->subject($subjectPrefix . ' - ' . strtoupper($this->period) . ' Service')
                     ->view('emails.pickup-completed', [
                         'booking' => $this->booking,
                         'pickupLocation' => $this->pickupLocation,
