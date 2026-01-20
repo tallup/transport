@@ -28,7 +28,7 @@ export default function Register() {
             <div className="mb-4 text-center">
                 <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                    Register as a parent to book private child transportation services
+                    Register as a parent to book school transportation for your child
                 </p>
             </div>
 

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RenewalReminder extends Notification implements ShouldQueue
+class RenewalReminder extends Notification
 {
     use Queueable;
 
