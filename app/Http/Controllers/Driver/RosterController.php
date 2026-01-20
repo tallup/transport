@@ -396,12 +396,19 @@ class RosterController extends Controller
 
         // Send pickup completed notification to parent
         $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
-        $booking->student->parent->notify(new \App\Notifications\PickupCompleted(
-            $booking,
-            $pickupLocation,
-            $period,
-            $dailyPickup->completed_at
-        ));
+        $parent = $booking->student?->parent;
+        if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+            $parent->notify(new \App\Notifications\PickupCompleted(
+                $booking,
+                $pickupLocation,
+                $period,
+                $dailyPickup->completed_at
+            ));
+        } else {
+            \Log::warning('PickupCompleted notification skipped: missing parent email', [
+                'booking_id' => $booking->id,
+            ]);
+        }
 
         // Notify admins of pickup/drop-off completion
         $adminService = app(\App\Services\AdminNotificationService::class);
@@ -497,12 +504,19 @@ class RosterController extends Controller
 
                 // Send pickup completed notification to parent
                 $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
-                $booking->student->parent->notify(new \App\Notifications\PickupCompleted(
-                    $booking,
-                    $pickupLocation,
-                    $period,
-                    $dailyPickup->completed_at
-                ));
+                $parent = $booking->student?->parent;
+                if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+                    $parent->notify(new \App\Notifications\PickupCompleted(
+                        $booking,
+                        $pickupLocation,
+                        $period,
+                        $dailyPickup->completed_at
+                    ));
+                } else {
+                    \Log::warning('PickupCompleted notification skipped: missing parent email', [
+                        'booking_id' => $booking->id,
+                    ]);
+                }
 
                 // Notify admins of pickup/drop-off completion
                 $adminService = app(\App\Services\AdminNotificationService::class);

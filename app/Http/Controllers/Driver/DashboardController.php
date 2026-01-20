@@ -504,13 +504,18 @@ class DashboardController extends Controller
         $studentsCount = $activeBookings->count();
 
         foreach ($activeBookings as $booking) {
-            if ($booking->student && $booking->student->parent) {
-                $booking->student->parent->notify(new \App\Notifications\RouteCompleted(
+            $parent = $booking->student?->parent;
+            if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+                $parent->notify(new \App\Notifications\RouteCompleted(
                     $booking,
                     $route,
                     $period,
                     $routeCompletion->completed_at
                 ));
+            } else {
+                \Log::warning('RouteCompleted notification skipped: missing parent email', [
+                    'booking_id' => $booking->id,
+                ]);
             }
         }
 
