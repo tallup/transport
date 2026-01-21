@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
-import axios from 'axios';
+const axios = window.axios;
 
 export default function CreateBooking({ students, routes }) {
     const { auth } = usePage().props;
