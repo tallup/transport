@@ -20,8 +20,6 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         route_id: previousBooking.route_id || '',
         pickup_point_id: previousBooking.pickup_point_id || '',
         pickup_address: previousBooking.pickup_address || previousBooking.student?.home_address || '',
-        pickup_latitude: previousBooking.pickup_latitude || '',
-        pickup_longitude: previousBooking.pickup_longitude || '',
         plan_type: previousBooking.plan_type || '',
         trip_type: previousBooking.trip_type || 'two_way',
         start_date: new Date().toISOString().split('T')[0],
@@ -315,44 +313,6 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     This address will be used for daily pickup. Make sure it's accurate and complete.
                                                 </p>
                                             </div>
-                                            
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
-                                                        Latitude (Optional)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="any"
-                                                        value={data.pickup_latitude}
-                                                        onChange={(e) => setData('pickup_latitude', e.target.value)}
-                                                        placeholder="e.g., 40.7128"
-                                                        className="block w-full glass-input text-white"
-                                                    />
-                                                    {errors.pickup_latitude && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_latitude}</p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
-                                                        Longitude (Optional)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="any"
-                                                        value={data.pickup_longitude}
-                                                        onChange={(e) => setData('pickup_longitude', e.target.value)}
-                                                        placeholder="e.g., -74.0060"
-                                                        className="block w-full glass-input text-white"
-                                                    />
-                                                    {errors.pickup_longitude && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_longitude}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <p className="text-sm text-white/70 font-semibold">
-                                                Note: Latitude and longitude are optional. They can be used for GPS navigation if provided.
-                                            </p>
                                         </div>
                                     </div>
                                 )}
