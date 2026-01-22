@@ -1,134 +1,8 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { useState } from 'react';
-
-const stripePublicKey = import.meta.env.VITE_STRIPE_KEY;
-const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
-
-function StripeCheckoutForm({ booking, price, onSuccess }) {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!stripe || !elements) {
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            // Create payment intent on backend
-            const response = await fetch('/parent/bookings/create-payment-intent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    booking_id: booking.id,
-                    amount: price.price * 100, // Convert to cents
-                }),
-            });
-
-            let data = {};
-            try {
-                data = await response.json();
-            } catch (parseError) {
-                data = {};
-            }
-
-            if (!response.ok || data.error || !data.clientSecret) {
-                setError(data.error || 'Unable to start payment. Please try again.');
-                setLoading(false);
-                return;
-            }
-
-            // Confirm payment with Stripe
-            const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardElement),
-                },
-            });
-
-            if (stripeError) {
-                setError(stripeError.message);
-                setLoading(false);
-            } else if (paymentIntent.status === 'succeeded') {
-                onSuccess(paymentIntent);
-            }
-        } catch (err) {
-            setError(err?.message || 'An error occurred. Please try again.');
-            setLoading(false);
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-                <label className="block text-base font-bold text-white mb-2">
-                    Card Details
-                </label>
-                <div className="glass-card p-4 rounded-lg">
-                    <CardElement
-                        options={{
-                            style: {
-                                base: {
-                                    fontSize: '16px',
-                                    color: '#ffffff',
-                                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                                    '::placeholder': {
-                                        color: '#d1d5db',
-                                    },
-                                },
-                                invalid: {
-                                    color: '#fca5a5',
-                                },
-                            },
-                        }}
-                    />
-                </div>
-            </div>
-
-            {!stripePublicKey && (
-                <div className="bg-yellow-500/20 border border-yellow-400/50 text-yellow-200 px-4 py-3 rounded-lg font-semibold">
-                    Stripe is not configured yet. Please contact support.
-                </div>
-            )}
-
-            {error && (
-                <div className="bg-red-500/20 border border-red-400/50 text-red-300 px-4 py-3 rounded-lg font-semibold">
-                    {error}
-                </div>
-            )}
-
-            <div className="glass-card p-4 rounded-lg">
-                <div className="flex justify-between items-center">
-                    <span className="font-bold text-white text-lg">Total Amount:</span>
-                    <span className="text-2xl font-bold text-green-400">{price.formatted}</span>
-                </div>
-            </div>
-
-            <GlassButton
-                type="submit"
-                disabled={!stripe || loading || !stripePublicKey}
-                variant="success"
-                className="w-full py-3 text-lg"
-            >
-                {loading ? 'Processing...' : `Pay ${price.formatted}`}
-            </GlassButton>
-        </form>
-    );
-}
 
 function PayPalCheckoutButton({ booking, price }) {
     const [loading, setLoading] = useState(false);
@@ -210,15 +84,6 @@ function PayPalCheckoutButton({ booking, price }) {
 export default function Checkout({ booking, price }) {
     const { auth } = usePage().props;
     const { post, processing } = useForm();
-    const [paymentMethod, setPaymentMethod] = useState('stripe'); // 'stripe' or 'paypal'
-
-    const handlePaymentSuccess = (paymentIntent) => {
-        // Redirect to success page
-        post('/parent/bookings/payment-success', {
-            booking_id: booking.id,
-            payment_intent_id: paymentIntent.id,
-        });
-    };
 
     const handleSkipPayment = () => {
         post('/parent/bookings/skip-payment', {
@@ -260,49 +125,16 @@ export default function Checkout({ booking, price }) {
                                 </div>
                             </div>
 
-                            {/* Payment Method Selection */}
+                            {/* Payment Method */}
                             <div className="glass-card p-6 rounded-lg mb-6">
-                                <h3 className="text-xl font-bold text-white mb-4">Choose Payment Method</h3>
-                                <div className="grid grid-cols-2 gap-4 mb-6">
-                                    <button
-                                        type="button"
-                                        onClick={() => setPaymentMethod('stripe')}
-                                        className={`p-4 rounded-lg border-2 transition-all ${
-                                            paymentMethod === 'stripe'
-                                                ? 'border-brand-primary bg-brand-primary/20'
-                                                : 'border-white/20 bg-white/5 hover:bg-white/10'
-                                        }`}
-                                    >
-                                        <div className="text-white font-semibold">Credit/Debit Card</div>
-                                        <div className="text-white/70 text-sm mt-1">Via Stripe</div>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setPaymentMethod('paypal')}
-                                        className={`p-4 rounded-lg border-2 transition-all ${
-                                            paymentMethod === 'paypal'
-                                                ? 'border-brand-primary bg-brand-primary/20'
-                                                : 'border-white/20 bg-white/5 hover:bg-white/10'
-                                        }`}
-                                    >
-                                        <div className="text-white font-semibold">PayPal</div>
-                                        <div className="text-white/70 text-sm mt-1">Pay with PayPal</div>
-                                    </button>
+                                <h3 className="text-xl font-bold text-white mb-4">Payment Method</h3>
+                                <div className="p-4 rounded-lg border-2 border-brand-primary bg-brand-primary/20">
+                                    <div className="text-white font-semibold">PayPal</div>
+                                    <div className="text-white/70 text-sm mt-1">Pay with PayPal</div>
                                 </div>
-
-                                {/* Payment Form */}
-                                {paymentMethod === 'stripe' ? (
-                                    <Elements stripe={stripePromise}>
-                                        <StripeCheckoutForm
-                                            booking={booking}
-                                            price={price}
-                                            onSuccess={handlePaymentSuccess}
-                                        />
-                                    </Elements>
-                                ) : (
-                                    <PayPalCheckoutButton booking={booking} price={price} />
-                                )}
                             </div>
+
+                            <PayPalCheckoutButton booking={booking} price={price} />
 
                             {/* Skip Payment Option */}
                             <div className="mt-6 pt-6 border-t border-white/20">
