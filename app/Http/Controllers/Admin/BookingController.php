@@ -155,8 +155,8 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to update this booking.');
         }
 
-        if ($booking->status !== 'awaiting_approval') {
-            return back()->withErrors(['error' => 'Only bookings awaiting approval can be approved.']);
+        if (!in_array($booking->status, ['pending', 'awaiting_approval'])) {
+            return back()->withErrors(['error' => 'Only pending or awaiting approval bookings can be approved.']);
         }
 
         $booking->update(['status' => 'active']);

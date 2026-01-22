@@ -25,7 +25,7 @@ export default function Show({ booking }) {
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Booking Details</h2>
                         <div className="flex gap-3">
-                            {booking.status === 'awaiting_approval' && (
+                            {(booking.status === 'pending' || booking.status === 'awaiting_approval') && (
                                 <GlassButton
                                     type="button"
                                     variant="success"

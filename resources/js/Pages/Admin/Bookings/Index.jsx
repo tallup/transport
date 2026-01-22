@@ -132,7 +132,7 @@ export default function Index({ bookings }) {
                                                         >
                                                             View
                                                         </Link>
-                                                        {booking.status === 'awaiting_approval' && (
+                                                        {(booking.status === 'pending' || booking.status === 'awaiting_approval') && (
                                                             <button
                                                                 onClick={() => handleApprove(booking.id)}
                                                                 className="text-green-300 hover:text-green-100 mr-4 font-semibold"
