@@ -160,7 +160,7 @@ class RouteController extends Controller
 
         // Get active bookings with student details
         $activeBookings = \App\Models\Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'pending'])
+            ->whereIn('status', ['active', 'pending', 'awaiting_approval'])
             ->whereDate('start_date', '<=', now())
             ->where(function ($query) {
                 $query->whereNull('end_date')
@@ -186,7 +186,7 @@ class RouteController extends Controller
 
         // Get upcoming bookings (starting soon)
         $upcomingBookings = \App\Models\Booking::where('route_id', $route->id)
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'awaiting_approval'])
             ->whereDate('start_date', '>', now())
             ->whereDate('start_date', '<=', now()->addDays(7))
             ->with(['student.parent'])

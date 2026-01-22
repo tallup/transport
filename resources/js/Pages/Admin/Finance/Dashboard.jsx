@@ -21,6 +21,7 @@ export default function FinanceDashboard({
     const statusDistributionData = [
         { name: 'Active', value: statusSummary?.active || 0, color: '#10b981' },
         { name: 'Pending', value: statusSummary?.pending || 0, color: '#f59e0b' },
+        { name: 'Awaiting Approval', value: statusSummary?.awaiting_approval || 0, color: '#f97316' },
         { name: 'Cancelled', value: statusSummary?.cancelled || 0, color: '#ef4444' },
         { name: 'Completed', value: statusSummary?.completed || 0, color: '#3b82f6' },
     ];

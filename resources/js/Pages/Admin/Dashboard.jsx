@@ -107,6 +107,20 @@ export default function AdminDashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
+                                    <p className="text-base font-bold text-white">Awaiting Approval</p>
+                                    <p className="text-3xl sm:text-4xl font-extrabold text-amber-200 mt-2 drop-shadow">{stats?.awaiting_approval_bookings || 0}</p>
+                                </div>
+                                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M5 20h14a2 2 0 001.732-3l-7-12a2 2 0 00-3.464 0l-7 12A2 2 0 005 20z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </GlassCard>
+
+                        <GlassCard>
+                            <div className="flex items-center justify-between">
+                                <div>
                                     <p className="text-base font-bold text-white">Total Drivers</p>
                                     <p className="text-3xl sm:text-4xl font-extrabold text-indigo-200 mt-2 drop-shadow">{stats?.total_drivers || 0}</p>
                                 </div>

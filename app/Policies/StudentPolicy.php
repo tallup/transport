@@ -84,7 +84,7 @@ class StudentPolicy
         // Parents can delete their own students (if no active bookings)
         if ($user->role === 'parent' && $student->parent_id === $user->id) {
             // Check if student has active bookings
-            return !$student->bookings()->whereIn('status', ['active', 'pending'])->exists();
+            return !$student->bookings()->whereIn('status', ['active', 'pending', 'awaiting_approval'])->exists();
         }
         
         return false;

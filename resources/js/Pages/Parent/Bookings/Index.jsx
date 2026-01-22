@@ -5,6 +5,12 @@ import GlassButton from '@/Components/GlassButton';
 
 export default function BookingsIndex({ bookings }) {
     const { auth } = usePage().props;
+    const formatStatus = (status) => {
+        if (status === 'awaiting_approval') {
+            return 'AWAITING APPROVAL';
+        }
+        return status.toUpperCase();
+    };
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="My Bookings" />
@@ -34,10 +40,11 @@ export default function BookingsIndex({ bookings }) {
                                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                                                             booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
                                                             booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                            booking.status === 'awaiting_approval' ? 'bg-amber-500/30 text-amber-100 border-amber-400/50' :
                                                             booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
                                                             'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                                         }`}>
-                                                            {booking.status.toUpperCase()}
+                                                            {formatStatus(booking.status)}
                                                         </span>
                                                     </div>
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-base font-semibold text-white/90">
@@ -91,6 +98,21 @@ export default function BookingsIndex({ bookings }) {
                                                             </button>
                                                         </>
                                                     ) : null}
+                                                    {booking.status === 'awaiting_approval' && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (confirm('Are you sure you want to cancel this booking?')) {
+                                                                    router.post(`/parent/bookings/${booking.id}/cancel`, {}, {
+                                                                        preserveScroll: false,
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="px-4 py-2 bg-red-500/30 backdrop-blur-sm border border-red-400/50 rounded-md text-white font-bold hover:bg-red-500/50 transition text-sm"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
                                                     {booking.status === 'active' && (
                                                         <>
                                                             <button

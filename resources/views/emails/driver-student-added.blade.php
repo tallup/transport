@@ -60,26 +60,26 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Payment Received</h1>
+            <h1>New Student Added</h1>
         </div>
         <div class="content">
-            <p>Hello {{ $user->name }},</p>
-            
-            <p>We received your payment. Your booking is pending admin approval. Please find your invoice and receipt attached to this email.</p>
-            
+            <p>Hello {{ $driver?->name ?? 'Driver' }},</p>
+
+            <p>A student has been added to your route. Please review the details below.</p>
+
             <div class="booking-details">
                 <h3>Booking Details</h3>
                 <div class="detail-row">
                     <strong>Student:</strong>
-                    <span>{{ $booking->student->name }}</span>
+                    <span>{{ $booking->student?->name ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Route:</strong>
-                    <span>{{ $booking->route->name }}</span>
+                    <span>{{ $booking->route?->name ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
-                    <strong>Pickup Point:</strong>
-                    <span>{{ $booking->pickupPoint->name }}</span>
+                    <strong>Pickup Location:</strong>
+                    <span>{{ $booking->pickupPoint?->name ?? ($booking->pickup_address ?? 'Not set') }}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Plan Type:</strong>
@@ -96,10 +96,10 @@
                 </div>
                 @endif
             </div>
-            
-            <a href="{{ url('/parent/dashboard') }}" class="button">View Booking</a>
-            
-            <p>Thank you for using our transport service!</p>
+
+            <a href="{{ url('/driver/dashboard') }}" class="button">View Route</a>
+
+            <p>Thank you for your service!</p>
         </div>
         <div class="footer">
             <p>This is an automated email. Please do not reply to this message.</p>
@@ -107,11 +107,4 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
 

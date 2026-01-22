@@ -237,7 +237,7 @@ class DashboardController extends Controller
         // Calculate stats for the active route
         // Use Carbon instance for date comparison to ensure proper type handling
         $totalStudents = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -247,7 +247,7 @@ class DashboardController extends Controller
             ->count('student_id');
 
         $todayBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -661,7 +661,7 @@ class DashboardController extends Controller
         // Overall performance metrics (aggregated or single route)
         $totalBookings = Booking::whereIn('route_id', $routeIds)->count();
         $activeBookings = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->count();
         // Count daily pickups instead of completed bookings
         $completedPickups = DailyPickup::whereIn('route_id', $routeIds)
@@ -672,7 +672,7 @@ class DashboardController extends Controller
             ->where('created_at', '>=', $thisWeekStart)
             ->count();
         $weeklyActive = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -686,7 +686,7 @@ class DashboardController extends Controller
             ->where('created_at', '>=', $thisMonthStart)
             ->count();
         $monthlyActive = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -697,7 +697,7 @@ class DashboardController extends Controller
 
         // Calculate average students per trip
         $totalStudents = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->distinct()
             ->count('student_id');
 
@@ -761,7 +761,7 @@ class DashboardController extends Controller
 
         $today = Carbon::today();
         $activeBookingsCount = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -771,7 +771,7 @@ class DashboardController extends Controller
 
         // Get all bookings for this route (active and pending)
         $bookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
             ->orderBy('start_date', 'desc')
             ->get()

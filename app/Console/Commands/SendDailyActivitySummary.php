@@ -123,6 +123,12 @@ class SendDailyActivitySummary extends Command
             $actions[] = "{$pendingBookings} pending booking(s) awaiting payment";
         }
 
+        // Check for bookings awaiting admin approval
+        $awaitingApproval = Booking::where('status', 'awaiting_approval')->count();
+        if ($awaitingApproval > 0) {
+            $actions[] = "{$awaitingApproval} booking(s) awaiting admin approval";
+        }
+
         // Check for routes without drivers
         $routesWithoutDrivers = Route::where('active', true)
             ->whereNull('driver_id')

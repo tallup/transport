@@ -125,7 +125,7 @@ class BookingController extends Controller
         
         // Get the overlapping booking for better error message
         $overlappingBooking = Booking::where('student_id', $validated['student_id'])
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->where(function ($q) use ($startDate, $endDate) {
                 $q->where(function ($subQ) use ($startDate, $endDate) {
                     $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
@@ -339,9 +339,9 @@ class BookingController extends Controller
                 // Calculate amount from payment intent
                 $amount = $paymentIntent->amount / 100; // Convert from cents
                 
-                // Update booking status
+                // Update booking status (awaiting admin approval)
                 $booking->update([
-                    'status' => 'active',
+                    'status' => 'awaiting_approval',
                     'stripe_customer_id' => $user->stripe_id,
                 ]);
 
@@ -357,7 +357,7 @@ class BookingController extends Controller
                 ));
 
                 return redirect()->route('parent.bookings.index')
-                    ->with('success', 'Booking confirmed! Check your email for details.');
+                    ->with('success', 'Payment received. Your booking is pending admin approval.');
             }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Payment verification failed']);
@@ -506,9 +506,9 @@ class BookingController extends Controller
                     $amount = (float) $capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
                 }
                 
-                // Update booking status
+                // Update booking status (awaiting admin approval)
                 $booking->update([
-                    'status' => 'active',
+                    'status' => 'awaiting_approval',
                     'payment_method' => 'paypal',
                     'payment_id' => $capture['id'] ?? null,
                     'paypal_order_id' => null, // Clear after successful payment
@@ -526,7 +526,7 @@ class BookingController extends Controller
                 ));
 
                 return redirect()->route('parent.bookings.index')
-                    ->with('success', 'Booking confirmed! Check your email for details.');
+                    ->with('success', 'Payment received. Your booking is pending admin approval.');
             }
 
             return redirect()->route('parent.bookings.show', $booking)
@@ -1048,7 +1048,8 @@ class BookingController extends Controller
             
             $overlappingBooking = Booking::where('student_id', $booking->student_id)
                 ->where('id', '!=', $booking->id)
-                ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
                 ->where(function ($q) use ($startDate, $endDate) {
                     $q->where(function ($subQ) use ($startDate, $endDate) {
                         $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
@@ -1112,8 +1113,8 @@ class BookingController extends Controller
         }
 
         // Allow cancelling pending or active bookings
-        if (!in_array($booking->status, ['pending', 'active'])) {
-            return back()->withErrors(['error' => 'Only pending or active bookings can be cancelled.']);
+        if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
+            return back()->withErrors(['error' => 'Only pending, awaiting approval, or active bookings can be cancelled.']);
         }
 
         // Cancel the booking
@@ -1144,10 +1145,10 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to delete this booking.');
         }
 
-        // Only allow deleting cancelled or completed bookings
-        // Prevent deleting pending or active bookings (they should be cancelled first)
+        // Only allow deleting cancelled, completed, or expired bookings
+        // Prevent deleting pending, awaiting approval, or active bookings (they should be cancelled first)
         if (!in_array($booking->status, ['cancelled', 'completed', 'expired'])) {
-            return back()->withErrors(['error' => 'Cannot delete pending or active bookings. Please cancel them first.']);
+            return back()->withErrors(['error' => 'Cannot delete pending, awaiting approval, or active bookings. Please cancel them first.']);
         }
 
         // Delete the booking

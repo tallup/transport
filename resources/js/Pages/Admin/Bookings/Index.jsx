@@ -15,12 +15,22 @@ export default function Index({ bookings }) {
         }
     };
 
+    const handleApprove = (id) => {
+        if (confirm('Approve this booking and activate it?')) {
+            router.post(`/admin/bookings/${id}/approve`, {}, {
+                preserveScroll: true,
+            });
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'active':
                 return 'bg-green-500/30 text-green-100 border border-green-400/50';
             case 'pending':
                 return 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50';
+            case 'awaiting_approval':
+                return 'bg-amber-500/30 text-amber-100 border border-amber-400/50';
             case 'cancelled':
                 return 'bg-red-500/30 text-red-100 border border-red-400/50';
             case 'expired':
@@ -32,6 +42,10 @@ export default function Index({ bookings }) {
 
     const formatPlanType = (planType) => {
         return planType.replace('_', '-').replace(/\b\w/g, l => l.toUpperCase());
+    };
+
+    const formatStatus = (status) => {
+        return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     };
 
     return (
@@ -102,7 +116,7 @@ export default function Index({ bookings }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(booking.status)}`}>
-                                                            {booking.status}
+                                                            {formatStatus(booking.status)}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
@@ -112,6 +126,14 @@ export default function Index({ bookings }) {
                                                         {booking.end_date ? new Date(booking.end_date).toLocaleDateString() : '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
+                                                        {booking.status === 'awaiting_approval' && (
+                                                            <button
+                                                                onClick={() => handleApprove(booking.id)}
+                                                                className="text-green-300 hover:text-green-100 mr-4 font-semibold"
+                                                            >
+                                                                Approve
+                                                            </button>
+                                                        )}
                                                         <Link
                                                             href={`/admin/bookings/${booking.id}/edit`}
                                                             className="text-blue-300 hover:text-blue-100 mr-4 font-semibold"

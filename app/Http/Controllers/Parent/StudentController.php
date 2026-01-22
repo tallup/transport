@@ -28,7 +28,7 @@ class StudentController extends Controller
         
         if ($studentIds->isNotEmpty()) {
             $activeBookings = Booking::whereIn('student_id', $studentIds)
-                ->whereIn('status', ['pending', 'active'])
+                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
                 ->with(['route', 'pickupPoint', 'dropoffPoint'])
                 ->orderBy('start_date', 'desc')
                 ->get()

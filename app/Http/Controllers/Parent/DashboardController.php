@@ -27,18 +27,18 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Active bookings: Include both 'pending' and 'active' status
-        // Count all pending and active bookings regardless of date (parent wants to see all their active/pending bookings)
+        // Active bookings: Include pending, awaiting approval, and active status
+        // Count all pending/awaiting approval bookings regardless of date
         $today = Carbon::today();
         $activeBookings = $bookings->filter(function ($booking) use ($today) {
             // Must be pending or active status
-            if (!in_array($booking->status, ['pending', 'active'])) {
+            if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
                 return false;
             }
             
             // For pending bookings: include all pending bookings (they're waiting for payment or to start)
             // Don't filter by date - parent wants to see all pending bookings
-            if ($booking->status === 'pending') {
+            if (in_array($booking->status, ['pending', 'awaiting_approval'])) {
                 return true;
             }
             

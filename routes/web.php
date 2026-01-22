@@ -84,6 +84,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
     Route::get('/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('finance.dashboard');
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
+    Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve');
 });
 
 // Driver Routes

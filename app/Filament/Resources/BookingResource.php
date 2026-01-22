@@ -78,6 +78,7 @@ class BookingResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
+                        'awaiting_approval' => 'Awaiting Approval',
                         'active' => 'Active',
                         'cancelled' => 'Cancelled',
                         'expired' => 'Expired',
@@ -124,6 +125,7 @@ class BookingResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
                         'pending' => 'warning',
+                        'awaiting_approval' => 'warning',
                         'cancelled' => 'danger',
                         'expired' => 'gray',
                         default => 'gray',
@@ -143,6 +145,7 @@ class BookingResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
+                        'awaiting_approval' => 'Awaiting Approval',
                         'active' => 'Active',
                         'cancelled' => 'Cancelled',
                         'expired' => 'Expired',
@@ -198,7 +201,7 @@ class BookingResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending']) && $record->stripe_customer_id),
+                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending', 'awaiting_approval']) && $record->stripe_customer_id),
                 Tables\Actions\Action::make('partial_refund')
                     ->label('Partial Refund')
                     ->icon('heroicon-o-arrow-uturn-left')
@@ -229,7 +232,7 @@ class BookingResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending']) && $record->stripe_customer_id),
+                    ->visible(fn (Booking $record) => in_array($record->status, ['active', 'pending', 'awaiting_approval']) && $record->stripe_customer_id),
                 Tables\Actions\Action::make('cancel_with_refund')
                     ->label('Cancel & Refund')
                     ->icon('heroicon-o-x-circle')
@@ -255,7 +258,7 @@ class BookingResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'active']) && $record->stripe_customer_id),
+                    ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'awaiting_approval', 'active']) && $record->stripe_customer_id),
                 Tables\Actions\Action::make('cancel_without_refund')
                     ->label('Cancel (No Refund)')
                     ->icon('heroicon-o-x-circle')
@@ -281,7 +284,7 @@ class BookingResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'active'])),
+                    ->visible(fn (Booking $record) => in_array($record->status, ['pending', 'awaiting_approval', 'active'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

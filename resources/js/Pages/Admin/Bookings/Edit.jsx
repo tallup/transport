@@ -190,6 +190,7 @@ export default function Edit({ booking, students, routes }) {
                                             required
                                         >
                                             <option value="pending" className="bg-indigo-700">Pending</option>
+                                            <option value="awaiting_approval" className="bg-indigo-700">Awaiting Approval</option>
                                             <option value="active" className="bg-indigo-700">Active</option>
                                             <option value="completed" className="bg-indigo-700">Completed</option>
                                             <option value="expired" className="bg-indigo-700">Expired</option>

@@ -358,10 +358,10 @@ class RosterController extends Controller
         }
 
         // Verify booking is in a state that can be completed
-        if (!in_array($booking->status, ['pending', 'active'])) {
+        if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only pending or active bookings can be marked as complete.',
+                'message' => 'Only pending, awaiting approval, or active bookings can be marked as complete.',
             ], 400);
         }
 

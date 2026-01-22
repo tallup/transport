@@ -29,7 +29,7 @@ class DashboardController extends Controller
         try {
             // Calculate total revenue from active and pending bookings
             $totalRevenue = 0;
-            $activeBookings = Booking::whereIn('status', ['active', 'pending'])
+            $activeBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
                 ->with(['route.vehicle', 'student.parent'])
                 ->get();
             
@@ -52,6 +52,7 @@ class DashboardController extends Controller
                 'total_routes' => Route::where('active', true)->count(),
                 'active_bookings' => Booking::where('status', 'active')->count(),
                 'pending_bookings' => Booking::where('status', 'pending')->count(),
+                'awaiting_approval_bookings' => Booking::where('status', 'awaiting_approval')->count(),
                 'total_drivers' => User::where('role', 'driver')->count(),
                 'total_parents' => User::where('role', 'parent')->count(),
                 'total_revenue' => round($totalRevenue, 2),
@@ -65,7 +66,7 @@ class DashboardController extends Controller
                 $dayEnd = $date->copy()->endOfDay();
                 
                 // Get bookings created on this day
-                $dayBookings = Booking::whereIn('status', ['active', 'pending'])
+                $dayBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
                     ->whereBetween('created_at', [$dayStart, $dayEnd])
                     ->with(['route.vehicle', 'student.parent'])
                     ->get();
@@ -100,6 +101,11 @@ class DashboardController extends Controller
                     'name' => 'Pending',
                     'value' => Booking::where('status', 'pending')->count(),
                     'color' => '#f59e0b',
+                ],
+                [
+                    'name' => 'Awaiting Approval',
+                    'value' => Booking::where('status', 'awaiting_approval')->count(),
+                    'color' => '#f97316',
                 ],
                 [
                     'name' => 'Cancelled',

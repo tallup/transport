@@ -30,7 +30,7 @@ class CapacityGuard
     public function getAvailableSeats(Route $route, ?int $excludeBookingId = null): int
     {
         $activeBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->when($excludeBookingId, fn($query) => $query->where('id', '!=', $excludeBookingId))
             ->count();
 

@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #4F46E5;
+            background-color: #10b981;
             color: white;
             padding: 20px;
             text-align: center;
@@ -49,7 +49,7 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #4F46E5;
+            background-color: #10b981;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -60,13 +60,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Payment Received</h1>
+            <h1>Booking Approved</h1>
         </div>
         <div class="content">
             <p>Hello {{ $user->name }},</p>
-            
-            <p>We received your payment. Your booking is pending admin approval. Please find your invoice and receipt attached to this email.</p>
-            
+
+            <p>Your transport booking has been approved by our admin team. You can now view your booking details below.</p>
+
             <div class="booking-details">
                 <h3>Booking Details</h3>
                 <div class="detail-row">
@@ -79,7 +79,7 @@
                 </div>
                 <div class="detail-row">
                     <strong>Pickup Point:</strong>
-                    <span>{{ $booking->pickupPoint->name }}</span>
+                    <span>{{ $booking->pickupPoint->name ?? ($booking->pickup_address ?? 'Not set') }}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Plan Type:</strong>
@@ -96,10 +96,10 @@
                 </div>
                 @endif
             </div>
-            
-            <a href="{{ url('/parent/dashboard') }}" class="button">View Booking</a>
-            
-            <p>Thank you for using our transport service!</p>
+
+            <a href="{{ url('/parent/bookings') }}" class="button">View Booking</a>
+
+            <p>Thank you for choosing our service!</p>
         </div>
         <div class="footer">
             <p>This is an automated email. Please do not reply to this message.</p>
@@ -107,11 +107,4 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
 

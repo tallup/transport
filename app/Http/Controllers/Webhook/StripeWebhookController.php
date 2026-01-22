@@ -76,11 +76,11 @@ class StripeWebhookController extends Controller
             $booking = Booking::find($bookingId);
             if ($booking && $booking->status === 'pending') {
                 $booking->update([
-                    'status' => 'active',
+                    'status' => 'awaiting_approval',
                     'stripe_customer_id' => $paymentIntent->customer,
                 ]);
 
-                Log::info("Booking {$bookingId} activated via webhook");
+                Log::info("Booking {$bookingId} marked awaiting approval via webhook");
             }
         }
     }

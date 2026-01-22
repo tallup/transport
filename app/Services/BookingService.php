@@ -50,10 +50,7 @@ class BookingService
             }
         }
 
-        // Activate pending bookings that have passed start_date
-        Booking::where('status', 'pending')
-            ->where('start_date', '<=', $today)
-            ->update(['status' => 'active']);
+        // Bookings now require admin approval before becoming active
     }
 
     /**
@@ -113,7 +110,7 @@ class BookingService
     public function hasOverlappingBooking(int $studentId, Carbon $startDate, ?Carbon $endDate = null, ?int $excludeBookingId = null): bool
     {
         $query = Booking::where('student_id', $studentId)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->where(function ($q) use ($startDate, $endDate) {
                 // Check if existing booking overlaps with new booking dates
                 $q->where(function ($subQ) use ($startDate, $endDate) {

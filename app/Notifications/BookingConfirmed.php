@@ -55,7 +55,7 @@ class BookingConfirmed extends Notification implements ShouldQueue
             }
             
             public function build() {
-                $mail = $this->subject('Transport Booking Confirmed')
+                $mail = $this->subject('Payment Received - Booking Pending Approval')
                     ->view('emails.booking-confirmed', [
                         'booking' => $this->booking,
                         'user' => $this->booking->student->parent,

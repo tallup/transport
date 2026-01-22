@@ -29,7 +29,7 @@ class RosterService
 
         // Get active bookings for the date
         $bookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
             ->where('start_date', '<=', $date)
             ->where(function ($query) use ($date) {
                 $query->whereNull('end_date')

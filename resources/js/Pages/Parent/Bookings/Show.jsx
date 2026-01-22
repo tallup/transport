@@ -38,6 +38,13 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         }
     };
 
+    const formatStatus = (status) => {
+        if (status === 'awaiting_approval') {
+            return 'AWAITING APPROVAL';
+        }
+        return status.toUpperCase();
+    };
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Booking Details" />
@@ -83,11 +90,12 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                         <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
                                             booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
                                             booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                            booking.status === 'awaiting_approval' ? 'bg-amber-500/30 text-amber-100 border-amber-400/50' :
                                             booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
                                             booking.status === 'completed' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
                                             'bg-gray-500/30 text-gray-200 border-gray-400/50'
                                         }`}>
-                                            {booking.status.toUpperCase()}
+                                            {formatStatus(booking.status)}
                                         </span>
                                         {booking.status === 'pending' && (
                                             <Link
@@ -108,6 +116,11 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                     </Link>
                                 )}
                             </div>
+                            {booking.status === 'awaiting_approval' && (
+                                <div className="mb-6 bg-amber-500/20 border border-amber-400/50 text-amber-100 px-4 py-3 rounded-lg font-semibold">
+                                    Payment received. Your booking is awaiting admin approval.
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Student Information */}

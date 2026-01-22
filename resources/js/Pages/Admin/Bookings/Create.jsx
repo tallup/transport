@@ -209,6 +209,7 @@ export default function Create({ students, routes }) {
                                         required
                                     >
                                         <option value="pending" className="text-gray-900">Pending</option>
+                                        <option value="awaiting_approval" className="text-gray-900">Awaiting Approval</option>
                                         <option value="active" className="text-gray-900">Active</option>
                                         <option value="completed" className="text-gray-900">Completed</option>
                                         <option value="expired" className="text-gray-900">Expired</option>

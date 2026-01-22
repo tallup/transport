@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Route;
 use App\Models\Student;
+use App\Notifications\DriverStudentAdded;
 use App\Services\BookingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,7 +55,7 @@ class BookingController extends Controller
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
-            'status' => 'required|in:pending,active,completed,expired,cancelled',
+            'status' => 'required|in:pending,awaiting_approval,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
@@ -69,7 +70,11 @@ class BookingController extends Controller
             $validated['end_date'] = $endDate?->format('Y-m-d');
         }
 
-        Booking::create($validated);
+        $booking = Booking::create($validated);
+
+        if ($booking->status === 'active') {
+            $this->notifyDriverStudentAdded($booking);
+        }
 
         return redirect()->route('admin.bookings.index')
             ->with('success', 'Booking created successfully.');
@@ -109,7 +114,7 @@ class BookingController extends Controller
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
-            'status' => 'required|in:pending,active,completed,expired,cancelled',
+            'status' => 'required|in:pending,awaiting_approval,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
@@ -124,10 +129,56 @@ class BookingController extends Controller
             $validated['end_date'] = $endDate?->format('Y-m-d');
         }
 
+        $previousStatus = $booking->status;
         $booking->update($validated);
+
+        if ($previousStatus !== 'active' && $booking->status === 'active') {
+            $this->notifyDriverStudentAdded($booking);
+        }
 
         return redirect()->route('admin.bookings.index')
             ->with('success', 'Booking updated successfully.');
+    }
+
+    public function approve(Request $request, Booking $booking)
+    {
+        if (!$request->user()->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
+        if ($booking->status !== 'awaiting_approval') {
+            return back()->withErrors(['error' => 'Only bookings awaiting approval can be approved.']);
+        }
+
+        $booking->update(['status' => 'active']);
+
+        $parent = $booking->student?->parent;
+        if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+            $parent->notify(new \App\Notifications\BookingApproved($booking));
+        } else {
+            \Log::warning('BookingApproved notification skipped: missing parent email', [
+                'booking_id' => $booking->id,
+            ]);
+        }
+
+        $this->notifyDriverStudentAdded($booking);
+
+        return back()->with('success', 'Booking approved successfully.');
+    }
+
+    private function notifyDriverStudentAdded(Booking $booking): void
+    {
+        $booking->loadMissing(['route.driver', 'student', 'pickupPoint']);
+        $driver = $booking->route?->driver;
+
+        if (!$driver || !filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+            \Log::warning('DriverStudentAdded notification skipped: missing driver email', [
+                'booking_id' => $booking->id,
+            ]);
+            return;
+        }
+
+        $driver->notify(new DriverStudentAdded($booking));
     }
 
     public function destroy(Booking $booking)
