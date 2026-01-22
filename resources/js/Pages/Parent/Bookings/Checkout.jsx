@@ -4,6 +4,8 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { useState } from 'react';
 
+const axios = window.axios;
+
 function PayPalCheckoutButton({ booking, price }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -13,20 +15,11 @@ function PayPalCheckoutButton({ booking, price }) {
         setError(null);
 
         try {
-            const response = await fetch('/parent/bookings/create-paypal-order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    booking_id: booking.id,
-                    amount: price.price,
-                }),
+            const response = await axios.post('/parent/bookings/create-paypal-order', {
+                booking_id: booking.id,
+                amount: price.price,
             });
-
-            const data = await response.json();
+            const data = response.data;
 
             if (data.error) {
                 setError(data.error);

@@ -100,6 +100,15 @@ class BookingController extends Controller
         ]);
     }
 
+    public function show(Booking $booking)
+    {
+        $booking->load(['student.parent', 'route.driver', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
+
+        return Inertia::render('Admin/Bookings/Show', [
+            'booking' => $booking,
+        ]);
+    }
+
     public function update(Request $request, Booking $booking)
     {
         // Authorization check

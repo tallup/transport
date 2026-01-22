@@ -126,6 +126,12 @@ export default function Index({ bookings }) {
                                                         {booking.end_date ? new Date(booking.end_date).toLocaleDateString() : '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
+                                                        <Link
+                                                            href={`/admin/bookings/${booking.id}`}
+                                                            className="text-indigo-300 hover:text-indigo-100 mr-4 font-semibold"
+                                                        >
+                                                            View
+                                                        </Link>
                                                         {booking.status === 'awaiting_approval' && (
                                                             <button
                                                                 onClick={() => handleApprove(booking.id)}
