@@ -1122,8 +1122,14 @@ class BookingController extends Controller
             'status' => 'cancelled',
         ]);
 
-        // Send cancellation notification to parent
-        $user->notify(new \App\Notifications\BookingCancelled($booking));
+        // Send cancellation notification to parent (send immediately)
+        if (filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+            $user->notifyNow(new \App\Notifications\BookingCancelled($booking));
+        } else {
+            \Log::warning('BookingCancelled notification skipped: missing parent email', [
+                'booking_id' => $booking->id,
+            ]);
+        }
         
         // Notify admins of cancellation
         $adminService = app(\App\Services\AdminNotificationService::class);
