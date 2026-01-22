@@ -23,6 +23,14 @@ export default function Index({ bookings }) {
         }
     };
 
+    const handleCancel = (id) => {
+        if (confirm('Cancel this booking?')) {
+            router.post(`/admin/bookings/${id}/cancel`, {}, {
+                preserveScroll: true,
+            });
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'active':
@@ -138,6 +146,14 @@ export default function Index({ bookings }) {
                                                                 className="text-green-300 hover:text-green-100 mr-4 font-semibold"
                                                             >
                                                                 Approve
+                                                            </button>
+                                                        )}
+                                                        {['pending', 'awaiting_approval', 'active'].includes(booking.status) && (
+                                                            <button
+                                                                onClick={() => handleCancel(booking.id)}
+                                                                className="text-red-300 hover:text-red-100 mr-4 font-semibold"
+                                                            >
+                                                                Cancel
                                                             </button>
                                                         )}
                                                         <Link

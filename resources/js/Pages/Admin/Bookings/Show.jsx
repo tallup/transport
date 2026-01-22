@@ -16,6 +16,12 @@ export default function Show({ booking }) {
         }
     };
 
+    const handleCancel = () => {
+        if (confirm('Cancel this booking?')) {
+            router.post(`/admin/bookings/${booking.id}/cancel`, {}, { preserveScroll: true });
+        }
+    };
+
     return (
         <AdminLayout>
             <Head title="Booking Details" />
@@ -32,6 +38,15 @@ export default function Show({ booking }) {
                                     onClick={handleApprove}
                                 >
                                     Approve Booking
+                                </GlassButton>
+                            )}
+                            {['pending', 'awaiting_approval', 'active'].includes(booking.status) && (
+                                <GlassButton
+                                    type="button"
+                                    variant="danger"
+                                    onClick={handleCancel}
+                                >
+                                    Cancel Booking
                                 </GlassButton>
                             )}
                             <Link

@@ -175,6 +175,36 @@ class BookingController extends Controller
         return back()->with('success', 'Booking approved successfully.');
     }
 
+    public function cancel(Request $request, Booking $booking)
+    {
+        if (!$request->user()->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
+        if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
+            return back()->withErrors(['error' => 'Only pending, awaiting approval, or active bookings can be cancelled.']);
+        }
+
+        $booking->update(['status' => 'cancelled']);
+
+        $parent = $booking->student?->parent;
+        if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+            $parent->notifyNow(new \App\Notifications\BookingCancelled($booking));
+        } else {
+            \Log::warning('Admin BookingCancelled notification skipped: missing parent email', [
+                'booking_id' => $booking->id,
+            ]);
+        }
+
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\BookingCancelledAlert(
+            $booking,
+            $request->user()
+        ));
+
+        return back()->with('success', 'Booking cancelled successfully.');
+    }
+
     private function notifyDriverStudentAdded(Booking $booking): void
     {
         $booking->loadMissing(['route.driver', 'student', 'pickupPoint']);
