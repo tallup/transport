@@ -6,7 +6,8 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { useState } from 'react';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || 'pk_test_placeholder');
+const stripePublicKey = import.meta.env.VITE_STRIPE_KEY;
+const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
 
 function StripeCheckoutForm({ booking, price, onSuccess }) {
     const stripe = useStripe();
@@ -39,10 +40,21 @@ function StripeCheckoutForm({ booking, price, onSuccess }) {
                 }),
             });
 
-            const { clientSecret } = await response.json();
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (parseError) {
+                data = {};
+            }
+
+            if (!response.ok || data.error || !data.clientSecret) {
+                setError(data.error || 'Unable to start payment. Please try again.');
+                setLoading(false);
+                return;
+            }
 
             // Confirm payment with Stripe
-            const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+            const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
                 payment_method: {
                     card: elements.getElement(CardElement),
                 },
@@ -55,7 +67,7 @@ function StripeCheckoutForm({ booking, price, onSuccess }) {
                 onSuccess(paymentIntent);
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            setError(err?.message || 'An error occurred. Please try again.');
             setLoading(false);
         }
     };
@@ -87,6 +99,12 @@ function StripeCheckoutForm({ booking, price, onSuccess }) {
                 </div>
             </div>
 
+            {!stripePublicKey && (
+                <div className="bg-yellow-500/20 border border-yellow-400/50 text-yellow-200 px-4 py-3 rounded-lg font-semibold">
+                    Stripe is not configured yet. Please contact support.
+                </div>
+            )}
+
             {error && (
                 <div className="bg-red-500/20 border border-red-400/50 text-red-300 px-4 py-3 rounded-lg font-semibold">
                     {error}
@@ -102,7 +120,7 @@ function StripeCheckoutForm({ booking, price, onSuccess }) {
 
             <GlassButton
                 type="submit"
-                disabled={!stripe || loading}
+                disabled={!stripe || loading || !stripePublicKey}
                 variant="success"
                 className="w-full py-3 text-lg"
             >
