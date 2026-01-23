@@ -4,17 +4,22 @@ import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
 
 export default function DriverLayout({ header, children }) {
-    const { auth } = usePage().props;
+    const { auth, currentPeriod, availablePeriods, routeCompletion } = usePage().props;
     const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+    const currentSearch = typeof window !== 'undefined' ? window.location.search : '';
+    const periodParam = typeof window !== 'undefined'
+        ? new URLSearchParams(currentSearch).get('period')
+        : null;
+    const withPeriod = (href) => (periodParam ? `${href}?period=${periodParam}` : href);
     
     // Build navigation items for mobile menu
     const navigationItems = [
-        { href: '/driver/dashboard', label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
-        { href: '/driver/roster', label: 'Daily Roster', active: currentUrl?.startsWith('/driver/roster') },
-        { href: '/driver/students-schedule', label: 'Students Schedule', active: currentUrl?.startsWith('/driver/students-schedule') },
-        { href: '/driver/route-performance', label: 'Route Performance', active: currentUrl?.startsWith('/driver/route-performance') },
-        { href: '/driver/route-information', label: 'Route Information', active: currentUrl?.startsWith('/driver/route-information') },
-        { href: '/driver/completed-routes', label: 'Completed Routes', active: currentUrl?.startsWith('/driver/completed-routes') },
+        { href: withPeriod('/driver/dashboard'), label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
+        { href: withPeriod('/driver/roster'), label: 'Daily Roster', active: currentUrl?.startsWith('/driver/roster') },
+        { href: withPeriod('/driver/students-schedule'), label: 'Students Schedule', active: currentUrl?.startsWith('/driver/students-schedule') },
+        { href: withPeriod('/driver/route-performance'), label: 'Route Performance', active: currentUrl?.startsWith('/driver/route-performance') },
+        { href: withPeriod('/driver/route-information'), label: 'Route Information', active: currentUrl?.startsWith('/driver/route-information') },
+        { href: withPeriod('/driver/completed-routes'), label: 'Completed Routes', active: currentUrl?.startsWith('/driver/completed-routes') },
     ];
 
     const userMenuItems = [
@@ -29,13 +34,13 @@ export default function DriverLayout({ header, children }) {
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
-                                <Link href="/driver/dashboard">
+                                <Link href={withPeriod('/driver/dashboard')}>
                                     <ApplicationLogo className="block h-9 w-auto text-gray-800" />
                                 </Link>
                             </div>
                             <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
                                 <Link
-                                    href="/driver/dashboard"
+                                    href={withPeriod('/driver/dashboard')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl === '/driver/dashboard'
                                             ? 'border-brand-primary text-brand-primary'
@@ -45,7 +50,7 @@ export default function DriverLayout({ header, children }) {
                                     Dashboard
                                 </Link>
                                 <Link
-                                    href="/driver/roster"
+                                    href={withPeriod('/driver/roster')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl?.startsWith('/driver/roster')
                                             ? 'border-brand-primary text-brand-primary'
@@ -55,7 +60,7 @@ export default function DriverLayout({ header, children }) {
                                     Daily Roster
                                 </Link>
                                 <Link
-                                    href="/driver/students-schedule"
+                                    href={withPeriod('/driver/students-schedule')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl?.startsWith('/driver/students-schedule')
                                             ? 'border-brand-primary text-brand-primary'
@@ -65,7 +70,7 @@ export default function DriverLayout({ header, children }) {
                                     Students Schedule
                                 </Link>
                                 <Link
-                                    href="/driver/route-performance"
+                                    href={withPeriod('/driver/route-performance')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl?.startsWith('/driver/route-performance')
                                             ? 'border-brand-primary text-brand-primary'
@@ -75,7 +80,7 @@ export default function DriverLayout({ header, children }) {
                                     Performance
                                 </Link>
                                 <Link
-                                    href="/driver/route-information"
+                                    href={withPeriod('/driver/route-information')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl?.startsWith('/driver/route-information')
                                             ? 'border-brand-primary text-brand-primary'
@@ -85,7 +90,7 @@ export default function DriverLayout({ header, children }) {
                                     Route Info
                                 </Link>
                                 <Link
-                                    href="/driver/completed-routes"
+                                    href={withPeriod('/driver/completed-routes')}
                                     className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
                                         currentUrl?.startsWith('/driver/completed-routes')
                                             ? 'border-brand-primary text-brand-primary'
@@ -97,6 +102,30 @@ export default function DriverLayout({ header, children }) {
                             </div>
                         </div>
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
+                            {availablePeriods?.am && availablePeriods?.pm && (
+                                <div className="flex items-center gap-2 mr-4">
+                                    <Link
+                                        href={`${currentUrl}?period=am`}
+                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                                            currentPeriod === 'am'
+                                                ? 'bg-yellow-500/40 text-yellow-100 border-yellow-400/60'
+                                                : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
+                                        }`}
+                                    >
+                                        {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
+                                    </Link>
+                                    <Link
+                                        href={`${currentUrl}?period=pm`}
+                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                                            currentPeriod === 'pm'
+                                                ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
+                                                : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
+                                        }`}
+                                    >
+                                        {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
+                                    </Link>
+                                </div>
+                            )}
                             <div className="ml-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -135,6 +164,10 @@ export default function DriverLayout({ header, children }) {
                             navigationItems={navigationItems}
                             userMenuItems={userMenuItems}
                             user={auth?.user}
+                            currentPath={currentUrl}
+                            currentPeriod={currentPeriod}
+                            availablePeriods={availablePeriods}
+                            routeCompletion={routeCompletion}
                         />
                     </div>
                 </div>

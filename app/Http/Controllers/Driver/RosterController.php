@@ -14,15 +14,9 @@ use Inertia\Inertia;
 
 class RosterController extends Controller
 {
-    /**
-     * Get the active route for the driver based on current time and completion status.
-     * Same logic as DashboardController.
-     */
-    private function getActiveRoute($driver)
+    private function getDriverRouteData($driver)
     {
         $today = Carbon::today();
-        $currentTime = Carbon::now();
-        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
 
         $routes = Route::where('driver_id', $driver->id)
             ->where('active', true)
@@ -30,7 +24,14 @@ class RosterController extends Controller
             ->get();
 
         if ($routes->isEmpty()) {
-            return null;
+            return [
+                'routes' => $routes,
+                'amRoute' => null,
+                'pmRoute' => null,
+                'bothRoute' => null,
+                'amCompleted' => false,
+                'pmCompleted' => false,
+            ];
         }
 
         // Separate AM and PM routes
@@ -56,55 +57,73 @@ class RosterController extends Controller
             }
         }
 
-        // Check completion status first (regardless of time of day)
-        // If AM route exists, check if it's completed
-        if ($amRoute) {
-            $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
+        $amCompleted = $amRoute
+            ? RouteCompletion::where('route_id', $amRoute->id)
                 ->where('driver_id', $driver->id)
                 ->whereDate('completion_date', $today)
-                ->exists();
+                ->exists()
+            : false;
 
-            \Log::info("RosterController - Driver {$driver->id} - AM Route ID: {$amRoute->id}, Completed: " . ($amCompleted ? 'Yes' : 'No'));
+        $pmCompleted = $pmRoute
+            ? RouteCompletion::where('route_id', $pmRoute->id)
+                ->where('driver_id', $driver->id)
+                ->whereDate('completion_date', $today)
+                ->exists()
+            : false;
 
-            // If AM route is not completed, show it (regardless of time)
-            if (!$amCompleted) {
-                \Log::info("RosterController - Driver {$driver->id} - Returning AM route (not completed)");
+        return [
+            'routes' => $routes,
+            'amRoute' => $amRoute,
+            'pmRoute' => $pmRoute,
+            'bothRoute' => $bothRoute,
+            'amCompleted' => $amCompleted,
+            'pmCompleted' => $pmCompleted,
+        ];
+    }
+
+    /**
+     * Get the active route for the driver based on current time and completion status.
+     * Same logic as DashboardController, with optional manual period selection.
+     */
+    private function getActiveRoute($driver, ?string $requestedPeriod = null, ?array $data = null)
+    {
+        $currentTime = Carbon::now();
+        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
+
+        $data = $data ?? $this->getDriverRouteData($driver);
+        $routes = $data['routes'];
+        $amRoute = $data['amRoute'];
+        $pmRoute = $data['pmRoute'];
+        $bothRoute = $data['bothRoute'];
+        $amCompleted = $data['amCompleted'];
+
+        if ($routes->isEmpty()) {
+            return null;
+        }
+
+        if (in_array($requestedPeriod, ['am', 'pm'], true)) {
+            if ($requestedPeriod === 'am' && $amRoute) {
                 return $amRoute;
             }
-            
-            // AM route is completed - check if PM route exists
-            if ($pmRoute) {
-                \Log::info("RosterController - Driver {$driver->id} - PM Route ID: {$pmRoute->id} exists");
-                // Check if PM route is also completed
-                $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
-                    ->where('driver_id', $driver->id)
-                    ->whereDate('completion_date', $today)
-                    ->exists();
-                
-                \Log::info("RosterController - Driver {$driver->id} - PM Route ID: {$pmRoute->id}, Completed: " . ($pmCompleted ? 'Yes' : 'No'));
-                
-                // If PM route is not completed, show it (driver completed AM, now show PM)
-                if (!$pmCompleted) {
-                    \Log::info("RosterController - Driver {$driver->id} - Returning PM route (AM completed, PM not completed)");
-                    return $pmRoute;
-                }
-            } else {
-                \Log::info("RosterController - Driver {$driver->id} - No PM route found");
+            if ($requestedPeriod === 'pm' && $pmRoute) {
+                return $pmRoute;
             }
-            
-            // AM route is completed, but no PM route or PM is also completed
-            // Return the AM route so driver can see it's completed
-            \Log::info("RosterController - Driver {$driver->id} - Returning AM route (completed, no PM or PM also completed)");
+        }
+
+        // Default behavior: never auto-switch to PM after AM completion
+        if ($amRoute) {
+            if (!$amCompleted) {
+                return $amRoute;
+            }
+
             return $amRoute;
         }
 
         // No AM route exists - use time-based logic
-        // If it's morning (before 12:00 PM), show 'both' route only
         if ($isMorning) {
             return $bothRoute;
         }
 
-        // It's afternoon and no AM route - show PM route or 'both' route
         return $pmRoute ?: $bothRoute ?: $routes->first();
     }
 
@@ -172,8 +191,11 @@ class RosterController extends Controller
         $today = Carbon::today();
         $todayFormatted = $today->format('Y-m-d');
 
+        $requestedPeriod = $request->query('period');
+        $routeData = $this->getDriverRouteData($driver);
+
         // Get the active route (always use today's date)
-        $selectedRoute = $this->getActiveRoute($driver);
+        $selectedRoute = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$selectedRoute) {
             return Inertia::render('Driver/Roster', [
@@ -181,6 +203,15 @@ class RosterController extends Controller
                 'date' => $todayFormatted,
                 'isSchoolDay' => false,
                 'groupedBookings' => [],
+                'currentPeriod' => null,
+                'availablePeriods' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
+                'routeCompletion' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
                 'canCompleteRoute' => false,
                 'isRouteCompleted' => false,
                 'message' => 'No active route assigned to you.',
@@ -334,6 +365,15 @@ class RosterController extends Controller
             'date' => $todayFormatted,
             'isSchoolDay' => $isSchoolDay,
             'groupedBookings' => $groupedBookings,
+            'currentPeriod' => $routePeriod,
+            'availablePeriods' => [
+                'am' => $routeData['amRoute'] ? true : false,
+                'pm' => $routeData['pmRoute'] ? true : false,
+            ],
+            'routeCompletion' => [
+                'am' => $routeData['amCompleted'],
+                'pm' => $routeData['pmCompleted'],
+            ],
             'canCompleteRoute' => $canCompleteRoute,
             'isRouteCompleted' => $isRouteCompleted,
         ]);

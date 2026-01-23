@@ -15,17 +15,9 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    /**
-     * Get the active route for the driver based on current time and completion status.
-     * 
-     * @param \App\Models\User $driver
-     * @return \App\Models\Route|null
-     */
-    private function getActiveRoute($driver)
+    private function getDriverRouteData($driver)
     {
         $today = Carbon::today();
-        $currentTime = Carbon::now();
-        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
 
         // Get all active routes for the driver
         $routes = Route::where('driver_id', $driver->id)
@@ -44,7 +36,6 @@ class DashboardController extends Controller
             if ($allRoutes->isNotEmpty()) {
                 \Log::info("Driver {$driver->id} has routes but none are active: " . $allRoutes->pluck('name')->join(', '));
             }
-            return null;
         }
 
         // Separate AM and PM routes
@@ -70,57 +61,75 @@ class DashboardController extends Controller
             }
         }
 
-        // Check completion status first (regardless of time of day)
-        // If AM route exists, check if it's completed
-        if ($amRoute) {
-            $amCompleted = RouteCompletion::where('route_id', $amRoute->id)
+        $amCompleted = $amRoute
+            ? RouteCompletion::where('route_id', $amRoute->id)
                 ->where('driver_id', $driver->id)
                 ->whereDate('completion_date', $today)
                 ->where('period', 'am')
-                ->exists();
+                ->exists()
+            : false;
 
-            \Log::info("Driver {$driver->id} - AM Route ID: {$amRoute->id}, Completed: " . ($amCompleted ? 'Yes' : 'No'));
+        $pmCompleted = $pmRoute
+            ? RouteCompletion::where('route_id', $pmRoute->id)
+                ->where('driver_id', $driver->id)
+                ->whereDate('completion_date', $today)
+                ->where('period', 'pm')
+                ->exists()
+            : false;
 
-            // If AM route is not completed, show it (regardless of time)
-            if (!$amCompleted) {
-                \Log::info("Driver {$driver->id} - Returning AM route (not completed)");
+        return [
+            'routes' => $routes,
+            'amRoute' => $amRoute,
+            'pmRoute' => $pmRoute,
+            'bothRoute' => $bothRoute,
+            'amCompleted' => $amCompleted,
+            'pmCompleted' => $pmCompleted,
+        ];
+    }
+
+    /**
+     * Get the active route for the driver based on current time and completion status,
+     * with optional manual period selection.
+     */
+    private function getActiveRoute($driver, ?string $requestedPeriod = null, ?array $data = null)
+    {
+        $currentTime = Carbon::now();
+        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
+
+        $data = $data ?? $this->getDriverRouteData($driver);
+        $routes = $data['routes'];
+        $amRoute = $data['amRoute'];
+        $pmRoute = $data['pmRoute'];
+        $bothRoute = $data['bothRoute'];
+        $amCompleted = $data['amCompleted'];
+
+        if ($routes->isEmpty()) {
+            return null;
+        }
+
+        if (in_array($requestedPeriod, ['am', 'pm'], true)) {
+            if ($requestedPeriod === 'am' && $amRoute) {
                 return $amRoute;
             }
-            
-            // AM route is completed - check if PM route exists
-            if ($pmRoute) {
-                \Log::info("Driver {$driver->id} - PM Route ID: {$pmRoute->id} exists");
-                // Check if PM route is also completed
-                $pmCompleted = RouteCompletion::where('route_id', $pmRoute->id)
-                    ->where('driver_id', $driver->id)
-                    ->whereDate('completion_date', $today)
-                    ->where('period', 'pm')
-                    ->exists();
-                
-                \Log::info("Driver {$driver->id} - PM Route ID: {$pmRoute->id}, Completed: " . ($pmCompleted ? 'Yes' : 'No'));
-                
-                // If PM route is not completed, show it (driver completed AM, now show PM)
-                if (!$pmCompleted) {
-                    \Log::info("Driver {$driver->id} - Returning PM route (AM completed, PM not completed)");
-                    return $pmRoute;
-                }
-            } else {
-                \Log::info("Driver {$driver->id} - No PM route found");
+            if ($requestedPeriod === 'pm' && $pmRoute) {
+                return $pmRoute;
             }
-            
-            // Both AM and PM (if exists) are completed, or only AM exists and is completed
-            // Return the AM route so driver can see it's completed
-            \Log::info("Driver {$driver->id} - Returning AM route (completed, no PM or PM also completed)");
+        }
+
+        // Default behavior: never auto-switch to PM after AM completion
+        if ($amRoute) {
+            if (!$amCompleted) {
+                return $amRoute;
+            }
+
             return $amRoute;
         }
 
         // No AM route exists - use time-based logic
-        // If it's morning (before 12:00 PM), show 'both' route only
         if ($isMorning) {
             return $bothRoute;
         }
 
-        // It's afternoon and no AM route - show PM route or 'both' route
         return $pmRoute ?: $bothRoute ?: $routes->first();
     }
 
@@ -192,14 +201,25 @@ class DashboardController extends Controller
     {
         $driver = $request->user();
         
-        // Get the active route based on time and completion status
-        $route = $this->getActiveRoute($driver);
+        $requestedPeriod = $request->query('period');
+        $routeData = $this->getDriverRouteData($driver);
+
+        // Get the active route based on time, completion status, and optional manual selection
+        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         // If no active route, return empty dashboard
         if (!$route) {
             return Inertia::render('Driver/Dashboard', [
                 'route' => null,
                 'currentPeriod' => null,
+                'availablePeriods' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
+                'routeCompletion' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
                 'stats' => [
                     'route_name' => 'No route assigned',
                     'vehicle' => 'No vehicle assigned',
@@ -425,6 +445,14 @@ class DashboardController extends Controller
                 'dropoff_time' => $dropoffTimeFormatted,
             ],
             'currentPeriod' => $currentPeriod,
+            'availablePeriods' => [
+                'am' => $routeData['amRoute'] ? true : false,
+                'pm' => $routeData['pmRoute'] ? true : false,
+            ],
+            'routeCompletion' => [
+                'am' => $routeData['amCompleted'],
+                'pm' => $routeData['pmCompleted'],
+            ],
             'stats' => $stats,
             'todaySchedule' => $todaySchedule,
             'performanceMetrics' => $performanceMetrics,
@@ -539,12 +567,24 @@ class DashboardController extends Controller
     {
         $driver = $request->user();
         
+        $requestedPeriod = $request->query('period');
+        $routeData = $this->getDriverRouteData($driver);
+        
         // Get the active route
-        $route = $this->getActiveRoute($driver);
+        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/StudentsSchedule', [
                 'route' => null,
+                'currentPeriod' => null,
+                'availablePeriods' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
+                'routeCompletion' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
                 'studentsList' => [],
             ]);
         }
@@ -632,6 +672,15 @@ class DashboardController extends Controller
                 'id' => $route->id,
                 'name' => $route->name,
             ],
+            'currentPeriod' => $this->getRoutePeriod($route),
+            'availablePeriods' => [
+                'am' => $routeData['amRoute'] ? true : false,
+                'pm' => $routeData['pmRoute'] ? true : false,
+            ],
+            'routeCompletion' => [
+                'am' => $routeData['amCompleted'],
+                'pm' => $routeData['pmCompleted'],
+            ],
             'studentsList' => $studentsList,
         ]);
     }
@@ -640,12 +689,24 @@ class DashboardController extends Controller
     {
         $driver = $request->user();
         
+        $requestedPeriod = $request->query('period');
+        $routeData = $this->getDriverRouteData($driver);
+
         // Get the active route
-        $route = $this->getActiveRoute($driver);
+        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/RoutePerformance', [
                 'route' => null,
+                'currentPeriod' => null,
+                'availablePeriods' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
+                'routeCompletion' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
                 'performanceMetrics' => [],
                 'weeklyStats' => [],
                 'monthlyStats' => [],
@@ -725,6 +786,15 @@ class DashboardController extends Controller
                 'id' => $route->id,
                 'name' => $route->name,
             ],
+            'currentPeriod' => $this->getRoutePeriod($route),
+            'availablePeriods' => [
+                'am' => $routeData['amRoute'] ? true : false,
+                'pm' => $routeData['pmRoute'] ? true : false,
+            ],
+            'routeCompletion' => [
+                'am' => $routeData['amCompleted'],
+                'pm' => $routeData['pmCompleted'],
+            ],
             'performanceMetrics' => $performanceMetrics,
             'weeklyStats' => $weeklyStats,
             'monthlyStats' => $monthlyStats,
@@ -735,12 +805,24 @@ class DashboardController extends Controller
     {
         $driver = $request->user();
         
+        $requestedPeriod = $request->query('period');
+        $routeData = $this->getDriverRouteData($driver);
+        
         // Get the active route
-        $route = $this->getActiveRoute($driver);
+        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/RouteInformation', [
                 'route' => null,
+                'currentPeriod' => null,
+                'availablePeriods' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
+                'routeCompletion' => [
+                    'am' => false,
+                    'pm' => false,
+                ],
             ]);
         }
 
@@ -829,6 +911,15 @@ class DashboardController extends Controller
                     'name' => $route->driver->name,
                     'email' => $route->driver->email,
                 ] : null,
+            ],
+            'currentPeriod' => $this->getRoutePeriod($route),
+            'availablePeriods' => [
+                'am' => $routeData['amRoute'] ? true : false,
+                'pm' => $routeData['pmRoute'] ? true : false,
+            ],
+            'routeCompletion' => [
+                'am' => $routeData['amCompleted'],
+                'pm' => $routeData['pmCompleted'],
             ],
             'pickupPoints' => $pickupPoints,
             'activeBookingsCount' => $activeBookingsCount,
