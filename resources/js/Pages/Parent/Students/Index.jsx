@@ -37,6 +37,15 @@ export default function StudentsIndex({ students }) {
             return timeString;
         }
     };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return null;
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return dateString;
+        }
+        return date.toLocaleDateString();
+    };
     
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -67,6 +76,11 @@ export default function StudentsIndex({ students }) {
                                                         {student.school && (
                                                             <span className="px-3 py-1 rounded-full text-sm font-semibold bg-blue-500/30 text-blue-100 border border-blue-400/50">
                                                                 {student.school.name}
+                                                            </span>
+                                                        )}
+                                                        {student.active_booking && (
+                                                            <span className="px-3 py-1 rounded-full text-sm font-semibold bg-emerald-500/30 text-emerald-100 border border-emerald-400/50">
+                                                                Active Booking
                                                             </span>
                                                         )}
                                                     </div>
@@ -100,6 +114,29 @@ export default function StudentsIndex({ students }) {
                                                             </div>
                                                         )}
                                                     </div>
+
+                                                    {/* Active Booking Summary */}
+                                                    {student.active_booking && (
+                                                        <div className="mt-2 mb-4 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4">
+                                                            <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-white/90">
+                                                                <div>
+                                                                    <span className="font-bold text-white">Route:</span>{' '}
+                                                                    <span className="text-emerald-100">
+                                                                        {student.active_booking.route?.name || 'Not assigned'}
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="font-bold text-white">Duration:</span>{' '}
+                                                                    <span className="text-emerald-100">
+                                                                        {formatDate(student.active_booking.start_date) || 'N/A'}
+                                                                        {student.active_booking.end_date
+                                                                            ? ` - ${formatDate(student.active_booking.end_date)}`
+                                                                            : ' - Ongoing'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
 
                                                     {/* Pickup and Dropoff Times */}
                                                     {student.active_booking && (
