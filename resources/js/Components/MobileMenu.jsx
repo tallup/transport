@@ -158,17 +158,23 @@ export default function MobileMenu({
                                         >
                                             {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
                                         </Link>
-                                        <Link
-                                            href={`${currentPath}?period=pm`}
-                                            onClick={closeMenu}
-                                            className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold border transition ${
-                                                currentPeriod === 'pm'
-                                                    ? 'bg-blue-100 text-blue-800 border-blue-300'
-                                                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
-                                            }`}
-                                        >
-                                            {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
-                                        </Link>
+                                        {currentPeriod === 'am' && availablePeriods?.am && !routeCompletion?.am ? (
+                                            <span className="flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold border bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed">
+                                                PM Locked
+                                            </span>
+                                        ) : (
+                                            <Link
+                                                href={`${currentPath}?period=pm`}
+                                                onClick={closeMenu}
+                                                className={`flex-1 text-center px-3 py-2 rounded-lg text-xs font-bold border transition ${
+                                                    currentPeriod === 'pm'
+                                                        ? 'bg-blue-100 text-blue-800 border-blue-300'
+                                                        : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                                                }`}
+                                            >
+                                                {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
+                                            </Link>
+                                        )}
                                     </div>
                                 </div>
                             )}

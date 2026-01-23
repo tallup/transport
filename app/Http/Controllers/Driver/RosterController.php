@@ -106,6 +106,10 @@ class RosterController extends Controller
                 return $amRoute;
             }
             if ($requestedPeriod === 'pm' && $pmRoute) {
+                // Block PM switch until AM is completed
+                if ($amRoute && !$amCompleted) {
+                    return $amRoute;
+                }
                 return $pmRoute;
             }
         }

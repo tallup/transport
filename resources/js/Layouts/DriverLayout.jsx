@@ -11,6 +11,7 @@ export default function DriverLayout({ header, children }) {
         ? new URLSearchParams(currentSearch).get('period')
         : null;
     const withPeriod = (href) => (periodParam ? `${href}?period=${periodParam}` : href);
+    const canSwitchToPm = !(currentPeriod === 'am' && availablePeriods?.am && !routeCompletion?.am);
     
     // Build navigation items for mobile menu
     const navigationItems = [
@@ -114,16 +115,22 @@ export default function DriverLayout({ header, children }) {
                                     >
                                         {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
                                     </Link>
-                                    <Link
-                                        href={`${currentUrl}?period=pm`}
-                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
-                                            currentPeriod === 'pm'
-                                                ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
-                                                : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
-                                        }`}
-                                    >
-                                        {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
-                                    </Link>
+                                    {canSwitchToPm ? (
+                                        <Link
+                                            href={`${currentUrl}?period=pm`}
+                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                                                currentPeriod === 'pm'
+                                                    ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
+                                                    : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
+                                            }`}
+                                        >
+                                            {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
+                                        </Link>
+                                    ) : (
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold border bg-white/5 text-white/60 border-white/20 cursor-not-allowed">
+                                            PM Locked
+                                        </span>
+                                    )}
                                 </div>
                             )}
                             <div className="ml-3 relative">
