@@ -163,7 +163,14 @@ class BookingController extends Controller
 
         $parent = $booking->student?->parent;
         if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-            $parent->notifyNow(new \App\Notifications\BookingApproved($booking));
+            try {
+                $parent->notifyNow(new \App\Notifications\BookingApproved($booking));
+            } catch (\Exception $e) {
+                \Log::error('BookingApproved notification failed', [
+                    'booking_id' => $booking->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         } else {
             \Log::warning('BookingApproved notification skipped: missing parent email', [
                 'booking_id' => $booking->id,
@@ -189,7 +196,14 @@ class BookingController extends Controller
 
         $parent = $booking->student?->parent;
         if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-            $parent->notifyNow(new \App\Notifications\BookingCancelled($booking));
+            try {
+                $parent->notifyNow(new \App\Notifications\BookingCancelled($booking));
+            } catch (\Exception $e) {
+                \Log::error('Admin BookingCancelled notification failed', [
+                    'booking_id' => $booking->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         } else {
             \Log::warning('Admin BookingCancelled notification skipped: missing parent email', [
                 'booking_id' => $booking->id,
@@ -217,7 +231,14 @@ class BookingController extends Controller
             return;
         }
 
-        $driver->notifyNow(new DriverStudentAdded($booking));
+        try {
+            $driver->notifyNow(new DriverStudentAdded($booking));
+        } catch (\Exception $e) {
+            \Log::error('DriverStudentAdded notification failed', [
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function destroy(Booking $booking)

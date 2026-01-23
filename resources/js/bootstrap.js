@@ -60,45 +60,24 @@ window.axios.interceptors.response.use(
 
 // Keep-alive mechanism: ping server every 5 minutes to keep session active
 let keepAliveInterval = null;
-let lastActivityTime = Date.now();
 
-// Function to send keep-alive ping
 const sendKeepAlivePing = async () => {
     try {
-        // Only send if user has been active in last 30 minutes
-        const timeSinceActivity = Date.now() - lastActivityTime;
-        const thirtyMinutes = 30 * 60 * 1000;
-        
-        if (timeSinceActivity < thirtyMinutes) {
-            await axios.get('/api/keep-alive', {
-                headers: {
-                    'X-Keep-Alive': 'true'
-                }
-            }).catch(() => {
-                // Silently fail - don't disrupt user experience
-            });
-        }
+        await axios.get('/api/keep-alive', {
+            headers: {
+                'X-Keep-Alive': 'true',
+            },
+        }).catch(() => {
+            // Silently fail - don't disrupt user experience
+        });
     } catch (error) {
         // Silently fail
     }
 };
 
-// Track user activity
-const updateActivityTime = () => {
-    lastActivityTime = Date.now();
-};
-
-// Listen for user activity
-if (typeof document !== 'undefined') {
-    ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
-        document.addEventListener(event, updateActivityTime, { passive: true });
-    });
-}
-
-// Start keep-alive interval (every 5 minutes)
 if (typeof window !== 'undefined') {
     keepAliveInterval = setInterval(sendKeepAlivePing, 5 * 60 * 1000);
-    
+
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {
         if (keepAliveInterval) {
