@@ -30,7 +30,7 @@ window.axios.interceptors.request.use(
     }
 );
 
-// Track if we're already handling a 419 error to prevent multiple dialogs
+// Track if we're already handling a 419 error to prevent multiple redirects
 let handling419 = false;
 
 // Add response interceptor to handle CSRF token mismatch (419 errors)
@@ -42,24 +42,16 @@ window.axios.interceptors.response.use(
         // Handle CSRF token mismatch
         if (error.response?.status === 419 && !handling419) {
             handling419 = true;
-            // Refresh the page to get a new CSRF token
-            console.warn('CSRF token mismatch detected. Refreshing page...');
-            
-            // Show a more user-friendly message
-            const message = 'Your session has expired due to inactivity. The page will refresh to log you back in.';
-            
-            // Use a timeout to show message briefly before reload
-            setTimeout(() => {
-                alert(message);
-                window.location.reload();
-            }, 100);
+            // Redirect to login silently on session expiration
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
 );
 
-// Keep-alive mechanism: ping server every 5 minutes to keep session active
+// Keep-alive mechanism: ping server periodically to keep session active
 let keepAliveInterval = null;
+const KEEP_ALIVE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
 
 const sendKeepAlivePing = async () => {
     try {
@@ -76,7 +68,20 @@ const sendKeepAlivePing = async () => {
 };
 
 if (typeof window !== 'undefined') {
-    keepAliveInterval = setInterval(sendKeepAlivePing, 5 * 60 * 1000);
+    keepAliveInterval = setInterval(sendKeepAlivePing, KEEP_ALIVE_INTERVAL_MS);
+
+    // Ping when tab becomes active again
+    window.addEventListener('focus', () => {
+        sendKeepAlivePing();
+    });
+
+    if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                sendKeepAlivePing();
+            }
+        });
+    }
 
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {

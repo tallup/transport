@@ -59,9 +59,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             });
 
             if (response.status === 419) {
-                // CSRF token mismatch - reload page
-                alert('Session expired. Please refresh the page and try again.');
-                window.location.reload();
+                window.location.href = '/login';
                 return;
             }
 
@@ -77,8 +75,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         } catch (error) {
             console.error('Error marking route as complete:', error);
             if (error.message?.includes('419') || error.message?.includes('CSRF')) {
-                alert('Session expired. Please refresh the page and try again.');
-                window.location.reload();
+                window.location.href = '/login';
             } else {
                 alert('An error occurred while marking the route as complete');
             }
@@ -112,8 +109,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             
             // Handle CSRF token mismatch
             if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
-                alert('Session expired. Please refresh the page and try again.');
-                window.location.reload();
+                window.location.href = '/login';
                 return;
             }
             
@@ -142,8 +138,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             
             // Handle CSRF token mismatch
             if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
-                alert('Session expired. Please refresh the page and try again.');
-                window.location.reload();
+                window.location.href = '/login';
                 return;
             }
             

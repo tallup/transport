@@ -15,6 +15,12 @@ function PayPalCheckoutButton({ booking, price }) {
         setError(null);
 
         try {
+            await axios.get('/api/keep-alive', {
+                headers: {
+                    'X-Keep-Alive': 'true',
+                },
+            });
+
             const response = await axios.post('/parent/bookings/create-paypal-order', {
                 booking_id: booking.id,
                 amount: price.price,
@@ -32,6 +38,10 @@ function PayPalCheckoutButton({ booking, price }) {
                 setLoading(false);
             }
         } catch (err) {
+            if (err?.response?.status === 419) {
+                window.location.href = '/login';
+                return;
+            }
             setError('An error occurred. Please try again.');
             setLoading(false);
         }
@@ -78,7 +88,19 @@ export default function Checkout({ booking, price }) {
     const { auth } = usePage().props;
     const { post, processing } = useForm();
 
-    const handleSkipPayment = () => {
+    const handleSkipPayment = async () => {
+        try {
+            await axios.get('/api/keep-alive', {
+                headers: {
+                    'X-Keep-Alive': 'true',
+                },
+            });
+        } catch (err) {
+            if (err?.response?.status === 419) {
+                window.location.href = '/login';
+                return;
+            }
+        }
         post('/parent/bookings/skip-payment', {
             booking_id: booking.id,
         });

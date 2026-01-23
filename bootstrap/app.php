@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Session\TokenMismatchException;
+use Inertia\Inertia;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -35,5 +37,17 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('admin:daily-summary')->dailyAt('18:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->renderable(function (TokenMismatchException $e, $request) {
+            if ($request->header('X-Inertia')) {
+                return Inertia::location(route('login'));
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Your session has expired. Please log in again.',
+                ], 419);
+            }
+
+            return redirect()->route('login');
+        });
     })->create();
