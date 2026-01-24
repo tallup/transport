@@ -158,7 +158,7 @@ export default function CreateBooking({ students, routes }) {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         
         // Validate required fields before submitting
@@ -169,13 +169,6 @@ export default function CreateBooking({ students, routes }) {
         if (!data.student_id || !data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
             alert('Please complete all required fields before proceeding to payment.');
             return;
-        }
-        
-        // Ping keep-alive before submission to ensure fresh session
-        try {
-            await axios.get('/api/keep-alive').catch(() => {});
-        } catch (err) {
-            // Silently continue
         }
         
         post('/parent/bookings', {
