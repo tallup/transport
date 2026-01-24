@@ -84,6 +84,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Route mail notifications only when email is valid.
+     */
+    public function routeNotificationForMail($notification): ?string
+    {
+        return filter_var($this->email, FILTER_VALIDATE_EMAIL) ? $this->email : null;
+    }
+
+    /**
      * Get the students for the user (when role is parent).
      */
     public function students(): HasMany
