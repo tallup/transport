@@ -88,12 +88,43 @@ class User extends Authenticatable
      */
     public function routeNotificationForMail($notification): ?string
     {
+        // First, try to use the user's email if it's valid
         if (filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             return $this->email;
         }
 
+        // Try the configured fallback address
         $fallbackAddress = config('mail.fallback_to.address');
-        return filter_var($fallbackAddress, FILTER_VALIDATE_EMAIL) ? $fallbackAddress : null;
+        if ($fallbackAddress && filter_var($fallbackAddress, FILTER_VALIDATE_EMAIL)) {
+            \Log::warning('Using fallback email address for notification', [
+                'user_id' => $this->id,
+                'user_email' => $this->email,
+                'fallback_email' => $fallbackAddress,
+                'notification' => get_class($notification)
+            ]);
+            return $fallbackAddress;
+        }
+
+        // Last resort: use the MAIL_FROM_ADDRESS
+        $fromAddress = config('mail.from.address');
+        if ($fromAddress && filter_var($fromAddress, FILTER_VALIDATE_EMAIL)) {
+            \Log::warning('Using from address as fallback for notification', [
+                'user_id' => $this->id,
+                'user_email' => $this->email,
+                'from_email' => $fromAddress,
+                'notification' => get_class($notification)
+            ]);
+            return $fromAddress;
+        }
+
+        // If all else fails, log error and return null (notification will be skipped)
+        \Log::error('No valid email address found for notification', [
+            'user_id' => $this->id,
+            'user_email' => $this->email,
+            'notification' => get_class($notification)
+        ]);
+        
+        return null;
     }
 
     /**
