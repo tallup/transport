@@ -121,4 +121,19 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fallback "To" Address
+    |--------------------------------------------------------------------------
+    |
+    | When a notification has no valid recipient address, use this fallback
+    | to avoid mail errors. Defaults to the global "from" address.
+    |
+    */
+
+    'fallback_to' => [
+        'address' => env('MAIL_FALLBACK_TO_ADDRESS', env('MAIL_FROM_ADDRESS')),
+        'name' => env('MAIL_FALLBACK_TO_NAME', env('MAIL_FROM_NAME')),
+    ],
+
 ];

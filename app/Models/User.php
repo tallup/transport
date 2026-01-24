@@ -88,7 +88,12 @@ class User extends Authenticatable
      */
     public function routeNotificationForMail($notification): ?string
     {
-        return filter_var($this->email, FILTER_VALIDATE_EMAIL) ? $this->email : null;
+        if (filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            return $this->email;
+        }
+
+        $fallbackAddress = config('mail.fallback_to.address');
+        return filter_var($fallbackAddress, FILTER_VALIDATE_EMAIL) ? $fallbackAddress : null;
     }
 
     /**
