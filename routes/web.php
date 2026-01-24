@@ -61,7 +61,7 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     Route::get('/schools/{school}/routes', [BookingController::class, 'getRoutesBySchool'])->name('schools.routes');
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');
-    Route::post('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
+    Route::get('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
 });
 
 // Admin Routes

@@ -142,14 +142,17 @@ export default function CreateBooking({ students, routes }) {
         if (!data.route_id || !data.plan_type || !data.trip_type) return;
         setLoading(true);
         try {
-            const response = await axios.post('/parent/calculate-price', {
-                route_id: data.route_id,
-                plan_type: data.plan_type,
-                trip_type: data.trip_type,
+            const response = await axios.get('/parent/calculate-price', {
+                params: {
+                    route_id: data.route_id,
+                    plan_type: data.plan_type,
+                    trip_type: data.trip_type,
+                },
             });
             setPrice(response.data);
         } catch (error) {
             console.error('Error calculating price:', error);
+            setPrice(null);
         } finally {
             setLoading(false);
         }
