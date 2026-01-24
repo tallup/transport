@@ -7,19 +7,7 @@ import GlassButton from '@/Components/GlassButton';
 // Use the configured axios instance from bootstrap.js which has CSRF token
 const axios = window.axios;
 
-// Helper function to get fresh CSRF token
-const getCsrfToken = () => {
-    const token = document.querySelector('meta[name="csrf-token"]');
-    return token ? token.content : null;
-};
 
-// Helper function to update axios CSRF token
-const updateAxiosToken = () => {
-    const token = getCsrfToken();
-    if (token) {
-        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
-    }
-};
 
 export default function Roster({ route, date, isSchoolDay, groupedBookings, message, canCompleteRoute, isRouteCompleted }) {
     const [completing, setCompleting] = useState({});
@@ -27,43 +15,17 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
     const [notes, setNotes] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    // Update CSRF token on component mount and before requests
-    React.useEffect(() => {
-        updateAxiosToken();
-    }, []);
+
 
     const handleCompleteRoute = async (e) => {
         e.preventDefault();
         if (!route || !canCompleteRoute) return;
 
         setSubmitting(true);
-        updateAxiosToken(); // Refresh token before request
-        
         try {
-            const csrfToken = getCsrfToken();
-            if (!csrfToken) {
-                alert('CSRF token not found. Please refresh the page.');
-                setSubmitting(false);
-                return;
-            }
+            const response = await axios.post(`/driver/routes/${route.id}/mark-complete`, { notes });
 
-            const response = await fetch(`/driver/routes/${route.id}/mark-complete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({ notes }),
-            });
-
-            if (response.status === 419) {
-                window.location.href = '/login';
-                return;
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             if (data.success) {
                 setShowCompletionModal(false);
@@ -88,7 +50,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         if (!route) return;
         const key = `${pickupPointId}-${route.id}`;
         setCompleting({ ...completing, [key]: true });
-        updateAxiosToken(); // Refresh token before request
+
 
         try {
             const response = await axios.post('/driver/pickup-points/mark-complete', {
@@ -106,13 +68,13 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            
+
             // Handle CSRF token mismatch
             if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
                 window.location.href = '/login';
                 return;
             }
-            
+
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
             alert(errorMessage);
             setCompleting({ ...completing, [key]: false });
@@ -121,7 +83,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
     const markBookingComplete = async (bookingId) => {
         setCompleting({ ...completing, [bookingId]: true });
-        updateAxiosToken(); // Refresh token before request
+
 
         try {
             const response = await axios.post(`/driver/bookings/${bookingId}/mark-complete`);
@@ -135,13 +97,13 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking trip as complete:', error);
-            
+
             // Handle CSRF token mismatch
             if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
                 window.location.href = '/login';
                 return;
             }
-            
+
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
             alert(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });
@@ -151,7 +113,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
     return (
         <DriverLayout>
             <Head title="Daily Roster" />
-            
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
@@ -194,7 +156,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                     <p className="text-base font-bold text-white">All pickups and dropoffs are complete!</p>
                                     <p className="text-sm font-semibold text-white/80 mt-1">Mark this route as complete to proceed.</p>
                                 </div>
-                                <GlassButton 
+                                <GlassButton
                                     variant="success"
                                     onClick={() => setShowCompletionModal(true)}
                                 >
@@ -230,11 +192,11 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                 </p>
                                             )}
                                             <p className="text-sm font-medium text-white/70">
-                                                Date: {new Date(date).toLocaleDateString('en-US', { 
-                                                    weekday: 'long', 
-                                                    year: 'numeric', 
-                                                    month: 'long', 
-                                                    day: 'numeric' 
+                                                Date: {new Date(date).toLocaleDateString('en-US', {
+                                                    weekday: 'long',
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
                                                 })}
                                             </p>
                                         </div>
@@ -335,71 +297,70 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         </div>
                                                     )}
 
-                                                <div className="border-t border-white/20 pt-4">
-                                                    <h4 className="text-base font-bold text-white mb-4">
-                                                        Students ({group.bookings.length})
-                                                    </h4>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        {group.bookings.map((booking) => {
-                                                            const isBookingCompleting = completing[booking.id];
-                                                            const isCompleted = booking.hasDailyPickup;
+                                                    <div className="border-t border-white/20 pt-4">
+                                                        <h4 className="text-base font-bold text-white mb-4">
+                                                            Students ({group.bookings.length})
+                                                        </h4>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            {group.bookings.map((booking) => {
+                                                                const isBookingCompleting = completing[booking.id];
+                                                                const isCompleted = booking.hasDailyPickup;
 
-                                                            return (
-                                                                <div
-                                                                    key={booking.id}
-                                                                    className={`p-4 glass-card rounded-lg border ${
-                                                                        isCompleted 
-                                                                            ? 'border-green-400/50 bg-green-500/10' 
-                                                                            : 'border-white/20'
-                                                                    }`}
-                                                                >
-                                                                    <div className="flex justify-between items-start">
-                                                                        <div className="flex-1">
-                                                                            <div className="flex items-center gap-2 mb-1">
-                                                                                <p className="font-bold text-white text-base">
-                                                                                    {booking.student.name}
+                                                                return (
+                                                                    <div
+                                                                        key={booking.id}
+                                                                        className={`p-4 glass-card rounded-lg border ${isCompleted
+                                                                                ? 'border-green-400/50 bg-green-500/10'
+                                                                                : 'border-white/20'
+                                                                            }`}
+                                                                    >
+                                                                        <div className="flex justify-between items-start">
+                                                                            <div className="flex-1">
+                                                                                <div className="flex items-center gap-2 mb-1">
+                                                                                    <p className="font-bold text-white text-base">
+                                                                                        {booking.student.name}
+                                                                                    </p>
+                                                                                    {isCompleted && (
+                                                                                        <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                                        </svg>
+                                                                                    )}
+                                                                                </div>
+                                                                                <p className="text-sm font-semibold text-white/90 mt-1">
+                                                                                    {booking.student.school}
                                                                                 </p>
-                                                                                {isCompleted && (
-                                                                                    <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                                    </svg>
+                                                                                {booking.student.grade && (
+                                                                                    <p className="text-xs font-medium text-white/70 mt-1">
+                                                                                        Grade: {booking.student.grade}
+                                                                                    </p>
                                                                                 )}
                                                                             </div>
-                                                                            <p className="text-sm font-semibold text-white/90 mt-1">
-                                                                                {booking.student.school}
-                                                                            </p>
-                                                                            {booking.student.grade && (
-                                                                                <p className="text-xs font-medium text-white/70 mt-1">
-                                                                                    Grade: {booking.student.grade}
-                                                                                </p>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="text-right ml-4">
-                                                                            {booking.student.emergency_phone && (
-                                                                                <div className="mb-2">
-                                                                                    <p className="text-xs font-semibold text-white/70">Emergency</p>
-                                                                                    <p className="text-sm font-bold text-white">
-                                                                                        {booking.student.emergency_phone}
-                                                                                    </p>
-                                                                                </div>
-                                                                            )}
-                                                                            {!isCompleted && (
-                                                                                <GlassButton
-                                                                                    variant="success"
-                                                                                    onClick={() => markBookingComplete(booking.id)}
-                                                                                    disabled={isBookingCompleting}
-                                                                                    className="text-xs py-1 px-2 mt-2"
-                                                                                >
-                                                                                    {isBookingCompleting ? '...' : 'Complete'}
-                                                                                </GlassButton>
-                                                                            )}
+                                                                            <div className="text-right ml-4">
+                                                                                {booking.student.emergency_phone && (
+                                                                                    <div className="mb-2">
+                                                                                        <p className="text-xs font-semibold text-white/70">Emergency</p>
+                                                                                        <p className="text-sm font-bold text-white">
+                                                                                            {booking.student.emergency_phone}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                )}
+                                                                                {!isCompleted && (
+                                                                                    <GlassButton
+                                                                                        variant="success"
+                                                                                        onClick={() => markBookingComplete(booking.id)}
+                                                                                        disabled={isBookingCompleting}
+                                                                                        className="text-xs py-1 px-2 mt-2"
+                                                                                    >
+                                                                                        {isBookingCompleting ? '...' : 'Complete'}
+                                                                                    </GlassButton>
+                                                                                )}
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            );
-                                                        })}
+                                                                );
+                                                            })}
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 </div>
                                             </GlassCard>
                                         );

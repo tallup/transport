@@ -28,16 +28,8 @@ export default function Dashboard({
 
         setSubmitting(true);
         try {
-            const response = await fetch(`/driver/routes/${route.id}/mark-complete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: JSON.stringify({ notes }),
-            });
-
-            const data = await response.json();
+            const response = await window.axios.post(`/driver/routes/${route.id}/mark-complete`, { notes });
+            const data = response.data;
 
             if (data.success) {
                 setShowCompletionModal(false);
@@ -54,11 +46,11 @@ export default function Dashboard({
             setSubmitting(false);
         }
     };
-    
+
     return (
         <DriverLayout>
             <Head title="Driver Dashboard" />
-            
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
@@ -72,13 +64,12 @@ export default function Dashboard({
                             </div>
                             <div className="flex flex-col items-end gap-2">
                                 {currentPeriod && (
-                                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                                        isRouteCompleted
+                                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${isRouteCompleted
                                             ? 'bg-green-500/30 text-green-100 border border-green-400/50'
-                                            : currentPeriod === 'am' 
-                                                ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50' 
+                                            : currentPeriod === 'am'
+                                                ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
                                                 : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
-                                    }`}>
+                                        }`}>
                                         {isRouteCompleted ? `${currentPeriod.toUpperCase()} Route - Completed` : `${currentPeriod.toUpperCase()} Route`}
                                     </span>
                                 )}
@@ -86,21 +77,19 @@ export default function Dashboard({
                                     <div className="flex gap-2">
                                         <Link
                                             href="/driver/dashboard?period=am"
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
-                                                currentPeriod === 'am'
+                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${currentPeriod === 'am'
                                                     ? 'bg-yellow-500/40 text-yellow-100 border-yellow-400/60'
                                                     : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
-                                            }`}
+                                                }`}
                                         >
                                             {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
                                         </Link>
                                         <Link
                                             href="/driver/dashboard?period=pm"
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
-                                                currentPeriod === 'pm'
+                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${currentPeriod === 'pm'
                                                     ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
                                                     : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
-                                            }`}
+                                                }`}
                                         >
                                             {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
                                         </Link>
@@ -213,9 +202,9 @@ export default function Dashboard({
                             <GlassCard className="mb-8">
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="text-xl font-bold text-white">Today's Schedule</h3>
-                                        <div className="flex gap-3">
+                                    <div className="flex gap-3">
                                         {canCompleteRoute && (
-                                            <GlassButton 
+                                            <GlassButton
                                                 variant="success"
                                                 onClick={() => setShowCompletionModal(true)}
                                             >
