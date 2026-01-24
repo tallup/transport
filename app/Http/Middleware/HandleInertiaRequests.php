@@ -35,9 +35,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // Track session activity to help with debugging session issues
-        if ($request->hasSession() && !$request->is('api/keep-alive')) {
+        // Force session start and save to ensure cookie is set
+        if ($request->hasSession()) {
             $request->session()->put('last_activity', now()->timestamp);
+            // Force session save to ensure cookie is sent
+            $request->session()->save();
         }
         
         $user = $request->user();

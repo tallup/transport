@@ -38,6 +38,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        // Force session save to ensure cookie is properly set
+        $request->session()->save();
 
         // Redirect based on user role - ignore intended URL to prevent role mismatch
         $user = $request->user();
