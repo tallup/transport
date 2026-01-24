@@ -51,7 +51,9 @@ window.axios.interceptors.response.use(
 
 // Keep-alive mechanism: ping server periodically to keep session active
 let keepAliveInterval = null;
+let lastKeepAliveAt = 0;
 const KEEP_ALIVE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+const KEEP_ALIVE_ACTIVITY_MIN_MS = 60 * 1000; // 1 minute
 
 const sendKeepAlivePing = async () => {
     try {
@@ -62,6 +64,7 @@ const sendKeepAlivePing = async () => {
         }).catch(() => {
             // Silently fail - don't disrupt user experience
         });
+        lastKeepAliveAt = Date.now();
     } catch (error) {
         // Silently fail
     }
@@ -80,6 +83,20 @@ if (typeof window !== 'undefined') {
             if (document.visibilityState === 'visible') {
                 sendKeepAlivePing();
             }
+        });
+    }
+
+    // Ping on user activity (throttled)
+    const activityHandler = () => {
+        const now = Date.now();
+        if (now - lastKeepAliveAt >= KEEP_ALIVE_ACTIVITY_MIN_MS) {
+            sendKeepAlivePing();
+        }
+    };
+
+    if (typeof document !== 'undefined') {
+        ['click', 'keydown', 'mousemove', 'touchstart', 'scroll'].forEach((event) => {
+            document.addEventListener(event, activityHandler, { passive: true });
         });
     }
 

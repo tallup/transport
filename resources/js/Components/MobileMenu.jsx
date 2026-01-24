@@ -35,7 +35,7 @@ export default function MobileMenu({
     return (
         <>
             {/* Hamburger Button - Visible on mobile */}
-            <div className="flex items-center sm:hidden ml-auto">
+            <div className="flex items-center sm:hidden ml-auto relative z-[210]">
                 <button
                     type="button"
                     onClick={toggleMenu}
@@ -80,7 +80,7 @@ export default function MobileMenu({
             {/* Mobile Menu Overlay and Panel - Rendered at root level */}
             {isOpen && (
                 <div 
-                    className="fixed inset-0 z-[100] sm:hidden"
+                    className="fixed inset-0 z-[200] sm:hidden"
                     style={{ 
                         position: 'fixed',
                         top: 0,
@@ -91,7 +91,7 @@ export default function MobileMenu({
                 >
                     {/* Overlay */}
                     <div
-                        className="absolute inset-0 bg-black bg-opacity-50"
+                        className="absolute inset-0 bg-black bg-opacity-50 z-[205]"
                         onClick={closeMenu}
                         style={{ 
                             animation: 'fadeIn 0.3s ease-out',
@@ -105,7 +105,7 @@ export default function MobileMenu({
                     
                     {/* Menu Panel */}
                     <div 
-                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-hidden"
+                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-hidden z-[210]"
                         style={{ 
                             animation: 'slideInLeft 0.3s ease-out',
                             position: 'absolute',
