@@ -48,14 +48,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         }
     }, [data.route_id, filteredRoutes]);
 
-    // Calculate price when route or plan type changes
+    // Calculate price when route, plan type, or trip type changes
     useEffect(() => {
-        if (data.route_id && data.plan_type) {
+        if (data.route_id && data.plan_type && data.trip_type) {
             calculatePrice();
         } else {
             setPrice(null);
         }
-    }, [data.route_id, data.plan_type]);
+    }, [data.route_id, data.plan_type, data.trip_type]);
 
     const checkCapacity = async (routeId) => {
         try {
@@ -67,16 +67,20 @@ export default function Rebook({ previousBooking, students, schools = [], routes
     };
 
     const calculatePrice = async () => {
-        if (!data.route_id || !data.plan_type) return;
+        if (!data.route_id || !data.plan_type || !data.trip_type) return;
         setLoading(true);
         try {
-            const response = await axios.post('/parent/calculate-price', {
-                route_id: data.route_id,
-                plan_type: data.plan_type,
+            const response = await axios.get('/parent/calculate-price', {
+                params: {
+                    route_id: data.route_id,
+                    plan_type: data.plan_type,
+                    trip_type: data.trip_type,
+                },
             });
             setPrice(response.data);
         } catch (error) {
             console.error('Error calculating price:', error);
+            setPrice(null);
         } finally {
             setLoading(false);
         }
@@ -131,18 +135,18 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                             <p className="text-xl font-bold text-blue-200 mb-6 drop-shadow">Quickly renew service for {previousBooking.student?.name}</p>
 
                             {/* Rebook Summary (Always visible for rebook) */}
-                            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-4 rounded-xl mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="bg-white/10 backdrop-blur-md border-2 border-white/10 p-5 rounded-2xl mb-10 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-2xl">
                                 <div>
-                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Student</p>
-                                    <p className="text-base font-bold text-white">{previousBooking.student?.name}</p>
+                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Student</p>
+                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.student?.name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Route</p>
-                                    <p className="text-base font-bold text-white">{previousBooking.route?.name}</p>
+                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Current Route</p>
+                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.route?.name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">School</p>
-                                    <p className="text-base font-bold text-white">{previousBooking.student?.school?.name || 'Assigned School'}</p>
+                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">School</p>
+                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.student?.school?.name || 'Assigned School'}</p>
                                 </div>
                             </div>
 
@@ -330,92 +334,105 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
                                 {/* Step 4: Select Plan */}
                                 {step === 4 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Plan</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
-                                                <div className="space-y-4">
+                                    <div className="space-y-8 animate-fade-in">
+                                        <div className="flex items-center space-x-3 mb-6">
+                                            <div className="h-8 w-2 bg-blue-500 rounded-full"></div>
+                                            <h3 className="text-2xl font-black text-white uppercase tracking-tight">Select Subscription Plan</h3>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="space-y-4">
+                                                <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                    Duration
+                                                </label>
+                                                <div className="space-y-3">
                                                     {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
                                                         <label
                                                             key={plan}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${data.plan_type === plan
-                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            className={`block p-5 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.plan_type === plan
+                                                                ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
+                                                                : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
                                                                 }`}
                                                         >
-                                                            <input
-                                                                type="radio"
-                                                                name="plan_type"
-                                                                value={plan}
-                                                                checked={data.plan_type === plan}
-                                                                onChange={(e) => setData('plan_type', e.target.value)}
-                                                                className="mr-3"
-                                                            />
                                                             <div className="flex justify-between items-center">
-                                                                <span className="font-bold text-white capitalize">
-                                                                    {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', '-')}
-                                                                </span>
+                                                                <div className="flex items-center">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="plan_type"
+                                                                        value={plan}
+                                                                        checked={data.plan_type === plan}
+                                                                        onChange={(e) => setData('plan_type', e.target.value)}
+                                                                        className="w-5 h-5 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                                    />
+                                                                    <span className="ml-4 font-black text-white uppercase tracking-wide">
+                                                                        {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', ' ')}
+                                                                    </span>
+                                                                </div>
                                                                 {price && data.plan_type === plan && (
-                                                                    <span className="text-lg font-bold text-green-200">
+                                                                    <span className="text-xl font-black text-green-400 drop-shadow-sm">
                                                                         {price.formatted}
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </label>
                                                     ))}
-                                                    {loading && <p className="text-white text-base font-semibold">Calculating price...</p>}
+                                                    {loading && <p className="text-blue-400 text-sm font-black animate-pulse uppercase tracking-widest ml-1">Calculating price...</p>}
                                                 </div>
                                             </div>
-                                            <div>
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Start Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={data.start_date}
-                                                    onChange={(e) => setData('start_date', e.target.value)}
-                                                    min={new Date().toISOString().split('T')[0]}
-                                                    className="block w-full glass-input text-white"
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Trip Type *
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${data.trip_type === 'one_way'
-                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}>
-                                                        <input
-                                                            type="radio"
-                                                            name="trip_type"
-                                                            value="one_way"
-                                                            checked={data.trip_type === 'one_way'}
-                                                            onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
-                                                        />
-                                                        <span className="font-bold text-white">One Way</span>
+
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                        Start Date
                                                     </label>
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${data.trip_type === 'two_way'
-                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}>
-                                                        <input
-                                                            type="radio"
-                                                            name="trip_type"
-                                                            value="two_way"
-                                                            checked={data.trip_type === 'two_way'}
-                                                            onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
-                                                        />
-                                                        <span className="font-bold text-white">Two Way</span>
-                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        value={data.start_date}
+                                                        onChange={(e) => setData('start_date', e.target.value)}
+                                                        min={new Date().toISOString().split('T')[0]}
+                                                        className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl text-white focus:bg-white/10 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 outline-none backdrop-blur-md shadow-inner"
+                                                        required
+                                                    />
                                                 </div>
-                                                {errors.trip_type && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_type}</p>
-                                                )}
+
+                                                <div>
+                                                    <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                        Trip Type
+                                                    </label>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <label className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.trip_type === 'one_way'
+                                                            ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
+                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                            }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="trip_type"
+                                                                value="one_way"
+                                                                checked={data.trip_type === 'one_way'}
+                                                                onChange={(e) => setData('trip_type', e.target.value)}
+                                                                className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                            />
+                                                            <span className="ml-3 font-black text-white uppercase tracking-widest text-sm">One Way</span>
+                                                        </label>
+                                                        <label className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.trip_type === 'two_way'
+                                                            ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
+                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                            }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="trip_type"
+                                                                value="two_way"
+                                                                checked={data.trip_type === 'two_way'}
+                                                                onChange={(e) => setData('trip_type', e.target.value)}
+                                                                className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                            />
+                                                            <span className="ml-3 font-black text-white uppercase tracking-widest text-sm">Two Way</span>
+                                                        </label>
+                                                    </div>
+                                                    {errors.trip_type && (
+                                                        <p className="text-red-400 text-xs mt-2 font-bold uppercase ml-1">{errors.trip_type}</p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -423,38 +440,57 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
                                 {/* Step 5: Review */}
                                 {step === 5 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Review Your Booking</h3>
-                                        <div className="bg-white/10 backdrop-blur-sm border border-white/30 p-6 rounded-lg space-y-4">
-                                            <div>
-                                                <span className="font-bold text-white">Student:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{students.find(s => s.id == data.student_id)?.name}</span>
+                                    <div className="space-y-6 animate-fade-in">
+                                        <div className="flex items-center space-x-3 mb-6">
+                                            <div className="h-8 w-2 bg-green-500 rounded-full"></div>
+                                            <h3 className="text-2xl font-black text-white uppercase tracking-tight">Review Final Summary</h3>
+                                        </div>
+
+                                        <div className="bg-white/5 backdrop-blur-xl border-2 border-white/10 p-8 rounded-3xl space-y-6 shadow-2xl">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Student</p>
+                                                        <p className="text-xl font-black text-white">{students.find(s => s.id == data.student_id)?.name}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Assigned Route</p>
+                                                        <p className="text-xl font-black text-white">{selectedRoute?.name}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Billing Plan</p>
+                                                        <p className="text-xl font-black text-white uppercase">{data.plan_type.replace('_', ' ')}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Start Date</p>
+                                                        <p className="text-xl font-black text-white">{new Date(data.start_date).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Trip Type</p>
+                                                        <p className="text-xl font-black text-white uppercase">{data.trip_type.replace('_', ' ')}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Pickup Information</p>
+                                                        <p className="text-sm font-bold text-white leading-relaxed">{data.pickup_address || 'Daily Home Pickup'}</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <span className="font-bold text-white">Route:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
-                                            </div>
-                                            <div>
-                                                <span className="font-bold text-white">Pickup Address:</span>{' '}
-                                                <span className="text-white/90 font-semibold">
-                                                    {data.pickup_address || 'Not set'}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <span className="font-bold text-white">Plan:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{data.plan_type.replace('_', '-').toUpperCase()}</span>
-                                            </div>
-                                            <div>
-                                                <span className="font-bold text-white">Start Date:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{new Date(data.start_date).toLocaleDateString()}</span>
-                                            </div>
+
                                             {price && (
-                                                <div className="border-t border-white/30 pt-4">
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-lg font-bold text-white">Total:</span>
-                                                        <span className="text-2xl font-extrabold text-green-200">
-                                                            {price.formatted}
-                                                        </span>
+                                                <div className="border-t-2 border-white/10 pt-8 mt-4">
+                                                    <div className="flex justify-between items-center bg-blue-600/20 p-6 rounded-2xl border-2 border-blue-500/30">
+                                                        <div>
+                                                            <p className="text-sm font-black text-blue-400 uppercase tracking-widest">Total Subscription Amount</p>
+                                                            <p className="text-white/60 text-xs font-bold mt-1 uppercase">Inclusive of all services & taxes</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <span className="text-4xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.4)]">
+                                                                {price.formatted}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
