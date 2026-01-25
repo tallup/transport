@@ -442,7 +442,7 @@ class RosterController extends Controller
         $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
         $parent = $booking->student?->parent;
         if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-            $parent->notify(new \App\Notifications\PickupCompleted(
+            $parent->notifyNow(new \App\Notifications\PickupCompleted(
                 $booking,
                 $pickupLocation,
                 $period,
@@ -550,7 +550,7 @@ class RosterController extends Controller
                 $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
                 $parent = $booking->student?->parent;
                 if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-                    $parent->notify(new \App\Notifications\PickupCompleted(
+                    $parent->notifyNow(new \App\Notifications\PickupCompleted(
                         $booking,
                         $pickupLocation,
                         $period,

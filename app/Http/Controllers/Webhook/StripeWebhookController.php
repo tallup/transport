@@ -99,7 +99,7 @@ class StripeWebhookController extends Controller
                 
                 // Notify parent
                 if ($booking->student && $booking->student->parent) {
-                    $booking->student->parent->notify(new PaymentFailed($booking));
+                    $booking->student->parent->notifyNow(new PaymentFailed($booking));
                 }
 
                 Log::info("Booking {$bookingId} payment failed via webhook");

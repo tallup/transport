@@ -135,7 +135,7 @@ class RouteController extends Controller
             $driver = User::find($validated['driver_id']);
             if ($driver) {
                 // Notify the driver about the new route assignment
-                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
+                $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
             }
         }
 
@@ -287,7 +287,7 @@ class RouteController extends Controller
             $driver = User::find($newDriverId);
             if ($driver) {
                 // Notify the driver
-                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
+                $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
                 
                 // Notify all parents with active bookings on this route
                 $activeBookings = \App\Models\Booking::where('route_id', $route->id)
@@ -302,7 +302,7 @@ class RouteController extends Controller
 
                 foreach ($activeBookings as $booking) {
                     if ($booking->student && $booking->student->parent) {
-                        $booking->student->parent->notify(new \App\Notifications\DriverAssigned(
+                        $booking->student->parent->notifyNow(new \App\Notifications\DriverAssigned(
                             $booking,
                             $driver,
                             $route

@@ -187,7 +187,7 @@ class BookingController extends Controller
         ]);
 
         // Send booking created notification to parent
-        $user->notify(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
+        $user->notifyNow(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
         
         // Notify admins of new booking attempt
         $adminService = app(\App\Services\AdminNotificationService::class);
@@ -356,7 +356,7 @@ class BookingController extends Controller
                 ]);
 
                 // Send confirmation notification to parent
-                $user->notify(new BookingConfirmed($booking));
+                $user->notifyNow(new BookingConfirmed($booking));
                 
                 // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);
@@ -403,7 +403,7 @@ class BookingController extends Controller
         ]);
 
         // Send notification about booking creation (without payment) to parent
-        $user->notify(new BookingConfirmed($booking));
+        $user->notifyNow(new BookingConfirmed($booking));
         
         // Notify admins of new booking
         $adminService = app(\App\Services\AdminNotificationService::class);

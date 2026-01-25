@@ -538,7 +538,7 @@ class DashboardController extends Controller
         foreach ($activeBookings as $booking) {
             $parent = $booking->student?->parent;
             if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-                $parent->notify(new \App\Notifications\RouteCompleted(
+                $parent->notifyNow(new \App\Notifications\RouteCompleted(
                     $booking,
                     $route,
                     $period,
