@@ -32,7 +32,7 @@ class BookingConfirmed extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): MailMessage
     {
         $invoiceService = app(InvoiceService::class);
         
@@ -43,42 +43,29 @@ class BookingConfirmed extends Notification implements ShouldQueue
         $invoiceFullPath = storage_path('app/public/' . $invoicePath);
         $receiptFullPath = storage_path('app/public/' . $receiptPath);
         
-        return (new class($this->booking, $invoiceFullPath, $receiptFullPath) extends Mailable {
-            public $booking;
-            public $invoicePath;
-            public $receiptPath;
-            
-            public function __construct($booking, $invoicePath, $receiptPath) {
-                $this->booking = $booking;
-                $this->invoicePath = $invoicePath;
-                $this->receiptPath = $receiptPath;
-            }
-            
-            public function build() {
-                $mail = $this->subject('Payment Received - Booking Pending Approval')
-                    ->view('emails.booking-confirmed', [
-                        'booking' => $this->booking,
-                        'user' => $this->booking->student->parent,
-                    ]);
-                
-                // Attach PDFs if they exist
-                if (file_exists($this->invoicePath)) {
-                    $mail->attach($this->invoicePath, [
-                        'as' => 'invoice-' . $this->booking->id . '.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
-                }
-                
-                if (file_exists($this->receiptPath)) {
-                    $mail->attach($this->receiptPath, [
-                        'as' => 'receipt-' . $this->booking->id . '.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
-                }
-                
-                return $mail;
-            }
-        });
+        $message = (new MailMessage)
+            ->subject('Payment Received - Booking Pending Approval')
+            ->view('emails.booking-confirmed', [
+                'booking' => $this->booking,
+                'user' => $notifiable,
+            ]);
+
+        // Attach PDFs if they exist
+        if (file_exists($invoiceFullPath)) {
+            $message->attach($invoiceFullPath, [
+                'as' => 'invoice-' . $this->booking->id . '.pdf',
+                'mime' => 'application/pdf',
+            ]);
+        }
+        
+        if (file_exists($receiptFullPath)) {
+            $message->attach($receiptFullPath, [
+                'as' => 'receipt-' . $this->booking->id . '.pdf',
+                'mime' => 'application/pdf',
+            ]);
+        }
+
+        return $message;
     }
 
     /**

@@ -26,30 +26,14 @@ class BookingCancelledAlert extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->parent) extends Mailable {
-            public $booking;
-            public $parent;
-            
-            public function __construct($booking, $parent) {
-                $this->booking = $booking;
-                $this->parent = $parent;
-            }
-            
-            public function build() {
-                // Note: The 'to' will be set by Laravel's notification system
-                // when sending to multiple admins, so we don't set it here
-                return $this->subject('Booking Cancelled by Parent')
-                    ->view('emails.admin.booking-cancelled-alert', [
-                        'booking' => $this->booking,
-                        'parent' => $this->parent,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Booking Cancelled by Parent')
+            ->view('emails.admin.booking-cancelled-alert', [
+                'booking' => $this->booking,
+                'parent' => $this->parent,
+            ]);
     }
 
     /**

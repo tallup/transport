@@ -25,26 +25,14 @@ class BookingCancelled extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking) extends Mailable {
-            public $booking;
-            
-            public function __construct($booking) {
-                $this->booking = $booking;
-            }
-            
-            public function build() {
-                return $this->subject('Booking Cancelled - On-Time Transportation')
-                    ->view('emails.booking-cancelled', [
-                        'booking' => $this->booking,
-                        'user' => $this->booking->student->parent,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Booking Cancelled - On-Time Transportation')
+            ->view('emails.booking-cancelled', [
+                'booking' => $this->booking,
+                'user' => $notifiable,
+            ]);
     }
 
     /**

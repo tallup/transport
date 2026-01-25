@@ -26,29 +26,15 @@ class BookingExpiringSoon extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->daysRemaining) extends Mailable {
-            public $booking;
-            public $daysRemaining;
-            
-            public function __construct($booking, $daysRemaining) {
-                $this->booking = $booking;
-                $this->daysRemaining = $daysRemaining;
-            }
-            
-            public function build() {
-                return $this->subject('Booking Expiring Soon - Renew Your Service')
-                    ->view('emails.booking-expiring', [
-                        'booking' => $this->booking,
-                        'daysRemaining' => $this->daysRemaining,
-                        'user' => $this->booking->student->parent,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Booking Expiring Soon - Renew Your Service')
+            ->view('emails.booking-expiring', [
+                'booking' => $this->booking,
+                'daysRemaining' => $this->daysRemaining,
+                'user' => $notifiable,
+            ]);
     }
 
     /**
