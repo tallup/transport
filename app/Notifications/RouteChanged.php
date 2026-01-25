@@ -27,32 +27,16 @@ class RouteChanged extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->route, $this->changes) extends Mailable {
-            public $booking;
-            public $route;
-            public $changes;
-            
-            public function __construct($booking, $route, $changes) {
-                $this->booking = $booking;
-                $this->route = $route;
-                $this->changes = $changes;
-            }
-            
-            public function build() {
-                return $this->subject('Route Information Updated')
-                    ->view('emails.route-changed', [
-                        'booking' => $this->booking,
-                        'route' => $this->route,
-                        'changes' => $this->changes,
-                        'user' => $this->booking->student->parent,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Route Information Updated')
+            ->view('emails.route-changed', [
+                'booking' => $this->booking,
+                'route' => $this->route,
+                'changes' => $this->changes,
+                'user' => $notifiable,
+            ]);
     }
 
     /**

@@ -29,38 +29,19 @@ class PickupCompletedAlert extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->driver, $this->period, $this->completedAt, $this->pickupLocation) extends Mailable {
-            public $booking;
-            public $driver;
-            public $period;
-            public $completedAt;
-            public $pickupLocation;
-
-            public function __construct($booking, $driver, $period, $completedAt, $pickupLocation) {
-                $this->booking = $booking;
-                $this->driver = $driver;
-                $this->period = $period;
-                $this->completedAt = $completedAt;
-                $this->pickupLocation = $pickupLocation;
-            }
-
-            public function build() {
-                $subjectPrefix = $this->period === 'pm' ? 'Drop-off Completed' : 'Pickup Completed';
-                return $this->subject($subjectPrefix . ' - ' . strtoupper($this->period))
-                    ->view('emails.admin.pickup-completed-alert', [
-                        'booking' => $this->booking,
-                        'driver' => $this->driver,
-                        'period' => $this->period,
-                        'completedAt' => $this->completedAt,
-                        'pickupLocation' => $this->pickupLocation,
-                    ]);
-            }
-        });
+        $subjectPrefix = $this->period === 'pm' ? 'Drop-off Completed' : 'Pickup Completed';
+        
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject($subjectPrefix . ' - ' . strtoupper($this->period))
+            ->view('emails.admin.pickup-completed-alert', [
+                'booking' => $this->booking,
+                'driver' => $this->driver,
+                'period' => $this->period,
+                'completedAt' => $this->completedAt,
+                'pickupLocation' => $this->pickupLocation,
+            ]);
     }
 }
 

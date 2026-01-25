@@ -186,6 +186,16 @@ class BookingController extends Controller
             'end_date' => $endDate?->format('Y-m-d'),
         ]);
 
+        // Send booking created notification to parent
+        $user->notify(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
+        
+        // Notify admins of new booking attempt
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
+            $booking,
+            $user
+        ));
+
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
             'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],

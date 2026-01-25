@@ -27,31 +27,15 @@ class PaymentReceivedAlert extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->amount, $this->paymentMethod) extends Mailable {
-            public $booking;
-            public $amount;
-            public $paymentMethod;
-            
-            public function __construct($booking, $amount, $paymentMethod) {
-                $this->booking = $booking;
-                $this->amount = $amount;
-                $this->paymentMethod = $paymentMethod;
-            }
-            
-            public function build() {
-                return $this->subject('Payment Received - Booking #' . $this->booking->id)
-                    ->view('emails.admin.payment-received-alert', [
-                        'booking' => $this->booking,
-                        'amount' => $this->amount,
-                        'paymentMethod' => $this->paymentMethod,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Payment Received - Booking #' . $this->booking->id)
+            ->view('emails.admin.payment-received-alert', [
+                'booking' => $this->booking,
+                'amount' => $this->amount,
+                'paymentMethod' => $this->paymentMethod,
+            ]);
     }
 
     /**

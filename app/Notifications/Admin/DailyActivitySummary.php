@@ -26,28 +26,14 @@ class DailyActivitySummary extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->date, $this->stats) extends Mailable {
-            public $date;
-            public $stats;
-            
-            public function __construct($date, $stats) {
-                $this->date = $date;
-                $this->stats = $stats;
-            }
-            
-            public function build() {
-                return $this->subject('Daily Activity Summary - ' . $this->date->format('F d, Y'))
-                    ->view('emails.admin.daily-activity-summary', [
-                        'date' => $this->date,
-                        'stats' => $this->stats,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Daily Activity Summary - ' . $this->date->format('F d, Y'))
+            ->view('emails.admin.daily-activity-summary', [
+                'date' => $this->date,
+                'stats' => $this->stats,
+            ]);
     }
 
     /**

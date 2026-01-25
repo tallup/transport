@@ -28,35 +28,17 @@ class RouteCompleted extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->route, $this->period, $this->completedAt) extends Mailable {
-            public $booking;
-            public $route;
-            public $period;
-            public $completedAt;
-            
-            public function __construct($booking, $route, $period, $completedAt) {
-                $this->booking = $booking;
-                $this->route = $route;
-                $this->period = $period;
-                $this->completedAt = $completedAt;
-            }
-            
-            public function build() {
-                return $this->subject('Route Completed - ' . strtoupper($this->period) . ' Service')
-                    ->view('emails.route-completed', [
-                        'booking' => $this->booking,
-                        'route' => $this->route,
-                        'period' => $this->period,
-                        'completedAt' => $this->completedAt,
-                        'user' => $this->booking->student->parent,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('Route Completed - ' . strtoupper($this->period) . ' Service')
+            ->view('emails.route-completed', [
+                'booking' => $this->booking,
+                'route' => $this->route,
+                'period' => $this->period,
+                'completedAt' => $this->completedAt,
+                'user' => $notifiable,
+            ]);
     }
 
     /**

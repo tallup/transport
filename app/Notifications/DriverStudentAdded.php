@@ -25,26 +25,14 @@ class DriverStudentAdded extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking) extends Mailable {
-            public $booking;
-
-            public function __construct($booking) {
-                $this->booking = $booking;
-            }
-
-            public function build() {
-                return $this->subject('New Student Added to Your Route')
-                    ->view('emails.driver-student-added', [
-                        'booking' => $this->booking,
-                        'driver' => $this->booking->route?->driver,
-                    ]);
-            }
-        });
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject('New Student Added to Your Route')
+            ->view('emails.driver-student-added', [
+                'booking' => $this->booking,
+                'driver' => $notifiable,
+            ]);
     }
 
     /**

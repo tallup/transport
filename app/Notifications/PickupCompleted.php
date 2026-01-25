@@ -28,36 +28,19 @@ class PickupCompleted extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
+    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
     {
-        return (new class($this->booking, $this->pickupLocation, $this->period, $this->completedAt) extends Mailable {
-            public $booking;
-            public $pickupLocation;
-            public $period;
-            public $completedAt;
-            
-            public function __construct($booking, $pickupLocation, $period, $completedAt) {
-                $this->booking = $booking;
-                $this->pickupLocation = $pickupLocation;
-                $this->period = $period;
-                $this->completedAt = $completedAt;
-            }
-            
-            public function build() {
-                $subjectPrefix = $this->period === 'pm' ? 'Student Drop-off Completed' : 'Student Picked Up';
-                return $this->subject($subjectPrefix . ' - ' . strtoupper($this->period) . ' Service')
-                    ->view('emails.pickup-completed', [
-                        'booking' => $this->booking,
-                        'pickupLocation' => $this->pickupLocation,
-                        'period' => $this->period,
-                        'completedAt' => $this->completedAt,
-                        'user' => $this->booking->student->parent,
-                    ]);
-            }
-        });
+        $subjectPrefix = $this->period === 'pm' ? 'Student Drop-off Completed' : 'Student Picked Up';
+        
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject($subjectPrefix . ' - ' . strtoupper($this->period) . ' Service')
+            ->view('emails.pickup-completed', [
+                'booking' => $this->booking,
+                'pickupLocation' => $this->pickupLocation,
+                'period' => $this->period,
+                'completedAt' => $this->completedAt,
+                'user' => $notifiable,
+            ]);
     }
 
     /**
