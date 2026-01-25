@@ -35,11 +35,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // Force session start and save to ensure cookie is set
+        // Keep session active
         if ($request->hasSession()) {
             $request->session()->put('last_activity', now()->timestamp);
-            // Force session save to ensure cookie is sent
-            $request->session()->save();
         }
         
         $user = $request->user();

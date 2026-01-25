@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false);
-    
+
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -20,6 +20,11 @@ export default function Login({ status, canResetPassword }) {
 
         post(route('login'), {
             onFinish: () => reset('password'),
+            onSuccess: () => {
+                // Force a hard reload to ensure CSRF token and session are perfectly synced
+                // This prevents 419 Page Expired errors on the first action after login
+                window.location.reload();
+            },
         });
     };
 
@@ -142,7 +147,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div>
-                    <GlassButton 
+                    <GlassButton
                         type="submit"
                         variant="primary"
                         className="w-full py-3 text-base font-semibold"

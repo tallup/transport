@@ -18,6 +18,11 @@ export default function Register() {
 
         post(route('parent.register'), {
             onFinish: () => reset('password', 'password_confirmation'),
+            onSuccess: () => {
+                // Force a hard reload to ensure CSRF token and session are perfectly synced
+                // This prevents 419 Page Expired errors on the first action after registration
+                window.location.reload();
+            },
         });
     };
 
