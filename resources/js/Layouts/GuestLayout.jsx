@@ -32,10 +32,10 @@ export default function GuestLayout({ children }) {
             </nav>
 
             {/* Content */}
-            <div className="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8 pt-32">
-                <div className="w-full max-w-md">
-                    <div className="glass-card overflow-hidden">
-                        <div className="px-8 py-8">
+            <div className="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32">
+                <div className="w-full max-w-lg animate-fade-in">
+                    <div className="glass-card overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                        <div className="px-6 py-10 sm:px-10">
                             {children}
                         </div>
                     </div>
