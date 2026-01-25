@@ -153,19 +153,47 @@ class DashboardController extends Controller
                 ->limit(10)
                 ->get();
 
-            // Recent activity (simplified - could be enhanced with activity log)
-            $recentActivity = [
-                [
+            // Real Recent Activity
+            $recentActivity = [];
+            
+            // Get recent users (parents)
+            $recentUsers = User::where('role', 'parent')
+                ->orderBy('created_at', 'desc')
+                ->limit(3)
+                ->get();
+            
+            foreach ($recentUsers as $user) {
+                $recentActivity[] = [
+                    'type' => 'user',
+                    'message' => "New parent registered: {$user->name}",
+                    'time' => $user->created_at->diffForHumans(),
+                    'timestamp' => $user->created_at,
+                ];
+            }
+            
+            // Get recent bookings
+            $recentBookingActs = Booking::with('student')
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+                
+            foreach ($recentBookingActs as $booking) {
+                $statusLabel = str_replace('_', ' ', $booking->status);
+                $recentActivity[] = [
                     'type' => 'booking',
-                    'message' => 'New booking created',
-                    'time' => Carbon::now()->subMinutes(5)->diffForHumans(),
-                ],
-                [
-                    'type' => 'student',
-                    'message' => 'New student registered',
-                    'time' => Carbon::now()->subHours(2)->diffForHumans(),
-                ],
-            ];
+                    'message' => "New booking for {$booking->student?->name} ({$statusLabel})",
+                    'time' => $booking->created_at->diffForHumans(),
+                    'timestamp' => $booking->created_at,
+                ];
+            }
+            
+            // Sort merged activity by timestamp
+            usort($recentActivity, function($a, $b) {
+                return $b['timestamp'] <=> $a['timestamp'];
+            });
+            
+            // Limit to 8 items
+            $recentActivity = array_slice($recentActivity, 0, 8);
 
             return Inertia::render('Admin/Dashboard', [
                 'stats' => $stats,

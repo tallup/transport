@@ -51,6 +51,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Notify admins of new parent registration
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
+
         Auth::login($user);
 
         // Redirect based on role (default to parent if role column doesn't exist)

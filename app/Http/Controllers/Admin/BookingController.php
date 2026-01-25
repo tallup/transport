@@ -13,14 +13,21 @@ use Inertia\Inertia;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bookings = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint']);
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $bookings = $query->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Admin/Bookings/Index', [
             'bookings' => $bookings,
+            'filters' => $request->only(['status']),
         ]);
     }
 
