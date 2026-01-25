@@ -7,7 +7,7 @@ const axios = window.axios;
 
 export default function Rebook({ previousBooking, students, schools = [], routes }) {
     const { auth } = usePage().props;
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(4); // Start at Plan selection
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
@@ -28,7 +28,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
     // Filter routes when school is selected
     useEffect(() => {
         if (data.school_id) {
-            const filtered = routes.filter(route => 
+            const filtered = routes.filter(route =>
                 route.schools && route.schools.some(school => school.id === parseInt(data.school_id))
             );
             setFilteredRoutes(filtered);
@@ -84,13 +84,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // Validate required fields before submitting
         if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
             alert('Please complete all required fields before proceeding to payment.');
             return;
         }
-        
+
         post('/parent/bookings', {
             preserveScroll: false,
             onSuccess: (page) => {
@@ -128,41 +128,56 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
                             <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg">Rebook Transport Service</h2>
-                            <p className="text-white/80 mb-6">Based on your previous booking for {previousBooking.student?.name}</p>
+                            <p className="text-xl font-bold text-blue-200 mb-6 drop-shadow">Quickly renew service for {previousBooking.student?.name}</p>
+
+                            {/* Rebook Summary (Always visible for rebook) */}
+                            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-4 rounded-xl mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Student</p>
+                                    <p className="text-base font-bold text-white">{previousBooking.student?.name}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Route</p>
+                                    <p className="text-base font-bold text-white">{previousBooking.route?.name}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">School</p>
+                                    <p className="text-base font-bold text-white">{previousBooking.student?.school?.name || 'Assigned School'}</p>
+                                </div>
+                            </div>
 
                             {/* Step Indicator */}
-                            <div className="mb-8">
-                                <div className="flex justify-between">
+                            <div className="mb-10">
+                                <div className="flex justify-between relative px-2">
+                                    {/* Background Line */}
+                                    <div className="absolute top-5 left-8 right-8 h-0.5 bg-white/10 -z-10"></div>
+
                                     {[0, 1, 2, 3, 4, 5].map((s) => (
-                                        <div key={s} className="flex items-center">
+                                        <div key={s} className="flex flex-col items-center">
                                             <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                                                    step >= s
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-white/20 text-white/60 border border-white/30'
-                                                }`}
-                                            >
-                                                {s + 1}
-                                            </div>
-                                            {s < 5 && (
-                                                <div
-                                                    className={`w-12 h-1 mx-1 ${
-                                                        step > s ? 'bg-blue-500' : 'bg-white/20'
+                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-black transition-all duration-500 shadow-lg ${step >= s
+                                                    ? 'bg-blue-600 text-white scale-110 shadow-blue-500/50'
+                                                    : 'bg-white/10 text-white/40 border-2 border-white/10'
                                                     }`}
-                                                />
-                                            )}
+                                            >
+                                                {step > s ? (
+                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                    </svg>
+                                                ) : s + 1}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-between mt-2 text-xs font-bold text-white">
-                                    <span>School</span>
-                                    <span>Student</span>
-                                    <span>Route</span>
-                                    <span>Pickup</span>
-                                    <span>Plan</span>
-                                    <span>Review</span>
+                                <div className="flex justify-between mt-3 text-[10px] font-black tracking-tighter text-white/60 uppercase px-1">
+                                    <span className={step >= 0 ? 'text-blue-400' : ''}>School</span>
+                                    <span className={step >= 1 ? 'text-blue-400' : ''}>Student</span>
+                                    <span className={step >= 2 ? 'text-blue-400' : ''}>Route</span>
+                                    <span className={step >= 3 ? 'text-blue-400' : ''}>Pickup</span>
+                                    <span className={step >= 4 ? 'text-blue-400' : ''}>Plan</span>
+                                    <span className={step >= 5 ? 'text-blue-400' : ''}>Review</span>
                                 </div>
-                            </div>
+                            </div >
 
                             <form onSubmit={handleSubmit}>
                                 {/* Step 0: Select School */}
@@ -173,11 +188,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                             {schools.map((school) => (
                                                 <label
                                                     key={school.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.school_id == school.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}
+                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${data.school_id == school.id
+                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}
                                                 >
                                                     <input
                                                         type="radio"
@@ -207,11 +221,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                             {students.map((student) => (
                                                 <label
                                                     key={student.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.student_id == student.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}
+                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${data.student_id == student.id
+                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}
                                                 >
                                                     <input
                                                         type="radio"
@@ -251,11 +264,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                 {filteredRoutes.map((route) => (
                                                     <label
                                                         key={route.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                            data.route_id == route.id
-                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}
+                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${data.route_id == route.id
+                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            }`}
                                                     >
                                                         <input
                                                             type="radio"
@@ -273,11 +285,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                 </p>
                                                             </div>
                                                             <div className="text-right">
-                                                                <span className={`text-sm px-2 py-1 rounded border font-semibold ${
-                                                                    route.available_seats > 0
-                                                                        ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                        : 'bg-red-500/30 text-red-100 border-red-400/50'
-                                                                }`}>
+                                                                <span className={`text-sm px-2 py-1 rounded border font-semibold ${route.available_seats > 0
+                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
+                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                                    }`}>
                                                                     {route.available_seats} seats available
                                                                 </span>
                                                             </div>
@@ -327,11 +338,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
                                                         <label
                                                             key={plan}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                                data.plan_type === plan
-                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                            }`}
+                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${data.plan_type === plan
+                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                                }`}
                                                         >
                                                             <input
                                                                 type="radio"
@@ -374,11 +384,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     Trip Type *
                                                 </label>
                                                 <div className="grid grid-cols-2 gap-4">
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.trip_type === 'one_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}>
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${data.trip_type === 'one_way'
+                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}>
                                                         <input
                                                             type="radio"
                                                             name="trip_type"
@@ -389,11 +398,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         />
                                                         <span className="font-bold text-white">One Way</span>
                                                     </label>
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.trip_type === 'two_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}>
+                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${data.trip_type === 'two_way'
+                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
+                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}>
                                                         <input
                                                             type="radio"
                                                             name="trip_type"
@@ -460,11 +468,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                         type="button"
                                         onClick={prevStep}
                                         disabled={step === 0}
-                                        className={`px-4 py-2 rounded font-bold transition ${
-                                            step === 0
-                                                ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
-                                                : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
-                                        }`}
+                                        className={`px-4 py-2 rounded font-bold transition ${step === 0
+                                            ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
+                                            : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
+                                            }`}
                                     >
                                         Previous
                                     </button>
@@ -485,11 +492,11 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                     )}
                                 </div>
                             </form>
-                        </div>
-                    </GlassCard>
-                </div>
-            </div>
-        </AuthenticatedLayout>
+                        </div >
+                    </GlassCard >
+                </div >
+            </div >
+        </AuthenticatedLayout >
     );
 }
 
