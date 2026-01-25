@@ -10,7 +10,8 @@ export default function Rebook({ previousBooking, students, schools = [], routes
     const [step, setStep] = useState(4); // Start at Plan selection
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
-    const [price, setPrice] = useState(null);
+    const [planPrices, setPlanPrices] = useState({}); // Store prices for all plans
+    const [price, setPrice] = useState(null); // Current selected price
     const [loading, setLoading] = useState(false);
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
 
@@ -43,19 +44,19 @@ export default function Rebook({ previousBooking, students, schools = [], routes
             const route = filteredRoutes.find(r => r.id === parseInt(data.route_id));
             setSelectedRoute(route);
             checkCapacity(data.route_id);
+            fetchAllPrices(data.route_id, data.trip_type); // Fetch all prices when route is ready
         } else {
             setSelectedRoute(null);
+            setPlanPrices({});
         }
-    }, [data.route_id, filteredRoutes]);
+    }, [data.route_id, filteredRoutes, data.trip_type]);
 
-    // Calculate price when route, plan type, or trip type changes
+    // Update the singular 'price' when plan changes
     useEffect(() => {
-        if (data.route_id && data.plan_type && data.trip_type) {
-            calculatePrice();
-        } else {
-            setPrice(null);
+        if (data.plan_type && planPrices[data.plan_type]) {
+            setPrice(planPrices[data.plan_type]);
         }
-    }, [data.route_id, data.plan_type, data.trip_type]);
+    }, [data.plan_type, planPrices]);
 
     const checkCapacity = async (routeId) => {
         try {
@@ -66,21 +67,31 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         }
     };
 
-    const calculatePrice = async () => {
-        if (!data.route_id || !data.plan_type || !data.trip_type) return;
+    const fetchAllPrices = async (routeId, tripType) => {
+        if (!routeId || !tripType) return;
         setLoading(true);
+        const plans = ['weekly', 'monthly', 'academic_term', 'annual'];
+        const newPrices = {};
+
         try {
-            const response = await axios.get('/parent/calculate-price', {
-                params: {
-                    route_id: data.route_id,
-                    plan_type: data.plan_type,
-                    trip_type: data.trip_type,
-                },
+            // Fetch all 4 prices in parallel for maximum speed
+            const pricePromises = plans.map(plan =>
+                axios.get('/parent/calculate-price', {
+                    params: {
+                        route_id: routeId,
+                        plan_type: plan,
+                        trip_type: tripType,
+                    },
+                })
+            );
+
+            const results = await Promise.all(pricePromises);
+            results.forEach((res, index) => {
+                newPrices[plans[index]] = res.data;
             });
-            setPrice(response.data);
+            setPlanPrices(newPrices);
         } catch (error) {
-            console.error('Error calculating price:', error);
-            setPrice(null);
+            console.error('Error pre-fetching all prices:', error);
         } finally {
             setLoading(false);
         }
@@ -368,15 +379,19 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                         {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', ' ')}
                                                                     </span>
                                                                 </div>
-                                                                {price && data.plan_type === plan && (
-                                                                    <span className="text-xl font-black text-green-400 drop-shadow-sm">
-                                                                        {price.formatted}
-                                                                    </span>
-                                                                )}
+                                                                <div className="text-right">
+                                                                    {planPrices[plan] ? (
+                                                                        <span className="text-xl font-black text-green-400 drop-shadow-sm">
+                                                                            {planPrices[plan].formatted}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <div className="h-6 w-20 bg-white/10 animate-pulse rounded"></div>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </label>
                                                     ))}
-                                                    {loading && <p className="text-blue-400 text-sm font-black animate-pulse uppercase tracking-widest ml-1">Calculating price...</p>}
+                                                    {loading && <p className="text-blue-400 text-xs font-black animate-pulse uppercase tracking-[0.2em] ml-1">Refreshing current rates...</p>}
                                                 </div>
                                             </div>
 
