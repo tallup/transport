@@ -84,7 +84,7 @@
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid #22304d;
         border-radius: 0.5rem; /* 8px - rounded-lg */
         transition: all 0.3s ease;
     }
