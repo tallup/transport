@@ -140,14 +140,28 @@
         border-radius: 0.5rem; /* Maintain border radius on hover */
     }
 
-    /* Ensure textareas with glass-input get border radius */
+    /* Ensure textareas with glass-input get border radius and dark blue border */
     textarea.glass-input {
         border-radius: 0.5rem; /* 8px - rounded-lg */
+        border: 1px solid #22304d !important;
+    }
+    
+    textarea.glass-input:focus {
+        border-color: #22304d !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.25);
     }
 
-    /* Ensure select elements with glass-input get border radius */
+    /* Ensure select elements with glass-input get border radius and dark blue border */
     select.glass-input {
         border-radius: 0.5rem; /* 8px - rounded-lg */
+        border: 1px solid #22304d !important;
+    }
+    
+    select.glass-input:focus {
+        border-color: #22304d !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.25);
     }
 
     /* Solid color backgrounds - Logo brand colors */
