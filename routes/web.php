@@ -83,6 +83,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/pricing/manage', [\App\Http\Controllers\Admin\PricingController::class, 'manage'])->name('pricing.manage');
     Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
     Route::get('/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('finance.dashboard');
+    Route::post('/finance/export', [\App\Http\Controllers\Admin\FinanceController::class, 'exportReport'])->name('finance.export');
+    
+    // Analytics routes
+    Route::prefix('analytics')->name('analytics.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('dashboard');
+        Route::get('/revenue', [\App\Http\Controllers\Admin\AnalyticsController::class, 'revenueMetrics'])->name('revenue');
+        Route::get('/capacity', [\App\Http\Controllers\Admin\AnalyticsController::class, 'capacityMetrics'])->name('capacity');
+        Route::get('/drivers/{driver?}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'driverMetrics'])->name('driver');
+        Route::get('/routes/{route?}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'routeMetrics'])->name('route');
+        Route::post('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportReport'])->name('export');
+    });
+    
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
     Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve');
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
@@ -110,6 +122,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Push subscriptions
+    Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::delete('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
+    
+    // Messages
+    Route::get('/messages', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{thread}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages', [\App\Http\Controllers\MessageController::class, 'store'])->name('messages.store');
+    Route::post('/messages/{thread}/read', [\App\Http\Controllers\MessageController::class, 'markAsRead'])->name('messages.read');
 });
 
 // Public static pages
@@ -137,6 +159,9 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::get('/api/policies', [PolicyController::class, 'index'])->name('api.policies');
     Route::get('/api/policies/{policy}', [PolicyController::class, 'show'])->name('api.policies.show');
 });
+
+// Push notification API routes
+Route::get('/api/push/vapid-public-key', [\App\Http\Controllers\Api\PushController::class, 'getVapidPublicKey'])->name('api.push.vapid-key');
 
 // Webhook routes (exclude CSRF, but with rate limiting)
 Route::post('/webhooks/stripe', [\App\Http\Controllers\Webhook\StripeWebhookController::class, 'handleWebhook'])

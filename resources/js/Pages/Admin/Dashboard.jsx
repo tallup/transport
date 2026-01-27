@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import ChartCard from '@/Components/ChartCard';
@@ -8,11 +8,13 @@ import { LineChart, Line, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Cart
 export default function AdminDashboard({
     stats,
     recentBookings,
+    recentBookingsPagination,
     revenueTrends,
     bookingStatusDistribution,
     upcomingEvents,
     activeRoutes,
-    recentActivity
+    recentActivity,
+    recentActivityPagination
 }) {
     const { auth } = usePage().props;
 
@@ -303,12 +305,46 @@ export default function AdminDashboard({
                         <GlassCard>
                             <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
                             <div className="space-y-3">
-                                {(recentActivity || []).map((activity, index) => (
-                                    <div key={index} className="p-3 bg-white/10 rounded-lg">
-                                        <p className="text-base font-bold text-white">{activity.message}</p>
-                                        <p className="text-sm font-semibold text-white/80 mt-1">{activity.time}</p>
-                                    </div>
-                                ))}
+                                {(recentActivity || []).length > 0 ? (
+                                    <>
+                                        {recentActivity.map((activity) => (
+                                            <div key={activity.id || activity.timestamp} className="p-3 bg-white/10 rounded-lg">
+                                                <p className="text-base font-bold text-white">{activity.message}</p>
+                                                <p className="text-sm font-semibold text-white/80 mt-1">{activity.time}</p>
+                                            </div>
+                                        ))}
+                                        
+                                        {/* Pagination */}
+                                        {recentActivityPagination && recentActivityPagination.last_page > 1 && (
+                                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/20">
+                                                <div className="text-sm text-white/80">
+                                                    Showing {((recentActivityPagination.current_page - 1) * recentActivityPagination.per_page) + 1} to {Math.min(recentActivityPagination.current_page * recentActivityPagination.per_page, recentActivityPagination.total)} of {recentActivityPagination.total} bookings
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => router.get('/admin/dashboard', { activity_page: recentActivityPagination.current_page - 1 }, { preserveState: true, preserveScroll: true })}
+                                                        disabled={recentActivityPagination.current_page === 1}
+                                                        className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                    >
+                                                        Previous
+                                                    </button>
+                                                    <span className="px-3 py-1 bg-white/10 text-white rounded-lg text-sm font-semibold">
+                                                        {recentActivityPagination.current_page} / {recentActivityPagination.last_page}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => router.get('/admin/dashboard', { activity_page: recentActivityPagination.current_page + 1 }, { preserveState: true, preserveScroll: true })}
+                                                        disabled={recentActivityPagination.current_page === recentActivityPagination.last_page}
+                                                        className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                    >
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p className="text-white/60 text-center py-4">No recent activity</p>
+                                )}
                             </div>
                         </GlassCard>
                     </div>
@@ -356,41 +392,73 @@ export default function AdminDashboard({
                             </Link>
                         </div>
                         {recentBookings && recentBookings.length > 0 ? (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200/30">
-                                    <thead className="bg-white/10">
-                                        <tr>
-                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Student</th>
-                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Route</th>
-                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Status</th>
-                                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white/5 divide-y divide-gray-200/20">
-                                        {recentBookings.map((booking) => (
-                                            <tr key={booking.id} className="hover:bg-white/10 transition">
-                                                <td className="px-4 py-3 text-base font-bold text-white">
-                                                    {booking.student?.name}
-                                                </td>
-                                                <td className="px-4 py-3 text-base font-bold text-white/90">
-                                                    {booking.route?.name}
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
-                                                            booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                                                'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                        }`}>
-                                                        {booking.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-3 text-base font-bold text-white/90">
-                                                    {new Date(booking.created_at).toLocaleDateString()}
-                                                </td>
+                            <>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200/30">
+                                        <thead className="bg-white/10">
+                                            <tr>
+                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Student</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Route</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Status</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Date</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody className="bg-white/5 divide-y divide-gray-200/20">
+                                            {recentBookings.map((booking) => (
+                                                <tr key={booking.id} className="hover:bg-white/10 transition">
+                                                    <td className="px-4 py-3 text-base font-bold text-white">
+                                                        {booking.student?.name}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-base font-bold text-white/90">
+                                                        {booking.route?.name}
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                                                booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                                    booking.status === 'awaiting_approval' ? 'bg-orange-500/30 text-orange-100 border-orange-400/50' :
+                                                                        booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
+                                                                            'bg-gray-500/30 text-gray-200 border-gray-400/50'
+                                                            }`}>
+                                                            {booking.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-base font-bold text-white/90">
+                                                        {new Date(booking.created_at).toLocaleDateString()}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                {/* Pagination */}
+                                {recentBookingsPagination && recentBookingsPagination.last_page > 1 && (
+                                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/20">
+                                        <div className="text-sm text-white/80">
+                                            Showing {((recentBookingsPagination.current_page - 1) * recentBookingsPagination.per_page) + 1} to {Math.min(recentBookingsPagination.current_page * recentBookingsPagination.per_page, recentBookingsPagination.total)} of {recentBookingsPagination.total} bookings
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => router.get('/admin/dashboard', { bookings_page: recentBookingsPagination.current_page - 1 }, { preserveState: true, preserveScroll: true })}
+                                                disabled={recentBookingsPagination.current_page === 1}
+                                                className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="px-3 py-1 bg-white/10 text-white rounded-lg text-sm font-semibold">
+                                                {recentBookingsPagination.current_page} / {recentBookingsPagination.last_page}
+                                            </span>
+                                            <button
+                                                onClick={() => router.get('/admin/dashboard', { bookings_page: recentBookingsPagination.current_page + 1 }, { preserveState: true, preserveScroll: true })}
+                                                disabled={recentBookingsPagination.current_page === recentBookingsPagination.last_page}
+                                                className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <p className="text-white text-lg font-semibold text-center py-8">No recent bookings</p>
                         )}

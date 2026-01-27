@@ -4,8 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @auth
+            <meta name="user-id" content="{{ auth()->id() }}">
+        @endauth
 
         <title inertia>{{ config('app.name', 'Student Transport System') }}</title>
+        
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <meta name="theme-color" content="#3b82f6">
 
         <!-- Favicon -->
         <link rel="icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">

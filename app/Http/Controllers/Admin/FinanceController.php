@@ -7,18 +7,22 @@ use App\Models\Booking;
 use App\Models\DailyPickup;
 use App\Models\PricingRule;
 use App\Services\PricingService;
+use App\Services\ReportExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class FinanceController extends Controller
 {
     protected $pricingService;
+    protected $reportExportService;
 
-    public function __construct(PricingService $pricingService)
+    public function __construct(PricingService $pricingService, ReportExportService $reportExportService)
     {
         $this->pricingService = $pricingService;
+        $this->reportExportService = $reportExportService;
     }
 
     public function dashboard(Request $request)
@@ -182,6 +186,40 @@ class FinanceController extends Controller
                     'completed' => 0,
                 ],
             ]);
+        }
+    }
+
+    /**
+     * Export finance report.
+     */
+    public function exportReport(Request $request)
+    {
+        $request->validate([
+            'format' => 'required|in:pdf,excel',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
+        $filters = $request->only(['start_date', 'end_date']);
+
+        try {
+            $filename = $this->reportExportService->exportRevenueReport(
+                $request->get('format'),
+                $filters
+            );
+
+            $url = Storage::url($filename);
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+                'filename' => $filename,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to export report: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

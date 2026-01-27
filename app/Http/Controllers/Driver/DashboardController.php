@@ -549,6 +549,17 @@ class DashboardController extends Controller
                     'booking_id' => $booking->id,
                 ]);
             }
+            
+            // Send push notification
+            if ($parent) {
+                $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                $pushHelper->sendIfSubscribed(
+                    $parent,
+                    'Route Completed',
+                    'The ' . strtoupper($period) . ' route has been completed successfully.',
+                    ['type' => 'route_completed', 'booking_id' => $booking->id, 'route_id' => $route->id, 'period' => $period, 'url' => route('parent.bookings.show', $booking)]
+                );
+            }
         }
 
         // Notify admins of route completion

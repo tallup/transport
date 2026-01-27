@@ -27,6 +27,15 @@ class RouteObserver
                     // Notify the driver
                     $driver->notify(new DriverAssigned(null, $driver, $route));
                     
+                    // Send push notification to driver
+                    $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                    $pushHelper->sendIfSubscribed(
+                        $driver,
+                        'Route Assigned',
+                        'You have been assigned to route: ' . $route->name,
+                        ['type' => 'driver_assigned', 'route_id' => $route->id, 'url' => route('driver.dashboard')]
+                    );
+                    
                     // Notify all parents with active bookings on this route
                     $activeBookings = Booking::where('route_id', $route->id)
                         ->where('status', 'active')
@@ -40,11 +49,20 @@ class RouteObserver
 
                     foreach ($activeBookings as $booking) {
                         if ($booking->student && $booking->student->parent) {
-                            $booking->student->parent->notify(new DriverAssigned(
+                            $parent = $booking->student->parent;
+                            $parent->notify(new DriverAssigned(
                                 $booking,
                                 $driver,
                                 $route
                             ));
+                            
+                            // Send push notification to parent
+                            $pushHelper->sendIfSubscribed(
+                                $parent,
+                                'Driver Assigned',
+                                'A driver has been assigned to your child\'s route: ' . $route->name,
+                                ['type' => 'driver_assigned', 'booking_id' => $booking->id, 'route_id' => $route->id, 'url' => route('parent.bookings.show', $booking)]
+                            );
                         }
                     }
                 }

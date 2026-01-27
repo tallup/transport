@@ -4,6 +4,8 @@ import './bootstrap';
 import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+import { registerServiceWorker, subscribeToPushNotifications } from './utils/serviceWorkerRegistration';
+import offlineManager from './utils/offlineManager';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -23,6 +25,17 @@ router.on('before', (event) => {
         }
     }
 });
+
+// Register service worker and initialize PWA features
+registerServiceWorker();
+
+// Initialize offline manager
+offlineManager.init();
+
+// Subscribe to push notifications if user is authenticated
+if (document.querySelector('meta[name="user-id"]')) {
+    subscribeToPushNotifications().catch(console.error);
+}
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

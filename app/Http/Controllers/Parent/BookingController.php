@@ -189,6 +189,15 @@ class BookingController extends Controller
         // Send booking created notification to parent
         $user->notifyNow(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
         
+        // Send push notification
+        $pushHelper = app(\App\Services\PushNotificationHelper::class);
+        $pushHelper->sendIfSubscribed(
+            $user,
+            'Booking Received',
+            'Your booking has been created. Please complete payment to confirm.',
+            ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
+        );
+        
         // Notify admins of new booking attempt
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
@@ -358,6 +367,15 @@ class BookingController extends Controller
                 // Send confirmation notification to parent
                 $user->notifyNow(new BookingConfirmed($booking));
                 
+                // Send push notification
+                $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                $pushHelper->sendIfSubscribed(
+                    $user,
+                    'Payment Received',
+                    'Your payment has been processed. Booking is pending approval.',
+                    ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+                );
+                
                 // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);
                 $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
@@ -404,6 +422,15 @@ class BookingController extends Controller
 
         // Send notification about booking creation (without payment) to parent
         $user->notifyNow(new BookingConfirmed($booking));
+        
+        // Send push notification
+        $pushHelper = app(\App\Services\PushNotificationHelper::class);
+        $pushHelper->sendIfSubscribed(
+            $user,
+            'Booking Created',
+            'Your booking has been created and is pending approval.',
+            ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+        );
         
         // Notify admins of new booking
         $adminService = app(\App\Services\AdminNotificationService::class);
@@ -526,6 +553,15 @@ class BookingController extends Controller
 
                 // Send confirmation notification to parent
                 $user->notify(new BookingConfirmed($booking));
+                
+                // Send push notification
+                $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                $pushHelper->sendIfSubscribed(
+                    $user,
+                    'Payment Received',
+                    'Your PayPal payment has been processed. Booking is pending approval.',
+                    ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+                );
                 
                 // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);
@@ -1140,6 +1176,15 @@ class BookingController extends Controller
                 'booking_id' => $booking->id,
             ]);
         }
+        
+        // Send push notification
+        $pushHelper = app(\App\Services\PushNotificationHelper::class);
+        $pushHelper->sendIfSubscribed(
+            $user,
+            'Booking Cancelled',
+            'Your booking has been cancelled.',
+            ['type' => 'booking_cancelled', 'booking_id' => $booking->id, 'url' => route('parent.bookings.index')]
+        );
         
         // Notify admins of cancellation
         $adminService = app(\App\Services\AdminNotificationService::class);

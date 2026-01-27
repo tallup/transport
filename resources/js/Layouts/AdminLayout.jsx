@@ -13,11 +13,12 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/bookings', label: 'Bookings', active: currentUrl?.startsWith('/admin/bookings') },
         { href: '/admin/routes', label: 'Routes', active: currentUrl?.startsWith('/admin/routes') },
         { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl?.startsWith('/admin/pickup-points') },
+        { href: '/admin/finance', label: 'Finance', active: currentUrl?.startsWith('/admin/finance') },
+        { href: '/admin/analytics', label: 'Analytics', active: currentUrl?.startsWith('/admin/analytics') },
+        { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
         { href: '/filament-admin/schools', label: 'Schools', active: currentUrl?.startsWith('/filament-admin/schools') },
         { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
-        { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
-        { href: '/admin/finance', label: 'Finance', active: currentUrl?.startsWith('/admin/finance') },
         { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
         { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl?.startsWith('/admin/pricing/manage') },
         { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl?.startsWith('/admin/calendar-events') },
@@ -73,6 +74,17 @@ export default function AdminLayout({ header, children }) {
                                     className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
                                 >
                                     Finance
+                                </Link>
+
+                                <Link
+                                    href="/admin/analytics"
+                                    className={`${
+                                        currentUrl?.startsWith('/admin/analytics')
+                                            ? 'border-brand-primary text-brand-primary'
+                                            : 'border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600'
+                                    } whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20`}
+                                >
+                                    Analytics
                                 </Link>
                                 
                                 <Link

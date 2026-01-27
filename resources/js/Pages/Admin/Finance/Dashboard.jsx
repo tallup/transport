@@ -1,7 +1,9 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import ChartCard from '@/Components/ChartCard';
+import GlassButton from '@/Components/GlassButton';
+import { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function FinanceDashboard({
@@ -33,13 +35,63 @@ export default function FinanceDashboard({
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
-                            Finance Dashboard
-                        </h1>
-                        <p className="text-base sm:text-lg font-semibold text-white/90">
-                            Revenue overview and financial analytics
-                        </p>
+                    <div className="mb-6 sm:mb-8 flex justify-between items-center">
+                        <div>
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                Finance Dashboard
+                            </h1>
+                            <p className="text-base sm:text-lg font-semibold text-white/90">
+                                Revenue overview and financial analytics
+                            </p>
+                        </div>
+                        <div className="flex gap-2">
+                            <GlassButton
+                                variant="primary"
+                                onClick={async () => {
+                                    try {
+                                        const response = await fetch('/admin/finance/export', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                            },
+                                            body: JSON.stringify({ format: 'pdf' }),
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            window.open(data.url, '_blank');
+                                        }
+                                    } catch (error) {
+                                        alert('Export failed');
+                                    }
+                                }}
+                            >
+                                Export PDF
+                            </GlassButton>
+                            <GlassButton
+                                variant="secondary"
+                                onClick={async () => {
+                                    try {
+                                        const response = await fetch('/admin/finance/export', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                            },
+                                            body: JSON.stringify({ format: 'excel' }),
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            window.open(data.url, '_blank');
+                                        }
+                                    } catch (error) {
+                                        alert('Export failed');
+                                    }
+                                }}
+                            >
+                                Export Excel
+                            </GlassButton>
+                        </div>
                     </div>
 
                     {/* Key Metrics Cards */}

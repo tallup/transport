@@ -453,6 +453,21 @@ class RosterController extends Controller
                 'booking_id' => $booking->id,
             ]);
         }
+        
+        // Send push notification
+        if ($parent) {
+            $pushHelper = app(\App\Services\PushNotificationHelper::class);
+            $title = $period === 'pm' ? 'Student Dropped Off' : 'Student Picked Up';
+            $body = $period === 'pm' 
+                ? 'Your student has been safely dropped off at ' . $pickupLocation
+                : 'Your student has been picked up from ' . $pickupLocation;
+            $pushHelper->sendIfSubscribed(
+                $parent,
+                $title,
+                $body,
+                ['type' => 'pickup_completed', 'booking_id' => $booking->id, 'period' => $period, 'url' => route('parent.bookings.show', $booking)]
+            );
+        }
 
         // Notify admins of pickup/drop-off completion
         $adminService = app(\App\Services\AdminNotificationService::class);

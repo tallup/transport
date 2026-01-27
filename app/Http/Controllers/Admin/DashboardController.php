@@ -147,62 +147,60 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // Recent bookings
+            // Recent bookings (with pagination support)
+            $bookingsPage = $request->get('bookings_page', 1);
+            $bookingsPerPage = 5;
+            
             $recent_bookings = Booking::with(['student.parent', 'route.vehicle', 'pickupPoint'])
                 ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
+                ->paginate($bookingsPerPage, ['*'], 'bookings_page', $bookingsPage);
+            
+            $recentBookingsPagination = [
+                'current_page' => $recent_bookings->currentPage(),
+                'last_page' => $recent_bookings->lastPage(),
+                'per_page' => $recent_bookings->perPage(),
+                'total' => $recent_bookings->total(),
+            ];
+            
+            // Convert to array for Inertia
+            $recent_bookings = $recent_bookings->items();
 
-            // Real Recent Activity
-            $recentActivity = [];
+            // Recent Activity - Only Bookings (with pagination support)
+            $page = $request->get('activity_page', 1);
+            $perPage = 3;
             
-            // Get recent users (parents)
-            $recentUsers = User::where('role', 'parent')
-                ->orderBy('created_at', 'desc')
-                ->limit(3)
-                ->get();
-            
-            foreach ($recentUsers as $user) {
-                $recentActivity[] = [
-                    'type' => 'user',
-                    'message' => "New parent registered: {$user->name}",
-                    'time' => $user->created_at->diffForHumans(),
-                    'timestamp' => $user->created_at,
-                ];
-            }
-            
-            // Get recent bookings
             $recentBookingActs = Booking::with('student')
                 ->orderBy('created_at', 'desc')
-                ->limit(5)
-                ->get();
-                
-            foreach ($recentBookingActs as $booking) {
+                ->paginate($perPage, ['*'], 'activity_page', $page);
+            
+            $recentActivity = $recentBookingActs->map(function ($booking) {
                 $statusLabel = str_replace('_', ' ', $booking->status);
-                $recentActivity[] = [
+                return [
+                    'id' => $booking->id,
                     'type' => 'booking',
                     'message' => "New booking for {$booking->student?->name} ({$statusLabel})",
                     'time' => $booking->created_at->diffForHumans(),
                     'timestamp' => $booking->created_at,
                 ];
-            }
+            })->toArray();
             
-            // Sort merged activity by timestamp
-            usort($recentActivity, function($a, $b) {
-                return $b['timestamp'] <=> $a['timestamp'];
-            });
-            
-            // Limit to 8 items
-            $recentActivity = array_slice($recentActivity, 0, 8);
+            $recentActivityPagination = [
+                'current_page' => $recentBookingActs->currentPage(),
+                'last_page' => $recentBookingActs->lastPage(),
+                'per_page' => $recentBookingActs->perPage(),
+                'total' => $recentBookingActs->total(),
+            ];
 
             return Inertia::render('Admin/Dashboard', [
                 'stats' => $stats,
                 'recentBookings' => $recent_bookings,
+                'recentBookingsPagination' => $recentBookingsPagination,
                 'revenueTrends' => $revenueTrends,
                 'bookingStatusDistribution' => $bookingStatusDistribution,
                 'upcomingEvents' => $upcomingEvents,
                 'activeRoutes' => $activeRoutes,
                 'recentActivity' => $recentActivity,
+                'recentActivityPagination' => $recentActivityPagination,
             ]);
         } catch (\Exception $e) {
             Log::error('Admin Dashboard Error: ' . $e->getMessage(), [
