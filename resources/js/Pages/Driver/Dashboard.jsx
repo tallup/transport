@@ -56,10 +56,10 @@ export default function Dashboard({
                     {/* Welcome Section */}
                     <div className="mb-6 sm:mb-8">
                         <div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                                 Welcome, {auth?.user?.name || 'Driver'}!
                             </h1>
-                            <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
+                            <p className="text-base sm:text-lg font-semibold text-brand-primary/90">Your route information and today's schedule</p>
                         </div>
                     </div>
 
