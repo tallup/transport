@@ -1,7 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import GlassCard from '@/Components/GlassCard';
-import ChartCard from '@/Components/ChartCard';
 import CapacityHeatmap from '@/Components/Analytics/CapacityHeatmap';
 import DriverPerformanceTable from '@/Components/Analytics/DriverPerformanceTable';
 import ReportExporter from '@/Components/Analytics/ReportExporter';
@@ -49,10 +47,10 @@ export default function AnalyticsDashboard({
                     {/* Header */}
                     <div className="mb-6 sm:mb-8 flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                                 Analytics Dashboard
                             </h1>
-                            <p className="text-base sm:text-lg font-semibold text-white/90">
+                            <p className="text-base sm:text-lg font-semibold text-brand-primary/90">
                                 Comprehensive insights into your transport operations
                             </p>
                         </div>
@@ -60,7 +58,7 @@ export default function AnalyticsDashboard({
                     </div>
 
                     {/* Date Range Filter */}
-                    <GlassCard className="mb-6">
+                    <div className="mb-6 bg-brand-primary rounded-xl p-6 shadow-lg">
                         <div className="flex flex-wrap items-center gap-4">
                             <div>
                                 <label className="block text-sm font-semibold text-white mb-1">Start Date</label>
@@ -68,7 +66,7 @@ export default function AnalyticsDashboard({
                                     type="date"
                                     value={dateRange.start}
                                     onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                                 />
                             </div>
                             <div>
@@ -77,19 +75,19 @@ export default function AnalyticsDashboard({
                                     type="date"
                                     value={dateRange.end}
                                     onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                                 />
                             </div>
                             <div className="flex items-end">
                                 <button
                                     onClick={handleDateRangeChange}
-                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+                                    className="px-4 py-2 bg-white text-brand-primary hover:bg-white/90 font-semibold rounded-lg transition"
                                 >
                                     Apply Filter
                                 </button>
                             </div>
                         </div>
-                    </GlassCard>
+                    </div>
 
                     {/* Tabs */}
                     <div className="mb-6">
@@ -115,7 +113,7 @@ export default function AnalyticsDashboard({
                         <div className="space-y-6">
                             {/* Key Metrics */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <GlassCard>
+                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm font-bold text-white uppercase">Total Revenue</p>
@@ -124,9 +122,9 @@ export default function AnalyticsDashboard({
                                             </p>
                                         </div>
                                     </div>
-                                </GlassCard>
+                                </div>
 
-                                <GlassCard>
+                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm font-bold text-white uppercase">Active Routes</p>
@@ -135,9 +133,9 @@ export default function AnalyticsDashboard({
                                             </p>
                                         </div>
                                     </div>
-                                </GlassCard>
+                                </div>
 
-                                <GlassCard>
+                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm font-bold text-white uppercase">Total Drivers</p>
@@ -146,9 +144,9 @@ export default function AnalyticsDashboard({
                                             </p>
                                         </div>
                                     </div>
-                                </GlassCard>
+                                </div>
 
-                                <GlassCard>
+                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm font-bold text-white uppercase">Avg Utilization</p>
@@ -159,11 +157,12 @@ export default function AnalyticsDashboard({
                                             </p>
                                         </div>
                                     </div>
-                                </GlassCard>
+                                </div>
                             </div>
 
                             {/* Revenue Trends Chart */}
-                            <ChartCard title="Revenue Trends">
+                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <h3 className="text-lg font-semibold text-white mb-4">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={revenueTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
@@ -195,7 +194,7 @@ export default function AnalyticsDashboard({
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
-                            </ChartCard>
+                            </div>
 
                             {/* Capacity Utilization */}
                             <CapacityHeatmap data={capacityUtilization} />
@@ -205,7 +204,9 @@ export default function AnalyticsDashboard({
                     {/* Revenue Tab */}
                     {activeTab === 'revenue' && (
                         <div className="space-y-6">
-                            <ChartCard title="Revenue Trends">
+                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <h3 className="text-lg font-semibold text-white mb-4">Revenue Trends</h3>
+                                <div>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={revenueTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
@@ -242,7 +243,8 @@ export default function AnalyticsDashboard({
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
-                            </ChartCard>
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -263,7 +265,7 @@ export default function AnalyticsDashboard({
                     {/* Routes Tab */}
                     {activeTab === 'routes' && (
                         <div className="space-y-6">
-                            <GlassCard>
+                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
                                 <h3 className="text-xl font-bold text-white mb-4">Route Efficiency Metrics</h3>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-gray-200/30">
@@ -313,7 +315,7 @@ export default function AnalyticsDashboard({
                                         </tbody>
                                     </table>
                                 </div>
-                            </GlassCard>
+                            </div>
                         </div>
                     )}
                 </div>

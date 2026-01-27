@@ -12,7 +12,7 @@
         
         <!-- PWA Manifest -->
         <link rel="manifest" href="{{ asset('manifest.json') }}">
-        <meta name="theme-color" content="#3b82f6">
+        <meta name="theme-color" content="#22304d">
 
         <!-- Favicon -->
         <link rel="icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">

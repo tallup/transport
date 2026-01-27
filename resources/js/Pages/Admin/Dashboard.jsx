@@ -28,10 +28,10 @@ export default function AdminDashboard({
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
                     <div className="mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                             Welcome, {auth?.user?.name || 'Admin'}!
                         </h1>
-                        <p className="text-base sm:text-lg font-semibold text-white/90">Here's what's happening with your transport system today.</p>
+                        <p className="text-base sm:text-lg font-semibold text-brand-primary/90">Here's what's happening with your transport system today.</p>
                     </div>
 
                     {/* Stats Cards */}
@@ -40,8 +40,8 @@ export default function AdminDashboard({
                             <GlassCard className="h-full transition-all duration-300 group-hover:scale-[1.03] group-hover:bg-white/20 cursor-pointer">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">Total Students</p>
-                                        <p className="text-3xl sm:text-4xl font-extrabold text-blue-200 mt-2 drop-shadow">{stats?.total_students || 0}</p>
+                                        <p className="text-sm sm:text-base font-bold text-brand-primary uppercase tracking-wider">Total Students</p>
+                                        <p className="text-3xl sm:text-4xl font-extrabold text-blue-600 mt-2 drop-shadow">{stats?.total_students || 0}</p>
                                     </div>
                                     <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
                                         <svg className="w-6 h-6 text-blue-400 group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,8 +56,8 @@ export default function AdminDashboard({
                             <GlassCard className="h-full transition-all duration-300 group-hover:scale-[1.03] group-hover:bg-white/20 cursor-pointer">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-base font-bold text-white uppercase tracking-wider">Active Routes</p>
-                                        <p className="text-3xl sm:text-4xl font-extrabold text-green-200 mt-2 drop-shadow">{stats?.total_routes || 0}</p>
+                                        <p className="text-base font-bold text-brand-primary uppercase tracking-wider">Active Routes</p>
+                                        <p className="text-3xl sm:text-4xl font-extrabold text-green-600 mt-2 drop-shadow">{stats?.total_routes || 0}</p>
                                     </div>
                                     <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
                                         <svg className="w-6 h-6 text-green-400 group-hover:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,8 +259,8 @@ export default function AdminDashboard({
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                         {/* Quick Actions */}
                         <GlassCard>
-                            <h3 className="text-xl font-bold text-white mb-4">Quick Actions</h3>
-                            <div className="space-y-3">
+                            <h3 className="text-xl font-bold text-brand-primary mb-4">Quick Actions</h3>
+                            <div className="flex flex-col gap-4">
                                 <Link href="/admin/users/create">
                                     <GlassButton variant="primary" className="w-full">
                                         Create User
@@ -286,24 +286,40 @@ export default function AdminDashboard({
 
                         {/* Upcoming Events */}
                         <GlassCard>
-                            <h3 className="text-xl font-bold text-white mb-4">Upcoming Events</h3>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-brand-primary">Upcoming Events</h3>
+                                <Link 
+                                    href="/admin/calendar-events/create"
+                                    className="text-sm font-semibold text-brand-primary hover:text-brand-secondary transition"
+                                >
+                                    + Add Event
+                                </Link>
+                            </div>
                             <div className="space-y-3">
                                 {(upcomingEvents || []).length > 0 ? (
                                     upcomingEvents.slice(0, 5).map((event) => (
-                                        <div key={event.id} className="p-3 bg-white/10 rounded-lg">
+                                        <div key={event.id} className="p-3 bg-white/10 rounded-lg hover:bg-white/15 transition">
                                             <p className="text-base font-bold text-white">{event.date_label}</p>
                                             <p className="text-base font-semibold text-white/90">{event.description || event.type}</p>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-white text-base font-semibold">No upcoming events</p>
+                                    <div className="text-center py-4">
+                                        <p className="text-white/80 text-base font-semibold mb-3">No upcoming events</p>
+                                        <Link 
+                                            href="/admin/calendar-events/create"
+                                            className="inline-block text-sm font-semibold text-brand-primary hover:text-brand-secondary transition underline"
+                                        >
+                                            Create your first event
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
                         </GlassCard>
 
                         {/* Recent Activity */}
                         <GlassCard>
-                            <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
+                            <h3 className="text-xl font-bold text-brand-primary mb-4">Recent Activity</h3>
                             <div className="space-y-3">
                                 {(recentActivity || []).length > 0 ? (
                                     <>
@@ -352,7 +368,7 @@ export default function AdminDashboard({
                     {/* Active Routes */}
                     <GlassCard className="mb-8">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold text-white">Active Routes</h3>
+                            <h3 className="text-xl font-bold text-brand-primary">Active Routes</h3>
                             <Link href="/admin/routes">
                                 <GlassButton variant="primary">View All</GlassButton>
                             </Link>
@@ -386,7 +402,7 @@ export default function AdminDashboard({
                     {/* Recent Bookings */}
                     <GlassCard>
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold text-white">Recent Bookings</h3>
+                            <h3 className="text-xl font-bold text-brand-primary">Recent Bookings</h3>
                             <Link href="/admin/bookings">
                                 <GlassButton variant="primary">View All</GlassButton>
                             </Link>

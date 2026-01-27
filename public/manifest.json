@@ -4,8 +4,8 @@
   "description": "School transport management system",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1e293b",
-  "theme_color": "#3b82f6",
+  "background_color": "#FFEB3B",
+  "theme_color": "#22304d",
   "orientation": "portrait-primary",
   "icons": [
     {

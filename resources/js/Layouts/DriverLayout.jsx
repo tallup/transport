@@ -109,8 +109,8 @@ export default function DriverLayout({ header, children }) {
                                         href={`${currentUrl}?period=am`}
                                         className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
                                             currentPeriod === 'am'
-                                                ? 'bg-yellow-500/40 text-yellow-100 border-yellow-400/60'
-                                                : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
+                                                ? 'bg-yellow-500/40 text-brand-primary border-yellow-400/60'
+                                                : 'bg-white/90 text-brand-primary border-brand-primary/30 hover:bg-white'
                                         }`}
                                     >
                                         {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
@@ -120,14 +120,14 @@ export default function DriverLayout({ header, children }) {
                                             href={`${currentUrl}?period=pm`}
                                             className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
                                                 currentPeriod === 'pm'
-                                                    ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
-                                                    : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
+                                                    ? 'bg-blue-500/40 text-white border-blue-400/60'
+                                                    : 'bg-white/90 text-brand-primary border-brand-primary/30 hover:bg-white'
                                             }`}
                                         >
                                             {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
                                         </Link>
                                     ) : (
-                                        <span className="px-3 py-1 rounded-full text-xs font-bold border bg-white/5 text-white/60 border-white/20 cursor-not-allowed">
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold border bg-white/50 text-brand-primary/60 border-brand-primary/20 cursor-not-allowed">
                                             PM Locked
                                         </span>
                                     )}

@@ -17,7 +17,7 @@ export default function CapacityHeatmap({ data = [] }) {
     };
 
     return (
-        <GlassCard>
+        <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-bold text-white mb-4">Capacity Utilization by Route</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.map((route) => (
@@ -72,7 +72,7 @@ export default function CapacityHeatmap({ data = [] }) {
             {data.length === 0 && (
                 <p className="text-white/60 text-center py-8">No route data available</p>
             )}
-        </GlassCard>
+        </div>
     );
 }
 

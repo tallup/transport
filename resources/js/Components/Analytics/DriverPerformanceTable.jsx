@@ -39,7 +39,7 @@ export default function DriverPerformanceTable({ data = [] }) {
     };
 
     return (
-        <GlassCard>
+        <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold text-white">Driver Performance Metrics</h3>
                 <div className="flex gap-2">
@@ -147,7 +147,7 @@ export default function DriverPerformanceTable({ data = [] }) {
             {sortedData.length === 0 && (
                 <p className="text-white/60 text-center py-8">No driver data available</p>
             )}
-        </GlassCard>
+        </div>
     );
 }
 

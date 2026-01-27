@@ -17,9 +17,10 @@ export default {
             },
             colors: {
                 'brand': {
-                    'primary': '#22304d',
+                    'primary': '#22304d', // Dark blue for text and accents
                     'secondary': '#1a2a47',
                     'light': '#ecf3fb',
+                    'yellow': '#FFEB3B', // Bright yellow background from flyer
                 },
             },
         },

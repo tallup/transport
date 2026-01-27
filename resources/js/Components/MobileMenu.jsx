@@ -35,14 +35,13 @@ export default function MobileMenu({
     return (
         <>
             {/* Hamburger Button - Visible on mobile */}
-            <div className="flex items-center sm:hidden ml-auto relative z-[210]">
-                <button
-                    type="button"
-                    onClick={toggleMenu}
-                    className="inline-flex items-center justify-center p-2.5 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition z-[70] relative bg-white/80 backdrop-blur-sm shadow-sm"
-                    aria-expanded={isOpen}
-                    aria-label="Toggle menu"
-                >
+            <button
+                type="button"
+                onClick={toggleMenu}
+                className="inline-flex items-center justify-center p-2.5 rounded-lg text-gray-800 hover:text-gray-900 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition relative bg-white border border-gray-300 shadow-lg z-50"
+                aria-expanded={isOpen}
+                aria-label="Toggle menu"
+            >
                     {!isOpen ? (
                         <svg
                             className="block h-6 w-6"
@@ -74,44 +73,46 @@ export default function MobileMenu({
                             />
                         </svg>
                     )}
-                </button>
-            </div>
+            </button>
 
             {/* Mobile Menu Overlay and Panel - Rendered at root level */}
             {isOpen && (
                 <div 
-                    className="fixed inset-0 z-[200] sm:hidden"
+                    className="fixed inset-0 z-[9999] sm:hidden"
                     style={{ 
                         position: 'fixed',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
+                        zIndex: 9999,
                     }}
                 >
                     {/* Overlay */}
                     <div
-                        className="absolute inset-0 bg-black bg-opacity-50 z-[205]"
+                        className="absolute inset-0 bg-black bg-opacity-50"
                         onClick={closeMenu}
                         style={{ 
-                            animation: 'fadeIn 0.3s ease-out',
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             right: 0,
                             bottom: 0,
+                            zIndex: 10000,
+                            animation: 'fadeIn 0.3s ease-out',
                         }}
                     />
                     
                     {/* Menu Panel */}
                     <div 
-                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-hidden z-[210]"
+                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-y-auto"
                         style={{ 
-                            animation: 'slideInLeft 0.3s ease-out',
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             bottom: 0,
+                            zIndex: 10001,
+                            animation: 'slideInLeft 0.3s ease-out',
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >

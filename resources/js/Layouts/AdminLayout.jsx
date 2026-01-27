@@ -129,6 +129,7 @@ export default function AdminLayout({ header, children }) {
                                 </Dropdown>
                             </div>
                         </div>
+                        {/* Desktop User Menu - Hidden on mobile */}
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
                             <div className="ml-3 relative">
                                 <Dropdown>
@@ -163,12 +164,14 @@ export default function AdminLayout({ header, children }) {
                             </div>
                         </div>
 
-                        {/* Mobile Menu */}
-                        <MobileMenu
-                            navigationItems={navigationItems}
-                            userMenuItems={userMenuItems}
-                            user={auth?.user}
-                        />
+                        {/* Mobile Menu Button - Visible on mobile only */}
+                        <div className="flex items-center sm:hidden ml-auto">
+                            <MobileMenu
+                                navigationItems={navigationItems}
+                                userMenuItems={userMenuItems}
+                                user={auth?.user}
+                            />
+                        </div>
                     </div>
                 </div>
             </nav>
