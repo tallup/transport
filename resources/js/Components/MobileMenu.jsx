@@ -105,12 +105,12 @@ export default function MobileMenu({
                     
                     {/* Menu Panel */}
                     <div 
-                        className="absolute inset-y-0 left-0 w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-y-auto"
+                        className="fixed top-0 left-0 h-screen w-[300px] max-w-[90vw] bg-white shadow-2xl overflow-y-auto"
                         style={{ 
-                            position: 'absolute',
+                            position: 'fixed',
                             top: 0,
                             left: 0,
-                            bottom: 0,
+                            height: '100vh',
                             zIndex: 10001,
                             animation: 'slideInLeft 0.3s ease-out',
                         }}
