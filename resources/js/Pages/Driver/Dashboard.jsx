@@ -55,47 +55,11 @@ export default function Dashboard({
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Welcome Section */}
                     <div className="mb-6 sm:mb-8">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
-                                    Welcome, {auth?.user?.name || 'Driver'}!
-                                </h1>
-                                <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                                {currentPeriod && (
-                                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${isRouteCompleted
-                                            ? 'bg-green-500/30 text-green-100 border border-green-400/50'
-                                            : currentPeriod === 'am'
-                                                ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
-                                        }`}>
-                                        {isRouteCompleted ? `${currentPeriod.toUpperCase()} Route - Completed` : `${currentPeriod.toUpperCase()} Route`}
-                                    </span>
-                                )}
-                                {availablePeriods?.am && availablePeriods?.pm && (
-                                    <div className="flex gap-2">
-                                        <Link
-                                            href="/driver/dashboard?period=am"
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${currentPeriod === 'am'
-                                                    ? 'bg-yellow-500/40 text-yellow-100 border-yellow-400/60'
-                                                    : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
-                                                }`}
-                                        >
-                                            {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
-                                        </Link>
-                                        <Link
-                                            href="/driver/dashboard?period=pm"
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${currentPeriod === 'pm'
-                                                    ? 'bg-blue-500/40 text-blue-100 border-blue-400/60'
-                                                    : 'bg-white/10 text-white/90 border-white/30 hover:bg-white/20'
-                                                }`}
-                                        >
-                                            {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
+                        <div>
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                Welcome, {auth?.user?.name || 'Driver'}!
+                            </h1>
+                            <p className="text-base sm:text-lg font-semibold text-white/90">Your route information and today's schedule</p>
                         </div>
                     </div>
 
