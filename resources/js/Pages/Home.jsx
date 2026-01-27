@@ -23,7 +23,7 @@ export default function Home({ auth }) {
                                 {auth?.user ? (
                                     <Link
                                         href="/parent/dashboard"
-                                        className="text-white/90 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition hover:bg-white/10 backdrop-blur-sm"
+                                        className="text-brand-primary hover:text-brand-secondary px-4 py-2 rounded-lg text-sm font-bold transition hover:bg-brand-primary/10 backdrop-blur-sm"
                                     >
                                         Dashboard
                                     </Link>
@@ -31,7 +31,7 @@ export default function Home({ auth }) {
                                     <>
                                         <Link
                                             href="/login"
-                                            className="text-white/90 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition hover:bg-white/10 backdrop-blur-sm"
+                                            className="text-brand-primary hover:text-brand-secondary px-4 py-2 rounded-lg text-sm font-bold transition hover:bg-brand-primary/10 backdrop-blur-sm"
                                         >
                                             Log in
                                         </Link>
@@ -115,21 +115,21 @@ export default function Home({ auth }) {
                             {/* Right Stats - 5 columns */}
                             <div className="lg:col-span-5">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
-                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">100%</div>
-                                        <div className="text-sm text-white/70 font-medium">Safe & Secure</div>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-brand-primary mb-2">100%</div>
+                                        <div className="text-sm text-brand-primary/80 font-medium">Safe & Secure</div>
                                     </GlassCard>
-                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
-                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">24/7</div>
-                                        <div className="text-sm text-white/70 font-medium">Support</div>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-brand-primary mb-2">24/7</div>
+                                        <div className="text-sm text-brand-primary/80 font-medium">Support</div>
                                     </GlassCard>
-                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
-                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">99%</div>
-                                        <div className="text-sm text-white/70 font-medium">On-Time</div>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-brand-primary mb-2">99%</div>
+                                        <div className="text-sm text-brand-primary/80 font-medium">On-Time</div>
                                     </GlassCard>
-                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-white/10">
-                                        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-br from-white to-brand-primary bg-clip-text text-transparent">500+</div>
-                                        <div className="text-sm text-white/70 font-medium">Families</div>
+                                    <GlassCard className="p-5 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-4xl md:text-5xl font-extrabold text-brand-primary mb-2">500+</div>
+                                        <div className="text-sm text-brand-primary/80 font-medium">Families</div>
                                     </GlassCard>
                                 </div>
                             </div>
@@ -141,10 +141,10 @@ export default function Home({ auth }) {
                 <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-8">
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3 drop-shadow-lg">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
                                 Why Parents Trust Us
                             </h2>
-                            <p className="text-lg text-white/80 max-w-2xl mx-auto font-medium">
+                            <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Everything you need for safe, reliable child transportation
                             </p>
                             <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
@@ -153,78 +153,78 @@ export default function Home({ auth }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {/* Feature 1 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Safe & Secure</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Safe & Secure</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     All vehicles are regularly maintained and our drivers are fully licensed, background checked, and trained for child transportation.
                                 </p>
                             </GlassCard>
 
                             {/* Feature 2 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Always On-Time</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Always On-Time</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is.
                                 </p>
                             </GlassCard>
 
                             {/* Feature 3 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Flexible Plans</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Flexible Plans</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     Choose from weekly, monthly, academic term, or annual plans. Perfect for any schedule or need.
                                 </p>
                             </GlassCard>
 
                             {/* Feature 4 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Easy Booking</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Easy Booking</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     Book in minutes with our simple online system. Select routes, pickup points, and payment plans with ease.
                                 </p>
                             </GlassCard>
 
                             {/* Feature 5 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Secure Payments</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Secure Payments</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     Industry-leading security with Stripe. Multiple payment options and automatic billing available.
                                 </p>
                             </GlassCard>
 
                             {/* Feature 6 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/30 to-brand-secondary/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Manage Everything</h3>
-                                <p className="text-white/80 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Manage Everything</h3>
+                                <p className="text-brand-primary/80 text-sm leading-relaxed">
                                     Complete dashboard to manage students, bookings, view history, and track rides all in one place.
                                 </p>
                             </GlassCard>
@@ -236,10 +236,10 @@ export default function Home({ auth }) {
                 <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-8">
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3 drop-shadow-lg">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
                                 How It Works
                             </h2>
-                            <p className="text-lg text-white/80 max-w-2xl mx-auto font-medium">
+                            <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Get started in just 4 simple steps
                             </p>
                             <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
@@ -262,8 +262,8 @@ export default function Home({ auth }) {
                                                 <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-brand-primary/50 to-transparent transform translate-x-4"></div>
                                             )}
                                         </div>
-                                        <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                                        <p className="text-white/80 text-sm leading-relaxed">
+                                        <h3 className="text-lg font-bold text-brand-primary mb-2">{step.title}</h3>
+                                        <p className="text-brand-primary/80 text-sm leading-relaxed">
                                             {step.desc}
                                         </p>
                                     </GlassCard>
@@ -277,10 +277,10 @@ export default function Home({ auth }) {
                 <section className="py-12 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-6">
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3 drop-shadow-lg">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
                                 Choose Your Portal
                             </h2>
-                            <p className="text-lg text-white/80 max-w-2xl mx-auto font-medium">
+                            <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Access your dedicated portal based on your role
                             </p>
                             <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
@@ -294,8 +294,8 @@ export default function Home({ auth }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Admin Portal</h3>
-                                <p className="text-white/80 mb-4 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Admin Portal</h3>
+                                <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     Manage students, vehicles, routes, bookings, and system settings
                                 </p>
                                 <Link
@@ -304,7 +304,7 @@ export default function Home({ auth }) {
                                 >
                                     Access Portal
                                 </Link>
-                                <p className="text-xs text-white/60 mt-3">
+                                <p className="text-xs text-brand-primary/60 mt-3">
                                     For Super Admin & Transport Admin
                                 </p>
                             </GlassCard>
@@ -316,8 +316,8 @@ export default function Home({ auth }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Driver Portal</h3>
-                                <p className="text-white/80 mb-4 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Driver Portal</h3>
+                                <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     View assigned routes, daily rosters, and student pickup information
                                 </p>
                                 <Link
@@ -326,7 +326,7 @@ export default function Home({ auth }) {
                                 >
                                     Access Portal
                                 </Link>
-                                <p className="text-xs text-white/60 mt-3">
+                                <p className="text-xs text-brand-primary/60 mt-3">
                                     For Drivers
                                 </p>
                             </GlassCard>
@@ -338,8 +338,8 @@ export default function Home({ auth }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Parent Portal</h3>
-                                <p className="text-white/80 mb-4 text-sm leading-relaxed">
+                                <h3 className="text-xl font-bold text-brand-primary mb-2">Parent Portal</h3>
+                                <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     Register students, book transport, manage bookings, and make payments
                                 </p>
                                 <Link
@@ -348,7 +348,7 @@ export default function Home({ auth }) {
                                 >
                                     Get Started
                                 </Link>
-                                <p className="text-xs text-white/60 mt-3">
+                                <p className="text-xs text-brand-primary/60 mt-3">
                                     For Parents
                                 </p>
                             </GlassCard>
@@ -365,10 +365,10 @@ export default function Home({ auth }) {
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand-secondary/10 rounded-full blur-3xl"></div>
                             
                             <div className="relative z-10">
-                                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3 drop-shadow-lg">
+                                <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
                                     Ready to Get Started?
                                 </h2>
-                                <p className="text-lg md:text-xl text-white/80 mb-6 font-medium max-w-2xl mx-auto">
+                                <p className="text-lg md:text-xl text-brand-primary/80 mb-6 font-medium max-w-2xl mx-auto">
                                     Join hundreds of satisfied parents who trust us with their children's safe transportation
                                 </p>
                                 {!auth?.user && (
@@ -388,8 +388,8 @@ export default function Home({ auth }) {
                 </section>
 
                 {/* Footer - Modern Redesign */}
-                <footer className="relative bg-gradient-to-b from-transparent via-white/5 to-white/10 backdrop-blur-sm border-t border-white/20">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-transparent to-brand-secondary/5"></div>
+                <footer className="relative bg-gradient-to-b from-brand-primary via-brand-primary/95 to-brand-primary backdrop-blur-sm border-t border-brand-primary/30">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/90 via-brand-primary/95 to-brand-secondary/90"></div>
                     
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
                         {/* Main Footer Content */}
@@ -550,14 +550,14 @@ export default function Home({ auth }) {
                         </div>
 
                         {/* Bottom Bar */}
-                        <div className="border-t border-white/10 pt-8 mt-8">
+                        <div className="border-t border-white/20 pt-8 mt-8">
                             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                                <p className="text-white/60 text-sm text-center md:text-left">
+                                <p className="text-white/90 text-sm text-center md:text-left">
                                     &copy; {new Date().getFullYear()} <span className="font-semibold text-white">On-Time Transportation</span>. All rights reserved.
                                 </p>
                                 
-                                <p className="text-xs text-white/50 italic text-center md:text-right max-w-2xl">
-                                    <strong className="text-white/70">Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
+                                <p className="text-xs text-white/80 italic text-center md:text-right max-w-2xl">
+                                    <strong className="text-white">Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
                                 </p>
                             </div>
                         </div>

@@ -243,9 +243,9 @@
     }
 }
 
-/* Global body background with solid color - Bright yellow from flyer */
+/* Global body background with solid color - Subtle cream/beige */
 body {
-    background: #FFEB3B;
+    background: #f5f3e7;
     background-attachment: fixed;
     min-height: 100vh;
     position: relative;
@@ -258,10 +258,10 @@ html {
 
 /* Layouts with explicit backgrounds will override body background */
 
-/* Logo Background Pattern - Bright yellow from flyer */
+/* Logo Background Pattern - Subtle cream/beige */
 .logo-background {
     position: relative;
-    background: #FFEB3B;
+    background: #f5f3e7;
     min-height: 100vh;
     overflow-x: hidden;
 }
@@ -290,7 +290,7 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 235, 59, 0.1); /* Light yellow overlay to maintain brightness */
+    background: rgba(245, 243, 231, 0.2); /* Subtle cream overlay */
     z-index: 0;
     pointer-events: none;
 }
