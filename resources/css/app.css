@@ -39,6 +39,23 @@
         color: #22304d;
     }
     
+    /* Override for SVG icons to allow yellow accent color */
+    .glass-card svg[class*="text-yellow"],
+    .glass-card svg[class*="!text-yellow"],
+    .glass-card svg.text-yellow-400,
+    .glass-card svg.\!text-yellow-400,
+    .glass-card svg[class*="yellow-400"] {
+        color: #facc15 !important; /* yellow-400 */
+        stroke: #facc15 !important; /* Force stroke color for SVG */
+    }
+    
+    /* Also override for any SVG with yellow classes outside glass-card */
+    svg[class*="!text-yellow-400"],
+    svg.\!text-yellow-400 {
+        color: #facc15 !important;
+        stroke: #facc15 !important;
+    }
+    
     /* Override for specific elements that should remain white (like buttons) */
     .glass-card .glass-button,
     .glass-card button.bg-brand-primary,
