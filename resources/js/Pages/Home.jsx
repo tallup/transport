@@ -64,10 +64,9 @@ export default function Home({ auth }) {
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                             {/* Left Content - 7 columns */}
                             <div className="lg:col-span-7 space-y-4">
-                                {/* Badge */}
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400/20 to-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 animate-fade-in">
-                                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                                    <span className="text-brand-primary font-semibold text-sm">Trusted by 500+ Families</span>
+                                {/* Hero Logo */}
+                                <div className="flex items-center">
+                                    <ApplicationLogo className="h-16 w-auto md:h-20 drop-shadow-lg" />
                                 </div>
                                 
                                 {/* Main Heading - Animated */}
@@ -79,6 +78,12 @@ export default function Home({ auth }) {
                                         Child Transportation
                                     </span>
                                 </h1>
+
+                                {/* Badge */}
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400/20 to-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 animate-fade-in">
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                    <span className="text-brand-primary font-semibold text-sm">Trusted by 500+ Families</span>
+                                </div>
                                 
                                 {/* Description */}
                                 <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl">
