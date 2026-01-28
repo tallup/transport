@@ -37,10 +37,10 @@ export default function Dashboard({
                     <div className="mb-8">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                <h1 className="text-4xl sm:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                                     Welcome back, {auth?.user?.name?.split(' ')[0] || 'User'}!
-                        </h1>
-                                <p className="text-lg font-semibold text-white/80">{formattedDate}</p>
+                                </h1>
+                                <p className="text-lg font-semibold text-brand-primary/80">{formattedDate}</p>
                             </div>
                             <div className="mt-4 sm:mt-0 flex gap-3">
                                 <Link
