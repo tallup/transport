@@ -44,16 +44,31 @@
     .glass-card svg[class*="!text-yellow"],
     .glass-card svg.text-yellow-400,
     .glass-card svg.\!text-yellow-400,
-    .glass-card svg[class*="yellow-400"] {
+    .glass-card svg[class*="yellow-400"],
+    svg[class*="!text-yellow-400"],
+    svg.\!text-yellow-400,
+    svg.text-yellow-400 {
         color: #facc15 !important; /* yellow-400 */
         stroke: #facc15 !important; /* Force stroke color for SVG */
+        fill: none !important; /* Ensure fill doesn't override stroke */
     }
     
     /* Also override for any SVG with yellow classes outside glass-card */
     svg[class*="!text-yellow-400"],
-    svg.\!text-yellow-400 {
+    svg.\!text-yellow-400,
+    svg[class*="text-yellow-400"] {
         color: #facc15 !important;
         stroke: #facc15 !important;
+        fill: none !important;
+    }
+    
+    /* More specific override for SVG elements with yellow classes - must come after .glass-card * rule */
+    .glass-card svg[class*="yellow"],
+    svg[class*="yellow-400"],
+    svg[class*="yellow-600"] {
+        color: #facc15 !important;
+        stroke: #facc15 !important;
+        fill: none !important;
     }
     
     /* Override for specific elements that should remain white (like buttons) */

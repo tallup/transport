@@ -45,12 +45,6 @@ export default function Home({ auth }) {
                                         </span>
                                     </h1>
 
-                                    {/* Badge */}
-                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-yellow-400/20 to-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 animate-fade-in">
-                                        <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
-                                        <span className="text-brand-primary font-semibold text-xs">Trusted by 500+ Families</span>
-                                    </div>
-                                    
                                     {/* Description */}
                                     <p className="text-sm md:text-base text-brand-primary/90 leading-relaxed">
                                         Private child transportation services between approved locations with parent authorization. Real-time tracking and flexible plans.
