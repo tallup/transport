@@ -63,15 +63,13 @@ export default function Home({ auth }) {
                     <div className="max-w-6xl mx-auto relative z-10 pt-4 pb-12">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                             {/* Left Content - 7 columns */}
-                            <div className="lg:col-span-7 space-y-4">
-                                {/* Hero Logo */}
-                                <div className="flex items-center">
-                                    <ApplicationLogo
-                                        className="drop-shadow-2xl"
-                                        style={{
-                                            width: '300px',
-                                            height: '300px',
-                                        }}
+                            <div className="lg:col-span-7 space-y-6">
+                                {/* Hero Logo - large and prominent on the left */}
+                                <div className="flex items-start">
+                                    <img
+                                        src="/on time.jpeg"
+                                        alt="On-Time Transportation Logo"
+                                        className="w-full max-w-[360px] md:max-w-[420px] lg:max-w-[480px] h-auto drop-shadow-2xl"
                                     />
                                 </div>
                                 
