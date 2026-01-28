@@ -66,7 +66,13 @@ export default function Home({ auth }) {
                             <div className="lg:col-span-7 space-y-4">
                                 {/* Hero Logo */}
                                 <div className="flex items-center">
-                                    <ApplicationLogo className="h-16 w-auto md:h-20 drop-shadow-lg" />
+                                    <ApplicationLogo
+                                        className="drop-shadow-2xl"
+                                        style={{
+                                            width: '300px',
+                                            height: '300px',
+                                        }}
+                                    />
                                 </div>
                                 
                                 {/* Main Heading - Animated */}
