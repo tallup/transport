@@ -65,9 +65,9 @@ export default function Home({ auth }) {
                             {/* Left Content - 7 columns */}
                             <div className="lg:col-span-7 space-y-4">
                                 {/* Badge */}
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-primary/20 to-brand-secondary/20 backdrop-blur-sm border border-brand-primary/30 animate-fade-in">
-                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="text-white/90 font-semibold text-sm">Trusted by 500+ Families</span>
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400/20 to-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 animate-fade-in">
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                    <span className="text-brand-primary font-semibold text-sm">Trusted by 500+ Families</span>
                                 </div>
                                 
                                 {/* Main Heading - Animated */}
@@ -147,14 +147,14 @@ export default function Home({ auth }) {
                             <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Everything you need for safe, reliable child transportation
                             </p>
-                            <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
+                            <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {/* Feature 1 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                 </div>
@@ -166,8 +166,8 @@ export default function Home({ auth }) {
 
                             {/* Feature 2 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
@@ -179,8 +179,8 @@ export default function Home({ auth }) {
 
                             {/* Feature 3 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
@@ -192,8 +192,8 @@ export default function Home({ auth }) {
 
                             {/* Feature 4 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
                                 </div>
@@ -205,8 +205,8 @@ export default function Home({ auth }) {
 
                             {/* Feature 5 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
@@ -218,8 +218,8 @@ export default function Home({ auth }) {
 
                             {/* Feature 6 */}
                             <GlassCard className="group hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
@@ -242,7 +242,7 @@ export default function Home({ auth }) {
                             <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Get started in just 4 simple steps
                             </p>
-                            <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
+                            <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -255,14 +255,14 @@ export default function Home({ auth }) {
                                 <div key={step.num} className="relative">
                                     <GlassCard className="text-center h-full hover:scale-105 transition-transform duration-300 p-5">
                                         <div className="relative mb-4">
-                                            <div className="bg-gradient-to-br from-brand-primary to-brand-secondary text-white w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-extrabold mx-auto shadow-lg">
+                                            <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 text-white w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-extrabold mx-auto shadow-lg">
                                                 {step.num}
                                             </div>
                                             {index < 3 && (
-                                                <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-brand-primary/50 to-transparent transform translate-x-4"></div>
+                                                <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-yellow-400/50 to-transparent transform translate-x-4"></div>
                                             )}
                                         </div>
-                                        <h3 className="text-lg font-bold text-brand-primary mb-2">{step.title}</h3>
+                                        <h3 className="text-lg font-bold text-yellow-600 mb-2">{step.title}</h3>
                                         <p className="text-brand-primary/80 text-sm leading-relaxed">
                                             {step.desc}
                                         </p>
@@ -283,18 +283,18 @@ export default function Home({ auth }) {
                             <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
                                 Access your dedicated portal based on your role
                             </p>
-                            <div className="w-20 h-1 bg-brand-primary mx-auto mt-4 rounded-full"></div>
+                            <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Admin Portal */}
                             <GlassCard className="text-center hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary to-brand-secondary w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                                <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-brand-primary mb-2">Admin Portal</h3>
+                                <h3 className="text-xl font-bold text-yellow-600 mb-2">Admin Portal</h3>
                                 <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     Manage students, vehicles, routes, bookings, and system settings
                                 </p>
@@ -311,12 +311,12 @@ export default function Home({ auth }) {
 
                             {/* Driver Portal */}
                             <GlassCard className="text-center hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary to-brand-secondary w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                                <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-brand-primary mb-2">Driver Portal</h3>
+                                <h3 className="text-xl font-bold text-yellow-600 mb-2">Driver Portal</h3>
                                 <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     View assigned routes, daily rosters, and student pickup information
                                 </p>
@@ -333,12 +333,12 @@ export default function Home({ auth }) {
 
                             {/* Parent Portal */}
                             <GlassCard className="text-center hover:scale-105 transition-transform duration-300 p-5">
-                                <div className="bg-gradient-to-br from-brand-primary to-brand-secondary w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                                <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-brand-primary mb-2">Parent Portal</h3>
+                                <h3 className="text-xl font-bold text-yellow-600 mb-2">Parent Portal</h3>
                                 <p className="text-brand-primary/80 mb-4 text-sm leading-relaxed">
                                     Register students, book transport, manage bookings, and make payments
                                 </p>
