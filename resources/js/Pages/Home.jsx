@@ -8,17 +8,11 @@ export default function Home({ auth }) {
             <Head title="Home - On-Time Transportation" />
             
             <div className="min-h-screen logo-background">
-                {/* Navigation - Transparent */}
-                <nav className="fixed w-full top-0 z-50 bg-transparent backdrop-blur-sm">
+                {/* Navigation - Transparent header with no logo */}
+                <nav className="fixed w-full top-0 z-50 bg-transparent">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
-                            <div className="flex items-center">
-                                <Link href="/" className="flex items-center group">
-                                    <div className="transform group-hover:scale-110 transition-transform">
-                                        <ApplicationLogo className="h-10 w-auto" />
-                                    </div>
-                                </Link>
-                            </div>
+                            <div className="flex items-center" />
                             <div className="flex items-center space-x-4">
                                 {auth?.user ? (
                                     <Link

@@ -118,10 +118,10 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                             Daily Roster
                         </h1>
-                        <p className="text-base sm:text-lg font-semibold text-white/90">View your schedule and student pickups</p>
+                        <p className="text-base sm:text-lg font-semibold text-brand-primary/90">View your schedule and student pickups</p>
                     </div>
 
                     {message && (
@@ -137,7 +137,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                         <GlassCard className="mb-6">
                             <div className="p-4 bg-green-500/20 border border-green-400/50 rounded-lg">
                                 <div className="flex items-center gap-3">
-                                    <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                     <p className="text-green-200 font-semibold text-lg">
@@ -208,7 +208,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                 <GlassCard>
                                     <div className="p-6 bg-blue-500/20 border border-blue-400/50 rounded-lg">
                                         <div className="flex items-center gap-3">
-                                            <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                             <p className="text-blue-200 font-semibold text-lg">
@@ -263,7 +263,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         </div>
                                                         <div className="text-right ml-4">
                                                             <div className="flex items-center gap-2 mb-2">
-                                                                <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-4 h-4 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                 </svg>
                                                                 <span className="text-sm font-bold text-green-300">Pickup: {group.pickup_point.pickup_time}</span>
@@ -321,7 +321,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                                         {booking.student.name}
                                                                                     </p>
                                                                                     {isCompleted && (
-                                                                                        <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                        <svg className="w-5 h-5 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                                                         </svg>
                                                                                     )}
