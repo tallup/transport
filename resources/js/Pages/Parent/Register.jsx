@@ -95,19 +95,19 @@ export default function Register() {
                                 <UserIcon className="h-5 w-5 text-gray-400 group-focus-within:text-brand-primary dark:group-focus-within:text-brand-primary transition-colors" />
                             )}
                         </div>
-                        <TextInput
-                            id="name"
-                            name="name"
-                            value={data.name}
+                    <TextInput
+                        id="name"
+                        name="name"
+                        value={data.name}
                             className={`glass-input pl-12 pr-4 py-3 w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                                 errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-brand-primary focus:ring-brand-primary'
                             }`}
-                            autoComplete="name"
-                            isFocused={true}
-                            onChange={(e) => setData('name', e.target.value)}
-                            required
-                            placeholder="Enter your full name"
-                        />
+                        autoComplete="name"
+                        isFocused={true}
+                        onChange={(e) => setData('name', e.target.value)}
+                        required
+                        placeholder="Enter your full name"
+                    />
                     </div>
                     <InputError message={errors.name} className="mt-1" />
                 </div>
@@ -123,19 +123,19 @@ export default function Register() {
                                 <EnvelopeIcon className="h-5 w-5 text-gray-400 group-focus-within:text-brand-primary dark:group-focus-within:text-brand-primary transition-colors" />
                             )}
                         </div>
-                        <TextInput
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
+                    <TextInput
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={data.email}
                             className={`glass-input pl-12 pr-4 py-3 w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                                 errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-brand-primary focus:ring-brand-primary'
                             }`}
-                            autoComplete="username"
-                            onChange={(e) => setData('email', e.target.value)}
-                            required
-                            placeholder="your.email@example.com"
-                        />
+                        autoComplete="username"
+                        onChange={(e) => setData('email', e.target.value)}
+                        required
+                        placeholder="your.email@example.com"
+                    />
                     </div>
                     <InputError message={errors.email} className="mt-1" />
                 </div>
@@ -151,19 +151,19 @@ export default function Register() {
                                 <LockClosedIcon className="h-5 w-5 text-gray-400 group-focus-within:text-brand-primary dark:group-focus-within:text-brand-primary transition-colors" />
                             )}
                         </div>
-                        <TextInput
-                            id="password"
+                    <TextInput
+                        id="password"
                             type={showPassword ? 'text' : 'password'}
-                            name="password"
-                            value={data.password}
+                        name="password"
+                        value={data.password}
                             className={`glass-input pl-12 pr-12 py-3 w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                                 errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-brand-primary focus:ring-brand-primary'
                             }`}
-                            autoComplete="new-password"
-                            onChange={(e) => setData('password', e.target.value)}
-                            required
-                            placeholder="Create a secure password"
-                        />
+                        autoComplete="new-password"
+                        onChange={(e) => setData('password', e.target.value)}
+                        required
+                        placeholder="Create a secure password"
+                    />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
@@ -209,21 +209,21 @@ export default function Register() {
                                 <LockClosedIcon className="h-5 w-5 text-gray-400 group-focus-within:text-brand-primary dark:group-focus-within:text-brand-primary transition-colors" />
                             )}
                         </div>
-                        <TextInput
-                            id="password_confirmation"
+                    <TextInput
+                        id="password_confirmation"
                             type={showPasswordConfirmation ? 'text' : 'password'}
-                            name="password_confirmation"
-                            value={data.password_confirmation}
+                        name="password_confirmation"
+                        value={data.password_confirmation}
                             className={`glass-input pl-12 pr-12 py-3 w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                                 errors.password_confirmation ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'focus:border-brand-primary focus:ring-brand-primary'
                             }`}
-                            autoComplete="new-password"
-                            onChange={(e) =>
-                                setData('password_confirmation', e.target.value)
-                            }
-                            required
-                            placeholder="Confirm your password"
-                        />
+                        autoComplete="new-password"
+                        onChange={(e) =>
+                            setData('password_confirmation', e.target.value)
+                        }
+                        required
+                        placeholder="Confirm your password"
+                    />
                         <button
                             type="button"
                             onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
