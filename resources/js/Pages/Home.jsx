@@ -37,7 +37,7 @@ export default function Home({ auth }) {
                                         </Link>
                                         <Link
                                             href="/parent/register"
-                                            className="bg-brand-primary hover:bg-brand-secondary text-white px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
+                                            className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
                                         >
                                             Get Started
                                         </Link>
@@ -91,7 +91,7 @@ export default function Home({ auth }) {
                                         <>
                                             <Link
                                                 href="/parent/register"
-                                                className="group relative bg-gradient-to-r from-brand-primary to-brand-secondary text-white px-8 py-3.5 rounded-lg font-bold text-base transition-all shadow-lg hover:shadow-xl hover:shadow-brand-primary/30 transform hover:scale-[1.02] flex items-center gap-2 overflow-hidden"
+                                                className="group relative bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 py-3.5 rounded-lg font-bold text-base transition-all shadow-lg hover:shadow-xl hover:shadow-yellow-500/30 transform hover:scale-[1.02] flex items-center gap-2 overflow-hidden"
                                             >
                                                 <span>Get Started</span>
                                                 <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ export default function Home({ auth }) {
                                             </Link>
                                             <Link
                                                 href="/login"
-                                                className="bg-white/5 backdrop-blur-sm border border-white/20 text-white px-8 py-3.5 rounded-lg font-bold text-base hover:bg-white/10 hover:border-white/30 transition-all flex items-center gap-2"
+                                                className="bg-yellow-400/10 backdrop-blur-sm border border-yellow-400/30 text-yellow-600 px-8 py-3.5 rounded-lg font-bold text-base hover:bg-yellow-400/20 hover:border-yellow-400/50 transition-all flex items-center gap-2"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -300,7 +300,7 @@ export default function Home({ auth }) {
                                 </p>
                                 <Link
                                     href="/login"
-                                    className="inline-block bg-brand-primary hover:bg-brand-secondary text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                                    className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                                 >
                                     Access Portal
                                 </Link>
@@ -322,7 +322,7 @@ export default function Home({ auth }) {
                                 </p>
                                 <Link
                                     href="/login"
-                                    className="inline-block bg-brand-primary hover:bg-brand-secondary text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                                    className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                                 >
                                     Access Portal
                                 </Link>
@@ -344,7 +344,7 @@ export default function Home({ auth }) {
                                 </p>
                                 <Link
                                     href="/parent/register"
-                                    className="inline-block bg-brand-primary hover:bg-brand-secondary text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                                    className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                                 >
                                     Get Started
                                 </Link>
@@ -374,7 +374,7 @@ export default function Home({ auth }) {
                                 {!auth?.user && (
                                     <Link
                                         href="/parent/register"
-                                        className="inline-flex items-center gap-3 bg-brand-primary hover:bg-brand-secondary text-white px-12 py-5 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-brand-primary/50 transform hover:scale-105"
+                                        className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white px-12 py-5 rounded-xl font-bold text-lg transition-all shadow-2xl hover:shadow-yellow-500/50 transform hover:scale-105"
                                     >
                                         <span>Register Now - It's Free</span>
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
