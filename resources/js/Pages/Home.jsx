@@ -48,38 +48,28 @@ export default function Home({ auth }) {
                     </div>
                 </nav>
 
-                {/* Hero Section - Modern Design */}
-                <section className="relative pt-28 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-                    {/* Gradient Background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#1a2332] via-[#22304d] to-[#1a2332]"></div>
-                    
-                    {/* Animated Orbs */}
-                    <div className="absolute inset-0 overflow-hidden">
-                        <div className="absolute -top-40 -left-40 w-80 h-80 bg-brand-primary/20 rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-brand-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                        <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-brand-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
-                    </div>
-                    
-                    <div className="max-w-6xl mx-auto relative z-10 pt-4 pb-12">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Hero Section - White background, fits within viewport */}
+                <section className="relative bg-white min-h-[calc(100vh-4rem)] px-4 sm:px-6 lg:px-8 flex items-center overflow-hidden">
+                    <div className="max-w-6xl mx-auto w-full py-6 lg:py-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                             {/* Left Content - 7 columns */}
                             <div className="lg:col-span-7 space-y-6">
                                 {/* Hero Logo - large and prominent on the left */}
-                                <div className="flex items-start">
+                                <div className="flex items-start justify-center lg:justify-start">
                                     <img
                                         src="/on time.jpeg"
                                         alt="On-Time Transportation Logo"
-                                        className="w-full max-w-[360px] md:max-w-[420px] lg:max-w-[480px] h-auto drop-shadow-2xl"
+                                        className="w-full max-w-[420px] lg:max-w-[520px] h-auto drop-shadow-2xl"
                                     />
                                 </div>
                                 
                                 {/* Main Heading - Animated */}
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1]">
+                                <h1 className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-brand-primary leading-[1.05]">
                                     <span className="block animate-slide-up" style={{ animationDelay: '0.2s' }}>
                                         Safe & Reliable
                                     </span>
-                                    <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary animate-slide-up animate-gradient" style={{ animationDelay: '0.4s', backgroundSize: '200% 200%' }}>
-                                        Child Transportation
+                                    <span className="block mt-2 text-2xl md:text-3xl font-semibold text-brand-primary">
+                                        Kids Transportation • Marysville • Everett • Lynnwood
                                     </span>
                                 </h1>
 
@@ -90,7 +80,7 @@ export default function Home({ auth }) {
                                 </div>
                                 
                                 {/* Description */}
-                                <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl">
+                                <p className="text-lg md:text-xl text-brand-primary/90 leading-relaxed max-w-2xl">
                                     Private child transportation services between approved locations with parent authorization. Real-time tracking and flexible plans.
                                 </p>
                                 
