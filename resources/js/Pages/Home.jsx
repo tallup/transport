@@ -11,7 +11,7 @@ export default function Home({ auth }) {
                 {/* Navigation - Transparent header with no logo */}
                 <nav className="fixed w-full top-0 z-50 bg-transparent">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
+                        <div className="flex justify-between h-8">
                             <div className="flex items-center" />
                             {/* Navigation buttons removed - they're in the hero section */}
                         </div>
@@ -19,7 +19,7 @@ export default function Home({ auth }) {
                 </nav>
 
                 {/* Hero Section - Transparent background, fits within viewport */}
-                <section className="relative min-h-[calc(100vh-4rem)] px-4 sm:px-6 lg:px-8 flex items-center overflow-hidden pt-16">
+                <section className="relative min-h-[calc(100vh-2rem)] px-4 sm:px-6 lg:px-8 flex items-center overflow-hidden pt-8">
                     <div className="max-w-6xl mx-auto w-full py-2">
                         <div className="space-y-4">
                             {/* Main Content Grid */}
@@ -33,7 +33,7 @@ export default function Home({ auth }) {
                                     />
                                 </div>
                                 
-                                {/* Right Content - Text and CTA */}
+                                {/* Right Content - Text, CTA, and Stats Cards */}
                                 <div className="lg:col-span-5 space-y-2 lg:space-y-3 flex flex-col justify-center">
                                     {/* Main Heading */}
                                     <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-brand-primary leading-[1.05]">
@@ -81,28 +81,28 @@ export default function Home({ auth }) {
                                             </>
                                         )}
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Stats Cards - Below main content */}
-                            <div className="flex justify-center lg:justify-start pt-2">
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 max-w-2xl">
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">100%</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Safe & Secure</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">24/7</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Support</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">99%</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">On-Time</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">500+</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Families</div>
-                                    </GlassCard>
+                                    {/* Stats Cards - Below buttons on the right */}
+                                    <div className="pt-2">
+                                        <div className="grid grid-cols-2 gap-2.5">
+                                            <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                                <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">100%</div>
+                                                <div className="text-xs text-brand-primary/80 font-medium">Safe & Secure</div>
+                                            </GlassCard>
+                                            <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                                <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">24/7</div>
+                                                <div className="text-xs text-brand-primary/80 font-medium">Support</div>
+                                            </GlassCard>
+                                            <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                                <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">99%</div>
+                                                <div className="text-xs text-brand-primary/80 font-medium">On-Time</div>
+                                            </GlassCard>
+                                            <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                                <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">500+</div>
+                                                <div className="text-xs text-brand-primary/80 font-medium">Families</div>
+                                            </GlassCard>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
