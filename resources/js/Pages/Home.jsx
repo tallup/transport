@@ -22,34 +22,12 @@ export default function Home({ auth }) {
                 <section className="relative min-h-[calc(100vh-4rem)] px-4 sm:px-6 lg:px-8 flex items-center overflow-hidden pt-16">
                     <div className="max-w-6xl mx-auto w-full py-2">
                         <div className="space-y-4">
-                            {/* Stats Cards - Moved to Top */}
-                            <div className="flex justify-center lg:justify-start">
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 max-w-2xl">
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">100%</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Safe & Secure</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">24/7</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Support</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">99%</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">On-Time</div>
-                                    </GlassCard>
-                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
-                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">500+</div>
-                                        <div className="text-xs text-brand-primary/80 font-medium">Families</div>
-                                    </GlassCard>
-                                </div>
-                            </div>
-
                             {/* Main Content Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-start">
                                 {/* Left Content - Logo */}
                                 <div className="lg:col-span-7 flex justify-center lg:justify-start">
                                     <img
-                                        src="/on time.jpeg"
+                                        src="/logo.png"
                                         alt="On-Time Transportation Logo"
                                         className="w-full max-w-[380px] lg:max-w-[450px] h-auto drop-shadow-2xl"
                                     />
@@ -103,6 +81,28 @@ export default function Home({ auth }) {
                                             </>
                                         )}
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Stats Cards - Below main content */}
+                            <div className="flex justify-center lg:justify-start pt-2">
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 max-w-2xl">
+                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">100%</div>
+                                        <div className="text-xs text-brand-primary/80 font-medium">Safe & Secure</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">24/7</div>
+                                        <div className="text-xs text-brand-primary/80 font-medium">Support</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">99%</div>
+                                        <div className="text-xs text-brand-primary/80 font-medium">On-Time</div>
+                                    </GlassCard>
+                                    <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
+                                        <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">500+</div>
+                                        <div className="text-xs text-brand-primary/80 font-medium">Families</div>
+                                    </GlassCard>
                                 </div>
                             </div>
                         </div>
