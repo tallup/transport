@@ -160,10 +160,12 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                     {steps.map((s, index) => (
                                         <div key={s.number} className="flex items-center flex-shrink-0">
                                             <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                                                    step >= s.number
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-white/20 text-white/60 border border-white/30'
+                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border ${
+                                                    step > s.number
+                                                        ? 'bg-yellow-400/35 border-yellow-400/60 text-brand-primary'
+                                                        : step === s.number
+                                                            ? 'bg-yellow-400/60 border-yellow-400 text-brand-primary'
+                                                            : 'bg-yellow-400/25 border-yellow-400/40 text-brand-primary'
                                                 }`}
                                             >
                                                 {s.number + 1}
@@ -171,7 +173,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             {index < steps.length - 1 && (
                                                 <div
                                                     className={`w-8 md:w-12 h-1 mx-1 ${
-                                                        step > s.number ? 'bg-blue-500' : 'bg-white/20'
+                                                        step > s.number ? 'bg-yellow-400/60' : 'bg-white/20'
                                                     }`}
                                                 />
                                             )}
