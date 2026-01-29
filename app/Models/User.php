@@ -154,8 +154,8 @@ class User extends Authenticatable
             ->value('role');
         
         if ($panel->getId() === 'admin') {
-            // Only super_admin and transport_admin can access admin panel
-            return in_array($role, ['super_admin', 'transport_admin']);
+            // Allow all admin roles to access admin panel
+            return in_array($role, ['super_admin', 'transport_admin', 'admin']);
         }
 
         if ($panel->getId() === 'driver') {

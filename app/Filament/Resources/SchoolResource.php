@@ -23,6 +23,11 @@ class SchoolResource extends Resource
         // Allow all admin roles to access schools
         $user = \Illuminate\Support\Facades\Auth::user();
         
+        // If no user is authenticated, deny access (this can happen during resource discovery)
+        if (!$user) {
+            return false;
+        }
+        
         if ($user instanceof \App\Models\User) {
             $role = $user->role;
         } else {

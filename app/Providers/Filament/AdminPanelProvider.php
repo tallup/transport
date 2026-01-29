@@ -54,16 +54,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->canAccessPanel(function (\Illuminate\Contracts\Auth\Authenticatable $user): bool {
-                // Allow all admin roles to access the Filament panel
-                if ($user instanceof \App\Models\User) {
-                    $role = $user->role;
-                } else {
-                    $role = $user->role ?? null;
-                }
-                
-                return in_array($role, ['super_admin', 'transport_admin', 'admin']);
-            });
+            ]);
     }
 }
