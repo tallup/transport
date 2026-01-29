@@ -169,9 +169,9 @@ class DashboardController extends Controller
         $period = $period ?? $this->getRoutePeriod($route);
         
         // Get all active bookings for this route on this date
-        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
+        // Include 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $totalBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'awaiting_approval'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -184,9 +184,9 @@ class DashboardController extends Controller
         }
 
         // Check if all bookings have daily pickup records for today and period
-        // Only check 'active' bookings (not 'pending' - those haven't been paid yet)
+        // Check 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $bookingsWithPickups = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'awaiting_approval'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -301,10 +301,10 @@ class DashboardController extends Controller
 
         // Today's schedule timeline
         // Fetch bookings that are active today (within their booking period)
-        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
+        // Show 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $todaySchedule = [];
         $todayBookingsList = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'awaiting_approval'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -387,7 +387,7 @@ class DashboardController extends Controller
                 : 0,
         ];
 
-        // Detailed student list
+        // Detailed student list (using the same bookings list from todaySchedule)
         $studentsList = [];
         foreach ($pickupPoints as $pickupPoint) {
             $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
@@ -605,9 +605,9 @@ class DashboardController extends Controller
         }
 
         $today = Carbon::today();
-        // Only show 'active' bookings on routes (not 'pending' - those haven't been paid yet)
+        // Show 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $activeBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'awaiting_approval'])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
