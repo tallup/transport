@@ -76,8 +76,8 @@ export default function Index({ bookings }) {
 
                             {bookings.data && bookings.data.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200/50">
-                                        <thead className="bg-white/10">
+                                    <table className="min-w-full divide-y divide-brand-primary/10 border border-brand-primary/10 rounded-lg overflow-hidden">
+                                        <thead className="bg-white/10 border-b border-brand-primary/10">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
                                                     Student
@@ -105,7 +105,7 @@ export default function Index({ bookings }) {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-gray-200/30">
+                                        <tbody className="bg-white/5 divide-y divide-brand-primary/10">
                                             {bookings.data.map((booking) => (
                                                 <tr key={booking.id} className="hover:bg-white/10 transition">
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
