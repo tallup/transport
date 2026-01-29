@@ -30,7 +30,7 @@ export default function BookingsIndex({ bookings }) {
                             </div>
 
                             {bookings && bookings.length > 0 ? (
-                                <div className="divide-y divide-white/10">
+                                <div className="divide-y divide-brand-primary/10">
                                     {bookings.map((booking) => (
                                         <div key={booking.id} className="py-4 first:pt-0 last:pb-0">
                                             <div className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition">

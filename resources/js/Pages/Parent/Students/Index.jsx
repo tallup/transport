@@ -66,9 +66,10 @@ export default function StudentsIndex({ students }) {
                             </div>
 
                             {students && students.length > 0 ? (
-                                <div className="space-y-4">
+                                <div className="divide-y divide-brand-primary/10">
                                     {students.map((student) => (
-                                        <div key={student.id} className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition">
+                                        <div key={student.id} className="py-4 first:pt-0 last:pb-0">
+                                            <div className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition">
                                             <div className="flex justify-between items-start">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-4 mb-4">
@@ -240,6 +241,7 @@ export default function StudentsIndex({ students }) {
                                                         Book Transport
                                                     </Link>
                                                 </div>
+                                            </div>
                                             </div>
                                         </div>
                                     ))}

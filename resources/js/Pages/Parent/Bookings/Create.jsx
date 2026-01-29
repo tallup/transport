@@ -306,7 +306,7 @@ export default function CreateBooking({ students, routes }) {
                                                         ? 'bg-yellow-400/35 border-yellow-400/60 text-brand-primary'
                                                         : step === s
                                                             ? 'bg-yellow-400/60 border-yellow-400 text-brand-primary'
-                                                            : 'bg-white/10 border-white/20 text-white/70'
+                                                            : 'bg-yellow-400/25 border-yellow-400/40 text-brand-primary'
                                                 }`}
                                             >
                                                 {s + 1}
@@ -376,16 +376,16 @@ export default function CreateBooking({ students, routes }) {
                                                 </a>
                                             </div>
                                         ) : (
-                                            <div className="space-y-2">
+                                            <div className="divide-y divide-brand-primary/10">
                                                 {students.map((student) => (
-                                                    <label
-                                                        key={student.id}
-                                                        className={`block p-4 border rounded-xl cursor-pointer transition ${
-                                                            data.student_id == student.id
-                                                                ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
-                                                                : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
-                                                        }`}
-                                                    >
+                                                    <div key={student.id} className="py-2 first:pt-0 last:pb-0">
+                                                        <label
+                                                            className={`block p-4 border rounded-xl cursor-pointer transition ${
+                                                                data.student_id == student.id
+                                                                    ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
+                                                            }`}
+                                                        >
                                                         <input
                                                             type="radio"
                                                             name="student_id"
@@ -398,7 +398,8 @@ export default function CreateBooking({ students, routes }) {
                                                         {student.school && (
                                                             <span className="text-white/90 ml-2 font-semibold">- {student.school.name}</span>
                                                         )}
-                                                    </label>
+                                                        </label>
+                                                    </div>
                                                 ))}
                                                 {errors.student_id && (
                                                     <p className="text-red-300 text-sm font-semibold">{errors.student_id}</p>
@@ -430,10 +431,10 @@ export default function CreateBooking({ students, routes }) {
                                                 </p>
                                             </div>
                                         ) : (
-                                            <div className="space-y-4">
+                                            <div className="divide-y divide-brand-primary/10">
                                                 {filteredRoutes.map((route) => (
+                                                <div key={route.id} className="py-2 first:pt-0 last:pb-0">
                                                 <label
-                                                    key={route.id}
                                                     className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                         data.route_id == route.id
                                                             ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
@@ -480,6 +481,7 @@ export default function CreateBooking({ students, routes }) {
                                                         </div>
                                                     </div>
                                                 </label>
+                                                </div>
                                                 ))}
                                                 {errors.route_id && (
                                                     <p className="text-red-300 text-sm font-semibold">{errors.route_id}</p>
@@ -546,10 +548,10 @@ export default function CreateBooking({ students, routes }) {
                                                 <label className="block text-base font-bold text-white mb-2">
                                                     Select Pickup Point <span className="text-red-300">*</span>
                                                 </label>
-                                                <div className="space-y-2">
+                                                <div className="divide-y divide-brand-primary/10">
                                                     {selectedRoute.pickup_points.map((point) => (
+                                                        <div key={point.id} className="py-2 first:pt-0 last:pb-0">
                                                         <label
-                                                            key={point.id}
                                                             className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                                 data.pickup_point_id == point.id
                                                                     ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
@@ -584,6 +586,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 </div>
                                                             </div>
                                                         </label>
+                                                        </div>
                                                     ))}
                                                 </div>
                                                 {errors.pickup_point_id && (
