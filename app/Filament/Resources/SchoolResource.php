@@ -18,9 +18,11 @@ class SchoolResource extends Resource
     
     protected static ?string $navigationGroup = 'Management';
 
-    public static function canViewAny(\Illuminate\Contracts\Auth\Authenticatable $user): bool
+    public static function canViewAny(): bool
     {
         // Allow all admin roles to access schools
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
         if ($user instanceof \App\Models\User) {
             $role = $user->role;
         } else {
