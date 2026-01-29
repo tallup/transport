@@ -48,17 +48,17 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                             <div>
                                 <Link
                                     href="/parent/bookings"
-                                    className="text-blue-400 hover:text-blue-300 font-semibold mb-2 inline-flex items-center gap-2"
+                                    className="text-brand-primary hover:text-brand-primary/80 font-semibold mb-2 inline-flex items-center gap-2"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                     </svg>
                                     Back to Bookings
                                 </Link>
-                                <h1 className="text-4xl font-extrabold text-white drop-shadow-lg">
+                                <h1 className="text-4xl font-extrabold text-brand-primary drop-shadow-lg">
                                     All Pickup History
                                 </h1>
-                                <p className="text-white/70 mt-2 font-semibold">
+                                <p className="text-brand-primary/80 mt-2 font-semibold">
                                     Complete pickup history for all your children
                                 </p>
                             </div>
