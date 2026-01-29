@@ -18,6 +18,18 @@ class SchoolResource extends Resource
     
     protected static ?string $navigationGroup = 'Management';
 
+    public static function canViewAny(\Illuminate\Contracts\Auth\Authenticatable $user): bool
+    {
+        // Allow all admin roles to access schools
+        if ($user instanceof \App\Models\User) {
+            $role = $user->role;
+        } else {
+            $role = $user->role ?? null;
+        }
+        
+        return in_array($role, ['super_admin', 'transport_admin', 'admin']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
