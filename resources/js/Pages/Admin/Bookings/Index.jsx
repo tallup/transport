@@ -105,9 +105,9 @@ export default function Index({ bookings }) {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-brand-primary/10">
+                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                             {bookings.data.map((booking) => (
-                                                <tr key={booking.id} className="hover:bg-white/10 transition">
+                                                <tr key={booking.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
                                                         {booking.student?.name}
                                                     </td>

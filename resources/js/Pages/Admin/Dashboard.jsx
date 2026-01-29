@@ -374,7 +374,7 @@ export default function AdminDashboard({
                             </Link>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200/30">
+                            <table className="min-w-full divide-y divide-brand-primary/20">
                                 <thead className="bg-white/10">
                                     <tr>
                                         <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Route</th>
@@ -384,9 +384,9 @@ export default function AdminDashboard({
                                         <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Capacity</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white/5 divide-y divide-gray-200/20">
+                                <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                     {(activeRoutes || []).slice(0, 5).map((route) => (
-                                        <tr key={route.id} className="hover:bg-white/10 transition">
+                                        <tr key={route.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                             <td className="px-4 py-3 text-base font-bold text-white">{route.name}</td>
                                             <td className="px-4 py-3 text-base font-semibold text-white/90">{route.vehicle}</td>
                                             <td className="px-4 py-3 text-base font-semibold text-white/90">{route.driver}</td>
@@ -410,7 +410,7 @@ export default function AdminDashboard({
                         {recentBookings && recentBookings.length > 0 ? (
                             <>
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200/30">
+                                    <table className="min-w-full divide-y divide-brand-primary/20">
                                         <thead className="bg-white/10">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Student</th>
@@ -419,9 +419,9 @@ export default function AdminDashboard({
                                                 <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Date</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-gray-200/20">
+                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                             {recentBookings.map((booking) => (
-                                                <tr key={booking.id} className="hover:bg-white/10 transition">
+                                                <tr key={booking.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                     <td className="px-4 py-3 text-base font-bold text-white">
                                                         {booking.student?.name}
                                                     </td>

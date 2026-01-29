@@ -268,7 +268,7 @@ export default function FinanceDashboard({
                         <div className="p-6">
                             <h3 className="text-lg font-semibold text-white mb-4">Bookings by Plan Type</h3>
                             <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200/50">
+                                <table className="min-w-full divide-y divide-brand-primary/20">
                                     <thead className="bg-white/10">
                                         <tr>
                                             <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
@@ -282,10 +282,10 @@ export default function FinanceDashboard({
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white/5 divide-y divide-gray-200/30">
+                                    <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                         {revenueByPlanType && revenueByPlanType.length > 0 ? (
                                             revenueByPlanType.map((item, index) => (
-                                                <tr key={index} className="hover:bg-white/10 transition">
+                                                <tr key={index} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                     <td className="px-4 py-4 whitespace-nowrap">
                                                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
                                                             {item.label}

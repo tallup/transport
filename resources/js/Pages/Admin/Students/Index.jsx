@@ -35,7 +35,7 @@ export default function Index({ students }) {
 
                             {students.data && students.data.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200/50">
+                                    <table className="min-w-full divide-y divide-brand-primary/20">
                                         <thead className="bg-white/10">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
@@ -58,9 +58,9 @@ export default function Index({ students }) {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-gray-200/30">
+                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                             {students.data.map((student) => (
-                                                <tr key={student.id} className="hover:bg-white/10 transition">
+                                                <tr key={student.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
                                                         {student.name}
                                                     </td>

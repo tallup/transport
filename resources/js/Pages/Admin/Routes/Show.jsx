@@ -330,7 +330,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                 </h3>
                                 {activeBookings.length > 0 ? (
                                     <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-gray-200/30">
+                                        <table className="min-w-full divide-y divide-brand-primary/20">
                                             <thead className="bg-white/10">
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-sm font-bold text-white">Student</th>
@@ -341,9 +341,9 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                     <th className="px-4 py-3 text-left text-sm font-bold text-white">End Date</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="bg-white/5 divide-y divide-gray-200/20">
+                                            <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                                 {activeBookings.map((booking) => (
-                                                    <tr key={booking.id} className="hover:bg-white/10 transition">
+                                                    <tr key={booking.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                         <td className="px-4 py-3 text-white font-semibold">
                                                             {booking.student.name}
                                                         </td>

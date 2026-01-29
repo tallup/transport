@@ -35,7 +35,7 @@ export default function Index({ routes }) {
 
                             {routes.data && routes.data.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200/50">
+                                    <table className="min-w-full divide-y divide-brand-primary/20">
                                         <thead className="bg-white/10">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
@@ -64,9 +64,9 @@ export default function Index({ routes }) {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-gray-200/30">
+                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                                             {routes.data.map((route) => (
-                                                <tr key={route.id} className="hover:bg-white/10 transition">
+                                                <tr key={route.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
                                                         {route.name}
                                                     </td>
