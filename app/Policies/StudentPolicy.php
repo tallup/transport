@@ -14,7 +14,7 @@ class StudentPolicy
     public function viewAny(User $user): bool
     {
         // Admins can view all students
-        if (in_array($user->role, ['super_admin', 'transport_admin'])) {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'])) {
             return true;
         }
         
@@ -32,7 +32,7 @@ class StudentPolicy
     public function view(User $user, Student $student): bool
     {
         // Admins can view any student
-        if (in_array($user->role, ['super_admin', 'transport_admin'])) {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'])) {
             return true;
         }
         
@@ -50,7 +50,7 @@ class StudentPolicy
     public function create(User $user): bool
     {
         // Only admins and parents can create students
-        return in_array($user->role, ['super_admin', 'transport_admin', 'parent']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin', 'parent']);
     }
 
     /**
@@ -59,7 +59,7 @@ class StudentPolicy
     public function update(User $user, Student $student): bool
     {
         // Admins can update any student
-        if (in_array($user->role, ['super_admin', 'transport_admin'])) {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'])) {
             return true;
         }
         
@@ -77,7 +77,7 @@ class StudentPolicy
     public function delete(User $user, Student $student): bool
     {
         // Only admins can delete students
-        if (in_array($user->role, ['super_admin', 'transport_admin'])) {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'])) {
             return true;
         }
         
@@ -96,7 +96,7 @@ class StudentPolicy
     public function restore(User $user, Student $student): bool
     {
         // Only admins can restore students
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -105,6 +105,6 @@ class StudentPolicy
     public function forceDelete(User $user, Student $student): bool
     {
         // Only super admins can permanently delete students
-        return $user->role === 'super_admin';
+        return in_array($user->role, ['super_admin', 'admin']);
     }
 }

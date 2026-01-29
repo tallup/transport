@@ -76,7 +76,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                         return (
                             <GlassCard key={planTypeKey} className="mb-6">
                                 <div className="p-6">
-                                    <div className="px-6 py-4 border-b border-white/20 mb-4">
+                                    <div className="px-6 py-4 border-b border-brand-primary/20 mb-4">
                                         <h3 className="text-lg font-semibold text-white">{planTypeLabel} Pricing</h3>
                                     </div>
                                     
@@ -94,7 +94,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                         <div className="overflow-x-auto">
                                             <table className="w-full">
                                                 <thead>
-                                                    <tr className="border-b border-white/20">
+                                                    <tr className="border-b border-brand-primary/20">
                                                         <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Scope</th>
                                                         <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Vehicle Type</th>
                                                         <th className="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Price</th>
@@ -104,7 +104,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                                 </thead>
                                                 <tbody>
                                                     {rules.map((rule) => (
-                                                        <tr key={rule.id} className="border-b border-white/10 hover:bg-white/5 transition">
+                                                        <tr key={rule.id} className="border-b border-brand-primary/20 hover:bg-white/5 transition">
                                                             <td className="px-4 py-3">
                                                                 {getScopeBadge(rule)}
                                                             </td>
