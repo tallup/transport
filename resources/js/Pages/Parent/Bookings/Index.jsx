@@ -30,45 +30,46 @@ export default function BookingsIndex({ bookings }) {
                             </div>
 
                             {bookings && bookings.length > 0 ? (
-                                <div className="space-y-4">
+                                <div className="divide-y divide-white/10">
                                     {bookings.map((booking) => (
-                                        <div key={booking.id} className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition">
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-4 mb-2">
-                                                        <h3 className="text-lg font-bold text-white">{booking.student?.name}</h3>
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                                                            booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
-                                                            booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                                            booking.status === 'awaiting_approval' ? 'bg-amber-500/30 text-amber-100 border-amber-400/50' :
-                                                            booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
-                                                            'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                        }`}>
-                                                            {formatStatus(booking.status)}
-                                                        </span>
+                                        <div key={booking.id} className="py-4 first:pt-0 last:pb-0">
+                                            <div className="border border-white/30 bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-4 mb-2">
+                                                            <h3 className="text-lg font-bold text-white">{booking.student?.name}</h3>
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                                                                booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                                                booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
+                                                                booking.status === 'awaiting_approval' ? 'bg-amber-500/30 text-amber-100 border-amber-400/50' :
+                                                                booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
+                                                                'bg-gray-500/30 text-gray-200 border-gray-400/50'
+                                                            }`}>
+                                                                {formatStatus(booking.status)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-base font-semibold text-white/90">
+                                                            <div>
+                                                                <span className="font-bold text-white">Route:</span> {booking.route?.name}
+                                                            </div>
+                                                            <div>
+                                                                <span className="font-bold text-white">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
+                                                            </div>
+                                                            <div>
+                                                                <span className="font-bold text-white">Plan:</span> {booking.plan_type?.replace('_', '-').toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <span className="font-bold text-white">Start:</span> {new Date(booking.start_date).toLocaleDateString()}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-base font-semibold text-white/90">
-                                                        <div>
-                                                            <span className="font-bold text-white">Route:</span> {booking.route?.name}
-                                                        </div>
-                                                        <div>
-                                                            <span className="font-bold text-white">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
-                                                        </div>
-                                                        <div>
-                                                            <span className="font-bold text-white">Plan:</span> {booking.plan_type?.replace('_', '-').toUpperCase()}
-                                                        </div>
-                                                        <div>
-                                                            <span className="font-bold text-white">Start:</span> {new Date(booking.start_date).toLocaleDateString()}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-2 flex-wrap">
-                                                    <Link
-                                                        href={`/parent/bookings/${booking.id}`}
-                                                        className="px-4 py-2 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition text-sm"
-                                                    >
-                                                        View
-                                                    </Link>
+                                                    <div className="flex gap-2 flex-wrap">
+                                                        <Link
+                                                            href={`/parent/bookings/${booking.id}`}
+                                                            className="px-4 py-2 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition text-sm"
+                                                        >
+                                                            View
+                                                        </Link>
                                                     {booking.status === 'pending' ? (
                                                         <>
                                                             <Link
@@ -167,6 +168,7 @@ export default function BookingsIndex({ bookings }) {
                                                             Delete
                                                         </button>
                                                     )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
