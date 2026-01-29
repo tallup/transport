@@ -85,21 +85,21 @@ export default function StudentsIndex({ students }) {
                                                         )}
                                                     </div>
                                                     
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-base font-semibold text-white/90">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-base font-semibold text-white/90">
                                                         {student.date_of_birth && (
-                                                            <div>
+                                                            <div className="rounded-lg border border-white/20 bg-white/5 px-3 py-2">
                                                                 <span className="font-bold text-white">Date of Birth:</span>{' '}
                                                                 <span className="text-white/90">{new Date(student.date_of_birth).toLocaleDateString()}</span>
                                                             </div>
                                                         )}
                                                         {student.grade && (
-                                                            <div>
+                                                            <div className="rounded-lg border border-white/20 bg-white/5 px-3 py-2">
                                                                 <span className="font-bold text-white">Grade:</span>{' '}
                                                                 <span className="text-white/90">{student.grade}</span>
                                                             </div>
                                                         )}
                                                         {student.emergency_contact_name && (
-                                                            <div>
+                                                            <div className="rounded-lg border border-white/20 bg-white/5 px-3 py-2">
                                                                 <span className="font-bold text-white">Emergency Contact:</span>{' '}
                                                                 <span className="text-white/90">{student.emergency_contact_name}</span>
                                                                 {student.emergency_phone && (
@@ -108,7 +108,7 @@ export default function StudentsIndex({ students }) {
                                                             </div>
                                                         )}
                                                         {student.home_address && (
-                                                            <div className="md:col-span-2 lg:col-span-3">
+                                                            <div className="md:col-span-2 lg:col-span-3 rounded-lg border border-white/20 bg-white/5 px-3 py-2">
                                                                 <span className="font-bold text-white">Home Address:</span>{' '}
                                                                 <span className="text-white/90">{student.home_address}</span>
                                                             </div>

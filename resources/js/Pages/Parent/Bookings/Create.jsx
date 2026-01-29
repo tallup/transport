@@ -301,10 +301,12 @@ export default function CreateBooking({ students, routes }) {
                                     {[0, 1, 2, 3, 4].map((s) => (
                                         <div key={s} className="flex items-center">
                                             <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                                                    step >= s
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-white/20 text-white/60 border border-white/30'
+                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border ${
+                                                    step > s
+                                                        ? 'bg-yellow-400/35 border-yellow-400/60 text-brand-primary'
+                                                        : step === s
+                                                            ? 'bg-yellow-400/60 border-yellow-400 text-brand-primary'
+                                                            : 'bg-white/10 border-white/20 text-white/70'
                                                 }`}
                                             >
                                                 {s + 1}
@@ -312,7 +314,7 @@ export default function CreateBooking({ students, routes }) {
                                             {s < 4 && (
                                                 <div
                                                     className={`w-12 h-1 mx-1 ${
-                                                        step > s ? 'bg-blue-500' : 'bg-white/20'
+                                                        step > s ? 'bg-yellow-400/60' : 'bg-white/20'
                                                     }`}
                                                 />
                                             )}
@@ -378,10 +380,10 @@ export default function CreateBooking({ students, routes }) {
                                                 {students.map((student) => (
                                                     <label
                                                         key={student.id}
-                                                        className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                        className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                             data.student_id == student.id
-                                                                ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                                ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                                : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                         }`}
                                                     >
                                                         <input
@@ -390,7 +392,7 @@ export default function CreateBooking({ students, routes }) {
                                                             value={student.id}
                                                             checked={data.student_id == student.id}
                                                             onChange={(e) => setData('student_id', e.target.value)}
-                                                            className="mr-3"
+                                                            className="mr-3 accent-yellow-400"
                                                         />
                                                         <span className="font-bold text-white">{student.name}</span>
                                                         {student.school && (
@@ -432,10 +434,10 @@ export default function CreateBooking({ students, routes }) {
                                                 {filteredRoutes.map((route) => (
                                                 <label
                                                     key={route.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                    className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                         data.route_id == route.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                     }`}
                                                 >
                                                     <input
@@ -444,7 +446,7 @@ export default function CreateBooking({ students, routes }) {
                                                         value={route.id}
                                                         checked={data.route_id == route.id}
                                                         onChange={(e) => setData('route_id', e.target.value)}
-                                                        className="mr-3"
+                                                        className="mr-3 accent-yellow-400"
                                                     />
                                                     <div className="flex justify-between items-start">
                                                         <div className="flex-1">
@@ -500,8 +502,8 @@ export default function CreateBooking({ students, routes }) {
                                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                                     <label className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                         pickupOption === 'pickup_point'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -513,14 +515,14 @@ export default function CreateBooking({ students, routes }) {
                                                                 setData('pickup_point_id', '');
                                                                 setData('pickup_address', '');
                                                             }}
-                                                            className="mr-3"
+                                                            className="mr-3 accent-yellow-400"
                                                         />
                                                         <span className="font-bold text-white">Select from Route</span>
                                                     </label>
                                                     <label className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                         pickupOption === 'custom'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -531,7 +533,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 setPickupOption(e.target.value);
                                                                 setData('pickup_point_id', '');
                                                             }}
-                                                            className="mr-3"
+                                                            className="mr-3 accent-yellow-400"
                                                         />
                                                         <span className="font-bold text-white">Custom Address</span>
                                                     </label>
@@ -548,10 +550,10 @@ export default function CreateBooking({ students, routes }) {
                                                     {selectedRoute.pickup_points.map((point) => (
                                                         <label
                                                             key={point.id}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                            className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                                 data.pickup_point_id == point.id
-                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                                    ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                             }`}
                                                         >
                                                             <input
@@ -563,7 +565,7 @@ export default function CreateBooking({ students, routes }) {
                                                                     setData('pickup_point_id', e.target.value);
                                                                     setData('pickup_address', point.address);
                                                                 }}
-                                                                className="mr-3"
+                                                                className="mr-3 accent-yellow-400"
                                                             />
                                                             <div className="flex-1">
                                                                 <span className="font-bold text-white">{point.name}</span>
@@ -624,10 +626,10 @@ export default function CreateBooking({ students, routes }) {
                                                     {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
                                                         <label
                                                             key={plan}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                            className={`block p-4 border rounded-xl cursor-pointer transition ${
                                                                 data.plan_type === plan
-                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                                    ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                             }`}
                                                         >
                                                             <input
@@ -636,7 +638,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 value={plan}
                                                                 checked={data.plan_type === plan}
                                                                 onChange={(e) => setData('plan_type', e.target.value)}
-                                                                className="mr-3"
+                                                                className="mr-3 accent-yellow-400"
                                                             />
                                                             <div className="flex justify-between items-center">
                                                                 <span className="font-bold text-white capitalize">
@@ -679,8 +681,8 @@ export default function CreateBooking({ students, routes }) {
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <label className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                         data.trip_type === 'one_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -688,14 +690,14 @@ export default function CreateBooking({ students, routes }) {
                                                             value="one_way"
                                                             checked={data.trip_type === 'one_way'}
                                                             onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
+                                                            className="mr-3 accent-yellow-400"
                                                         />
                                                         <span className="font-bold text-white">One Way</span>
                                                     </label>
                                                     <label className={`block p-4 border rounded-lg cursor-pointer transition ${
                                                         data.trip_type === 'two_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
+                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -703,7 +705,7 @@ export default function CreateBooking({ students, routes }) {
                                                             value="two_way"
                                                             checked={data.trip_type === 'two_way'}
                                                             onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
+                                                            className="mr-3 accent-yellow-400"
                                                         />
                                                         <span className="font-bold text-white">Two Way</span>
                                                     </label>
