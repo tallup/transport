@@ -9,21 +9,21 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/on time.jpeg",
+      "src": "/logo.png",
       "sizes": "any",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/on time.jpeg",
+      "src": "/logo.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/on time.jpeg",
+      "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

@@ -15,9 +15,10 @@
         <meta name="theme-color" content="#22304d">
 
         <!-- Favicon -->
-        <link rel="icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">
-        <link rel="shortcut icon" type="image/jpeg" href="{{ asset('on time.jpeg') }}">
-        <link rel="apple-touch-icon" href="{{ asset('on time.jpeg') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('logo.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('logo.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('logo.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('logo.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
