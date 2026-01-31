@@ -290,43 +290,53 @@ export default function CreateBooking({ students, routes }) {
             <Head title="Book Transport" />
 
             <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <GlassCard className="overflow-hidden">
-                        <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Book Transport Service</h2>
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    {/* Header */}
+                    <div className="mb-8">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                            Book Transport Service
+                        </h1>
+                        <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
+                            Complete the steps below to book transport for your student
+                        </p>
+                    </div>
 
-                            {/* Step Indicator */}
-                            <div className="mb-8">
-                                <div className="flex justify-between">
+                    <GlassCard className="overflow-hidden">
+                        <div className="p-6 sm:p-8">
+                            {/* Step Indicator - Modern Design */}
+                            <div className="mb-10">
+                                <div className="flex items-center justify-between relative">
                                     {[0, 1, 2, 3, 4].map((s) => (
-                                        <div key={s} className="flex items-center">
-                                            <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border ${
-                                                    step > s
-                                                        ? 'bg-yellow-400/35 border-yellow-400/60 text-brand-primary'
-                                                        : step === s
-                                                            ? 'bg-yellow-400/60 border-yellow-400 text-brand-primary'
-                                                            : 'bg-yellow-400/25 border-yellow-400/40 text-brand-primary'
-                                                }`}
-                                            >
-                                                {s + 1}
+                                        <div key={s} className="flex items-center flex-1">
+                                            <div className="flex flex-col items-center flex-1">
+                                                <div
+                                                    className={`w-12 h-12 rounded-full flex items-center justify-center font-extrabold text-base border-2 shadow-lg transition-all duration-300 ${
+                                                        step > s
+                                                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-400 text-brand-primary scale-100'
+                                                            : step === s
+                                                                ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-500 text-brand-primary scale-110 ring-4 ring-yellow-400/30'
+                                                                : 'bg-white/10 border-white/30 text-white/60 scale-100'
+                                                    }`}
+                                                >
+                                                    {s + 1}
+                                                </div>
+                                                <span className={`mt-2 text-xs font-bold transition-colors ${
+                                                    step >= s ? 'text-brand-primary' : 'text-white/50'
+                                                }`}>
+                                                    {['Student', 'Route', 'Pickup', 'Plan', 'Review'][s]}
+                                                </span>
                                             </div>
                                             {s < 4 && (
                                                 <div
-                                                    className={`w-12 h-1 mx-1 ${
-                                                        step > s ? 'bg-yellow-400/60' : 'bg-white/20'
+                                                    className={`h-1 flex-1 mx-2 transition-all duration-300 ${
+                                                        step > s 
+                                                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' 
+                                                            : 'bg-white/20'
                                                     }`}
                                                 />
                                             )}
                                         </div>
                                     ))}
-                                </div>
-                                <div className="flex justify-between mt-2 text-xs font-bold text-white">
-                                    <span>Student</span>
-                                    <span>Route</span>
-                                    <span>Pickup</span>
-                                    <span>Plan</span>
-                                    <span>Review</span>
                                 </div>
                             </div>
 
@@ -336,24 +346,31 @@ export default function CreateBooking({ students, routes }) {
                                     return s.id == data.student_id || s.id === parseInt(data.student_id, 10) || String(s.id) === String(data.student_id);
                                 });
                                 return selectedStudent ? (
-                                    <div className="mb-6 p-4 bg-blue-500/30 border border-blue-400/50 rounded-lg">
+                                    <div className="mb-8 p-5 bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-2 border-blue-400/30 rounded-xl">
                                         <div className="flex items-center justify-between">
-                                            <div>
-                                                <p className="text-sm font-semibold text-blue-100 mb-1">Booking for:</p>
-                                                <p className="text-lg font-bold text-white">
-                                                    {selectedStudent.name}
-                                                    {selectedStudent.school && (
-                                                        <span className="text-base font-semibold text-white/90 ml-2">
-                                                            - {selectedStudent.school.name}
-                                                        </span>
-                                                    )}
-                                                </p>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-semibold text-blue-100 uppercase tracking-wide mb-1">Booking for:</p>
+                                                    <p className="text-lg font-extrabold text-white">
+                                                        {selectedStudent.name}
+                                                        {selectedStudent.school && (
+                                                            <span className="text-base font-semibold text-white/90 ml-2">
+                                                                - {selectedStudent.school.name}
+                                                            </span>
+                                                        )}
+                                                    </p>
+                                                </div>
                                             </div>
                                             <Link
                                                 href="/parent/students"
-                                                className="text-sm font-semibold text-blue-200 hover:text-blue-100 underline"
+                                                className="px-4 py-2 text-sm font-bold text-blue-200 hover:text-white bg-blue-500/20 hover:bg-blue-500/30 rounded-lg border border-blue-400/50 transition"
                                             >
-                                                Change Student
+                                                Change
                                             </Link>
                                         </div>
                                     </div>
@@ -363,47 +380,84 @@ export default function CreateBooking({ students, routes }) {
                             <form onSubmit={handleSubmit}>
                                 {/* Step 0: Select Student */}
                                 {step === 0 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Student</h3>
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-2xl font-extrabold text-brand-primary">Select Student</h3>
+                                        </div>
                                         {students.length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <p className="text-white text-lg font-semibold mb-4">No students registered yet.</p>
-                                                <a
+                                            <div className="text-center py-12">
+                                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-white text-lg font-bold mb-4">No students registered yet.</p>
+                                                <Link
                                                     href="/parent/students/enroll"
-                                                    className="text-blue-300 hover:text-blue-100 font-bold underline"
+                                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl"
                                                 >
                                                     Add a student first
-                                                </a>
+                                                </Link>
                                             </div>
                                         ) : (
-                                            <div className="divide-y divide-brand-primary/10">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {students.map((student) => (
-                                                    <div key={student.id} className="py-2 first:pt-0 last:pb-0">
-                                                        <label
-                                                            className={`block p-4 border rounded-xl cursor-pointer transition ${
-                                                                data.student_id == student.id
-                                                                    ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
-                                                                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
-                                                            }`}
-                                                        >
+                                                    <label
+                                                        key={student.id}
+                                                        className={`relative block p-5 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
+                                                            data.student_id == student.id
+                                                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 backdrop-blur-sm ring-2 ring-yellow-400/30 shadow-lg'
+                                                                : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
+                                                        }`}
+                                                    >
                                                         <input
                                                             type="radio"
                                                             name="student_id"
                                                             value={student.id}
                                                             checked={data.student_id == student.id}
                                                             onChange={(e) => setData('student_id', e.target.value)}
-                                                            className="mr-3 accent-yellow-400"
+                                                            className="sr-only"
                                                         />
-                                                        <span className="font-bold text-white">{student.name}</span>
-                                                        {student.school && (
-                                                            <span className="text-white/90 ml-2 font-semibold">- {student.school.name}</span>
-                                                        )}
-                                                        </label>
-                                                    </div>
+                                                        <div className="flex items-start gap-4">
+                                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                                                                data.student_id == student.id
+                                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                                    : 'bg-white/10'
+                                                            }`}>
+                                                                <svg className={`w-6 h-6 ${data.student_id == student.id ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                </svg>
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-lg font-extrabold text-white mb-1">{student.name}</p>
+                                                                {student.school && (
+                                                                    <div className="flex items-center gap-2 mt-2">
+                                                                        <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50">
+                                                                            {student.school.name}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            {data.student_id == student.id && (
+                                                                <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                                    <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </label>
                                                 ))}
-                                                {errors.student_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.student_id}</p>
-                                                )}
+                                            </div>
+                                        )}
+                                        {errors.student_id && (
+                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
+                                                <p className="text-red-200 text-sm font-bold">{errors.student_id}</p>
                                             </div>
                                         )}
                                     </div>
@@ -411,81 +465,124 @@ export default function CreateBooking({ students, routes }) {
 
                                 {/* Step 1: Select Route */}
                                 {step === 1 && (
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-white mb-2">Select Route</h3>
-                                            {data.student_id && (() => {
-                                                const selectedStudent = students.find(s => s.id == data.student_id);
-                                                return selectedStudent?.school ? (
-                                                    <p className="text-sm text-white/80 font-semibold mb-4">
-                                                        Showing routes for: <span className="text-blue-200 font-bold">{selectedStudent.school.name}</span>
-                                                    </p>
-                                                ) : null;
-                                            })()}
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-2xl font-extrabold text-brand-primary">Select Route</h3>
+                                                {data.student_id && (() => {
+                                                    const selectedStudent = students.find(s => s.id == data.student_id);
+                                                    return selectedStudent?.school ? (
+                                                        <p className="text-sm text-brand-primary/70 font-semibold mt-1">
+                                                            Showing routes for: <span className="text-brand-primary font-bold">{selectedStudent.school.name}</span>
+                                                        </p>
+                                                    ) : null;
+                                                })()}
+                                            </div>
                                         </div>
                                         {filteredRoutes.length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <p className="text-white text-lg font-semibold mb-4">No routes available for the selected school.</p>
-                                                <p className="text-white text-sm font-semibold">
-                                                    No routes are currently configured for this student's school. Please contact the administrator.
+                                            <div className="text-center py-12">
+                                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-white text-lg font-bold mb-2">No routes available</p>
+                                                <p className="text-white/80 text-sm font-semibold">
+                                                    No routes are currently configured for this student's school.
                                                 </p>
                                             </div>
                                         ) : (
-                                            <div className="divide-y divide-brand-primary/10">
+                                            <div className="grid grid-cols-1 gap-4">
                                                 {filteredRoutes.map((route) => (
-                                                <div key={route.id} className="py-2 first:pt-0 last:pb-0">
-                                                <label
-                                                    className={`block p-4 border rounded-xl cursor-pointer transition ${
-                                                        data.route_id == route.id
-                                                            ? 'border-yellow-400 bg-yellow-400/10 backdrop-blur-sm ring-1 ring-yellow-400/30'
-                                                            : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="route_id"
-                                                        value={route.id}
-                                                        checked={data.route_id == route.id}
-                                                        onChange={(e) => setData('route_id', e.target.value)}
-                                                        className="mr-3 accent-yellow-400"
-                                                    />
-                                                    <div className="flex justify-between items-start">
-                                                        <div className="flex-1">
-                                                            <span className="font-bold text-white">{route.name}</span>
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">
-                                                                Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
-                                                            </p>
-                                                            {(route.pickup_time || route.dropoff_time) && (
-                                                                <div className="mt-2 space-y-1">
-                                                                    {route.pickup_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Pickup: <span className="font-bold text-white">{formatTime(route.pickup_time)}</span>
-                                                                        </p>
-                                                                    )}
-                                                                    {route.dropoff_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Dropoff: <span className="font-bold text-white">{formatTime(route.dropoff_time)}</span>
-                                                                        </p>
-                                                                    )}
+                                                    <label
+                                                        key={route.id}
+                                                        className={`relative block p-5 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
+                                                            data.route_id == route.id
+                                                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 backdrop-blur-sm ring-2 ring-yellow-400/30 shadow-lg'
+                                                                : 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/15 hover:border-yellow-400/40'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name="route_id"
+                                                            value={route.id}
+                                                            checked={data.route_id == route.id}
+                                                            onChange={(e) => setData('route_id', e.target.value)}
+                                                            className="sr-only"
+                                                        />
+                                                        <div className="flex items-start gap-4">
+                                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                                                                data.route_id == route.id
+                                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                                    : 'bg-white/10'
+                                                            }`}>
+                                                                <svg className={`w-6 h-6 ${data.route_id == route.id ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                                </svg>
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-start justify-between gap-4 mb-3">
+                                                                    <div>
+                                                                        <p className="text-lg font-extrabold text-white mb-1">{route.name}</p>
+                                                                        {route.vehicle && (
+                                                                            <p className="text-sm text-white/80 font-semibold">
+                                                                                {route.vehicle.make} {route.vehicle.model} • {route.vehicle.license_plate}
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
+                                                                    <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex-shrink-0 ${
+                                                                        route.available_seats > 0
+                                                                            ? 'bg-green-500/30 text-green-100 border-green-400/50'
+                                                                            : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                                    }`}>
+                                                                        {route.available_seats} seats
+                                                                    </span>
+                                                                </div>
+                                                                {(route.pickup_time || route.dropoff_time) && (
+                                                                    <div className="flex flex-wrap gap-4 mt-3">
+                                                                        {route.pickup_time && (
+                                                                            <div className="flex items-center gap-2">
+                                                                                <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                                </svg>
+                                                                                <span className="text-xs font-semibold text-white/90">
+                                                                                    Pickup: <span className="font-bold text-green-200">{formatTime(route.pickup_time)}</span>
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                        {route.dropoff_time && (
+                                                                            <div className="flex items-center gap-2">
+                                                                                <svg className="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                                </svg>
+                                                                                <span className="text-xs font-semibold text-white/90">
+                                                                                    Dropoff: <span className="font-bold text-blue-200">{formatTime(route.dropoff_time)}</span>
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            {data.route_id == route.id && (
+                                                                <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                                    <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <div className="text-right ml-4">
-                                                            <span className={`text-sm px-2 py-1 rounded border font-semibold ${
-                                                                route.available_seats > 0
-                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
-                                                            }`}>
-                                                                {route.available_seats} seats available
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </label>
-                                                </div>
+                                                    </label>
                                                 ))}
-                                                {errors.route_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.route_id}</p>
-                                                )}
+                                            </div>
+                                        )}
+                                        {errors.route_id && (
+                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
+                                                <p className="text-red-200 text-sm font-bold">{errors.route_id}</p>
                                             </div>
                                         )}
                                     </div>
