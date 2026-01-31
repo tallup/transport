@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import GlassCard from '@/Components/GlassCard';
 import { useState } from 'react';
 
 export default function Index({ routes }) {
@@ -21,149 +22,156 @@ export default function Index({ routes }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="glass-card overflow-hidden">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Routes</h2>
-                                <Link
-                                    href="/admin/routes/create"
-                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
-                                >
-                                    Add Route
-                                </Link>
+                    {/* Header Section */}
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Routes</h1>
+                                <p className="text-lg text-brand-primary/80 font-medium">Manage all transport routes</p>
                             </div>
-
-                            {routes.data && routes.data.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-brand-primary/20">
-                                        <thead className="bg-white/10">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Name
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Driver
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Vehicle
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Capacity
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Service Type
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Schools
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
-                                            {routes.data.map((route) => (
-                                                <tr key={route.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
-                                                        {route.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                                        {route.driver?.name || '-'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                                        {route.vehicle?.license_plate || '-'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                                        {route.capacity}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${
-                                                            route.service_type === 'am' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                                            route.service_type === 'pm' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
-                                                            'bg-green-500/30 text-green-100 border-green-400/50'
-                                                        }`}>
-                                                            {route.service_type === 'am' ? 'AM Only' :
-                                                             route.service_type === 'pm' ? 'PM Only' : 'Both'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                                        {route.schools && route.schools.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {route.schools.slice(0, 2).map((school) => (
-                                                                    <span key={school.id} className="px-2 py-1 bg-indigo-500/30 text-indigo-100 rounded text-xs">
-                                                                        {school.name}
-                                                                    </span>
-                                                                ))}
-                                                                {route.schools.length > 2 && (
-                                                                    <span className="px-2 py-1 bg-gray-500/30 text-gray-200 rounded text-xs">
-                                                                        +{route.schools.length - 2}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <span className="text-gray-400">-</span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${
-                                                            route.active ? 'bg-green-500/30 text-green-100 border-green-400/50' : 'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                        }`}>
-                                                            {route.active ? 'Active' : 'Inactive'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <Link
-                                                            href={`/admin/routes/${route.id}`}
-                                                            className="text-green-300 hover:text-green-100 mr-4"
-                                                        >
-                                                            View
-                                                        </Link>
-                                                        <Link
-                                                            href={`/admin/routes/${route.id}/edit`}
-                                                            className="text-blue-300 hover:text-blue-100 mr-4"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDelete(route.id)}
-                                                            disabled={deleting === route.id}
-                                                            className="text-red-300 hover:text-red-100 disabled:opacity-50"
-                                                        >
-                                                            {deleting === route.id ? 'Deleting...' : 'Delete'}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <p className="text-white">No routes found.</p>
-                            )}
-
-                            {routes.links && (
-                                <div className="mt-4 flex justify-center">
-                                    <div className="flex gap-2">
-                                        {routes.links.map((link, index) => (
-                                            <Link
-                                                key={index}
-                                                href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-lg ${
-                                                    link.active
-                                                        ? 'glass-button text-white'
-                                                        : 'bg-white/20 text-white hover:bg-white/30'
-                                                } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            <Link
+                                href="/admin/routes/create"
+                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                            >
+                                Add Route
+                            </Link>
                         </div>
                     </div>
+
+                    {routes.data && routes.data.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {routes.data.map((route) => (
+                                <GlassCard key={route.id} className="p-6 hover:scale-[1.02] transition-all">
+                                    {/* Card Header */}
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-lg font-extrabold text-white truncate">{route.name}</h3>
+                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                    {route.driver?.name || 'No driver assigned'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                            route.active ? 'bg-green-500/30 text-brand-primary border border-green-400/50' : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                        }`}>
+                                            {route.active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+
+                                    {/* Card Content */}
+                                    <div className="space-y-3 mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                            </svg>
+                                            <p className="text-sm text-white/90 font-medium">
+                                                Vehicle: {route.vehicle?.license_plate || 'No vehicle'}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                            <p className="text-sm text-white/90 font-medium">
+                                                Capacity: {route.capacity} students
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span className={`px-2 py-1 rounded-lg text-xs font-bold border ${
+                                                route.service_type === 'am' ? 'bg-yellow-500/30 text-brand-primary border-yellow-400/50' :
+                                                route.service_type === 'pm' ? 'bg-blue-500/30 text-brand-primary border-blue-400/50' :
+                                                'bg-green-500/30 text-brand-primary border-green-400/50'
+                                            }`}>
+                                                {route.service_type === 'am' ? 'AM Only' :
+                                                 route.service_type === 'pm' ? 'PM Only' : 'Both'}
+                                            </span>
+                                        </div>
+                                        {route.schools && route.schools.length > 0 && (
+                                            <div className="flex items-start gap-2">
+                                                <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                </svg>
+                                                <div className="flex flex-wrap gap-1.5 flex-1">
+                                                    {route.schools.slice(0, 2).map((school) => (
+                                                        <span key={school.id} className="px-2 py-1 bg-blue-500/30 text-brand-primary border border-blue-400/50 rounded-lg text-xs font-bold">
+                                                            {school.name}
+                                                        </span>
+                                                    ))}
+                                                    {route.schools.length > 2 && (
+                                                        <span className="px-2 py-1 bg-gray-500/30 text-brand-primary border border-gray-400/50 rounded-lg text-xs font-bold">
+                                                            +{route.schools.length - 2}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Card Actions */}
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                        <Link
+                                            href={`/admin/routes/${route.id}`}
+                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                        >
+                                            View
+                                        </Link>
+                                        <Link
+                                            href={`/admin/routes/${route.id}/edit`}
+                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(route.id)}
+                                            disabled={deleting === route.id}
+                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            {deleting === route.id ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </div>
+                                </GlassCard>
+                            ))}
+                        </div>
+                    ) : (
+                        <GlassCard className="p-12">
+                            <div className="text-center">
+                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                    </svg>
+                                </div>
+                                <p className="text-brand-primary text-lg font-bold">No routes found.</p>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {routes.links && (
+                        <div className="mt-8 flex justify-center">
+                            <div className="flex gap-2">
+                                {routes.links.map((link, index) => (
+                                    <Link
+                                        key={index}
+                                        href={link.url || '#'}
+                                        className={`px-3 py-2 rounded-lg ${
+                                            link.active
+                                                ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
+                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminLayout>
