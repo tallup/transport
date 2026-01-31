@@ -3,7 +3,7 @@ export default function Select({ className = '', children, ...props }) {
         <select
             {...props}
             className={
-                'rounded-md border-brand-primary shadow-sm focus:border-brand-primary focus:ring-brand-primary dark:border-brand-primary dark:bg-gray-900 dark:text-gray-300 dark:focus:border-brand-primary dark:focus:ring-brand-primary ' +
+                'block w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white focus:bg-white/20 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all duration-300 outline-none backdrop-blur-sm ' +
                 className
             }
         >
