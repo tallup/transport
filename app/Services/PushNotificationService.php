@@ -11,18 +11,28 @@ use Minishlink\WebPush\Subscription;
 class PushNotificationService
 {
     protected $webPush;
+    protected $isConfigured = false;
 
     public function __construct()
     {
-        $auth = [
-            'VAPID' => [
-                'subject' => config('app.url'),
-                'publicKey' => config('services.webpush.public_key'),
-                'privateKey' => config('services.webpush.private_key'),
-            ],
-        ];
+        $publicKey = config('services.webpush.public_key');
+        $privateKey = config('services.webpush.private_key');
 
-        $this->webPush = new WebPush($auth);
+        // Only initialize WebPush if VAPID keys are configured
+        if ($publicKey && $privateKey) {
+            $auth = [
+                'VAPID' => [
+                    'subject' => config('app.url'),
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
+                ],
+            ];
+
+            $this->webPush = new WebPush($auth);
+            $this->isConfigured = true;
+        } else {
+            Log::warning('Push notifications not configured: VAPID keys missing');
+        }
     }
 
     /**
@@ -36,7 +46,17 @@ class PushNotificationService
      */
     public function sendPushNotification(User $user, string $title, string $body, array $data = []): void
     {
+        // Return early if VAPID keys are not configured
+        if (!$this->isConfigured || !$this->webPush) {
+            Log::debug('Push notification skipped: VAPID keys not configured');
+            return;
+        }
+
         $subscriptions = PushSubscription::where('user_id', $user->id)->get();
+
+        if ($subscriptions->isEmpty()) {
+            return;
+        }
 
         foreach ($subscriptions as $subscription) {
             try {
