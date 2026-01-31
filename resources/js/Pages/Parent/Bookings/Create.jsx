@@ -290,7 +290,7 @@ export default function CreateBooking({ students, routes }) {
             <Head title="Book Transport" />
 
             <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
                     {/* Header Section */}
                     <div className="text-center mb-10">
                         <h1 className="text-4xl font-extrabold text-brand-primary mb-3">Book Transport Service</h1>
@@ -432,13 +432,7 @@ export default function CreateBooking({ students, routes }) {
                                                             </svg>
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className={`text-lg font-extrabold text-white mb-1 px-3 py-1.5 rounded-lg border-2 inline-block ${
-                                                                data.student_id == student.id
-                                                                    ? 'border-yellow-400 bg-yellow-400/10'
-                                                                    : 'border-brand-primary/80 bg-white/10'
-                                                            }`} style={{
-                                                                borderColor: data.student_id == student.id ? '#facc15' : '#22304d'
-                                                            }}>{student.name}</p>
+                                                            <p className="text-lg font-extrabold text-white mb-1">{student.name}</p>
                                                             {student.school && (
                                                                 <div className="flex items-center gap-2 mt-2">
                                                                     <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50">
