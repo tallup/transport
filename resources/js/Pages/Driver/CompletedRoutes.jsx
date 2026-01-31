@@ -14,10 +14,10 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                     <div className="mb-6 sm:mb-8">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
                                     Completed Routes
                                 </h1>
-                                <p className="text-base sm:text-lg font-semibold text-white/90">
+                                <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
                                     View all your completed routes and completion details
                                 </p>
                             </div>
