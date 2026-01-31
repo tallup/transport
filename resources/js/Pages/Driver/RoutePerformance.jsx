@@ -53,8 +53,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                                 {performanceMetrics?.on_time_percentage || 0}%
                                             </p>
                                         </div>
-                                        <div className="w-12 h-12 bg-teal-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
@@ -69,8 +69,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                                 {performanceMetrics?.total_trips || 0}
                                             </p>
                                         </div>
-                                        <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                             </svg>
                                         </div>
@@ -85,8 +85,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                                 {performanceMetrics?.active_trips || 0}
                                             </p>
                                         </div>
-                                        <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                             </svg>
                                         </div>
@@ -101,8 +101,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                                 {performanceMetrics?.completed_trips || 0}
                                             </p>
                                         </div>
-                                        <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
                                         </div>
@@ -120,8 +120,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                                 {performanceMetrics?.total_students || 0}
                                             </p>
                                         </div>
-                                        <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                             </svg>
                                         </div>
