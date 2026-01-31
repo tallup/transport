@@ -90,7 +90,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {booking.status === 'pending' && (
                                     <Link
                                         href={`/parent/bookings/${booking.id}/checkout`}
-                                        className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                     >
                                         Pay Now
                                     </Link>
@@ -98,7 +98,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {booking.status === 'pending' && (
                                     <Link
                                         href={`/parent/bookings/${booking.id}/edit`}
-                                        className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                     >
                                         Edit Booking
                                     </Link>
@@ -377,13 +377,13 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                     <>
                                         <Link
                                             href={`/parent/bookings/${booking.id}/edit`}
-                                            className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                            className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                         >
                                             Edit Booking
                                         </Link>
                                         <Link
                                             href={`/parent/bookings/${booking.id}/checkout`}
-                                            className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                            className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                         >
                                             Complete Payment
                                         </Link>
@@ -392,7 +392,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {(booking.status === 'active' || booking.status === 'expired') && new Date(booking.start_date) > new Date() && (
                                     <Link
                                         href={`/parent/bookings/${booking.id}/edit`}
-                                        className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                     >
                                         Edit Booking
                                     </Link>
@@ -400,7 +400,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {(booking.status === 'active' || booking.status === 'expired') && (
                                     <Link
                                         href={`/parent/bookings/${booking.id}/rebook`}
-                                        className="px-6 py-3 bg-purple-500/30 border-2 border-purple-400/50 text-white font-bold rounded-xl hover:bg-purple-500/40 transition-all"
+                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                                     >
                                         Rebook
                                     </Link>
