@@ -435,7 +435,7 @@ export default function CreateBooking({ students, routes }) {
                                                             <p className={`text-lg font-extrabold text-white mb-1 px-3 py-1.5 rounded-lg border-2 inline-block ${
                                                                 data.student_id == student.id
                                                                     ? 'border-yellow-400 bg-yellow-400/10'
-                                                                    : 'border-white/30 bg-white/5'
+                                                                    : 'border-brand-primary/50 bg-white/10'
                                                             }`}>{student.name}</p>
                                                             {student.school && (
                                                                 <div className="flex items-center gap-2 mt-2">
