@@ -404,11 +404,11 @@ export default function CreateBooking({ students, routes }) {
                                                 </Link>
                                             </div>
                                         ) : (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                                 {students.map((student) => (
                                                     <label
                                                         key={student.id}
-                                                        className={`group relative flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
+                                                        className={`group relative flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] max-w-xs mx-auto md:mx-0 ${
                                                             data.student_id == student.id
                                                                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
                                                                 : 'border-yellow-400/50 bg-white/10 hover:bg-white/15 hover:border-yellow-400'
@@ -422,20 +422,20 @@ export default function CreateBooking({ students, routes }) {
                                                             onChange={(e) => setData('student_id', e.target.value)}
                                                             className="sr-only"
                                                         />
-                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
+                                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                                                             data.student_id == student.id
                                                                 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md'
                                                                 : 'bg-white/20 group-hover:bg-white/30'
                                                         }`}>
-                                                            <svg className={`w-6 h-6 ${data.student_id == student.id ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg className={`w-5 h-5 ${data.student_id == student.id ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                             </svg>
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-lg font-extrabold text-white mb-1">{student.name}</p>
+                                                            <p className="text-base font-extrabold text-white mb-1 truncate">{student.name}</p>
                                                             {student.school && (
-                                                                <div className="flex items-center gap-2 mt-2">
-                                                                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50">
+                                                                <div className="flex items-center gap-2 mt-1.5">
+                                                                    <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50 truncate">
                                                                         {student.school.name}
                                                                     </span>
                                                                 </div>
