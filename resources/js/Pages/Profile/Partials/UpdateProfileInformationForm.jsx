@@ -27,11 +27,11 @@ export default function UpdateProfileInformation({
     return (
         <section className={`p-6 ${className}`}>
             <header>
-                <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg">
+                <h2 className="text-2xl font-bold text-brand-primary mb-2">
                     Profile Information
                 </h2>
 
-                <p className="mt-1 text-base text-white/90 font-semibold">
+                <p className="mt-1 text-sm text-brand-primary/70 font-semibold">
                     Update your account's profile information and email address.
                 </p>
             </header>
@@ -39,7 +39,7 @@ export default function UpdateProfileInformation({
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <InputLabel htmlFor="name" value="Name" className="text-white font-bold text-base" />
+                        <InputLabel htmlFor="name" value="Name" className="text-brand-primary font-semibold text-sm mb-2" />
 
                         <TextInput
                             id="name"
@@ -55,7 +55,7 @@ export default function UpdateProfileInformation({
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="email" value="Email" className="text-white font-bold text-base" />
+                        <InputLabel htmlFor="email" value="Email" className="text-brand-primary font-semibold text-sm mb-2" />
 
                         <TextInput
                             id="email"

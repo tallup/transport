@@ -47,11 +47,11 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <section className={`p-6 ${className}`}>
             <header>
-                <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg">
+                <h2 className="text-2xl font-bold text-brand-primary mb-2">
                     Update Password
                 </h2>
 
-                <p className="mt-1 text-base text-white/90 font-semibold">
+                <p className="mt-1 text-sm text-brand-primary/70 font-semibold">
                     Ensure your account is using a long, random password to stay
                     secure.
                 </p>
@@ -63,7 +63,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         <InputLabel
                             htmlFor="current_password"
                             value="Current Password"
-                            className="text-white font-bold text-base"
+                            className="text-brand-primary font-semibold text-sm mb-2"
                         />
 
                         <TextInput
@@ -85,7 +85,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="password" value="New Password" className="text-white font-bold text-base" />
+                        <InputLabel htmlFor="password" value="New Password" className="text-brand-primary font-semibold text-sm mb-2" />
 
                         <TextInput
                             id="password"
@@ -104,7 +104,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         <InputLabel
                             htmlFor="password_confirmation"
                             value="Confirm Password"
-                            className="text-white font-bold text-base"
+                            className="text-brand-primary font-semibold text-sm mb-2"
                         />
 
                         <TextInput
