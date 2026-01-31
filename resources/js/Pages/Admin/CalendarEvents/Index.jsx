@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import GlassCard from '@/Components/GlassCard';
 import { useState } from 'react';
 
 export default function Index({ calendarEvents }) {
@@ -18,13 +19,13 @@ export default function Index({ calendarEvents }) {
     const getTypeColor = (type) => {
         switch (type) {
             case 'school_day':
-                return 'bg-green-500/30 text-green-100 border border-green-400/50';
+                return 'bg-green-500/30 text-brand-primary border border-green-400/50';
             case 'holiday':
-                return 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50';
+                return 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50';
             case 'closure':
-                return 'bg-red-500/30 text-red-100 border border-red-400/50';
+                return 'bg-red-500/30 text-brand-primary border border-red-400/50';
             default:
-                return 'bg-gray-500/30 text-gray-200 border border-gray-400/50';
+                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
         }
     };
 
@@ -38,95 +39,113 @@ export default function Index({ calendarEvents }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="glass-card overflow-hidden">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Calendar Events</h2>
-                                <Link
-                                    href="/admin/calendar-events/create"
-                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
-                                >
-                                    Add Calendar Event
-                                </Link>
+                    {/* Header Section */}
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Calendar Events</h1>
+                                <p className="text-lg text-brand-primary/80 font-medium">Manage school calendar and events</p>
                             </div>
-
-                            {calendarEvents.data && calendarEvents.data.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-brand-primary/20">
-                                        <thead className="bg-white/10">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Date
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Type
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Description
-                                                </th>
-                                                <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
-                                            {calendarEvents.data.map((event) => (
-                                                <tr key={event.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
-                                                        {new Date(event.date).toLocaleDateString()}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(event.type)}`}>
-                                                            {formatType(event.type)}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-base font-semibold text-white/90">
-                                                        {event.description}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
-                                                        <Link
-                                                            href={`/admin/calendar-events/${event.id}/edit`}
-                                                            className="text-blue-300 hover:text-blue-100 mr-4 font-semibold"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDelete(event.id)}
-                                                            disabled={deleting === event.id}
-                                                            className="text-red-300 hover:text-red-100 disabled:opacity-50 font-semibold"
-                                                        >
-                                                            {deleting === event.id ? 'Deleting...' : 'Delete'}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <p className="text-white text-lg font-semibold">No calendar events found.</p>
-                            )}
-
-                            {calendarEvents.links && (
-                                <div className="mt-4 flex justify-center">
-                                    <div className="flex gap-2">
-                                        {calendarEvents.links.map((link, index) => (
-                                            <Link
-                                                key={index}
-                                                href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-lg ${
-                                                    link.active
-                                                        ? 'glass-button text-white'
-                                                        : 'bg-white/20 text-white hover:bg-white/30'
-                                                } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            <Link
+                                href="/admin/calendar-events/create"
+                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                            >
+                                Add Calendar Event
+                            </Link>
                         </div>
                     </div>
+
+                    {calendarEvents.data && calendarEvents.data.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {calendarEvents.data.map((event) => (
+                                <GlassCard key={event.id} className="p-6 hover:scale-[1.02] transition-all">
+                                    {/* Card Header */}
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-lg font-extrabold text-white truncate">
+                                                    {new Date(event.date).toLocaleDateString('en-US', { 
+                                                        weekday: 'short', 
+                                                        year: 'numeric', 
+                                                        month: 'short', 
+                                                        day: 'numeric' 
+                                                    })}
+                                                </h3>
+                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                    {event.description || 'No description'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getTypeColor(event.type)}`}>
+                                            {formatType(event.type)}
+                                        </span>
+                                    </div>
+
+                                    {/* Card Content */}
+                                    <div className="space-y-3 mb-4">
+                                        <div className="flex items-start gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                            <p className="text-sm text-white/90 font-medium line-clamp-3">{event.description || 'No description provided'}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Card Actions */}
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                        <Link
+                                            href={`/admin/calendar-events/${event.id}/edit`}
+                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(event.id)}
+                                            disabled={deleting === event.id}
+                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            {deleting === event.id ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </div>
+                                </GlassCard>
+                            ))}
+                        </div>
+                    ) : (
+                        <GlassCard className="p-12">
+                            <div className="text-center">
+                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <p className="text-brand-primary text-lg font-bold">No calendar events found.</p>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {calendarEvents.links && (
+                        <div className="mt-8 flex justify-center">
+                            <div className="flex gap-2">
+                                {calendarEvents.links.map((link, index) => (
+                                    <Link
+                                        key={index}
+                                        href={link.url || '#'}
+                                        className={`px-3 py-2 rounded-lg ${
+                                            link.active
+                                                ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
+                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminLayout>

@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import GlassCard from '@/Components/GlassCard';
 import { useState } from 'react';
 
 export default function Index({ pricingRules }) {
@@ -25,123 +26,132 @@ export default function Index({ pricingRules }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="glass-card overflow-hidden">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-3xl font-extrabold text-white drop-shadow-lg">Pricing Rules</h2>
-                                <Link
-                                    href="/admin/pricing-rules/create"
-                                    className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
-                                >
-                                    Add Pricing Rule
-                                </Link>
+                    {/* Header Section */}
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Pricing Rules</h1>
+                                <p className="text-lg text-brand-primary/80 font-medium">Manage transport pricing configurations</p>
                             </div>
-
-                            {pricingRules.data && pricingRules.data.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-brand-primary/20">
-                                        <thead className="bg-white/10">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Plan Type
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Route
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Vehicle Type
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Amount
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Currency
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                    Active
-                                                </th>
-                                                <th className="px-6 py-3 text-right text-sm font-bold text-white uppercase tracking-wider">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
-                                            {pricingRules.data.map((rule) => (
-                                                <tr key={rule.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
-                                                            {formatPlanType(rule.plan_type)}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {rule.route?.name || 'Global'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        {rule.vehicle_type ? (
-                                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-500/30 text-gray-200 border border-gray-400/50 capitalize">
-                                                                {rule.vehicle_type}
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-base font-semibold text-white/90">All</span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-white">
-                                                        ${parseFloat(rule.amount).toFixed(2)}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-base font-semibold text-white/90">
-                                                        {rule.currency}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${
-                                                            rule.active ? 'bg-green-500/30 text-green-100 border-green-400/50' : 'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                        }`}>
-                                                            {rule.active ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-base font-bold">
-                                                        <Link
-                                                            href={`/admin/pricing-rules/${rule.id}/edit`}
-                                                            className="text-blue-300 hover:text-blue-100 mr-4 font-semibold"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDelete(rule.id)}
-                                                            disabled={deleting === rule.id}
-                                                            className="text-red-300 hover:text-red-100 disabled:opacity-50 font-semibold"
-                                                        >
-                                                            {deleting === rule.id ? 'Deleting...' : 'Delete'}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <p className="text-white text-lg font-semibold">No pricing rules found.</p>
-                            )}
-
-                            {pricingRules.links && (
-                                <div className="mt-4 flex justify-center">
-                                    <div className="flex gap-2">
-                                        {pricingRules.links.map((link, index) => (
-                                            <Link
-                                                key={index}
-                                                href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-lg ${
-                                                    link.active
-                                                        ? 'glass-button text-white'
-                                                        : 'bg-white/20 text-white hover:bg-white/30'
-                                                } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            <Link
+                                href="/admin/pricing-rules/create"
+                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                            >
+                                Add Pricing Rule
+                            </Link>
                         </div>
                     </div>
+
+                    {pricingRules.data && pricingRules.data.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {pricingRules.data.map((rule) => (
+                                <GlassCard key={rule.id} className="p-6 hover:scale-[1.02] transition-all">
+                                    {/* Card Header */}
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-lg font-extrabold text-white truncate">
+                                                    ${parseFloat(rule.amount).toFixed(2)} {rule.currency}
+                                                </h3>
+                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                    {rule.route?.name || 'Global Rule'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                            rule.active 
+                                                ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
+                                                : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                        }`}>
+                                            {rule.active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+
+                                    {/* Card Content */}
+                                    <div className="space-y-3 mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50">
+                                                {formatPlanType(rule.plan_type)}
+                                            </span>
+                                        </div>
+                                        {rule.vehicle_type && (
+                                            <div className="flex items-center gap-2">
+                                                <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                </svg>
+                                                <span className="px-2 py-1 rounded-lg text-xs font-bold bg-gray-500/30 text-brand-primary border border-gray-400/50 capitalize">
+                                                    {rule.vehicle_type}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {!rule.vehicle_type && (
+                                            <div className="flex items-center gap-2">
+                                                <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                </svg>
+                                                <p className="text-sm text-white/90 font-medium">All Vehicle Types</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Card Actions */}
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                        <Link
+                                            href={`/admin/pricing-rules/${rule.id}/edit`}
+                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(rule.id)}
+                                            disabled={deleting === rule.id}
+                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            {deleting === rule.id ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </div>
+                                </GlassCard>
+                            ))}
+                        </div>
+                    ) : (
+                        <GlassCard className="p-12">
+                            <div className="text-center">
+                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p className="text-brand-primary text-lg font-bold">No pricing rules found.</p>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {pricingRules.links && (
+                        <div className="mt-8 flex justify-center">
+                            <div className="flex gap-2">
+                                {pricingRules.links.map((link, index) => (
+                                    <Link
+                                        key={index}
+                                        href={link.url || '#'}
+                                        className={`px-3 py-2 rounded-lg ${
+                                            link.active
+                                                ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
+                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminLayout>
