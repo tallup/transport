@@ -198,6 +198,20 @@ class BookingController extends Controller
             ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
         );
         
+        // Notify driver if route has a driver assigned
+        $booking->loadMissing(['route.driver']);
+        $driver = $booking->route?->driver;
+        if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+            } catch (\Exception $e) {
+                \Log::error('DriverStudentAdded notification failed on booking creation', [
+                    'booking_id' => $booking->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
         // Notify admins of new booking attempt
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
@@ -375,6 +389,20 @@ class BookingController extends Controller
                     'Your payment has been processed. Booking is pending approval.',
                     ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
                 );
+                
+                // Notify driver if route has a driver assigned (even though booking is awaiting approval)
+                $booking->loadMissing(['route.driver']);
+                $driver = $booking->route?->driver;
+                if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                    try {
+                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                    } catch (\Exception $e) {
+                        \Log::error('DriverStudentAdded notification failed on payment', [
+                            'booking_id' => $booking->id,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
                 
                 // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);
@@ -562,6 +590,20 @@ class BookingController extends Controller
                     'Your PayPal payment has been processed. Booking is pending approval.',
                     ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
                 );
+                
+                // Notify driver if route has a driver assigned (even though booking is awaiting approval)
+                $booking->loadMissing(['route.driver']);
+                $driver = $booking->route?->driver;
+                if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                    try {
+                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                    } catch (\Exception $e) {
+                        \Log::error('DriverStudentAdded notification failed on PayPal payment', [
+                            'booking_id' => $booking->id,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
                 
                 // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);

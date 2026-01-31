@@ -184,6 +184,7 @@ class BookingController extends Controller
             ]);
         }
 
+        // Notify driver when booking is approved and becomes active
         $this->notifyDriverStudentAdded($booking);
 
         return back()->with('success', 'Booking approved successfully.');

@@ -316,6 +316,22 @@ class DashboardController extends Controller
             }])
             ->get();
 
+        // Debug logging for driver dashboard
+        \Log::info("Driver Dashboard - Route {$route->id} ({$route->name})", [
+            'driver_id' => $driver->id,
+            'today' => $today->toDateString(),
+            'bookings_found' => $todayBookingsList->count(),
+            'bookings' => $todayBookingsList->map(function ($b) {
+                return [
+                    'id' => $b->id,
+                    'status' => $b->status,
+                    'start_date' => $b->start_date?->toDateString(),
+                    'end_date' => $b->end_date?->toDateString(),
+                    'student' => $b->student->name ?? 'N/A',
+                ];
+            })->toArray(),
+        ]);
+
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
 
         // Group bookings by pickup points
