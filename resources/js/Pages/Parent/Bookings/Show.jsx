@@ -54,7 +54,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                     <div className="mb-6">
                         <Link
                             href="/parent/bookings"
-                            className="text-white/80 hover:text-white font-semibold mb-4 inline-flex items-center gap-2"
+                            className="text-brand-primary hover:text-brand-primary/80 font-semibold mb-4 inline-flex items-center gap-2"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -90,7 +90,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {booking.status === 'pending' && (
                                     <Link
                                         href={`/parent/bookings/${booking.id}/checkout`}
-                                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                        className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
                                     >
                                         Pay Now
                                     </Link>
@@ -383,7 +383,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                         </Link>
                                         <Link
                                             href={`/parent/bookings/${booking.id}/checkout`}
-                                            className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                            className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
                                         >
                                             Complete Payment
                                         </Link>
@@ -436,157 +436,148 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                         </GlassCard>
                     )}
 
-                    {/* Enhanced Pickup Details Section */}
-                    <GlassCard>
-                        <div className="p-6">
-                            <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-6">
-                                Pickup & Dropoff Schedule
-                            </h3>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Pickup Details */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xl font-bold text-white border-b border-white/30 pb-2">
-                                        Morning Pickup
-                                    </h4>
-                                    {booking.pickup_point ? (
-                                        <>
-                                            <div>
-                                                <span className="text-white/70 font-semibold">Location:</span>
-                                                <p className="text-white font-bold text-lg">{booking.pickup_point.name}</p>
-                                                <p className="text-white/80 text-sm mt-1">{booking.pickup_point.address}</p>
-                                                {booking.pickup_point.latitude && booking.pickup_point.longitude && (
-                                                    <p className="text-white/60 text-xs mt-1">
-                                                        Coordinates: {booking.pickup_point.latitude}, {booking.pickup_point.longitude}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            {booking.pickup_point.pickup_time && (
-                                                <div>
-                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
-                                                    <p className="text-white font-bold text-lg text-green-300">
-                                                        {formatTime(booking.pickup_point.pickup_time)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : booking.pickup_address ? (
-                                        <>
-                                            <div>
-                                                <span className="text-white/70 font-semibold">Location:</span>
-                                                <p className="text-white font-bold text-lg">{booking.pickup_address}</p>
-                                                {booking.pickup_latitude && booking.pickup_longitude && (
-                                                    <p className="text-white/60 text-xs mt-1">
-                                                        Coordinates: {booking.pickup_latitude}, {booking.pickup_longitude}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            {booking.route?.pickup_time && (
-                                                <div>
-                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
-                                                    <p className="text-white font-bold text-lg text-green-300">
-                                                        {formatTime(booking.route.pickup_time)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <p className="text-white/70">Pickup location not specified</p>
-                                    )}
+                    {/* Pickup & Dropoff Schedule - Card Style */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        {/* Pickup Details Card */}
+                        <GlassCard className="p-6">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
                                 </div>
-
-                                {/* Dropoff Details */}
-                                <div className="space-y-4">
-                                    <h4 className="text-xl font-bold text-white border-b border-white/30 pb-2">
-                                        Afternoon Dropoff
-                                    </h4>
-                                    {booking.dropoff_point ? (
-                                        <>
-                                            <div>
-                                                <span className="text-white/70 font-semibold">Location:</span>
-                                                <p className="text-white font-bold text-lg">{booking.dropoff_point.name}</p>
-                                                <p className="text-white/80 text-sm mt-1">{booking.dropoff_point.address}</p>
-                                                {booking.dropoff_point.latitude && booking.dropoff_point.longitude && (
-                                                    <p className="text-white/60 text-xs mt-1">
-                                                        Coordinates: {booking.dropoff_point.latitude}, {booking.dropoff_point.longitude}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            {booking.dropoff_point.dropoff_time && (
-                                                <div>
-                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
-                                                    <p className="text-white font-bold text-lg text-green-300">
-                                                        {formatTime(booking.dropoff_point.dropoff_time)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : booking.pickup_point ? (
-                                        <>
-                                            <div>
-                                                <span className="text-white/70 font-semibold">Location:</span>
-                                                <p className="text-white font-bold text-lg">{booking.pickup_point.name}</p>
-                                                <p className="text-white/80 text-sm mt-1">{booking.pickup_point.address}</p>
-                                            </div>
-                                            {booking.pickup_point.dropoff_time && (
-                                                <div>
-                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
-                                                    <p className="text-white font-bold text-lg text-green-300">
-                                                        {formatTime(booking.pickup_point.dropoff_time)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : booking.student?.school ? (
-                                        <div>
-                                            <span className="text-white/70 font-semibold">Location:</span>
-                                            <p className="text-white font-bold text-lg">{booking.student.school.name}</p>
-                                            {booking.route?.dropoff_time && (
-                                                <div className="mt-3">
-                                                    <span className="text-white/70 font-semibold">Scheduled Time:</span>
-                                                    <p className="text-white font-bold text-lg text-green-300">
-                                                        {formatTime(booking.route.dropoff_time)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <p className="text-white/70">Dropoff location not specified</p>
-                                    )}
-                                </div>
+                                <h3 className="text-xl font-extrabold text-brand-primary">Morning Pickup</h3>
                             </div>
-
-                            {/* Route Information */}
-                            {booking.route && (
-                                <div className="mt-6 pt-6 border-t border-white/30">
-                                    <h4 className="text-xl font-bold text-white mb-4">Route Information</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-4">
+                                {booking.pickup_point ? (
+                                    <>
                                         <div>
-                                            <span className="text-white/70 font-semibold">Route Name:</span>
-                                            <p className="text-white font-bold">{booking.route.name}</p>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
+                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
+                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
                                         </div>
-                                        {booking.route.vehicle && (
+                                        {booking.pickup_point.pickup_time && (
                                             <div>
-                                                <span className="text-white/70 font-semibold">Vehicle:</span>
-                                                <p className="text-white font-bold">
-                                                    {booking.route.vehicle.make} {booking.route.vehicle.model}
-                                                </p>
-                                                {booking.route.vehicle.license_plate && (
-                                                    <p className="text-white/80 text-sm">Plate: {booking.route.vehicle.license_plate}</p>
-                                                )}
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
+                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.pickup_point.pickup_time)}</p>
                                             </div>
                                         )}
-                                        {booking.route?.driver && (
+                                    </>
+                                ) : booking.pickup_address ? (
+                                    <>
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
+                                            <p className="text-lg font-extrabold text-white">{booking.pickup_address}</p>
+                                        </div>
+                                        {booking.route?.pickup_time && (
                                             <div>
-                                                <span className="text-white/70 font-semibold">Driver:</span>
-                                                <p className="text-white font-bold">{booking.route.driver.name}</p>
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
+                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.route.pickup_time)}</p>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p className="text-white/70">Pickup location not specified</p>
+                                )}
+                            </div>
+                        </GlassCard>
+
+                        {/* Dropoff Details Card */}
+                        <GlassCard className="p-6">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-extrabold text-brand-primary">Afternoon Dropoff</h3>
+                            </div>
+                            <div className="space-y-4">
+                                {booking.dropoff_point ? (
+                                    <>
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
+                                            <p className="text-lg font-extrabold text-white">{booking.dropoff_point.name}</p>
+                                            <p className="text-sm text-white/80 mt-1">{booking.dropoff_point.address}</p>
+                                        </div>
+                                        {booking.dropoff_point.dropoff_time && (
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
+                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.dropoff_point.dropoff_time)}</p>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : booking.pickup_point ? (
+                                    <>
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
+                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
+                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
+                                        </div>
+                                        {booking.pickup_point.dropoff_time && (
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
+                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.pickup_point.dropoff_time)}</p>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : booking.student?.school ? (
+                                    <div>
+                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
+                                        <p className="text-lg font-extrabold text-white">{booking.student.school.name}</p>
+                                        {booking.route?.dropoff_time && (
+                                            <div className="mt-3">
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
+                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.route.dropoff_time)}</p>
                                             </div>
                                         )}
                                     </div>
+                                ) : (
+                                    <p className="text-white/70">Dropoff location not specified</p>
+                                )}
+                            </div>
+                        </GlassCard>
+                    </div>
+
+                    {/* Route Information Card */}
+                    {booking.route && (
+                        <GlassCard className="mb-6">
+                            <div className="p-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                        <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-xl font-extrabold text-brand-primary">Route Information</h3>
                                 </div>
-                            )}
-                        </div>
-                    </GlassCard>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Route Name</p>
+                                        <p className="text-lg font-extrabold text-white">{booking.route.name}</p>
+                                    </div>
+                                    {booking.route.vehicle && (
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Vehicle</p>
+                                            <p className="text-lg font-extrabold text-white">
+                                                {booking.route.vehicle.make} {booking.route.vehicle.model}
+                                            </p>
+                                            {booking.route.vehicle.license_plate && (
+                                                <p className="text-sm text-white/80 mt-1">Plate: {booking.route.vehicle.license_plate}</p>
+                                            )}
+                                        </div>
+                                    )}
+                                    {booking.route?.driver && (
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
+                                            <p className="text-lg font-extrabold text-white">{booking.route.driver.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </GlassCard>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>
