@@ -411,7 +411,7 @@ export default function CreateBooking({ students, routes }) {
                                                         className={`group relative flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
                                                             data.student_id == student.id
                                                                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
-                                                                : 'border-white/30 bg-white/10 hover:bg-white/15 hover:border-yellow-400/50'
+                                                                : 'border-yellow-400/50 bg-white/10 hover:bg-white/15 hover:border-yellow-400'
                                                         }`}
                                                     >
                                                         <input
