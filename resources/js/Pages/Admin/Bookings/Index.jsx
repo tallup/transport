@@ -80,7 +80,7 @@ export default function Index({ bookings }) {
                     </div>
 
                     {bookings.data && bookings.data.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {bookings.data.map((booking) => (
                                 <GlassCard key={booking.id} className="p-6 hover:scale-[1.02] transition-all">
                                     {/* Card Header */}
@@ -185,26 +185,24 @@ export default function Index({ bookings }) {
                         </GlassCard>
                     )}
 
-                            {bookings.links && (
-                                <div className="mt-4 flex justify-center">
-                                    <div className="flex gap-2">
-                                        {bookings.links.map((link, index) => (
-                                            <Link
-                                                key={index}
-                                                href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-lg ${
-                                                    link.active
-                                                        ? 'glass-button text-white'
-                                                        : 'bg-white/20 text-white hover:bg-white/30'
-                                                } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                    {bookings.links && (
+                        <div className="mt-8 flex justify-center">
+                            <div className="flex gap-2">
+                                {bookings.links.map((link, index) => (
+                                    <Link
+                                        key={index}
+                                        href={link.url || '#'}
+                                        className={`px-3 py-2 rounded-lg ${
+                                            link.active
+                                                ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
+                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </AdminLayout>
