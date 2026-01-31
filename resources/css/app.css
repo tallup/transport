@@ -305,12 +305,12 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/on time.jpeg');
-    background-size: 70% auto;
+    background-image: url('/logo.png');
+    background-size: 60% auto;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    opacity: 0.08;
+    opacity: 0.06;
     z-index: 0;
     pointer-events: none;
 }
