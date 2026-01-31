@@ -432,7 +432,11 @@ export default function CreateBooking({ students, routes }) {
                                                             </svg>
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-lg font-extrabold text-white mb-1">{student.name}</p>
+                                                            <p className={`text-lg font-extrabold text-white mb-1 px-3 py-1.5 rounded-lg border-2 inline-block ${
+                                                                data.student_id == student.id
+                                                                    ? 'border-yellow-400 bg-yellow-400/10'
+                                                                    : 'border-white/30 bg-white/5'
+                                                            }`}>{student.name}</p>
                                                             {student.school && (
                                                                 <div className="flex items-center gap-2 mt-2">
                                                                     <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50">
