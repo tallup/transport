@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import GlassCard from '@/Components/GlassCard';
 import CapacityHeatmap from '@/Components/Analytics/CapacityHeatmap';
 import DriverPerformanceTable from '@/Components/Analytics/DriverPerformanceTable';
 import ReportExporter from '@/Components/Analytics/ReportExporter';
@@ -58,36 +59,36 @@ export default function AnalyticsDashboard({
                     </div>
 
                     {/* Date Range Filter */}
-                    <div className="mb-6 bg-brand-primary rounded-xl p-6 shadow-lg">
+                    <GlassCard className="mb-6 p-6">
                         <div className="flex flex-wrap items-center gap-4">
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">Start Date</label>
+                                <label className="block text-sm font-bold text-brand-primary mb-1">Start Date</label>
                                 <input
                                     type="date"
                                     value={dateRange.start}
                                     onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                                    className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">End Date</label>
+                                <label className="block text-sm font-bold text-brand-primary mb-1">End Date</label>
                                 <input
                                     type="date"
                                     value={dateRange.end}
                                     onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                                    className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
                                 />
                             </div>
                             <div className="flex items-end">
                                 <button
                                     onClick={handleDateRangeChange}
-                                    className="px-4 py-2 bg-white text-brand-primary hover:bg-white/90 font-semibold rounded-lg transition"
+                                    className="px-4 py-2 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary hover:bg-brand-primary/30 hover:border-brand-primary/70 font-bold rounded-lg transition-all"
                                 >
                                     Apply Filter
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </GlassCard>
 
                     {/* Tabs */}
                     <div className="mb-6">
@@ -113,56 +114,76 @@ export default function AnalyticsDashboard({
                         <div className="space-y-6">
                             {/* Key Metrics */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-white uppercase">Total Revenue</p>
-                                            <p className="text-2xl font-extrabold text-white mt-2">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Revenue</p>
+                                            <p className="text-2xl font-extrabold text-white">
                                                 ${revenueTrends.reduce((sum, item) => sum + (item.revenue || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </p>
                                         </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
+                                </GlassCard>
 
-                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-white uppercase">Active Routes</p>
-                                            <p className="text-2xl font-extrabold text-white mt-2">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Active Routes</p>
+                                            <p className="text-2xl font-extrabold text-white">
                                                 {capacityUtilization.length}
                                             </p>
                                         </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
+                                </GlassCard>
 
-                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-white uppercase">Total Drivers</p>
-                                            <p className="text-2xl font-extrabold text-white mt-2">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Drivers</p>
+                                            <p className="text-2xl font-extrabold text-white">
                                                 {driverMetrics.length}
                                             </p>
                                         </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
+                                </GlassCard>
 
-                                <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+                                <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-white uppercase">Avg Utilization</p>
-                                            <p className="text-2xl font-extrabold text-white mt-2">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Avg Utilization</p>
+                                            <p className="text-2xl font-extrabold text-white">
                                                 {capacityUtilization.length > 0
                                                     ? Math.round(capacityUtilization.reduce((sum, r) => sum + r.utilization_percent, 0) / capacityUtilization.length)
                                                     : 0}%
                                             </p>
                                         </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
+                                </GlassCard>
                             </div>
 
                             {/* Revenue Trends Chart */}
-                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
-                                <h3 className="text-lg font-semibold text-white mb-4">Revenue Trends</h3>
+                            <GlassCard className="p-6">
+                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={revenueTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
@@ -194,7 +215,7 @@ export default function AnalyticsDashboard({
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
-                            </div>
+                            </GlassCard>
 
                             {/* Capacity Utilization */}
                             <CapacityHeatmap data={capacityUtilization} />
@@ -204,8 +225,8 @@ export default function AnalyticsDashboard({
                     {/* Revenue Tab */}
                     {activeTab === 'revenue' && (
                         <div className="space-y-6">
-                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
-                                <h3 className="text-lg font-semibold text-white mb-4">Revenue Trends</h3>
+                            <GlassCard className="p-6">
+                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
                                 <div>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={revenueTrends}>
@@ -243,8 +264,7 @@ export default function AnalyticsDashboard({
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
-                                </div>
-                            </div>
+                            </GlassCard>
                         </div>
                     )}
 
@@ -265,8 +285,8 @@ export default function AnalyticsDashboard({
                     {/* Routes Tab */}
                     {activeTab === 'routes' && (
                         <div className="space-y-6">
-                            <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
-                                <h3 className="text-xl font-bold text-white mb-4">Route Efficiency Metrics</h3>
+                            <GlassCard className="p-6">
+                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Route Efficiency Metrics</h3>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-brand-primary/20">
                                         <thead className="bg-white/10">
@@ -315,7 +335,7 @@ export default function AnalyticsDashboard({
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </GlassCard>
                         </div>
                     )}
                 </div>
