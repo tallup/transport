@@ -11,18 +11,17 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="mb-6 sm:mb-8">
-                        <div className="flex justify-between items-center">
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
-                                    Completed Routes
-                                </h1>
-                                <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
-                                    View all your completed routes and completion details
-                                </p>
+                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Completed Routes</h1>
+                                <p className="text-lg text-brand-primary/80 font-medium">View all your completed routes and completion details</p>
                             </div>
-                            <Link href="/driver/dashboard">
-                                <GlassButton variant="secondary">Back to Dashboard</GlassButton>
+                            <Link 
+                                href="/driver/dashboard"
+                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                            >
+                                Back to Dashboard
                             </Link>
                         </div>
                     </div>

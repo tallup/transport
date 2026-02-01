@@ -171,121 +171,212 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                             )}
 
                             {/* Bookings */}
-                            <GlassCard className="mb-8">
-                                <h3 className="text-2xl font-bold text-white mb-6">Bookings ({bookings?.length || 0})</h3>
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Bookings ({bookings?.length || 0})</h3>
                                 
                                 {bookings && bookings.length > 0 ? (
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full">
-                                            <thead>
-                                                <tr className="border-b border-white/20">
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Student</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">School</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Pickup Location</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Plan Type</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Trip Type</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Date Range</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-white/10">
-                                                {bookings.map((booking) => (
-                                                    <tr key={booking.id} className="hover:bg-white/5 transition">
-                                                        <td className="px-4 py-4">
-                                                            <p className="text-base font-bold text-white">{booking.student?.name || 'N/A'}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {bookings.map((booking) => (
+                                            <GlassCard key={booking.id} className="p-6 hover:scale-[1.02] transition-all">
+                                                {/* Card Header */}
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <h3 className="text-lg font-extrabold text-white truncate">{booking.student?.name || 'N/A'}</h3>
                                                             {booking.student?.grade && (
-                                                                <p className="text-xs font-medium text-white/70 mt-1">Grade: {booking.student.grade}</p>
+                                                                <p className="text-sm text-white/70 font-medium">Grade {booking.student.grade}</p>
                                                             )}
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <p className="text-sm font-semibold text-white/90">{booking.student?.school || 'N/A'}</p>
-                                                        </td>
-                                                        <td className="px-4 py-4">
+                                                        </div>
+                                                    </div>
+                                                    <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                                        booking.status === 'active' 
+                                                            ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
+                                                            : booking.status === 'pending'
+                                                            ? 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50'
+                                                            : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                                    }`}>
+                                                        {booking.status?.toUpperCase() || 'N/A'}
+                                                    </span>
+                                                </div>
+
+                                                {/* Card Content */}
+                                                <div className="space-y-3 mb-4">
+                                                    {booking.student?.school && (
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                            </svg>
+                                                            <p className="text-sm text-white/90 font-medium truncate">{booking.student.school}</p>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-start gap-2">
+                                                        <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        </svg>
+                                                        <div className="flex-1 min-w-0">
                                                             {booking.pickup_point ? (
                                                                 <>
-                                                                    <p className="text-sm font-bold text-white">{booking.pickup_point.name}</p>
-                                                                    <p className="text-xs font-medium text-white/70 mt-1">{booking.pickup_point.address}</p>
+                                                                    <p className="text-sm text-white/90 font-medium truncate">{booking.pickup_point.name}</p>
+                                                                    {booking.pickup_point.address && (
+                                                                        <p className="text-xs text-white/70 font-medium truncate mt-1">{booking.pickup_point.address}</p>
+                                                                    )}
                                                                     {booking.pickup_point.pickup_time && (
-                                                                        <p className="text-xs font-medium text-green-300 mt-1">
+                                                                        <p className="text-xs font-bold text-green-300 mt-1">
                                                                             Time: {booking.pickup_point.pickup_time}
                                                                         </p>
                                                                     )}
                                                                 </>
                                                             ) : booking.pickup_address ? (
                                                                 <>
-                                                                    <p className="text-sm font-bold text-white">Custom Address</p>
-                                                                    <p className="text-xs font-medium text-white/70 mt-1">{booking.pickup_address}</p>
+                                                                    <p className="text-sm text-white/90 font-medium truncate">Custom Address</p>
+                                                                    <p className="text-xs text-white/70 font-medium truncate mt-1">{booking.pickup_address}</p>
                                                                 </>
                                                             ) : (
-                                                                <p className="text-sm font-medium text-white/50">N/A</p>
+                                                                <p className="text-sm text-white/50 font-medium">N/A</p>
                                                             )}
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <span className="text-sm font-semibold text-white capitalize">
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50 capitalize">
                                                                 {booking.plan_type === 'academic_term' ? 'Academic Term' : booking.plan_type?.replace('_', ' ')}
                                                             </span>
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <span className="text-sm font-semibold text-white capitalize">
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                            </svg>
+                                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-purple-500/30 text-brand-primary border border-purple-400/50 capitalize">
                                                                 {booking.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
                                                             </span>
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <p className="text-sm font-semibold text-white">{booking.start_date_formatted}</p>
-                                                            <p className="text-xs font-medium text-white/70 mt-1">to {booking.end_date_formatted}</p>
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                                                                booking.status === 'active' 
-                                                                    ? 'bg-green-500/30 text-green-100 border border-green-400/50' 
-                                                                    : booking.status === 'pending'
-                                                                    ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                                    : 'bg-gray-500/30 text-gray-100 border border-gray-400/50'
-                                                            }`}>
-                                                                {booking.status?.toUpperCase() || 'N/A'}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <p className="text-sm text-white/90 font-medium">
+                                                            {booking.start_date_formatted} - {booking.end_date_formatted}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </GlassCard>
+                                        ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-12">
-                                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                        <p className="mt-4 text-lg font-semibold text-white">No bookings found</p>
-                                        <p className="mt-2 text-base font-medium text-white/70">This route has no active or pending bookings.</p>
-                                    </div>
+                                    <GlassCard className="p-12">
+                                        <div className="text-center">
+                                            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                                <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                </svg>
+                                            </div>
+                                            <p className="text-brand-primary text-lg font-bold mb-2">No bookings found</p>
+                                            <p className="text-white/70 text-sm">This route has no active or pending bookings.</p>
+                                        </div>
+                                    </GlassCard>
                                 )}
-                            </GlassCard>
+                            </div>
 
                             {/* Pickup Points */}
-                            <GlassCard>
-                                <h3 className="text-2xl font-bold text-white mb-6">Pickup Points ({pickupPoints?.length || 0})</h3>
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Pickup Points ({pickupPoints?.length || 0})</h3>
                                 
                                 {pickupPoints && pickupPoints.length > 0 ? (
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full">
-                                            <thead>
-                                                <tr className="border-b border-white/20">
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Sequence</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Pickup Point Name</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Address</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Pickup Time</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Dropoff Time</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Coordinates</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-white/10">
-                                                {pickupPoints.map((point) => (
-                                                    <tr key={point.id} className="hover:bg-white/5 transition">
-                                                        <td className="px-4 py-4 whitespace-nowrap">
-                                                            <span className="px-3 py-1 bg-blue-500/30 text-blue-100 border border-blue-400/50 text-sm font-bold rounded-full">
-                                                                #{point.sequence_order}
-                                                            </span>
-                                                        </td>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {pickupPoints.map((point) => (
+                                            <GlassCard key={point.id} className="p-6 hover:scale-[1.02] transition-all">
+                                                {/* Card Header */}
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <h3 className="text-lg font-extrabold text-white truncate">{point.name}</h3>
+                                                            <p className="text-sm text-white/70 font-medium truncate">Sequence #{point.sequence_order}</p>
+                                                        </div>
+                                                    </div>
+                                                    <span className="px-3 py-1 bg-blue-500/30 text-brand-primary border border-blue-400/50 text-xs font-bold rounded-lg">
+                                                        #{point.sequence_order}
+                                                    </span>
+                                                </div>
+
+                                                {/* Card Content */}
+                                                <div className="space-y-3 mb-4">
+                                                    {point.address && (
+                                                        <div className="flex items-start gap-2">
+                                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            </svg>
+                                                            <p className="text-sm text-white/90 font-medium line-clamp-2">{point.address}</p>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                                        {point.pickup_time && (
+                                                            <div className="flex items-center gap-2">
+                                                                <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                <div>
+                                                                    <p className="text-xs text-white/70 font-medium">Pickup</p>
+                                                                    <p className="text-sm font-bold text-green-300">{point.pickup_time}</p>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {point.dropoff_time && (
+                                                            <div className="flex items-center gap-2">
+                                                                <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                <div>
+                                                                    <p className="text-xs text-white/70 font-medium">Dropoff</p>
+                                                                    <p className="text-sm font-bold text-white/90">{point.dropoff_time}</p>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {(point.latitude || point.longitude) && (
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                            </svg>
+                                                            <p className="text-xs text-white/70 font-medium">
+                                                                {point.latitude && point.longitude ? `${point.latitude}, ${point.longitude}` : 'N/A'}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </GlassCard>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <GlassCard className="p-12">
+                                        <div className="text-center">
+                                            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                                <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                            </div>
+                                            <p className="text-brand-primary text-lg font-bold">No pickup points</p>
+                                        </div>
+                                    </GlassCard>
+                                )}
+                            </div>
                                                         <td className="px-4 py-4">
                                                             <p className="text-base font-bold text-white">{point.name}</p>
                                                         </td>
