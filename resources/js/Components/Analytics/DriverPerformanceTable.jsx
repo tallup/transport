@@ -39,71 +39,71 @@ export default function DriverPerformanceTable({ data = [] }) {
     };
 
     return (
-        <div className="bg-brand-primary rounded-xl p-6 shadow-lg">
+        <GlassCard className="p-6">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-white">Driver Performance Metrics</h3>
+                <h3 className="text-xl font-extrabold text-brand-primary">Driver Performance Metrics</h3>
                 <div className="flex gap-2">
                     <input
                         type="text"
                         placeholder="Filter by driver name..."
                         value={filterRoute}
                         onChange={(e) => setFilterRoute(e.target.value)}
-                        className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
                     />
                 </div>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200/30">
+                <table className="min-w-full divide-y divide-brand-primary/20">
                     <thead className="bg-white/10">
                         <tr>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('driver_name')}
                             >
                                 Driver {sortField === 'driver_name' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('total_routes')}
                             >
                                 Routes {sortField === 'total_routes' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('total_bookings')}
                             >
                                 Bookings {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('total_completions')}
                             >
                                 Completions {sortField === 'total_completions' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('total_pickups')}
                             >
                                 Pickups {sortField === 'total_pickups' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-white uppercase cursor-pointer hover:bg-white/20"
+                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
                                 onClick={() => handleSort('on_time_rate')}
                             >
                                 On-Time Rate {sortField === 'on_time_rate' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">
+                            <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">
                                 Avg Completion Time
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white/5 divide-y divide-gray-200/20">
+                    <tbody className="bg-white/5 divide-y divide-brand-primary/20">
                         {sortedData
                             .filter((driver) =>
                                 filterRoute === '' || driver.driver_name.toLowerCase().includes(filterRoute.toLowerCase())
                             )
                             .map((driver) => (
-                                <tr key={driver.driver_id} className="hover:bg-white/10 transition">
+                                <tr key={driver.driver_id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
                                     <td className="px-4 py-3 text-base font-bold text-white">{driver.driver_name}</td>
                                     <td className="px-4 py-3 text-base font-semibold text-white/90">
                                         {driver.total_routes}
@@ -145,9 +145,16 @@ export default function DriverPerformanceTable({ data = [] }) {
                 </table>
             </div>
             {sortedData.length === 0 && (
-                <p className="text-white/60 text-center py-8">No driver data available</p>
+                <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                        <svg className="w-8 h-8 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <p className="text-brand-primary font-bold">No driver data available</p>
+                </div>
             )}
-        </div>
+        </GlassCard>
     );
 }
 
