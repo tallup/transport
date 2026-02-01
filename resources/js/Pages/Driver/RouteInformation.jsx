@@ -377,48 +377,6 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                     </GlassCard>
                                 )}
                             </div>
-                                                        <td className="px-4 py-4">
-                                                            <p className="text-base font-bold text-white">{point.name}</p>
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <p className="text-sm font-semibold text-white/90">{point.address || 'N/A'}</p>
-                                                        </td>
-                                                        <td className="px-4 py-4 whitespace-nowrap">
-                                                            <div className="flex items-center gap-2">
-                                                                <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                </svg>
-                                                                <span className="text-sm font-bold text-green-300">{point.pickup_time}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-4 py-4 whitespace-nowrap">
-                                                            <span className="text-sm font-semibold text-white/90">{point.dropoff_time || 'N/A'}</span>
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            {point.latitude && point.longitude ? (
-                                                                <p className="text-xs font-medium text-white/70">
-                                                                    {point.latitude}, {point.longitude}
-                                                                </p>
-                                                            ) : (
-                                                                <p className="text-xs font-medium text-white/50">N/A</p>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12">
-                                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        <p className="mt-4 text-lg font-semibold text-white">No pickup points assigned</p>
-                                        <p className="mt-2 text-base font-medium text-white/70">This route has no pickup points configured.</p>
-                                    </div>
-                                )}
-                            </GlassCard>
                         </>
                     )}
                 </div>
