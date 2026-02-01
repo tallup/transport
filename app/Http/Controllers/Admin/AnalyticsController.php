@@ -36,12 +36,18 @@ class AnalyticsController extends Controller
             Carbon::parse($endDate)
         );
 
+        $revenueSummary = $this->analyticsService->getRevenueSummary(
+            Carbon::parse($startDate),
+            Carbon::parse($endDate)
+        );
+
         $capacityUtilization = $this->analyticsService->getCapacityUtilization();
         $driverMetrics = $this->analyticsService->getDriverPerformanceMetrics();
         $routeMetrics = $this->analyticsService->getRouteEfficiencyMetrics();
 
         return Inertia::render('Admin/Analytics/Dashboard', [
             'revenueTrends' => $revenueTrends,
+            'revenueSummary' => $revenueSummary,
             'capacityUtilization' => $capacityUtilization,
             'driverMetrics' => $driverMetrics,
             'routeMetrics' => $routeMetrics,

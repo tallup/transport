@@ -5,10 +5,11 @@ import CapacityHeatmap from '@/Components/Analytics/CapacityHeatmap';
 import DriverPerformanceTable from '@/Components/Analytics/DriverPerformanceTable';
 import ReportExporter from '@/Components/Analytics/ReportExporter';
 import { useState } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AnalyticsDashboard({
     revenueTrends = [],
+    revenueSummary = {},
     capacityUtilization = [],
     driverMetrics = [],
     routeMetrics = [],
@@ -225,6 +226,75 @@ export default function AnalyticsDashboard({
                     {/* Revenue Tab */}
                     {activeTab === 'revenue' && (
                         <div className="space-y-6">
+                            {/* Revenue Summary Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <GlassCard className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Revenue</p>
+                                            <p className="text-2xl font-extrabold text-white">
+                                                ${(revenueSummary.total_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </p>
+                                        </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+
+                                <GlassCard className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Avg Daily Revenue</p>
+                                            <p className="text-2xl font-extrabold text-white">
+                                                ${(revenueSummary.avg_daily_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </p>
+                                        </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+
+                                <GlassCard className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Growth</p>
+                                            <p className={`text-2xl font-extrabold ${(revenueSummary.growth_percent || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                                {(revenueSummary.growth_percent || 0) >= 0 ? '+' : ''}{revenueSummary.growth_percent || 0}%
+                                            </p>
+                                            <p className="text-xs text-brand-primary/60 mt-1">vs previous period</p>
+                                        </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+
+                                <GlassCard className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Bookings</p>
+                                            <p className="text-2xl font-extrabold text-white">
+                                                {revenueSummary.total_bookings || 0}
+                                            </p>
+                                        </div>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+                            </div>
+
+                            {/* Revenue Trends Chart */}
                             <GlassCard className="p-6">
                                 <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={400}>
@@ -250,9 +320,10 @@ export default function AnalyticsDashboard({
                                         <Line
                                             type="monotone"
                                             dataKey="revenue"
-                                            stroke="#10b981"
-                                            strokeWidth={2}
+                                            stroke="#facc15"
+                                            strokeWidth={3}
                                             name="Revenue ($)"
+                                            dot={{ fill: '#facc15', r: 4 }}
                                         />
                                         <Line
                                             type="monotone"
@@ -260,10 +331,163 @@ export default function AnalyticsDashboard({
                                             stroke="#3b82f6"
                                             strokeWidth={2}
                                             name="Bookings"
+                                            dot={{ fill: '#3b82f6', r: 3 }}
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </GlassCard>
+
+                            {/* Revenue Breakdown */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {/* Revenue by Plan Type */}
+                                <GlassCard className="p-6">
+                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue by Plan Type</h3>
+                                    {revenueSummary.revenue_by_plan_type && revenueSummary.revenue_by_plan_type.length > 0 ? (
+                                        <>
+                                            <ResponsiveContainer width="100%" height={300}>
+                                                <PieChart>
+                                                    <Pie
+                                                        data={revenueSummary.revenue_by_plan_type}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={false}
+                                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                                        outerRadius={80}
+                                                        fill="#8884d8"
+                                                        dataKey="revenue"
+                                                    >
+                                                        {revenueSummary.revenue_by_plan_type.map((entry, index) => {
+                                                            const colors = ['#facc15', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+                                                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                                                        })}
+                                                    </Pie>
+                                                    <Tooltip
+                                                        contentStyle={{
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                            color: '#ffffff',
+                                                        }}
+                                                        formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                                                    />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                            <div className="mt-4 space-y-2">
+                                                {revenueSummary.revenue_by_plan_type.map((plan, index) => {
+                                                    const colors = ['#facc15', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+                                                    const percentage = revenueSummary.total_revenue > 0 
+                                                        ? ((plan.revenue / revenueSummary.total_revenue) * 100).toFixed(1)
+                                                        : 0;
+                                                    return (
+                                                        <div key={plan.plan_type} className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index % colors.length] }}></div>
+                                                                <span className="text-sm font-semibold text-white">{plan.label}</span>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <span className="text-sm font-bold text-white">${plan.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                                <span className="text-xs text-brand-primary/70 ml-2">({percentage}%)</span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <p className="text-brand-primary/70">No revenue data available</p>
+                                        </div>
+                                    )}
+                                </GlassCard>
+
+                                {/* Revenue by Plan Type Bar Chart */}
+                                <GlassCard className="p-6">
+                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Comparison by Plan</h3>
+                                    {revenueSummary.revenue_by_plan_type && revenueSummary.revenue_by_plan_type.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height={300}>
+                                            <BarChart data={revenueSummary.revenue_by_plan_type}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
+                                                <XAxis
+                                                    dataKey="label"
+                                                    stroke="#22304d"
+                                                    tick={{ fill: '#22304d' }}
+                                                />
+                                                <YAxis
+                                                    stroke="#22304d"
+                                                    tick={{ fill: '#22304d' }}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                        color: '#ffffff',
+                                                    }}
+                                                    formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                                                />
+                                                <Bar dataKey="revenue" fill="#facc15" radius={[8, 8, 0, 0]} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <p className="text-brand-primary/70">No revenue data available</p>
+                                        </div>
+                                    )}
+                                </GlassCard>
+                            </div>
+
+                            {/* Top Revenue Generating Routes */}
+                            {revenueSummary.revenue_by_route && revenueSummary.revenue_by_route.length > 0 && (
+                                <GlassCard className="p-6">
+                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Top Revenue Generating Routes</h3>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-brand-primary/20">
+                                            <thead className="bg-white/10">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Route</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Revenue</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Bookings</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Avg per Booking</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">% of Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                                                {revenueSummary.revenue_by_route.slice(0, 10).map((route) => {
+                                                    const avgPerBooking = route.bookings_count > 0 
+                                                        ? (route.revenue / route.bookings_count).toFixed(2)
+                                                        : '0.00';
+                                                    const percentage = revenueSummary.total_revenue > 0
+                                                        ? ((route.revenue / revenueSummary.total_revenue) * 100).toFixed(1)
+                                                        : '0.0';
+                                                    return (
+                                                        <tr key={route.route_id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
+                                                            <td className="px-4 py-3 text-base font-bold text-white">{route.route_name}</td>
+                                                            <td className="px-4 py-3 text-base font-semibold text-white">
+                                                                ${route.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                                {route.bookings_count}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                                ${avgPerBooking}
+                                                            </td>
+                                                            <td className="px-4 py-3">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-24 bg-white/10 rounded-full h-2 mr-2">
+                                                                        <div
+                                                                            className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500"
+                                                                            style={{ width: `${Math.min(parseFloat(percentage), 100)}%` }}
+                                                                        />
+                                                                    </div>
+                                                                    <span className="text-base font-semibold text-white/90">{percentage}%</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </GlassCard>
+                            )}
                         </div>
                     )}
 

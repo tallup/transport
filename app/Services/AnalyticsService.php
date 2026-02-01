@@ -354,7 +354,7 @@ class AnalyticsService
      * @param Carbon $endDate
      * @return array
      */
-    protected function getRevenueSummary(Carbon $startDate, Carbon $endDate): array
+    public function getRevenueSummary(Carbon $startDate, Carbon $endDate): array
     {
         $bookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
             ->whereBetween('created_at', [$startDate, $endDate])
@@ -363,6 +363,7 @@ class AnalyticsService
 
         $totalRevenue = 0;
         $byPlanType = [];
+        $byRoute = [];
 
         foreach ($bookings as $booking) {
             try {
@@ -378,16 +379,81 @@ class AnalyticsService
                         $byPlanType[$booking->plan_type] = 0;
                     }
                     $byPlanType[$booking->plan_type] += $price;
+
+                    $routeId = $booking->route->id;
+                    $routeName = $booking->route->name;
+                    if (!isset($byRoute[$routeId])) {
+                        $byRoute[$routeId] = [
+                            'route_id' => $routeId,
+                            'route_name' => $routeName,
+                            'revenue' => 0,
+                            'bookings_count' => 0,
+                        ];
+                    }
+                    $byRoute[$routeId]['revenue'] += $price;
+                    $byRoute[$routeId]['bookings_count'] += 1;
                 }
             } catch (\Exception $e) {
                 // Skip bookings without valid pricing
             }
         }
 
+        // Sort routes by revenue
+        usort($byRoute, function($a, $b) {
+            return $b['revenue'] <=> $a['revenue'];
+        });
+
+        // Format plan type data
+        $planTypeData = [];
+        foreach ($byPlanType as $planType => $revenue) {
+            $planTypeData[] = [
+                'plan_type' => $planType,
+                'label' => ucfirst(str_replace('_', ' ', $planType)),
+                'revenue' => round($revenue, 2),
+            ];
+        }
+
+        // Calculate average daily revenue
+        $daysDiff = $startDate->diffInDays($endDate) + 1;
+        $avgDailyRevenue = $daysDiff > 0 ? round($totalRevenue / $daysDiff, 2) : 0;
+
+        // Calculate previous period for comparison
+        $periodLength = $startDate->diffInDays($endDate);
+        $prevStartDate = $startDate->copy()->subDays($periodLength + 1);
+        $prevEndDate = $startDate->copy()->subDay();
+        $prevBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+            ->whereBetween('created_at', [$prevStartDate, $prevEndDate])
+            ->with(['route.vehicle'])
+            ->get();
+
+        $prevRevenue = 0;
+        foreach ($prevBookings as $booking) {
+            try {
+                if ($booking->route) {
+                    $price = $this->pricingService->calculatePrice(
+                        $booking->plan_type,
+                        $booking->trip_type ?? 'two_way',
+                        $booking->route
+                    );
+                    $prevRevenue += $price;
+                }
+            } catch (\Exception $e) {
+                // Skip bookings without valid pricing
+            }
+        }
+
+        $growthPercent = $prevRevenue > 0 
+            ? round((($totalRevenue - $prevRevenue) / $prevRevenue) * 100, 2)
+            : ($totalRevenue > 0 ? 100 : 0);
+
         return [
             'total_revenue' => round($totalRevenue, 2),
             'total_bookings' => $bookings->count(),
-            'revenue_by_plan_type' => $byPlanType,
+            'avg_daily_revenue' => $avgDailyRevenue,
+            'growth_percent' => $growthPercent,
+            'previous_period_revenue' => round($prevRevenue, 2),
+            'revenue_by_plan_type' => $planTypeData,
+            'revenue_by_route' => array_values($byRoute),
             'period_start' => $startDate->format('Y-m-d'),
             'period_end' => $endDate->format('Y-m-d'),
         ];
