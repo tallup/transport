@@ -186,16 +186,16 @@ export default function AnalyticsDashboard({
                                 <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={revenueTrends}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
                                         <XAxis
                                             dataKey="label"
-                                            stroke="#ffffff"
-                                            tick={{ fill: '#ffffff' }}
+                                            stroke="#22304d"
+                                            tick={{ fill: '#22304d' }}
                                             style={{ fontSize: '12px' }}
                                         />
                                         <YAxis
-                                            stroke="#ffffff"
-                                            tick={{ fill: '#ffffff' }}
+                                            stroke="#22304d"
+                                            tick={{ fill: '#22304d' }}
                                             style={{ fontSize: '12px' }}
                                         />
                                         <Tooltip
@@ -229,15 +229,15 @@ export default function AnalyticsDashboard({
                                 <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={revenueTrends}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
                                         <XAxis
                                             dataKey="label"
-                                            stroke="#ffffff"
-                                            tick={{ fill: '#ffffff' }}
+                                            stroke="#22304d"
+                                            tick={{ fill: '#22304d' }}
                                         />
                                         <YAxis
-                                            stroke="#ffffff"
-                                            tick={{ fill: '#ffffff' }}
+                                            stroke="#22304d"
+                                            tick={{ fill: '#22304d' }}
                                         />
                                         <Tooltip
                                             contentStyle={{
