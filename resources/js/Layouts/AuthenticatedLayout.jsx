@@ -108,11 +108,11 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             {/* Mobile Menu - Visible on mobile only */}
                             <div className="flex items-center sm:hidden ml-auto">
-                                <MobileMenu
-                                    navigationItems={navigationItems}
-                                    userMenuItems={userMenuItems}
-                                    user={auth?.user}
-                                />
+                            <MobileMenu
+                                navigationItems={navigationItems}
+                                userMenuItems={userMenuItems}
+                                user={auth?.user}
+                            />
                             </div>
                         </div>
                     </div>

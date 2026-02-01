@@ -13,7 +13,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
         // Only admins can view users list
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -22,7 +22,7 @@ class UserPolicy
     public function view(User $user, User $model): bool
     {
         // Only admins can view users
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -31,7 +31,7 @@ class UserPolicy
     public function create(User $user): bool
     {
         // Only admins can create users
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -44,7 +44,7 @@ class UserPolicy
         if (in_array($model->role, ['super_admin', 'transport_admin'])) {
             return false;
         }
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserPolicy
         if (in_array($model->role, ['super_admin', 'transport_admin'])) {
             return false;
         }
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -65,7 +65,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 
     /**
@@ -77,6 +77,6 @@ class UserPolicy
         if (in_array($model->role, ['super_admin', 'transport_admin'])) {
             return false;
         }
-        return in_array($user->role, ['super_admin', 'transport_admin']);
+        return in_array($user->role, ['super_admin', 'transport_admin', 'admin']);
     }
 }

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'role', // Will be ignored if column doesn't exist
         'phone_numbers',
+        'is_active',
     ];
 
     /**

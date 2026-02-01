@@ -37,64 +37,64 @@ export default function Home({ auth }) {
                                 <div className="lg:col-span-5 space-y-2 lg:space-y-3 flex flex-col justify-center">
                                     {/* Main Heading */}
                                     <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-brand-primary leading-[1.05]">
-                                        <span className="block animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                                            Safe & Reliable
-                                        </span>
+                                    <span className="block animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                                        Safe & Reliable
+                                    </span>
                                         <span className="block mt-0.5 text-lg md:text-xl font-semibold text-brand-primary">
                                             Kids Transportation • Marysville • Everett • Lynnwood
-                                        </span>
-                                    </h1>
-
-                                    {/* Description */}
+                                    </span>
+                                </h1>
+                                
+                                {/* Description */}
                                     <p className="text-sm md:text-base text-brand-primary/90 leading-relaxed">
-                                        Private child transportation services between approved locations with parent authorization. Real-time tracking and flexible plans.
-                                    </p>
-                                    
-                                    {/* CTA Buttons */}
+                                    Private child transportation services between approved locations with parent authorization. Real-time tracking and flexible plans.
+                                </p>
+                                
+                                {/* CTA Buttons */}
                                     <div className="flex flex-wrap gap-2.5 pt-0.5">
-                                        {!auth?.user && (
-                                            <>
-                                                <Link
-                                                    href="/parent/register"
+                                    {!auth?.user && (
+                                        <>
+                                            <Link
+                                                href="/parent/register"
                                                     className="group relative bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-5 py-2 rounded-lg font-bold text-sm transition-all shadow-lg hover:shadow-xl hover:shadow-yellow-500/30 transform hover:scale-[1.02] flex items-center gap-1.5 overflow-hidden"
-                                                >
-                                                    <span>Get Started</span>
+                                            >
+                                                <span>Get Started</span>
                                                     <svg className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                                    </svg>
-                                                </Link>
-                                                <Link
-                                                    href="/login"
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                            </Link>
+                                            <Link
+                                                href="/login"
                                                     className="bg-yellow-400/10 backdrop-blur-sm border border-yellow-400/30 text-yellow-600 px-5 py-2 rounded-lg font-bold text-sm hover:bg-yellow-400/20 hover:border-yellow-400/50 transition-all flex items-center gap-1.5"
-                                                >
+                                            >
                                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                                    </svg>
-                                                    <span>Sign In</span>
-                                                </Link>
-                                            </>
-                                        )}
-                                    </div>
-
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                                </svg>
+                                                <span>Sign In</span>
+                                            </Link>
+                                        </>
+                                    )}
+                            </div>
+                            
                                     {/* Stats Cards - Below buttons on the right */}
                                     <div className="pt-2">
                                         <div className="grid grid-cols-2 gap-2.5">
                                             <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
                                                 <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">100%</div>
                                                 <div className="text-xs text-brand-primary/80 font-medium">Safe & Secure</div>
-                                            </GlassCard>
+                                    </GlassCard>
                                             <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
                                                 <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">24/7</div>
                                                 <div className="text-xs text-brand-primary/80 font-medium">Support</div>
-                                            </GlassCard>
+                                    </GlassCard>
                                             <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
                                                 <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">99%</div>
                                                 <div className="text-xs text-brand-primary/80 font-medium">On-Time</div>
-                                            </GlassCard>
+                                    </GlassCard>
                                             <GlassCard className="p-3 text-center hover:scale-105 transition-all duration-300 border border-brand-primary/20">
                                                 <div className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-0.5">500+</div>
                                                 <div className="text-xs text-brand-primary/80 font-medium">Families</div>
-                                            </GlassCard>
+                                    </GlassCard>
                                         </div>
                                     </div>
                                 </div>

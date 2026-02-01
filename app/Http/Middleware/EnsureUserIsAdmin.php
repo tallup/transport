@@ -26,7 +26,7 @@ class EnsureUserIsAdmin
             ->where('id', $user->id)
             ->value('role');
         
-        if (!in_array($role, ['super_admin', 'transport_admin'])) {
+        if (!in_array($role, ['super_admin', 'transport_admin', 'admin'])) {
             abort(403, 'Unauthorized access to admin area. Your current role is: ' . ($role ?? 'not set'));
         }
 

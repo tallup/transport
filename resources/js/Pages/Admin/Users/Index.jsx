@@ -6,6 +6,7 @@ import { useState } from 'react';
 export default function Index({ users, filters }) {
     const { auth } = usePage().props;
     const [deleting, setDeleting] = useState(null);
+    const [toggling, setToggling] = useState(null);
     const [search, setSearch] = useState(filters.search || '');
     const [roleFilter, setRoleFilter] = useState(filters.role || '');
 
@@ -14,6 +15,25 @@ export default function Index({ users, filters }) {
             setDeleting(id);
             router.delete(`/admin/users/${id}`, {
                 onFinish: () => setDeleting(null),
+            });
+        }
+    };
+
+    const handleToggleParentStatus = (user) => {
+        if (user.role !== 'parent') {
+            return;
+        }
+
+        const action = user.is_active ? 'disable' : 'enable';
+        const message = user.is_active 
+            ? 'Are you sure you want to disable this parent account? All their students will be removed from routes and active bookings will be cancelled.'
+            : 'Are you sure you want to enable this parent account?';
+
+        if (confirm(message)) {
+            setToggling(user.id);
+            router.post(`/admin/users/${user.id}/toggle-parent-status`, {}, {
+                onFinish: () => setToggling(null),
+                preserveScroll: true,
             });
         }
     };
@@ -97,15 +117,26 @@ export default function Index({ users, filters }) {
                                                 <p className="text-sm text-white/70 font-medium truncate">{user.email}</p>
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
-                                            user.role === 'driver' 
-                                                ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
-                                                : user.role === 'parent'
-                                                ? 'bg-blue-500/30 text-brand-primary border border-blue-400/50'
-                                                : 'bg-purple-500/30 text-brand-primary border border-purple-400/50'
-                                        }`}>
-                                            {user.role}
-                                        </span>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                                user.role === 'driver' 
+                                                    ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
+                                                    : user.role === 'parent'
+                                                    ? 'bg-blue-500/30 text-brand-primary border border-blue-400/50'
+                                                    : 'bg-purple-500/30 text-brand-primary border border-purple-400/50'
+                                            }`}>
+                                                {user.role}
+                                            </span>
+                                            {user.role === 'parent' && (
+                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                                    user.is_active !== false
+                                                        ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
+                                                        : 'bg-red-500/30 text-brand-primary border border-red-400/50'
+                                                }`}>
+                                                    {user.is_active !== false ? 'Active' : 'Disabled'}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Card Content */}
@@ -132,6 +163,24 @@ export default function Index({ users, filters }) {
                                         >
                                             Edit
                                         </Link>
+                                        {user.role === 'parent' && (
+                                            <button
+                                                onClick={() => handleToggleParentStatus(user)}
+                                                disabled={toggling === user.id}
+                                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${
+                                                    user.is_active !== false
+                                                        ? 'bg-orange-500/20 border border-orange-400/50 text-orange-200 hover:bg-orange-500/30'
+                                                        : 'bg-green-500/20 border border-green-400/50 text-green-200 hover:bg-green-500/30'
+                                                }`}
+                                            >
+                                                {toggling === user.id 
+                                                    ? 'Processing...' 
+                                                    : user.is_active !== false 
+                                                        ? 'Disable' 
+                                                        : 'Enable'
+                                                }
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleDelete(user.id)}
                                             disabled={deleting === user.id}

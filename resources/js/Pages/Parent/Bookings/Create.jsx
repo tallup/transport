@@ -321,17 +321,17 @@ export default function CreateBooking({ students, routes }) {
                                                                 : step === s
                                                                     ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-brand-primary shadow-xl scale-125 ring-4 ring-yellow-400/40'
                                                                     : 'bg-white/20 text-white/50 border-2 border-white/30'
-                                                        }`}
-                                                    >
+                                                }`}
+                                            >
                                                         {step > s ? (
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                             </svg>
                                                         ) : (
                                                             <span className="text-base">{s + 1}</span>
-                                                        )}
-                                                    </div>
-                                                </div>
+                                            )}
+                                        </div>
+                                </div>
                                                 <span className={`mt-3 text-xs font-bold uppercase tracking-wider transition-colors ${
                                                     step >= s ? 'text-brand-primary' : 'text-white/40'
                                                 }`}>
@@ -357,16 +357,16 @@ export default function CreateBooking({ students, routes }) {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                     </svg>
                                                 </div>
-                                                <div>
+                                            <div>
                                                     <p className="text-xs font-bold text-blue-200 uppercase tracking-wide mb-1">Booking for:</p>
                                                     <p className="text-lg font-extrabold text-white">
-                                                        {selectedStudent.name}
-                                                        {selectedStudent.school && (
-                                                            <span className="text-base font-semibold text-white/90 ml-2">
-                                                                - {selectedStudent.school.name}
-                                                            </span>
-                                                        )}
-                                                    </p>
+                                                    {selectedStudent.name}
+                                                    {selectedStudent.school && (
+                                                        <span className="text-base font-semibold text-white/90 ml-2">
+                                                            - {selectedStudent.school.name}
+                                                        </span>
+                                                    )}
+                                                </p>
                                                 </div>
                                             </div>
                                             <Link
@@ -433,7 +433,7 @@ export default function CreateBooking({ students, routes }) {
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-base font-extrabold text-white mb-1 truncate">{student.name}</p>
-                                                            {student.school && (
+                                                        {student.school && (
                                                                 <div className="flex items-center gap-2 mt-1.5">
                                                                     <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50 truncate">
                                                                         {student.school.name}
@@ -451,7 +451,7 @@ export default function CreateBooking({ students, routes }) {
                                                     </label>
                                                 ))}
                                             </div>
-                                        )}
+                                                )}
                                         {errors.student_id && (
                                             <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
                                                 <p className="text-red-200 text-sm font-bold">{errors.student_id}</p>
@@ -489,22 +489,22 @@ export default function CreateBooking({ students, routes }) {
                                         ) : (
                                             <div className="space-y-3">
                                                 {filteredRoutes.map((route) => (
-                                                    <label
-                                                        key={route.id}
+                                                <label
+                                                    key={route.id}
                                                         className={`group relative flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                                                            data.route_id == route.id
+                                                        data.route_id == route.id
                                                                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
                                                                 : 'border-white/30 bg-white/10 hover:bg-white/15 hover:border-yellow-400/50'
-                                                        }`}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="route_id"
-                                                            value={route.id}
-                                                            checked={data.route_id == route.id}
-                                                            onChange={(e) => setData('route_id', e.target.value)}
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="route_id"
+                                                        value={route.id}
+                                                        checked={data.route_id == route.id}
+                                                        onChange={(e) => setData('route_id', e.target.value)}
                                                             className="sr-only"
-                                                        />
+                                                    />
                                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
                                                             data.route_id == route.id
                                                                 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md'
@@ -525,13 +525,13 @@ export default function CreateBooking({ students, routes }) {
                                                                     )}
                                                                 </div>
                                                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex-shrink-0 ${
-                                                                    route.available_seats > 0
-                                                                        ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                        : 'bg-red-500/30 text-red-100 border-red-400/50'
-                                                                }`}>
+                                                                route.available_seats > 0
+                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
+                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                            }`}>
                                                                     {route.available_seats} seats
-                                                                </span>
-                                                            </div>
+                                                            </span>
+                                                        </div>
                                                             {(route.pickup_time || route.dropoff_time) && (
                                                                 <div className="flex flex-wrap gap-4 text-xs text-white/70 mt-2">
                                                                     {route.pickup_time && (
@@ -550,7 +550,7 @@ export default function CreateBooking({ students, routes }) {
                                                                             Dropoff: <span className="font-bold text-blue-200">{formatTime(route.dropoff_time)}</span>
                                                                         </span>
                                                                     )}
-                                                                </div>
+                                                    </div>
                                                             )}
                                                         </div>
                                                         {data.route_id == route.id && (
@@ -560,10 +560,10 @@ export default function CreateBooking({ students, routes }) {
                                                                 </svg>
                                                             </div>
                                                         )}
-                                                    </label>
+                                                </label>
                                                 ))}
                                             </div>
-                                        )}
+                                                )}
                                         {errors.route_id && (
                                             <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
                                                 <p className="text-red-200 text-sm font-bold">{errors.route_id}</p>
@@ -664,26 +664,26 @@ export default function CreateBooking({ students, routes }) {
                                                 <label className="block text-sm font-bold text-brand-primary mb-3">
                                                     Select Pickup Point <span className="text-red-400">*</span>
                                                 </label>
-                                                {selectedRoute.pickup_points.map((point) => (
-                                                    <label
-                                                        key={point.id}
+                                                    {selectedRoute.pickup_points.map((point) => (
+                                                        <label
+                                                            key={point.id}
                                                         className={`group relative flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                                                            data.pickup_point_id == point.id
+                                                                data.pickup_point_id == point.id
                                                                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
                                                                 : 'border-white/30 bg-white/10 hover:bg-white/15 hover:border-yellow-400/50'
-                                                        }`}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="pickup_point_id"
-                                                            value={point.id}
-                                                            checked={data.pickup_point_id == point.id}
-                                                            onChange={(e) => {
-                                                                setData('pickup_point_id', e.target.value);
-                                                                setData('pickup_address', point.address);
-                                                            }}
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="pickup_point_id"
+                                                                value={point.id}
+                                                                checked={data.pickup_point_id == point.id}
+                                                                onChange={(e) => {
+                                                                    setData('pickup_point_id', e.target.value);
+                                                                    setData('pickup_address', point.address);
+                                                                }}
                                                             className="sr-only"
-                                                        />
+                                                            />
                                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
                                                             data.pickup_point_id == point.id
                                                                 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md'
@@ -717,7 +717,7 @@ export default function CreateBooking({ students, routes }) {
                                                                     )}
                                                                 </div>
                                                             )}
-                                                        </div>
+                                                            </div>
                                                         {data.pickup_point_id == point.id && (
                                                             <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
                                                                 <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -725,8 +725,8 @@ export default function CreateBooking({ students, routes }) {
                                                                 </svg>
                                                             </div>
                                                         )}
-                                                    </label>
-                                                ))}
+                                                        </label>
+                                                    ))}
                                                 {errors.pickup_point_id && (
                                                     <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
                                                         <p className="text-red-200 text-sm font-bold">{errors.pickup_point_id}</p>
@@ -734,26 +734,26 @@ export default function CreateBooking({ students, routes }) {
                                                 )}
                                             </div>
                                         ) : (
-                                            <div>
+                                                <div>
                                                 <label className="block text-sm font-bold text-brand-primary mb-3">
                                                     Pickup Address <span className="text-red-400">*</span>
-                                                </label>
-                                                <textarea
-                                                    value={data.pickup_address}
-                                                    onChange={(e) => setData('pickup_address', e.target.value)}
-                                                    placeholder="Enter the full address where the student will be picked up"
+                                                    </label>
+                                                    <textarea
+                                                        value={data.pickup_address}
+                                                        onChange={(e) => setData('pickup_address', e.target.value)}
+                                                        placeholder="Enter the full address where the student will be picked up"
                                                     rows={4}
                                                     className="block w-full p-4 rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm"
-                                                    required={pickupOption === 'custom'}
-                                                />
-                                                {errors.pickup_address && (
+                                                        required={pickupOption === 'custom'}
+                                                    />
+                                                    {errors.pickup_address && (
                                                     <div className="mt-3 p-3 bg-red-500/20 border border-red-400/50 rounded-lg">
                                                         <p className="text-red-200 text-sm font-bold">{errors.pickup_address}</p>
                                                     </div>
-                                                )}
+                                                    )}
                                                 <p className="text-xs text-brand-primary/70 mt-3 font-medium">
                                                     This address will be used for daily pickup.
-                                                </p>
+                                                    </p>
                                             </div>
                                         )}
                                     </div>
@@ -762,7 +762,7 @@ export default function CreateBooking({ students, routes }) {
                                 {/* Step 3: Select Plan */}
                                 {step === 3 && (
                                     <div className="space-y-6">
-                                        <div>
+                                            <div>
                                             <h3 className="text-2xl font-extrabold text-brand-primary mb-2">Select Plan</h3>
                                             <p className="text-sm text-brand-primary/70">Choose your preferred plan and options</p>
                                         </div>
@@ -771,23 +771,23 @@ export default function CreateBooking({ students, routes }) {
                                             <label className="block text-sm font-bold text-brand-primary mb-3">
                                                 Plan Type <span className="text-red-400">*</span>
                                             </label>
-                                            {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
-                                                <label
-                                                    key={plan}
+                                                    {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
+                                                        <label
+                                                            key={plan}
                                                     className={`group relative flex items-center justify-between gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                                                        data.plan_type === plan
+                                                                data.plan_type === plan
                                                             ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
                                                             : 'border-white/30 bg-white/10 hover:bg-white/15 hover:border-yellow-400/50'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="plan_type"
-                                                        value={plan}
-                                                        checked={data.plan_type === plan}
-                                                        onChange={(e) => setData('plan_type', e.target.value)}
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="plan_type"
+                                                                value={plan}
+                                                                checked={data.plan_type === plan}
+                                                                onChange={(e) => setData('plan_type', e.target.value)}
                                                         className="sr-only"
-                                                    />
+                                                            />
                                                     <div className="flex items-center gap-4">
                                                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
                                                             data.plan_type === plan
@@ -799,15 +799,15 @@ export default function CreateBooking({ students, routes }) {
                                                             </svg>
                                                         </div>
                                                         <span className="text-base font-bold text-white capitalize">
-                                                            {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', '-')}
-                                                        </span>
+                                                                    {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', '-')}
+                                                                </span>
                                                     </div>
                                                     <div className="flex items-center gap-3">
-                                                        {price && data.plan_type === plan && (
+                                                                {price && data.plan_type === plan && (
                                                             <span className="text-lg font-extrabold text-green-200">
-                                                                {price.formatted}
-                                                            </span>
-                                                        )}
+                                                                        {price.formatted}
+                                                                    </span>
+                                                                )}
                                                         {data.plan_type === plan && (
                                                             <div className="w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
                                                                 <svg className="w-3 h-3 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -815,9 +815,9 @@ export default function CreateBooking({ students, routes }) {
                                                                 </svg>
                                                             </div>
                                                         )}
-                                                    </div>
-                                                </label>
-                                            ))}
+                                                            </div>
+                                                        </label>
+                                                    ))}
                                             {loading && (
                                                 <div className="p-4 bg-white/10 rounded-xl border border-white/20">
                                                     <p className="text-white text-sm flex items-center gap-2 font-medium">
@@ -829,12 +829,12 @@ export default function CreateBooking({ students, routes }) {
                                                     </p>
                                                 </div>
                                             )}
-                                            {errors.plan_type && (
+                                                    {errors.plan_type && (
                                                 <div className="mt-3 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
                                                     <p className="text-red-200 text-sm font-bold">{errors.plan_type}</p>
                                                 </div>
-                                            )}
-                                        </div>
+                                                    )}
+                                                </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
@@ -965,7 +965,7 @@ export default function CreateBooking({ students, routes }) {
                                                     <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                     </svg>
-                                                </div>
+                                            </div>
                                                 <div className="flex-1">
                                                     <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Student</p>
                                                     <p className="text-lg font-extrabold text-white">{students.find(s => s.id == data.student_id)?.name}</p>
@@ -981,27 +981,27 @@ export default function CreateBooking({ students, routes }) {
                                                 <div className="flex-1">
                                                     <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Route</p>
                                                     <p className="text-lg font-extrabold text-white mb-2">{selectedRoute?.name}</p>
-                                                    {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
+                                                {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
                                                         <div className="flex flex-wrap gap-4 text-xs text-white/70 mt-2">
-                                                            {selectedRoute.pickup_time && (
+                                                        {selectedRoute.pickup_time && (
                                                                 <span className="flex items-center gap-1.5">
                                                                     <svg className="w-3.5 h-3.5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                     </svg>
                                                                     Pickup: <span className="font-bold text-green-200">{formatTime(selectedRoute.pickup_time)}</span>
                                                                 </span>
-                                                            )}
-                                                            {selectedRoute.dropoff_time && (
+                                                        )}
+                                                        {selectedRoute.dropoff_time && (
                                                                 <span className="flex items-center gap-1.5">
                                                                     <svg className="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                     </svg>
                                                                     Dropoff: <span className="font-bold text-blue-200">{formatTime(selectedRoute.dropoff_time)}</span>
                                                                 </span>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
                                             </div>
                                             
                                             <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
@@ -1014,14 +1014,14 @@ export default function CreateBooking({ students, routes }) {
                                                 <div className="flex-1">
                                                     <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Pickup Location</p>
                                                     <p className="text-lg font-extrabold text-white">
-                                                        {data.pickup_point_id 
-                                                            ? (() => {
-                                                                const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
-                                                                return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
-                                                              })()
-                                                            : data.pickup_address || 'Not set'}
+                                                    {data.pickup_point_id 
+                                                        ? (() => {
+                                                            const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
+                                                            return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
+                                                          })()
+                                                        : data.pickup_address || 'Not set'}
                                                     </p>
-                                                </div>
+                                                        </div>
                                             </div>
                                             
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1034,9 +1034,9 @@ export default function CreateBooking({ students, routes }) {
                                                     <div className="flex-1">
                                                         <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Plan</p>
                                                         <p className="text-base font-extrabold text-white">
-                                                            {data.plan_type === 'academic_term' ? 'Academic Term' : data.plan_type.replace('_', '-').toUpperCase()}
+                                                    {data.plan_type === 'academic_term' ? 'Academic Term' : data.plan_type.replace('_', '-').toUpperCase()}
                                                         </p>
-                                                    </div>
+                                            </div>
                                                 </div>
                                                 <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
                                                     <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
@@ -1047,10 +1047,10 @@ export default function CreateBooking({ students, routes }) {
                                                     <div className="flex-1">
                                                         <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Trip Type</p>
                                                         <p className="text-base font-extrabold text-white">
-                                                            {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                    {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
                                                         </p>
-                                                    </div>
-                                                </div>
+                                            </div>
+                                            </div>
                                             </div>
                                             
                                             <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">

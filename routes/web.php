@@ -74,6 +74,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::post('/users/{user}/toggle-parent-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleParentStatus'])->name('users.toggle-parent-status');
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
     Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class);

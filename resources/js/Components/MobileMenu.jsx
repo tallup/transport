@@ -35,13 +35,13 @@ export default function MobileMenu({
     return (
         <>
             {/* Hamburger Button - Visible on mobile only */}
-            <button
-                type="button"
-                onClick={toggleMenu}
+                <button
+                    type="button"
+                    onClick={toggleMenu}
                 className="sm:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-gray-800 hover:text-gray-900 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition relative bg-white border border-gray-300 shadow-lg z-50"
-                aria-expanded={isOpen}
-                aria-label="Toggle menu"
-            >
+                    aria-expanded={isOpen}
+                    aria-label="Toggle menu"
+                >
                     {!isOpen ? (
                         <svg
                             className="block h-6 w-6"
@@ -73,7 +73,7 @@ export default function MobileMenu({
                             />
                         </svg>
                     )}
-            </button>
+                </button>
 
             {/* Mobile Menu Overlay and Panel - Rendered at root level */}
             {isOpen && (

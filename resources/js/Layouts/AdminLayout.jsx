@@ -166,11 +166,11 @@ export default function AdminLayout({ header, children }) {
 
                         {/* Mobile Menu Button - Visible on mobile only */}
                         <div className="flex items-center sm:hidden ml-auto">
-                            <MobileMenu
-                                navigationItems={navigationItems}
-                                userMenuItems={userMenuItems}
-                                user={auth?.user}
-                            />
+                        <MobileMenu
+                            navigationItems={navigationItems}
+                            userMenuItems={userMenuItems}
+                            user={auth?.user}
+                        />
                         </div>
                     </div>
                 </div>
