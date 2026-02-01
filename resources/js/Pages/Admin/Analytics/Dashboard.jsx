@@ -92,15 +92,15 @@ export default function AnalyticsDashboard({
 
                     {/* Tabs */}
                     <div className="mb-6">
-                        <div className="flex space-x-2 border-b border-white/20">
+                        <div className="flex space-x-2 border-b border-brand-primary/20">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`px-4 py-2 font-semibold transition ${
+                                    className={`px-4 py-2 font-bold transition ${
                                         activeTab === tab.id
-                                            ? 'text-white border-b-2 border-blue-500'
-                                            : 'text-white/60 hover:text-white'
+                                            ? 'text-brand-primary border-b-2 border-yellow-400'
+                                            : 'text-brand-primary/70 hover:text-brand-primary'
                                     }`}
                                 >
                                     {tab.label}
