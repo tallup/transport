@@ -227,7 +227,6 @@ export default function AnalyticsDashboard({
                         <div className="space-y-6">
                             <GlassCard className="p-6">
                                 <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
-                                <div>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={revenueTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
