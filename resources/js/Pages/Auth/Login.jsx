@@ -39,7 +39,11 @@ export default function Login({ status, canResetPassword }) {
                     {/* Left Side - Logo */}
                     <div className="hidden lg:flex flex-col items-center justify-center animate-fade-in">
                         <Link href="/" className="inline-block">
-                            <ApplicationLogo className="h-32 w-auto drop-shadow-2xl mb-6" />
+                            <img
+                                src="/logo.png"
+                                alt="On-Time Transportation Logo"
+                                className="w-full max-w-[380px] lg:max-w-[450px] h-auto drop-shadow-2xl mb-6"
+                            />
                         </Link>
                         <h2 className="text-2xl font-bold text-brand-primary text-center">
                             Safe & Reliable
@@ -54,7 +58,11 @@ export default function Login({ status, canResetPassword }) {
                         {/* Mobile Logo */}
                         <div className="text-center mb-6 lg:hidden animate-fade-in">
                             <Link href="/" className="inline-block">
-                                <ApplicationLogo className="h-16 w-auto mx-auto drop-shadow-lg" />
+                                <img
+                                    src="/logo.png"
+                                    alt="On-Time Transportation Logo"
+                                    className="w-full max-w-[280px] h-auto mx-auto drop-shadow-lg"
+                                />
                             </Link>
                         </div>
 
