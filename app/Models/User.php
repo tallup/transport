@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'role', // Will be ignored if column doesn't exist
         'phone_numbers',
         'is_active',
+        'profile_picture',
     ];
 
     /**
@@ -142,6 +144,18 @@ class User extends Authenticatable
     public function routes(): HasMany
     {
         return $this->hasMany(Route::class, 'driver_id');
+    }
+
+    /**
+     * Get the profile picture URL.
+     */
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        if (!$this->profile_picture) {
+            return null;
+        }
+
+        return Storage::url($this->profile_picture);
     }
 
     /**

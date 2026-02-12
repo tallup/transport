@@ -3,8 +3,9 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
+import GlassCard from '@/Components/GlassCard';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
     UserIcon,
     EnvelopeIcon,
@@ -12,6 +13,8 @@ import {
     EyeIcon,
     EyeSlashIcon,
     CheckCircleIcon,
+    CameraIcon,
+    XMarkIcon,
 } from '@heroicons/react/24/outline';
 import {
     UserIcon as UserIconSolid,
@@ -22,18 +25,59 @@ import {
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+    const fileInputRef = useRef(null);
     
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        profile_picture: null,
     });
+
+    const handleProfilePictureChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB');
+                return;
+            }
+            
+            setProfilePicture(file);
+            setData('profile_picture', file);
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePicturePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeProfilePicture = () => {
+        setProfilePicture(null);
+        setProfilePicturePreview(null);
+        setData('profile_picture', null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const submit = (e) => {
         e.preventDefault();
 
         post(route('parent.register'), {
+            forceFormData: true,
             onFinish: () => reset('password', 'password_confirmation'),
             onSuccess: () => {
                 // Force a hard reload to ensure CSRF token and session are perfectly synced
@@ -70,20 +114,68 @@ export default function Register() {
         <GuestLayout>
             <Head title="Parent Registration" />
 
-            {/* Header Section */}
-            <div className="mb-8 text-center space-y-3">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary mb-2 shadow-lg">
-                    <UserIconSolid className="w-8 h-8 text-white" />
+            <GlassCard className="p-8">
+                {/* Header Section */}
+                <div className="mb-8 text-center space-y-4">
+                    <h2 className="text-3xl font-extrabold text-brand-primary">
+                        Create Parent Account
+                    </h2>
+                    <p className="text-sm font-semibold text-brand-primary/80 max-w-md mx-auto">
+                        Join our transportation system to manage your child's school commute with ease
+                    </p>
                 </div>
-                <h2 className="text-3xl font-bold text-brand-primary dark:text-white">
-                    Create Parent Account
-                </h2>
-                <p className="text-sm text-brand-primary/80 dark:text-gray-300 max-w-sm mx-auto">
-                    Join our transportation system to manage your child's school commute with ease
-                </p>
-            </div>
 
-            <form onSubmit={submit} className="space-y-6">
+                <form onSubmit={submit} className="space-y-6">
+                {/* Profile Picture Upload */}
+                <div className="space-y-3">
+                    <InputLabel value="Profile Picture" className="text-brand-primary font-semibold text-center" />
+                    <div className="flex justify-center">
+                        <div className="relative">
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 bg-white/10 flex items-center justify-center group cursor-pointer hover:border-yellow-400/50 transition-all duration-300">
+                                {profilePicturePreview ? (
+                                    <img 
+                                        src={profilePicturePreview} 
+                                        alt="Profile preview" 
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <CameraIcon className="w-10 h-10 text-brand-primary/70 group-hover:text-yellow-400 transition-colors" />
+                                        <span className="text-xs text-brand-primary/70 mt-1">Add Photo</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {profilePicturePreview && (
+                                <button
+                                    type="button"
+                                    onClick={removeProfilePicture}
+                                    className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all"
+                                >
+                                    <XMarkIcon className="w-5 h-5" />
+                                </button>
+                            )}
+                            
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleProfilePictureChange}
+                                className="hidden"
+                                id="profile_picture"
+                            />
+                            
+                            <label
+                                htmlFor="profile_picture"
+                                className="absolute inset-0 cursor-pointer"
+                            />
+                        </div>
+                    </div>
+                    <p className="text-xs text-center text-brand-primary/60">
+                        Click to upload (Max 5MB, JPG/PNG)
+                    </p>
+                    <InputError message={errors.profile_picture} className="text-center" />
+                </div>
                 {/* Full Name Field */}
                 <div className="space-y-2">
                     <InputLabel htmlFor="name" value="Full Name" className="text-brand-primary dark:text-gray-200 font-semibold" />
@@ -304,7 +396,8 @@ export default function Register() {
                         </Link>
                     </p>
                 </div>
-            </form>
+                </form>
+            </GlassCard>
         </GuestLayout>
     );
 }
