@@ -191,6 +191,7 @@ export default function Login({ status, canResetPassword }) {
                             </p>
                         </div>
                     </form>
+                        </div>
                     </div>
                 </div>
             </div>
