@@ -34,16 +34,32 @@ export default function Login({ status, canResetPassword }) {
         <div className="min-h-screen logo-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
             <Head title="Sign In - On-Time Transportation" />
 
-            <div className="w-full max-w-md">
-                {/* Logo */}
-                <div className="text-center mb-8 animate-fade-in">
-                    <Link href="/" className="inline-block">
-                        <ApplicationLogo className="h-16 w-auto mx-auto mb-4 drop-shadow-lg" />
-                    </Link>
-                </div>
+            <div className="w-full max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    {/* Left Side - Logo */}
+                    <div className="hidden lg:flex flex-col items-center justify-center animate-fade-in">
+                        <Link href="/" className="inline-block">
+                            <ApplicationLogo className="h-32 w-auto drop-shadow-2xl mb-6" />
+                        </Link>
+                        <h2 className="text-2xl font-bold text-brand-primary text-center">
+                            Safe & Reliable
+                        </h2>
+                        <p className="text-gray-600 text-center mt-2">
+                            Kids Transportation
+                        </p>
+                    </div>
 
-                {/* Login Card */}
-                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 sm:p-10 animate-slide-up">
+                    {/* Right Side - Login Form */}
+                    <div className="w-full max-w-md mx-auto lg:max-w-full">
+                        {/* Mobile Logo */}
+                        <div className="text-center mb-6 lg:hidden animate-fade-in">
+                            <Link href="/" className="inline-block">
+                                <ApplicationLogo className="h-16 w-auto mx-auto drop-shadow-lg" />
+                            </Link>
+                        </div>
+
+                        {/* Login Card */}
+                        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 sm:p-10 animate-slide-up">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-brand-primary mb-2">
                             Welcome Back
@@ -175,6 +191,7 @@ export default function Login({ status, canResetPassword }) {
                             </p>
                         </div>
                     </form>
+                    </div>
                 </div>
             </div>
         </div>
