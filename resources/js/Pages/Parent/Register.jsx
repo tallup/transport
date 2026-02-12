@@ -109,85 +109,86 @@ export default function Register() {
         <GuestLayout>
             <Head title="Parent Registration" />
 
-            <div className="max-w-2xl mx-auto">
+            <div className="w-full max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 mb-4 shadow-lg border-2 border-yellow-400/50">
-                        <UserIconSolid className="w-10 h-10 !text-brand-primary" />
+                <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 mb-3 shadow-lg border-2 border-yellow-400/50">
+                        <UserIconSolid className="w-8 h-8 !text-brand-primary" />
                     </div>
-                    <h1 className="text-4xl font-extrabold text-brand-primary mb-3">
+                    <h1 className="text-3xl font-extrabold text-brand-primary mb-2">
                         Create Your Account
                     </h1>
-                    <p className="text-base font-semibold text-brand-primary/80">
+                    <p className="text-sm font-semibold text-brand-primary/80">
                         Start managing your child's transportation needs today
                     </p>
                 </div>
 
-                <GlassCard className="p-8 md:p-10">
-                    <form onSubmit={submit} className="space-y-6">
-                        {/* Profile Picture Section - More Elegant */}
-                        <div className="flex flex-col items-center mb-8 pb-8 border-b border-brand-primary/20">
-                            <div className="relative group">
-                                <div className={`w-28 h-28 rounded-full overflow-hidden border-4 transition-all duration-300 ${
-                                    profilePicturePreview 
-                                        ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' 
-                                        : 'border-brand-primary/30 bg-gradient-to-br from-white/10 to-white/5 hover:border-yellow-400/50'
-                                }`}>
+                <form onSubmit={submit} className="space-y-6">
+                        {/* Two Column Layout */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Left Column - Profile Picture */}
+                            <div className="flex flex-col items-center justify-start">
+                                <div className="relative group mb-4">
+                                    <div className={`w-32 h-32 rounded-full overflow-hidden border-4 transition-all duration-300 ${
+                                        profilePicturePreview 
+                                            ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' 
+                                            : 'border-brand-primary/30 bg-gradient-to-br from-white/10 to-white/5 hover:border-yellow-400/50'
+                                    }`}>
+                                        {profilePicturePreview ? (
+                                            <img 
+                                                src={profilePicturePreview} 
+                                                alt="Profile" 
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center">
+                                                <PhotoIcon className="w-14 h-14 text-brand-primary/60 group-hover:text-yellow-400 transition-colors" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    
                                     {profilePicturePreview ? (
-                                        <img 
-                                            src={profilePicturePreview} 
-                                            alt="Profile" 
-                                            className="w-full h-full object-cover"
-                                        />
+                                        <button
+                                            type="button"
+                                            onClick={removeProfilePicture}
+                                            className="absolute -top-1 -right-1 w-7 h-7 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all z-10"
+                                        >
+                                            <XMarkIcon className="w-4 h-4" />
+                                        </button>
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center">
-                                            <PhotoIcon className="w-12 h-12 text-brand-primary/60 group-hover:text-yellow-400 transition-colors" />
+                                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white/30 cursor-pointer hover:scale-110 transition-transform">
+                                            <CameraIcon className="w-4 h-4 !text-brand-primary" />
                                         </div>
                                     )}
+                                    
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleProfilePictureChange}
+                                        className="hidden"
+                                        id="profile_picture"
+                                    />
+                                    
+                                    <label
+                                        htmlFor="profile_picture"
+                                        className="absolute inset-0 cursor-pointer rounded-full"
+                                    />
                                 </div>
                                 
-                                {profilePicturePreview ? (
-                                    <button
-                                        type="button"
-                                        onClick={removeProfilePicture}
-                                        className="absolute -top-1 -right-1 w-7 h-7 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all z-10"
-                                    >
-                                        <XMarkIcon className="w-4 h-4" />
-                                    </button>
-                                ) : (
-                                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white/30 cursor-pointer hover:scale-110 transition-transform">
-                                        <CameraIcon className="w-4 h-4 !text-brand-primary" />
-                                    </div>
-                                )}
-                                
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleProfilePictureChange}
-                                    className="hidden"
-                                    id="profile_picture"
-                                />
-                                
-                                <label
-                                    htmlFor="profile_picture"
-                                    className="absolute inset-0 cursor-pointer rounded-full"
-                                />
+                                <div className="text-center">
+                                    <p className="text-sm font-semibold text-brand-primary mb-1">
+                                        {profilePicturePreview ? 'Profile Picture' : 'Add Profile Picture'}
+                                    </p>
+                                    <p className="text-xs text-brand-primary/60">
+                                        {profilePicturePreview ? 'Click to change' : 'Optional • JPG, PNG up to 5MB'}
+                                    </p>
+                                </div>
+                                <InputError message={errors.profile_picture} className="mt-2 text-center" />
                             </div>
-                            
-                            <div className="mt-4 text-center">
-                                <p className="text-sm font-semibold text-brand-primary mb-1">
-                                    {profilePicturePreview ? 'Profile Picture' : 'Add Profile Picture'}
-                                </p>
-                                <p className="text-xs text-brand-primary/60">
-                                    {profilePicturePreview ? 'Click to change' : 'Optional • JPG, PNG up to 5MB'}
-                                </p>
-                            </div>
-                            <InputError message={errors.profile_picture} className="mt-2 text-center" />
-                        </div>
 
-                        {/* Form Fields */}
-                        <div className="space-y-5">
+                            {/* Right Column - Form Fields */}
+                            <div className="space-y-5">
                             {/* Full Name */}
                             <div>
                                 <InputLabel htmlFor="name" value="Full Name" className="text-brand-primary font-bold mb-2" />
@@ -323,10 +324,11 @@ export default function Register() {
                                 )}
                                 <InputError message={errors.password_confirmation} className="mt-1" />
                             </div>
+                            </div>
                         </div>
 
                         {/* Submit Button */}
-                        <div className="pt-4">
+                        <div className="pt-2">
                             <PrimaryButton
                                 className="w-full bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary hover:bg-brand-primary/30 hover:border-brand-primary/70 font-bold py-3.5 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 disabled={processing}
@@ -372,7 +374,6 @@ export default function Register() {
                             </p>
                         </div>
                     </form>
-                </GlassCard>
             </div>
         </GuestLayout>
     );
