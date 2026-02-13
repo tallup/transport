@@ -123,7 +123,7 @@ export default function Register() {
                     </p>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6">
+                <form onSubmit={submit} className="space-y-6" noValidate>
                         {/* Two Column Layout */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Left Column - Profile Picture */}

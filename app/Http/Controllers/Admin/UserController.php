@@ -112,21 +112,14 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         // Prevent deleting admin users
-        if (in_array($user->role, ['super_admin', 'transport_admin'])) {
-            abort(403, 'Cannot delete admin users.');
-        }
-
-        // Check if user has related data
-        if ($user->role === 'parent' && $user->students()->count() > 0) {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'])) {
             return redirect()->route('admin.users.index')
-                ->with('error', 'Cannot delete user with associated students.');
+                ->with('error', 'Cannot delete admin users.');
         }
 
-        if ($user->role === 'driver' && $user->routes()->count() > 0) {
-            return redirect()->route('admin.users.index')
-                ->with('error', 'Cannot delete user with assigned routes.');
-        }
-
+        // Delete user - DB cascades will handle related records:
+        // - Parents: students are cascade-deleted via parent_id FK
+        // - Drivers: routes get driver_id set to null via FK
         $user->delete();
 
         return redirect()->route('admin.users.index')

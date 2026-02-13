@@ -1,20 +1,31 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Index({ users, filters }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const [deleting, setDeleting] = useState(null);
     const [toggling, setToggling] = useState(null);
     const [search, setSearch] = useState(filters.search || '');
     const [roleFilter, setRoleFilter] = useState(filters.role || '');
+    const [showFlash, setShowFlash] = useState(true);
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this user?')) {
+        if (confirm('Are you sure you want to delete this user? This will permanently remove the user and all their associated data (students, bookings, etc.).')) {
             setDeleting(id);
             router.delete(`/admin/users/${id}`, {
                 onFinish: () => setDeleting(null),
+                preserveScroll: false,
             });
         }
     };
@@ -75,6 +86,17 @@ export default function Index({ users, filters }) {
                             </Link>
                         </div>
                     </div>
+
+                    {/* Flash Messages */}
+                    {showFlash && (flash?.success || flash?.error) && (
+                        <div className={`mb-6 px-6 py-4 rounded-xl font-bold ${
+                            flash.success 
+                                ? 'bg-green-500/20 border-2 border-green-400/50 text-green-200' 
+                                : 'bg-red-500/20 border-2 border-red-400/50 text-red-200'
+                        }`}>
+                            {flash.success || flash.error}
+                        </div>
+                    )}
 
                     {/* Filters */}
                     <GlassCard className="mb-6 p-6">
