@@ -77,9 +77,6 @@ export default function Register() {
         post(route('parent.register'), {
             forceFormData: true,
             onFinish: () => reset('password', 'password_confirmation'),
-            onSuccess: () => {
-                window.location.reload();
-            },
         });
     };
 

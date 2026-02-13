@@ -17,6 +17,7 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/analytics', label: 'Analytics', active: currentUrl?.startsWith('/admin/analytics') },
         { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
         { href: '/admin/schools', label: 'Schools', active: currentUrl?.startsWith('/admin/schools') },
+        { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl?.startsWith('/admin/registration-requests') },
         { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
         { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
@@ -105,6 +106,7 @@ export default function AdminLayout({ header, children }) {
                                         </button>
                                     </Dropdown.Trigger>
                                     <Dropdown.Content align="left" width="56">
+                                        <Dropdown.Link href="/admin/registration-requests">Registration Requests</Dropdown.Link>
                                         <Dropdown.Link href="/admin/users">Users</Dropdown.Link>
                                         <Dropdown.Link href="/admin/students">Students</Dropdown.Link>
                                         <Dropdown.Link href="/admin/schools">Schools</Dropdown.Link>

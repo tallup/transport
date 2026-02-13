@@ -49,6 +49,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user->role === 'parent' && ! $user->isRegistrationApproved()) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is pending approval. Please wait for an administrator to approve your registration.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

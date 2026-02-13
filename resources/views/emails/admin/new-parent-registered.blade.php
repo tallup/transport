@@ -81,7 +81,7 @@
                 </div>
             </div>
             
-            <a href="{{ url('/admin/users/' . $parent->id) }}" class="button">View Parent Profile</a>
+            <a href="{{ url('/admin/registration-requests') }}" class="button">Review Registration Request</a>
             
             <p>You can manage this user from the admin dashboard.</p>
         </div>

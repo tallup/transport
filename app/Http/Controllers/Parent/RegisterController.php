@@ -7,9 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -25,7 +23,16 @@ class RegisterController extends Controller
     }
 
     /**
+     * Display the pending approval page after registration.
+     */
+    public function pending(): Response
+    {
+        return Inertia::render('Parent/RegistrationPending');
+    }
+
+    /**
      * Handle an incoming parent registration request.
+     * Parent is not logged in; admin must approve before they can access the system.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -42,8 +49,9 @@ class RegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'registration_approved_at' => null,
         ];
-        
+
         // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
@@ -51,19 +59,21 @@ class RegisterController extends Controller
             $path = $file->storeAs('profile-pictures', $filename, 'public');
             $userData['profile_picture'] = $path;
         }
-        
+
         // Only add role if column exists
         if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
             $userData['role'] = 'parent';
         }
-        
+
         $user = User::create($userData);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Notify admins of new parent registration
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
 
-        return redirect()->route('parent.dashboard');
+        return redirect()->route('parent.registration.pending');
     }
 }
 

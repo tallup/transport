@@ -28,6 +28,7 @@ class User extends Authenticatable
         'phone_numbers',
         'is_active',
         'profile_picture',
+        'registration_approved_at',
     ];
 
     /**
@@ -49,6 +50,7 @@ class User extends Authenticatable
     {
         $casts = [
             'email_verified_at' => 'datetime',
+            'registration_approved_at' => 'datetime',
             'password' => 'hashed',
             'phone_numbers' => 'array',
         ];
@@ -144,6 +146,14 @@ class User extends Authenticatable
     public function routes(): HasMany
     {
         return $this->hasMany(Route::class, 'driver_id');
+    }
+
+    /**
+     * Check if the parent's registration has been approved by an admin.
+     */
+    public function isRegistrationApproved(): bool
+    {
+        return $this->registration_approved_at !== null;
     }
 
     /**

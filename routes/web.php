@@ -73,6 +73,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
+    Route::get('/registration-requests', [\App\Http\Controllers\Admin\RegistrationRequestController::class, 'index'])->name('registration-requests.index');
+    Route::post('/registration-requests/{user}/approve', [\App\Http\Controllers\Admin\RegistrationRequestController::class, 'approve'])->name('registration-requests.approve');
+    Route::post('/registration-requests/{user}/reject', [\App\Http\Controllers\Admin\RegistrationRequestController::class, 'reject'])->name('registration-requests.reject');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::post('/users/{user}/toggle-parent-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleParentStatus'])->name('users.toggle-parent-status');
     Route::resource('schools', \App\Http\Controllers\Admin\SchoolController::class);
