@@ -249,7 +249,7 @@ class BookingController extends Controller
         }
     }
 
-    public function destroy(Booking $booking)
+    public function destroy(Request $request, Booking $booking)
     {
         // Authorization check
         if (!$request->user()->can('delete', $booking)) {
