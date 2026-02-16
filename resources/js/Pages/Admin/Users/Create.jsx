@@ -1,19 +1,30 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
+import GlassCard from '@/Components/GlassCard';
+import GlassButton from '@/Components/GlassButton';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+import TextInput from '@/Components/TextInput';
+import {
+    UserIcon,
+    EnvelopeIcon,
+    LockClosedIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    UserGroupIcon,
+    TruckIcon,
+    ArrowLeftIcon,
+} from '@heroicons/react/24/outline';
 
 export default function Create() {
-    const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
         password: '',
         role: 'parent',
     });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,96 +36,189 @@ export default function Create() {
             <Head title="Create User" />
 
             <div className="py-12">
-                <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl overflow-hidden">
-                        <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6 text-gray-900">Create User</h2>
+                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                    {/* Back link */}
+                    <Link
+                        href="/admin/users"
+                        className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:text-yellow-500 transition-colors mb-6"
+                    >
+                        <ArrowLeftIcon className="w-5 h-5" />
+                        Back to Users
+                    </Link>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="name" value="Name *" />
-                                    <TextInput
-                                        id="name"
-                                        type="text"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    />
-                                    <InputError message={errors.name} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="email" value="Email *" />
-                                    <TextInput
-                                        id="email"
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    />
-                                    <InputError message={errors.email} className="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="password" value="Password *" />
-                                    <TextInput
-                                        id="password"
-                                        type="password"
-                                        value={data.password}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                        minLength={8}
-                                    />
-                                    <InputError message={errors.password} className="mt-2" />
-                                    <p className="mt-1 text-sm text-gray-600">Minimum 8 characters</p>
-                                </div>
-
-                                <div>
-                                    <InputLabel htmlFor="role" value="Role *" />
-                                    <Select
-                                        id="role"
-                                        value={data.role}
-                                        onChange={(e) => setData('role', e.target.value)}
-                                        className="mt-1 block w-full bg-white/20 backdrop-blur-sm border-white/30"
-                                        required
-                                    >
-                                        <option value="parent">Parent</option>
-                                        <option value="driver">Driver</option>
-                                    </Select>
-                                    <InputError message={errors.role} className="mt-2" />
-                                </div>
-
-                                <div className="flex justify-end gap-4">
-                                    <Link
-                                        href="/admin/users"
-                                        className="px-4 py-2 border border-white/30 rounded-lg text-gray-700 hover:bg-white/20 backdrop-blur-sm transition"
-                                    >
-                                        Cancel
-                                    </Link>
-                                    <PrimaryButton 
-                                        disabled={processing}
-                                        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                                    >
-                                        {processing ? 'Creating...' : 'Create User'}
-                                    </PrimaryButton>
-                                </div>
-                            </form>
+                    <GlassCard className="overflow-hidden p-8">
+                        {/* Header */}
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg border-2 border-yellow-400/50">
+                                <UserIcon className="w-8 h-8 !text-brand-primary" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-extrabold text-brand-primary">Create User</h1>
+                                <p className="text-brand-primary/70 font-medium mt-1">
+                                    Add a new parent or driver to the system
+                                </p>
+                            </div>
                         </div>
-                    </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Name */}
+                                <div>
+                                    <label htmlFor="name" className="block text-sm font-bold text-brand-primary mb-2">
+                                        Full Name *
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <UserIcon className="h-5 w-5 text-brand-primary/60" />
+                                        </div>
+                                        <TextInput
+                                            id="name"
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            className={`pl-12 pr-4 py-3 w-full ${errors.name ? 'border-red-500' : ''}`}
+                                            placeholder="John Doe"
+                                            required
+                                        />
+                                    </div>
+                                    <InputError message={errors.name} className="mt-1 text-red-300" />
+                                </div>
+
+                                {/* Email */}
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-bold text-brand-primary mb-2">
+                                        Email Address *
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <EnvelopeIcon className="h-5 w-5 text-brand-primary/60" />
+                                        </div>
+                                        <TextInput
+                                            id="email"
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            className={`pl-12 pr-4 py-3 w-full ${errors.email ? 'border-red-500' : ''}`}
+                                            placeholder="john@example.com"
+                                            required
+                                        />
+                                    </div>
+                                    <InputError message={errors.email} className="mt-1 text-red-300" />
+                                </div>
+
+                                {/* Password */}
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-bold text-brand-primary mb-2">
+                                        Password * <span className="text-xs font-normal text-brand-primary/60">(min 8 characters)</span>
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <LockClosedIcon className="h-5 w-5 text-brand-primary/60" />
+                                        </div>
+                                        <TextInput
+                                            id="password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            className={`pl-12 pr-12 py-3 w-full ${errors.password ? 'border-red-500' : ''}`}
+                                            placeholder="Create a secure password"
+                                            required
+                                            minLength={8}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-primary/60 hover:text-brand-primary transition-colors"
+                                        >
+                                            {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                                        </button>
+                                    </div>
+                                    <InputError message={errors.password} className="mt-1 text-red-300" />
+                                </div>
+
+                                {/* Role */}
+                                <div>
+                                    <label className="block text-sm font-bold text-brand-primary mb-3">
+                                        Role *
+                                    </label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setData('role', 'parent')}
+                                            className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                                                data.role === 'parent'
+                                                    ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
+                                                    : 'border-white/20 bg-white/5 hover:border-yellow-400/50 hover:bg-white/10'
+                                            }`}
+                                        >
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                                data.role === 'parent'
+                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                    : 'bg-white/10'
+                                            }`}>
+                                                <UserGroupIcon className={`w-6 h-6 ${data.role === 'parent' ? '!text-brand-primary' : 'text-brand-primary/60'}`} />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className={`font-bold ${data.role === 'parent' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Parent</p>
+                                                <p className="text-xs text-brand-primary/60">Manage students & bookings</p>
+                                            </div>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setData('role', 'driver')}
+                                            className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                                                data.role === 'driver'
+                                                    ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
+                                                    : 'border-white/20 bg-white/5 hover:border-yellow-400/50 hover:bg-white/10'
+                                            }`}
+                                        >
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                                data.role === 'driver'
+                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                    : 'bg-white/10'
+                                            }`}>
+                                                <TruckIcon className={`w-6 h-6 ${data.role === 'driver' ? '!text-brand-primary' : 'text-brand-primary/60'}`} />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className={`font-bold ${data.role === 'driver' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Driver</p>
+                                                <p className="text-xs text-brand-primary/60">Operate routes & pickups</p>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <InputError message={errors.role} className="mt-2 text-red-300" />
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-6 border-t border-white/20">
+                                <Link
+                                    href="/admin/users"
+                                    className="px-6 py-3 rounded-xl border-2 border-white/30 text-brand-primary font-bold hover:bg-white/10 transition-all text-center"
+                                >
+                                    Cancel
+                                </Link>
+                                <GlassButton
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-8 py-3 rounded-xl text-base"
+                                >
+                                    {processing ? (
+                                        <span className="flex items-center gap-2">
+                                            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                            </svg>
+                                            Creating...
+                                        </span>
+                                    ) : (
+                                        'Create User'
+                                    )}
+                                </GlassButton>
+                            </div>
+                        </form>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>
     );
 }
-
-
-
-
-
-
-
-
-

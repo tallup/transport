@@ -63,6 +63,8 @@ class UserController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['email_verified_at'] = now();
+        // Admin-created accounts don't need verification — they're immediately approved
+        $validated['registration_approved_at'] = now();
 
         User::create($validated);
 
