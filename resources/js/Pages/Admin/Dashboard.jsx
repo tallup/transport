@@ -340,17 +340,17 @@ export default function AdminDashboard({
                                                     <button
                                                         onClick={() => router.get('/admin/dashboard', { activity_page: recentActivityPagination.current_page - 1 }, { preserveState: true, preserveScroll: true })}
                                                         disabled={recentActivityPagination.current_page === 1}
-                                                        className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                        className="px-4 py-2.5 bg-yellow-400/20 border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition"
                                                     >
                                                         Previous
                                                     </button>
-                                                    <span className="px-3 py-1 bg-white/10 text-white rounded-lg text-sm font-semibold">
+                                                    <span className="px-4 py-2.5 bg-yellow-400/35 border-2 border-yellow-400 text-brand-primary rounded-xl text-sm font-bold shadow-sm">
                                                         {recentActivityPagination.current_page} / {recentActivityPagination.last_page}
                                                     </span>
                                                     <button
                                                         onClick={() => router.get('/admin/dashboard', { activity_page: recentActivityPagination.current_page + 1 }, { preserveState: true, preserveScroll: true })}
                                                         disabled={recentActivityPagination.current_page === recentActivityPagination.last_page}
-                                                        className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                        className="px-4 py-2.5 bg-yellow-400/20 border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition"
                                                     >
                                                         Next
                                                     </button>
@@ -457,17 +457,17 @@ export default function AdminDashboard({
                                             <button
                                                 onClick={() => router.get('/admin/dashboard', { bookings_page: recentBookingsPagination.current_page - 1 }, { preserveState: true, preserveScroll: true })}
                                                 disabled={recentBookingsPagination.current_page === 1}
-                                                className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                className="px-4 py-2.5 bg-yellow-400/20 border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition"
                                             >
                                                 Previous
                                             </button>
-                                            <span className="px-3 py-1 bg-white/10 text-white rounded-lg text-sm font-semibold">
+                                            <span className="px-4 py-2.5 bg-yellow-400/35 border-2 border-yellow-400 text-brand-primary rounded-xl text-sm font-bold shadow-sm">
                                                 {recentBookingsPagination.current_page} / {recentBookingsPagination.last_page}
                                             </span>
                                             <button
                                                 onClick={() => router.get('/admin/dashboard', { bookings_page: recentBookingsPagination.current_page + 1 }, { preserveState: true, preserveScroll: true })}
                                                 disabled={recentBookingsPagination.current_page === recentBookingsPagination.last_page}
-                                                className="px-3 py-1 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold transition"
+                                                className="px-4 py-2.5 bg-yellow-400/20 border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition"
                                             >
                                                 Next
                                             </button>

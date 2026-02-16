@@ -131,18 +131,28 @@ export default function Index({ calendarEvents }) {
                     {calendarEvents.links && (
                         <div className="mt-8 flex justify-center">
                             <div className="flex gap-2">
-                                {calendarEvents.links.map((link, index) => (
-                                    <Link
-                                        key={index}
-                                        href={link.url || '#'}
-                                        className={`px-3 py-2 rounded-lg ${
-                                            link.active
-                                                ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
-                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
-                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ))}
+                                {calendarEvents.links.map((link, index) => {
+                                    const baseClass = `px-4 py-2.5 rounded-xl font-bold text-sm ${
+                                        link.active
+                                            ? 'bg-yellow-400/35 text-brand-primary border-2 border-yellow-400 shadow-sm'
+                                            : 'bg-yellow-400/20 text-white border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400'
+                                    } ${!link.url ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`;
+                                    return link.url ? (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            onClick={() => router.get(link.url)}
+                                            className={baseClass}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    ) : (
+                                        <span
+                                            key={index}
+                                            className={baseClass}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
