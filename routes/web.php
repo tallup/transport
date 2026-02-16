@@ -100,6 +100,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
     Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve');
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::post('/bookings/{booking}/refund', [\App\Http\Controllers\Admin\BookingController::class, 'refund'])->name('bookings.refund');
 });
 
 // Driver Routes

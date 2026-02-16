@@ -379,10 +379,12 @@ class BookingController extends Controller
                 // Calculate amount from payment intent
                 $amount = $paymentIntent->amount / 100; // Convert from cents
                 
-                // Update booking status (awaiting admin approval)
+                // Update booking status and store Stripe payment intent for refunds
                 $booking->update([
                     'status' => 'awaiting_approval',
                     'stripe_customer_id' => $user->stripe_id,
+                    'payment_id' => $validated['payment_intent_id'],
+                    'payment_method' => 'stripe',
                 ]);
 
                 // Send confirmation notification to parent

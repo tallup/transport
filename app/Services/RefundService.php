@@ -24,28 +24,30 @@ class RefundService
     public function processRefund(Booking $booking, ?float $amount = null): array
     {
         try {
-            if (!$booking->stripe_customer_id) {
-                return [
-                    'success' => false,
-                    'message' => 'No Stripe customer ID found for this booking.',
-                    'refund_id' => null,
-                ];
-            }
+            $paymentIntentId = $booking->payment_id;
 
-            // Get the payment intent from Stripe
-            // Note: In a real implementation, you'd store payment_intent_id in bookings table
-            // For now, we'll search by customer and metadata
-            $paymentIntents = \Stripe\PaymentIntent::all([
-                'customer' => $booking->stripe_customer_id,
-                'limit' => 10,
-            ]);
-
-            $paymentIntent = null;
-            foreach ($paymentIntents->data as $pi) {
-                if (isset($pi->metadata->booking_id) && $pi->metadata->booking_id == $booking->id) {
-                    $paymentIntent = $pi;
-                    break;
+            if (!$paymentIntentId) {
+                // Fallback: try to find by customer and metadata (older bookings)
+                if (!$booking->stripe_customer_id) {
+                    return [
+                        'success' => false,
+                        'message' => 'No Stripe payment found for this booking. Refunds require a recorded payment.',
+                        'refund_id' => null,
+                    ];
                 }
+                $paymentIntents = \Stripe\PaymentIntent::all([
+                    'customer' => $booking->stripe_customer_id,
+                    'limit' => 10,
+                ]);
+                $paymentIntent = null;
+                foreach ($paymentIntents->data as $pi) {
+                    if (isset($pi->metadata->booking_id) && (string)$pi->metadata->booking_id === (string)$booking->id) {
+                        $paymentIntent = $pi;
+                        break;
+                    }
+                }
+            } else {
+                $paymentIntent = \Stripe\PaymentIntent::retrieve($paymentIntentId);
             }
 
             if (!$paymentIntent) {
@@ -56,7 +58,6 @@ class RefundService
                 ];
             }
 
-            // Get the charge ID from the payment intent
             $charges = \Stripe\Charge::all([
                 'payment_intent' => $paymentIntent->id,
                 'limit' => 1,
@@ -83,10 +84,10 @@ class RefundService
 
             $refund = Refund::create($refundData);
 
-            // Update booking status
-            $booking->update([
-                'status' => 'refunded',
-            ]);
+            // Update booking status only for full refunds
+            if ($amount === null) {
+                $booking->update(['status' => 'refunded']);
+            }
 
             Log::info("Refund processed for booking {$booking->id}: {$refund->id}");
 

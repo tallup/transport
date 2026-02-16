@@ -8,6 +8,7 @@ use App\Models\Route;
 use App\Models\Student;
 use App\Notifications\DriverStudentAdded;
 use App\Services\BookingService;
+use App\Services\RefundService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -225,6 +226,34 @@ class BookingController extends Controller
         ));
 
         return back()->with('success', 'Booking cancelled successfully.');
+    }
+
+    public function refund(Request $request, Booking $booking)
+    {
+        if (!$request->user()->can('update', $booking)) {
+            abort(403, 'Unauthorized to update this booking.');
+        }
+
+        if ($booking->status === 'refunded') {
+            return back()->with('error', 'This booking has already been refunded.');
+        }
+
+        $amount = $request->input('amount');
+        if ($amount !== null) {
+            $validated = $request->validate([
+                'amount' => 'required|numeric|min:0.01',
+            ]);
+            $amount = (float) $validated['amount'];
+        }
+
+        $refundService = app(RefundService::class);
+        $result = $refundService->processRefund($booking, $amount);
+
+        if ($result['success']) {
+            return back()->with('success', $result['message']);
+        }
+
+        return back()->with('error', $result['message']);
     }
 
     private function notifyDriverStudentAdded(Booking $booking): void

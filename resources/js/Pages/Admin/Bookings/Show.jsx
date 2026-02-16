@@ -1,10 +1,13 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 
 export default function Show({ booking }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
+    const [partialAmount, setPartialAmount] = useState('');
+    const [refunding, setRefunding] = useState(false);
 
     const formatStatus = (status) => {
         return status.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
@@ -22,12 +25,48 @@ export default function Show({ booking }) {
         }
     };
 
+    const canRefund = (booking.payment_id || booking.payment_method === 'stripe') &&
+        !['refunded', 'cancelled'].includes(booking.status);
+
+    const handleFullRefund = () => {
+        if (!confirm('Process a full refund for this booking? This cannot be undone.')) return;
+        setRefunding(true);
+        router.post(route('admin.bookings.refund', booking.id), {}, {
+            preserveScroll: true,
+            onFinish: () => setRefunding(false),
+        });
+    };
+
+    const handlePartialRefund = () => {
+        const amount = parseFloat(partialAmount);
+        if (!partialAmount || isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid refund amount.');
+            return;
+        }
+        if (!confirm(`Process a partial refund of $${amount.toFixed(2)}?`)) return;
+        setRefunding(true);
+        router.post(route('admin.bookings.refund', booking.id), { amount: amount }, {
+            preserveScroll: true,
+            onFinish: () => setRefunding(false),
+        });
+    };
+
     return (
         <AdminLayout>
             <Head title="Booking Details" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {flash?.success && (
+                        <div className="mb-6 rounded-xl bg-emerald-600 text-white px-4 py-3 font-medium shadow">
+                            {flash.success}
+                        </div>
+                    )}
+                    {flash?.error && (
+                        <div className="mb-6 rounded-xl bg-red-600 text-white px-4 py-3 font-medium shadow">
+                            {flash.error}
+                        </div>
+                    )}
                     {/* Header Section */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
@@ -56,6 +95,17 @@ export default function Show({ booking }) {
                                         Cancel Booking
                                     </GlassButton>
                                 )}
+                                {canRefund && (
+                                    <GlassButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={handleFullRefund}
+                                        disabled={refunding}
+                                        className="px-6 py-3"
+                                    >
+                                        {refunding ? 'Processing…' : 'Full Refund'}
+                                    </GlassButton>
+                                )}
                                 <Link
                                     href={`/admin/bookings/${booking.id}/edit`}
                                     className="px-6 py-3 bg-yellow-400/25 border-2 border-yellow-400 text-brand-primary font-bold rounded-xl hover:bg-yellow-400/40 hover:border-yellow-500 transition-all shadow-sm"
@@ -78,11 +128,37 @@ export default function Show({ booking }) {
                             booking.status === 'active' ? 'bg-green-500/30 text-green-200 border border-green-400/50' :
                             booking.status === 'pending' || booking.status === 'awaiting_approval' ? 'bg-yellow-500/30 text-yellow-200 border border-yellow-400/50' :
                             booking.status === 'cancelled' ? 'bg-red-500/30 text-red-200 border border-red-400/50' :
+                            booking.status === 'refunded' ? 'bg-emerald-600/30 text-emerald-200 border border-emerald-400/50' :
                             'bg-gray-500/30 text-gray-200 border border-gray-400/50'
                         }`}>
                             {formatStatus(booking.status)}
                         </span>
                     </div>
+
+                    {/* Partial refund (when eligible) */}
+                    {canRefund && (
+                        <GlassCard className="mb-6 p-4 flex flex-wrap items-end gap-4">
+                            <span className="text-brand-primary font-semibold">Partial refund:</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                placeholder="Amount ($)"
+                                value={partialAmount}
+                                onChange={(e) => setPartialAmount(e.target.value)}
+                                className="glass-input w-32 px-3 py-2 rounded-lg"
+                            />
+                            <GlassButton
+                                type="button"
+                                variant="secondary"
+                                onClick={handlePartialRefund}
+                                disabled={refunding || !partialAmount}
+                                className="px-4 py-2"
+                            >
+                                {refunding ? 'Processing…' : 'Refund amount'}
+                            </GlassButton>
+                        </GlassCard>
+                    )}
 
                     {/* Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
