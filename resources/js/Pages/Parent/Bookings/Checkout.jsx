@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -29,7 +29,6 @@ function StripeCheckoutForm({ booking, price, stripeKey }) {
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { post } = useForm();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -72,9 +71,20 @@ function StripeCheckoutForm({ booking, price, stripeKey }) {
                 return;
             }
 
-            post(route('parent.bookings.payment-success'), {
+            // Post to server; server redirects to My Bookings so checkout page closes
+            router.post(route('parent.bookings.payment-success'), {
                 booking_id: booking.id,
                 payment_intent_id: paymentIntentId,
+            }, {
+                preserveState: false,
+                onSuccess: () => {
+                    alert('Payment approved! Your booking is pending admin approval.');
+                    // If still on checkout (e.g. redirect not followed), close payment page
+                    if (window.location.pathname.includes('/checkout')) {
+                        window.location.href = route('parent.bookings.index');
+                    }
+                },
+                onFinish: () => setLoading(false),
             });
         } catch (err) {
             if (err?.response?.status === 419) {

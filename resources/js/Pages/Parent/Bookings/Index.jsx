@@ -4,7 +4,7 @@ import GlassCard from '@/Components/GlassCard';
 import { useState } from 'react';
 
 export default function BookingsIndex({ bookings }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const [cancelling, setCancelling] = useState(null);
     const [deleting, setDeleting] = useState(null);
 
@@ -65,6 +65,17 @@ export default function BookingsIndex({ bookings }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {/* Success / Error messages */}
+                    {(flash?.success || flash?.error) && (
+                        <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
+                            flash.success
+                                ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
+                                : 'bg-red-600 border-2 border-red-500 text-white'
+                        }`}>
+                            {flash.success || flash.error}
+                        </div>
+                    )}
+
                     {/* Header Section */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
