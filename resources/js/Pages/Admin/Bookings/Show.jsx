@@ -58,13 +58,13 @@ export default function Show({ booking }) {
                                 )}
                                 <Link
                                     href={`/admin/bookings/${booking.id}/edit`}
-                                    className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                    className="px-6 py-3 bg-yellow-400/25 border-2 border-yellow-400 text-brand-primary font-bold rounded-xl hover:bg-yellow-400/40 hover:border-yellow-500 transition-all shadow-sm"
                                 >
                                     Edit
                                 </Link>
                                 <Link
                                     href="/admin/bookings"
-                                    className="px-6 py-3 bg-white/10 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all"
+                                    className="px-6 py-3 bg-yellow-400/25 border-2 border-yellow-400 text-brand-primary font-bold rounded-xl hover:bg-yellow-400/40 hover:border-yellow-500 transition-all shadow-sm"
                                 >
                                     Back
                                 </Link>
