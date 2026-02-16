@@ -89,7 +89,7 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
                             type="checkbox"
                             checked={acknowledged}
                             onChange={handleAcknowledge}
-                            className="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-indigo-600 focus:ring-indigo-500"
+                            className="mt-1 w-5 h-5 rounded border-2 border-brand-primary bg-white accent-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-0"
                             required
                         />
                         <span className="text-white font-semibold">
