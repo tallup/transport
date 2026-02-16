@@ -135,11 +135,15 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                         {/* Student Information Card */}
                         <GlassCard className="p-6">
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                </div>
+                                {booking.student?.profile_picture_url ? (
+                                    <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="w-12 h-12 rounded-xl object-cover shadow-md border-2 border-yellow-400/50" />
+                                ) : (
+                                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                        <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                )}
                                 <h3 className="text-xl font-extrabold text-brand-primary">Student Information</h3>
                             </div>
                             <div className="space-y-4">
@@ -187,9 +191,14 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                     </div>
                                 )}
                                 {booking.route?.driver && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
-                                        <p className="text-base font-semibold text-white/90">{booking.route.driver.name}</p>
+                                    <div className="flex items-center gap-3">
+                                        {booking.route.driver.profile_picture_url ? (
+                                            <img src={booking.route.driver.profile_picture_url} alt={booking.route.driver.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50" />
+                                        ) : null}
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
+                                            <p className="text-base font-semibold text-white/90">{booking.route.driver.name}</p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -565,9 +574,14 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                         </div>
                                     )}
                                     {booking.route?.driver && (
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.route.driver.name}</p>
+                                        <div className="flex items-center gap-3">
+                                            {booking.route.driver.profile_picture_url && (
+                                                <img src={booking.route.driver.profile_picture_url} alt={booking.route.driver.name} className="w-12 h-12 rounded-xl object-cover border-2 border-yellow-400/50" />
+                                            )}
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
+                                                <p className="text-lg font-extrabold text-white">{booking.route.driver.name}</p>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

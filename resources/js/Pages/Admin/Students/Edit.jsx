@@ -1,13 +1,16 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import InputError from '@/Components/InputError';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 export default function Edit({ student, parents, schools = [] }) {
     const { auth } = usePage().props;
+    const [profilePreview, setProfilePreview] = useState(null);
+    const fileInputRef = useRef(null);
     const { data, setData, put, processing, errors } = useForm({
         parent_id: student.parent_id || '',
         name: student.name || '',
@@ -15,6 +18,7 @@ export default function Edit({ student, parents, schools = [] }) {
         date_of_birth: student.date_of_birth ? (typeof student.date_of_birth === 'string' ? student.date_of_birth.split('T')[0] : student.date_of_birth) : '',
         emergency_phone: student.emergency_phone || '',
         emergency_contact_name: student.emergency_contact_name || '',
+        profile_picture: null,
     });
 
     // Format phone on mount if it exists
@@ -30,17 +34,24 @@ export default function Edit({ student, parents, schools = [] }) {
         setData('emergency_phone', formatted);
     };
 
+    const handleProfilePictureChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('profile_picture', file);
+            const reader = new FileReader();
+            reader.onloadend = () => setProfilePreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Prepare submission data with unformatted phone
         const submitData = {
             ...data,
             emergency_phone: unformatPhoneNumber(data.emergency_phone || ''),
             _method: 'PUT'
         };
-        
-        // Submit with transformed data (using POST with _method for Laravel)
-        router.post(`/admin/students/${student.id}`, submitData);
+        router.post(`/admin/students/${student.id}`, submitData, data.profile_picture ? { forceFormData: true } : {});
     };
 
     return (
@@ -54,6 +65,29 @@ export default function Edit({ student, parents, schools = [] }) {
                             <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Student</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
+                                <div>
+                                    <label className="block text-base font-bold text-white mb-2">Profile Picture</label>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-yellow-400/50 flex-shrink-0">
+                                            {(profilePreview || student.profile_picture_url) ? (
+                                                <img src={profilePreview || student.profile_picture_url} alt={student.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                                                    <PhotoIcon className="w-8 h-8 text-brand-primary" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/jpg,image/gif" onChange={handleProfilePictureChange} className="hidden" id="profile_picture" />
+                                            <label htmlFor="profile_picture" className="px-4 py-2 bg-white/20 border-2 border-yellow-400/70 rounded-lg text-white font-semibold cursor-pointer hover:bg-white/30 transition">
+                                                {student.profile_picture_url || profilePreview ? 'Change' : 'Upload'}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                    <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
                                         <label htmlFor="parent_id" className="block text-base font-bold text-white mb-2">

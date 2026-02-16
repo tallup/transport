@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 export default function Create({ parents, schools = [] }) {
     const { auth } = usePage().props;
@@ -14,6 +15,7 @@ export default function Create({ parents, schools = [] }) {
         date_of_birth: '',
         emergency_phone: '',
         emergency_contact_name: '',
+        profile_picture: null,
     });
 
     const handlePhoneChange = (e) => {
@@ -31,7 +33,7 @@ export default function Create({ parents, schools = [] }) {
         };
         
         // Submit with transformed data
-        router.post('/admin/students', submitData);
+        router.post('/admin/students', submitData, data.profile_picture ? { forceFormData: true } : {});
     };
 
     return (
@@ -80,6 +82,30 @@ export default function Create({ parents, schools = [] }) {
                                             required
                                         />
                                         <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <label className="block text-base font-bold text-white mb-2">Profile Picture (optional)</label>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-16 h-16 rounded-xl bg-white/10 border-2 border-yellow-400/50 flex items-center justify-center overflow-hidden">
+                                                {data.profile_picture ? (
+                                                    <img src={URL.createObjectURL(data.profile_picture)} alt="Preview" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <PhotoIcon className="w-8 h-8 text-yellow-500" />
+                                                )}
+                                            </div>
+                                            <input
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/jpg,image/gif"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) setData('profile_picture', file);
+                                                }}
+                                                className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                        <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>

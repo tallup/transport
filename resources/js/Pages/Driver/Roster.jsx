@@ -315,7 +315,17 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                             }`}
                                                                     >
                                                                         <div className="flex justify-between items-start">
-                                                                            <div className="flex-1">
+                                                                            <div className="flex items-center gap-3 flex-1">
+                                                                                {booking.student.profile_picture_url ? (
+                                                                                    <img src={booking.student.profile_picture_url} alt={booking.student.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50 flex-shrink-0" />
+                                                                                ) : (
+                                                                                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                                                        <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                                        </svg>
+                                                                                    </div>
+                                                                                )}
+                                                                                <div>
                                                                                 <div className="flex items-center gap-2 mb-1">
                                                                                     <p className="font-bold text-white text-base">
                                                                                         {booking.student.name}
@@ -334,6 +344,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                                         Grade: {booking.student.grade}
                                                                                     </p>
                                                                                 )}
+                                                                                </div>
                                                                             </div>
                                                                             <div className="text-right ml-4">
                                                                                 {booking.student.emergency_phone && (

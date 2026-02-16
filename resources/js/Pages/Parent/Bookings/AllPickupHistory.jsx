@@ -132,9 +132,20 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                                 )}
                                                             </div>
                                                             {pickup.booking?.student && (
-                                                                <p className="text-white font-bold text-lg mb-1">
-                                                                    {pickup.booking.student.name}
-                                                                </p>
+                                                                <div className="flex items-center gap-3 mb-2">
+                                                                    {pickup.booking.student.profile_picture_url ? (
+                                                                        <img src={pickup.booking.student.profile_picture_url} alt={pickup.booking.student.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50 flex-shrink-0" />
+                                                                    ) : (
+                                                                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                                            <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                            </svg>
+                                                                        </div>
+                                                                    )}
+                                                                    <p className="text-white font-bold text-lg mb-0">
+                                                                        {pickup.booking.student.name}
+                                                                    </p>
+                                                                </div>
                                                             )}
                                                             {pickup.booking?.route && (
                                                                 <p className="text-white/70 text-sm mb-2">
@@ -168,9 +179,14 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                     )}
 
                                                     {pickup.driver && (
-                                                        <div className="mt-3 pt-3 border-t border-yellow-400/40">
-                                                            <p className="text-white/70 text-xs font-semibold mb-1">Driver</p>
-                                                            <p className="text-white font-bold">{pickup.driver.name}</p>
+                                                        <div className="mt-3 pt-3 border-t border-yellow-400/40 flex items-center gap-3">
+                                                            {pickup.driver.profile_picture_url && (
+                                                                <img src={pickup.driver.profile_picture_url} alt={pickup.driver.name} className="w-10 h-10 rounded-lg object-cover border border-yellow-400/50" />
+                                                            )}
+                                                            <div>
+                                                                <p className="text-white/70 text-xs font-semibold mb-1">Driver</p>
+                                                                <p className="text-white font-bold">{pickup.driver.name}</p>
+                                                            </div>
                                                         </div>
                                                     )}
 

@@ -85,11 +85,19 @@ export default function StudentsIndex({ students }) {
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-3">
-                                                        <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
-                                                            <svg className="w-7 h-7 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                            </svg>
-                                                        </div>
+                                                        {student.profile_picture_url ? (
+                                                            <img
+                                                                src={student.profile_picture_url}
+                                                                alt={student.name}
+                                                                className="w-14 h-14 rounded-xl object-cover shadow-lg border-2 border-yellow-400/50"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
+                                                                <svg className="w-7 h-7 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                         <div>
                                                             <h3 className="text-2xl font-extrabold text-brand-primary">{student.name}</h3>
                                                             <div className="flex items-center gap-2 mt-1">

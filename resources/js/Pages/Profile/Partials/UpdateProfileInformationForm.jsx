@@ -4,24 +4,53 @@ import GlassButton from '@/Components/GlassButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { useState, useRef } from 'react';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
+    profile_picture_url,
     className = '',
 }) {
     const user = usePage().props.auth.user;
+    const [profilePreview, setProfilePreview] = useState(null);
+    const fileInputRef = useRef(null);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
+            profile_picture: null,
         });
+
+    const handleProfilePictureChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) return;
+            setData('profile_picture', file);
+            const reader = new FileReader();
+            reader.onloadend = () => setProfilePreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeProfilePicture = () => {
+        setData('profile_picture', null);
+        setProfilePreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
 
     const submit = (e) => {
         e.preventDefault();
-
-        patch(route('profile.update'));
+        const options = {};
+        if (data.profile_picture) {
+            options.forceFormData = true;
+        }
+        patch(route('profile.update'), options);
     };
 
     return (
@@ -37,6 +66,52 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
+                <div>
+                    <InputLabel value="Profile Picture" className="text-brand-primary font-semibold text-sm mb-2" />
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            {(profilePreview || profile_picture_url) ? (
+                                <img
+                                    src={profilePreview || profile_picture_url}
+                                    alt={user.name}
+                                    className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400/50"
+                                />
+                            ) : (
+                                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                                    <PhotoIcon className="w-10 h-10 text-brand-primary" />
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex gap-3">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/jpeg,image/png,image/jpg,image/gif"
+                                onChange={handleProfilePictureChange}
+                                className="hidden"
+                                id="profile_picture"
+                            />
+                            <label
+                                htmlFor="profile_picture"
+                                className="px-4 py-2 bg-white/20 border-2 border-yellow-400/70 rounded-lg text-brand-primary font-semibold cursor-pointer hover:bg-white/30 transition"
+                            >
+                                {profilePreview || profile_picture_url ? 'Change' : 'Upload'}
+                            </label>
+                            {(profilePreview || data.profile_picture) && (
+                                <button
+                                    type="button"
+                                    onClick={removeProfilePicture}
+                                    className="px-4 py-2 bg-red-500/20 border border-red-400/50 rounded-lg text-red-200 font-semibold hover:bg-red-500/30 transition"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <p className="text-xs text-brand-primary/70 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                    <InputError className="mt-2 text-red-300 font-semibold" message={errors.profile_picture} />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <InputLabel htmlFor="name" value="Name" className="text-brand-primary font-semibold text-sm mb-2" />

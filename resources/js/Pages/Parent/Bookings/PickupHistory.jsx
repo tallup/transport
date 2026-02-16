@@ -58,9 +58,20 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
                                     Pickup History
                                 </h1>
-                                <p className="text-base sm:text-lg font-semibold text-white/90">
-                                    {booking.student?.name} - {booking.route?.name || 'Route'}
-                                </p>
+                                <div className="flex items-center gap-3">
+                                    {booking.student?.profile_picture_url ? (
+                                        <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50 flex-shrink-0" />
+                                    ) : (
+                                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <p className="text-base sm:text-lg font-semibold text-white/90">
+                                        {booking.student?.name} - {booking.route?.name || 'Route'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -237,13 +248,18 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                             {/* Driver Information */}
                                                             <div>
                                                                 {pickup.driver && (
-                                                                    <>
-                                                                        <span className="text-white/70 font-semibold text-sm">Driver:</span>
-                                                                        <p className="text-white font-bold mt-1">{pickup.driver.name}</p>
-                                                                        {pickup.driver.email && (
-                                                                            <p className="text-white/70 text-xs mt-1">{pickup.driver.email}</p>
-                                                                        )}
-                                                                    </>
+                                                                    <div className="flex items-center gap-3">
+                                                                        {pickup.driver.profile_picture_url ? (
+                                                                            <img src={pickup.driver.profile_picture_url} alt={pickup.driver.name} className="w-10 h-10 rounded-lg object-cover border border-yellow-400/50" />
+                                                                        ) : null}
+                                                                        <div>
+                                                                            <span className="text-white/70 font-semibold text-sm">Driver:</span>
+                                                                            <p className="text-white font-bold mt-1">{pickup.driver.name}</p>
+                                                                            {pickup.driver.email && (
+                                                                                <p className="text-white/70 text-xs mt-1">{pickup.driver.email}</p>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>

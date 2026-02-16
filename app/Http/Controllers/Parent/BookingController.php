@@ -733,6 +733,7 @@ class BookingController extends Controller
                         'driver' => $pickup->driver ? [
                             'id' => $pickup->driver->id,
                             'name' => $pickup->driver->name,
+                            'profile_picture_url' => $pickup->driver->profile_picture_url,
                         ] : null,
                         'pickup_point' => $pickup->pickupPoint ? [
                             'id' => $pickup->pickupPoint->id,
@@ -815,6 +816,7 @@ class BookingController extends Controller
                                 'id' => $pickup->driver->id,
                                 'name' => $pickup->driver->name ?? 'Unknown',
                                 'email' => $pickup->driver->email ?? null,
+                                'profile_picture_url' => $pickup->driver->profile_picture_url,
                             ] : null,
                             'pickup_point' => $pickup->pickupPoint ? [
                                 'id' => $pickup->pickupPoint->id,
@@ -944,6 +946,7 @@ class BookingController extends Controller
                             'id' => $pickup->driver->id,
                             'name' => $pickup->driver->name,
                             'email' => $pickup->driver->email,
+                            'profile_picture_url' => $pickup->driver->profile_picture_url,
                         ] : null,
                         'pickup_point' => $pickup->pickupPoint ? [
                             'id' => $pickup->pickupPoint->id,
@@ -959,6 +962,7 @@ class BookingController extends Controller
                             'student' => $booking->student ? [
                                 'id' => $booking->student->id,
                                 'name' => $booking->student->name,
+                                'profile_picture_url' => $booking->student->profile_picture_url,
                             ] : null,
                             'route' => $booking->route ? [
                                 'id' => $booking->route->id,

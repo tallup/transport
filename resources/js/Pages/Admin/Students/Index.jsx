@@ -45,11 +45,19 @@ export default function Index({ students }) {
                                     {/* Card Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                </svg>
-                                            </div>
+                                            {student.profile_picture_url ? (
+                                                <img
+                                                    src={student.profile_picture_url}
+                                                    alt={student.name}
+                                                    className="w-12 h-12 rounded-xl object-cover shadow-md flex-shrink-0 border-2 border-yellow-400/50"
+                                                />
+                                            ) : (
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                            )}
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-lg font-extrabold text-white truncate">{student.name}</h3>
                                                 <p className="text-sm text-white/70 font-medium truncate">

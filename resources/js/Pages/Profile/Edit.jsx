@@ -7,7 +7,7 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import GlassCard from '@/Components/GlassCard';
 
-export default function Edit({ mustVerifyEmail, status }) {
+export default function Edit({ mustVerifyEmail, status, profile_picture_url }) {
     const { auth } = usePage().props;
     const userRole = auth?.user?.role;
     
@@ -27,6 +27,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
+                            profile_picture_url={profile_picture_url}
                             className="max-w-full"
                         />
                     </GlassCard>

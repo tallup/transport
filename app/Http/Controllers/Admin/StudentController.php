@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -51,7 +52,16 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = 'student_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+        } else {
+            unset($validated['profile_picture']);
+        }
 
         Student::create($validated);
 
@@ -101,7 +111,19 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
+
+        if ($request->hasFile('profile_picture')) {
+            if ($student->profile_picture) {
+                Storage::disk('public')->delete($student->profile_picture);
+            }
+            $file = $request->file('profile_picture');
+            $filename = 'student_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+        } else {
+            unset($validated['profile_picture']);
+        }
 
         $student->update($validated);
 

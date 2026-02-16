@@ -24,6 +24,7 @@ class StoreStudentRequest extends FormRequest
         return [
             // Basic Information
             'name' => 'required|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'school_id' => 'required|exists:schools,id',
             'date_of_birth' => 'nullable|date',
             'home_address' => 'nullable|string',

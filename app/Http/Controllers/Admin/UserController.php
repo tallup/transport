@@ -9,6 +9,7 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -59,12 +60,20 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:parent,driver',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['email_verified_at'] = now();
-        // Admin-created accounts don't need verification — they're immediately approved
         $validated['registration_approved_at'] = now();
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+        } else {
+            unset($validated['profile_picture']);
+        }
 
         User::create($validated);
 
@@ -80,7 +89,13 @@ class UserController extends Controller
         }
 
         return Inertia::render('Admin/Users/Edit', [
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'profile_picture_url' => $user->profile_picture_url,
+            ],
         ]);
     }
 
@@ -96,13 +111,24 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:parent,driver',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        // Only update password if provided
         if (empty($validated['password'])) {
             unset($validated['password']);
         } else {
             $validated['password'] = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+        } else {
+            unset($validated['profile_picture']);
         }
 
         $user->update($validated);

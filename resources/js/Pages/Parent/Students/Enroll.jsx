@@ -11,6 +11,7 @@ import {
     PhoneIcon,
     DocumentCheckIcon,
     CheckCircleIcon,
+    PhotoIcon,
 } from '@heroicons/react/24/outline';
 
 export default function EnrollStudent({ schools = [], policies = {} }) {
@@ -21,6 +22,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     const { data, setData, post, processing, errors } = useForm({
         // Basic Information
         name: '',
+        profile_picture: null,
         school_id: '',
         date_of_birth: '',
         home_address: '',
@@ -145,7 +147,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
             policies_acknowledged: policiesAcknowledged,
         };
         
-        router.post('/parent/students', submitData);
+        router.post('/parent/students', submitData, data.profile_picture ? { forceFormData: true } : {});
     };
 
     return (
@@ -213,6 +215,32 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                     required
                                                 />
                                                 {errors.name && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.name}</p>}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-base font-bold text-white mb-2">
+                                                    Profile Picture (optional)
+                                                </label>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-16 h-16 rounded-xl bg-white/10 border-2 border-yellow-400/50 flex items-center justify-center overflow-hidden">
+                                                        {data.profile_picture ? (
+                                                            <img src={URL.createObjectURL(data.profile_picture)} alt="Preview" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <PhotoIcon className="w-8 h-8 text-yellow-500" />
+                                                        )}
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/jpeg,image/png,image/jpg,image/gif"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) setData('profile_picture', file);
+                                                        }}
+                                                        className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
+                                                    />
+                                                </div>
+                                                <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                                {errors.profile_picture && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.profile_picture}</p>}
                                             </div>
 
                                             <div>

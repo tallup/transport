@@ -10,6 +10,7 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\PickupPoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -111,6 +112,14 @@ class StudentController extends Controller
             $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], function($person) {
                 return !empty($person['name']);
             }));
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = 'student_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+        } else {
+            unset($validated['profile_picture']);
         }
 
         $student = $user->students()->create($validated);

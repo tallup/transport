@@ -205,14 +205,27 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                     Driver
                                 </h3>
                                 {route.driver ? (
-                                    <div className="space-y-3">
-                                        <div>
-                                            <p className="text-gray-400 text-sm">Name</p>
-                                            <p className="text-white font-semibold">{route.driver.name}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-400 text-sm">Email</p>
-                                            <p className="text-white">{route.driver.email}</p>
+                                    <div className="flex items-start gap-4">
+                                        {route.driver.profile_picture_url ? (
+                                            <img
+                                                src={route.driver.profile_picture_url}
+                                                alt={route.driver.name}
+                                                className="w-12 h-12 rounded-xl object-cover border-2 border-yellow-400/50 flex-shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                                <UserIcon className="w-6 h-6 text-brand-primary" />
+                                            </div>
+                                        )}
+                                        <div className="space-y-3 flex-1">
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Name</p>
+                                                <p className="text-white font-semibold">{route.driver.name}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Email</p>
+                                                <p className="text-white">{route.driver.email}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (

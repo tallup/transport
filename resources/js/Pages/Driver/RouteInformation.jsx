@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { UserIcon } from '@heroicons/react/24/outline';
 
 export default function RouteInformation({ route, pickupPoints, activeBookingsCount, bookings }) {
     return (
@@ -157,14 +158,27 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                             {route.driver && (
                                 <GlassCard className="mb-8">
                                     <h3 className="text-2xl font-bold text-white mb-6">Driver Information</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Driver Name</p>
-                                            <p className="text-lg font-bold text-white">{route.driver.name}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-semibold text-white/70 mb-1">Email</p>
-                                            <p className="text-lg font-bold text-white">{route.driver.email}</p>
+                                    <div className="flex items-start gap-4">
+                                        {route.driver.profile_picture_url ? (
+                                            <img
+                                                src={route.driver.profile_picture_url}
+                                                alt={route.driver.name}
+                                                className="w-16 h-16 rounded-xl object-cover border-2 border-yellow-400/50 flex-shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                                <UserIcon className="w-8 h-8 text-brand-primary" />
+                                            </div>
+                                        )}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Driver Name</p>
+                                                <p className="text-lg font-bold text-white">{route.driver.name}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white/70 mb-1">Email</p>
+                                                <p className="text-lg font-bold text-white">{route.driver.email}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </GlassCard>
@@ -181,11 +195,15 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                 {/* Card Header */}
                                                 <div className="flex items-start justify-between mb-4">
                                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                            </svg>
-                                                        </div>
+                                                        {booking.student?.profile_picture_url ? (
+                                                            <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="w-12 h-12 rounded-xl object-cover shadow-md flex-shrink-0 border-2 border-yellow-400/50" />
+                                                        ) : (
+                                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                         <div className="flex-1 min-w-0">
                                                             <h3 className="text-lg font-extrabold text-white truncate">{booking.student?.name || 'N/A'}</h3>
                                                             {booking.student?.grade && (

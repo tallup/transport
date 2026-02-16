@@ -426,6 +426,7 @@ class DashboardController extends Controller
                     $studentsList[] = [
                         'id' => $booking->student->id,
                         'name' => $booking->student->name,
+                        'profile_picture_url' => $booking->student->profile_picture_url,
                         'pickup_point_id' => $pickupPoint->id,
                         'pickup_point_name' => $pickupPoint->name,
                         'pickup_point_address' => $pickupPoint->address,
@@ -464,6 +465,7 @@ class DashboardController extends Controller
             $studentsList[] = [
                 'id' => $booking->student->id,
                 'name' => $booking->student->name,
+                'profile_picture_url' => $booking->student->profile_picture_url,
                 'pickup_point_id' => $booking->pickup_point_id,
                 'pickup_point_name' => $pickupPoint ? $pickupPoint->name : 'Custom Location',
                 'pickup_point_address' => $booking->pickup_address ?? ($pickupPoint ? $pickupPoint->address : 'Address not set'),
@@ -679,6 +681,7 @@ class DashboardController extends Controller
                     $studentsList[] = [
                         'id' => $booking->student->id,
                         'name' => $booking->student->name,
+                        'profile_picture_url' => $booking->student->profile_picture_url,
                         'grade' => $booking->student->grade,
                         'school' => $booking->student->school?->name ?? 'N/A',
                         'pickup_point_id' => $pickupPoint->id,
@@ -708,6 +711,7 @@ class DashboardController extends Controller
             $studentsList[] = [
                 'id' => $booking->student->id,
                 'name' => $booking->student->name,
+                'profile_picture_url' => $booking->student->profile_picture_url,
                 'grade' => $booking->student->grade,
                 'school' => $booking->student->school?->name ?? 'N/A',
                 'pickup_point_id' => null,
