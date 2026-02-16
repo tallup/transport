@@ -191,7 +191,7 @@ export default function Register() {
                                 <InputLabel htmlFor="name" value="Full Name" className="text-brand-primary font-bold mb-2" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <UserIcon className="h-5 w-5 text-brand-primary/60" />
+                                        <UserIcon className="h-5 w-5 text-yellow-500" />
                                     </div>
                                     <TextInput
                                         id="name"
@@ -215,7 +215,7 @@ export default function Register() {
                                 <InputLabel htmlFor="email" value="Email Address" className="text-brand-primary font-bold mb-2" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <EnvelopeIcon className="h-5 w-5 text-brand-primary/60" />
+                                        <EnvelopeIcon className="h-5 w-5 text-yellow-500" />
                                     </div>
                                     <TextInput
                                         id="email"
@@ -239,7 +239,7 @@ export default function Register() {
                                 <InputLabel htmlFor="password" value="Password" className="text-brand-primary font-bold mb-2" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <LockClosedIcon className="h-5 w-5 text-brand-primary/60" />
+                                        <LockClosedIcon className="h-5 w-5 text-yellow-500" />
                                     </div>
                                     <TextInput
                                         id="password"
@@ -257,7 +257,7 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-primary/60 hover:text-brand-primary transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-500 hover:text-yellow-400 transition-colors"
                                     >
                                         {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                                     </button>
@@ -285,7 +285,7 @@ export default function Register() {
                                 <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="text-brand-primary font-bold mb-2" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <LockClosedIcon className="h-5 w-5 text-brand-primary/60" />
+                                        <LockClosedIcon className="h-5 w-5 text-yellow-500" />
                                     </div>
                                     <TextInput
                                         id="password_confirmation"
@@ -303,7 +303,7 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-primary/60 hover:text-brand-primary transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-500 hover:text-yellow-400 transition-colors"
                                     >
                                         {showPasswordConfirmation ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                                     </button>

@@ -56,8 +56,12 @@ class AuthenticatedSessionController extends Controller
         if ($role === 'driver') {
             return redirect()->route('driver.dashboard');
         }
-        
-        return redirect()->route('parent.dashboard');
+
+        // Force full-page redirect for parent so the dashboard loads with a proper
+        // document request and session cookie (avoids login → dashboard → back to login)
+        $parentDashboardUrl = url()->route('parent.dashboard');
+        return response('', 409)
+            ->header('X-Inertia-Location', $parentDashboardUrl);
     }
 
     /**

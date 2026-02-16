@@ -29,8 +29,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Parent Portal Routes
-Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->group(function () {
+// Parent Portal Routes (no 'verified' — approved parents can access without email verification)
+Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Students

@@ -111,21 +111,21 @@
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
     }
 
-    /* Glass input */
+    /* Glass input - Yellow border for visibility */
     .glass-input {
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border: 1px solid #22304d;
+        border: 2px solid rgba(250, 204, 21, 0.7); /* yellow-400/70 */
         border-radius: 0.5rem; /* 8px - rounded-lg */
         transition: all 0.3s ease;
     }
 
     .glass-input:focus {
         background: rgba(255, 255, 255, 0.95);
-        border-color: #22304d;
+        border-color: #facc15; /* yellow-400 */
         outline: none;
-        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.25);
+        box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
         border-radius: 0.5rem; /* Maintain border radius on focus */
         color: #22304d; /* Dark blue text */
     }
@@ -172,28 +172,35 @@
         border-radius: 0.5rem; /* Maintain border radius on hover */
     }
 
-    /* Ensure textareas with glass-input get border radius and dark blue border */
+    /* Ensure textareas with glass-input get yellow border */
     textarea.glass-input {
         border-radius: 0.5rem; /* 8px - rounded-lg */
-        border: 1px solid #22304d !important;
+        border: 2px solid rgba(250, 204, 21, 0.7) !important;
     }
     
     textarea.glass-input:focus {
-        border-color: #22304d !important;
+        border-color: #facc15 !important;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.25);
+        box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
     }
 
-    /* Ensure select elements with glass-input get border radius and dark blue border */
+    /* Ensure select elements with glass-input get yellow border */
     select.glass-input {
         border-radius: 0.5rem; /* 8px - rounded-lg */
-        border: 1px solid #22304d !important;
+        border: 2px solid rgba(250, 204, 21, 0.7) !important;
     }
     
     select.glass-input:focus {
-        border-color: #22304d !important;
+        border-color: #facc15 !important;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(34, 48, 77, 0.25);
+        box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
+    }
+
+    /* Select dropdown options - light background for readability (removes blue/dark background) */
+    select option,
+    select optgroup {
+        background: #ffffff !important;
+        color: #1f2937 !important;
     }
 
     /* Solid color backgrounds - Logo brand colors */

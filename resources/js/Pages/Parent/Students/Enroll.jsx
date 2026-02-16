@@ -6,6 +6,12 @@ import GlassButton from '@/Components/GlassButton';
 import PhoneNumbersInput from '@/Components/PhoneNumbersInput';
 import PolicyDisplay from '@/Components/PolicyDisplay';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
+import {
+    UserCircleIcon,
+    PhoneIcon,
+    DocumentCheckIcon,
+    CheckCircleIcon,
+} from '@heroicons/react/24/outline';
 
 export default function EnrollStudent({ schools = [], policies = {} }) {
     const { auth } = usePage().props;
@@ -242,12 +248,12 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                 <select
                                                     value={data.school_id}
                                                     onChange={(e) => setData('school_id', e.target.value)}
-                                                    className="w-full glass-input text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
+                                                    className="w-full glass-input text-brand-primary bg-white/20 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg px-4 py-3 focus:border-yellow-400"
                                                     required
                                                 >
                                                     <option value="">Select a school</option>
                                                     {schools.map((school) => (
-                                                        <option key={school.id} value={school.id} className="bg-gray-800 text-white">
+                                                        <option key={school.id} value={school.id}>
                                                             {school.name}
                                                         </option>
                                                     ))}
@@ -637,27 +643,99 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
 
                                 {/* Step 9: Review & Submit */}
                                 {step === 9 && (
-                                    <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Review & Submit</h3>
-                                        <div className="glass-card p-6 space-y-4">
-                                            <div>
-                                                <h4 className="text-lg font-bold text-white mb-2">Child Information</h4>
-                                                <p className="text-white/90"><strong>Name:</strong> {data.name}</p>
-                                                <p className="text-white/90"><strong>School:</strong> {schools.find(s => s.id == data.school_id)?.name || 'N/A'}</p>
-                                                <p className="text-white/90"><strong>Grade:</strong> {data.grade || 'N/A'}</p>
+                                    <div className="space-y-8">
+                                        <div className="text-center">
+                                            <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-2 drop-shadow-md">
+                                                You're all set
+                                            </h3>
+                                            <p className="text-white/90 text-sm md:text-base">
+                                                Review the details below, then submit to complete enrollment.
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                                            {/* Child Information card */}
+                                            <div className="glass-card rounded-xl p-5 border-2 border-yellow-400/30 shadow-lg hover:shadow-xl transition-shadow">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <div className="p-2.5 rounded-xl bg-yellow-400/20">
+                                                        <UserCircleIcon className="w-7 h-7 text-yellow-500" strokeWidth={2} />
+                                                    </div>
+                                                    <h4 className="text-base font-extrabold text-brand-primary uppercase tracking-wide">
+                                                        Child Information
+                                                    </h4>
+                                                </div>
+                                                <dl className="space-y-2.5">
+                                                    <div>
+                                                        <dt className="text-xs font-bold text-brand-primary/70 uppercase tracking-wider">Name</dt>
+                                                        <dd className="text-brand-primary font-semibold mt-0.5">{data.name || '—'}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt className="text-xs font-bold text-brand-primary/70 uppercase tracking-wider">School</dt>
+                                                        <dd className="text-brand-primary font-semibold mt-0.5">{schools.find(s => s.id == data.school_id)?.name || '—'}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt className="text-xs font-bold text-brand-primary/70 uppercase tracking-wider">Grade</dt>
+                                                        <dd className="text-brand-primary font-semibold mt-0.5">{data.grade || '—'}</dd>
+                                                    </div>
+                                                </dl>
                                             </div>
-                                            <div>
-                                                <h4 className="text-lg font-bold text-white mb-2">Emergency Contact</h4>
-                                                <p className="text-white/90"><strong>Name:</strong> {data.emergency_contact_name}</p>
-                                                <p className="text-white/90"><strong>Phone:</strong> {data.emergency_phone}</p>
+
+                                            {/* Emergency Contact card */}
+                                            <div className="glass-card rounded-xl p-5 border-2 border-yellow-400/30 shadow-lg hover:shadow-xl transition-shadow">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <div className="p-2.5 rounded-xl bg-yellow-400/20">
+                                                        <PhoneIcon className="w-7 h-7 text-yellow-500" strokeWidth={2} />
+                                                    </div>
+                                                    <h4 className="text-base font-extrabold text-brand-primary uppercase tracking-wide">
+                                                        Emergency Contact
+                                                    </h4>
+                                                </div>
+                                                <dl className="space-y-2.5">
+                                                    <div>
+                                                        <dt className="text-xs font-bold text-brand-primary/70 uppercase tracking-wider">Name</dt>
+                                                        <dd className="text-brand-primary font-semibold mt-0.5">{data.emergency_contact_name || '—'}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt className="text-xs font-bold text-brand-primary/70 uppercase tracking-wider">Phone</dt>
+                                                        <dd className="text-brand-primary font-semibold mt-0.5">{data.emergency_phone || '—'}</dd>
+                                                    </div>
+                                                </dl>
                                             </div>
-                                            <div>
-                                                <h4 className="text-lg font-bold text-white mb-2">Signatures</h4>
-                                                <p className="text-white/90"><strong>Transport Authorization:</strong> {data.authorization_to_transport_signature ? '✓ Signed' : '✗ Not signed'}</p>
-                                                <p className="text-white/90"><strong>Payment Agreement:</strong> {data.payment_agreement_signature ? '✓ Signed' : '✗ Not signed'}</p>
-                                                <p className="text-white/90"><strong>Liability Waiver:</strong> {data.liability_waiver_signature ? '✓ Signed' : '✗ Not signed'}</p>
+
+                                            {/* Signatures card */}
+                                            <div className="glass-card rounded-xl p-5 border-2 border-yellow-400/30 shadow-lg hover:shadow-xl transition-shadow">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <div className="p-2.5 rounded-xl bg-yellow-400/20">
+                                                        <DocumentCheckIcon className="w-7 h-7 text-yellow-500" strokeWidth={2} />
+                                                    </div>
+                                                    <h4 className="text-base font-extrabold text-brand-primary uppercase tracking-wide">
+                                                        Signatures
+                                                    </h4>
+                                                </div>
+                                                <ul className="space-y-3">
+                                                    {[
+                                                        { label: 'Transport Authorization', signed: !!data.authorization_to_transport_signature },
+                                                        { label: 'Payment Agreement', signed: !!data.payment_agreement_signature },
+                                                        { label: 'Liability Waiver', signed: !!data.liability_waiver_signature },
+                                                    ].map(({ label, signed }) => (
+                                                        <li key={label} className="flex items-center justify-between gap-2">
+                                                            <span className="text-sm font-medium text-brand-primary">{label}</span>
+                                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${signed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-brand-primary/60'}`}>
+                                                                {signed ? (
+                                                                    <><CheckCircleIcon className="w-3.5 h-3.5" strokeWidth={2.5} /> Signed</>
+                                                                ) : (
+                                                                    'Not signed'
+                                                                )}
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
                                         </div>
+
+                                        <p className="text-center text-white/80 text-sm">
+                                            Need to change something? Use <strong className="text-white">Previous</strong> to go back and edit.
+                                        </p>
                                     </div>
                                 )}
 

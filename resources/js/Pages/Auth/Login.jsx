@@ -94,7 +94,7 @@ export default function Login({ status, canResetPassword }) {
                                 type="email"
                                 name="email"
                                 value={data.email}
-                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all duration-200 outline-none"
+                                className="w-full px-4 py-3 border-2 border-yellow-400/70 rounded-xl text-gray-900 placeholder-gray-400 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 transition-all duration-200 outline-none"
                                 autoComplete="username"
                                 autoFocus
                                 onChange={(e) => setData('email', e.target.value)}
@@ -115,7 +115,7 @@ export default function Login({ status, canResetPassword }) {
                                     type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     value={data.password}
-                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all duration-200 outline-none pr-12"
+                                    className="w-full px-4 py-3 border-2 border-yellow-400/70 rounded-xl text-gray-900 placeholder-gray-400 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 transition-all duration-200 outline-none pr-12"
                                     autoComplete="current-password"
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="Enter your password"
@@ -123,7 +123,7 @@ export default function Login({ status, canResetPassword }) {
                                 />
                                 <button
                                     type="button"
-                                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-brand-primary transition-colors"
+                                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-yellow-500 hover:text-yellow-600 transition-colors"
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
                                     {showPassword ? (

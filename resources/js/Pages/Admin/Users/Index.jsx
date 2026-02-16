@@ -107,13 +107,13 @@ export default function Index({ users, filters }) {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search by name or email..."
-                                    className="w-full px-4 py-3 bg-white/20 border-2 border-brand-primary/40 rounded-xl text-brand-primary font-medium placeholder-brand-primary/60 focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
+                                    className="w-full px-4 py-3 bg-white/20 border-2 border-yellow-400/70 rounded-xl text-brand-primary font-medium placeholder-brand-primary/60 focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
                                 />
                             </form>
                             <select
                                 value={roleFilter}
                                 onChange={handleRoleFilter}
-                                className="px-4 py-3 bg-white/20 border-2 border-brand-primary/40 rounded-xl text-brand-primary font-medium focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
+                                className="px-4 py-3 bg-white/20 border-2 border-yellow-400/70 rounded-xl text-brand-primary font-medium focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
                             >
                                 <option value="" className="bg-brand-primary text-white">All Roles</option>
                                 <option value="parent" className="bg-brand-primary text-white">Parent</option>

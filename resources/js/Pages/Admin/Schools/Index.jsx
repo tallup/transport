@@ -108,13 +108,13 @@ export default function Index({ schools, filters }) {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search by name or address..."
-                                    className="w-full px-4 py-3 bg-white/10 border-2 border-white/30 rounded-xl text-white placeholder-white/40 focus:bg-white/20 focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
+                                    className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/70 rounded-xl text-white placeholder-white/40 focus:bg-white/20 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
                                 />
                             </form>
                             <select
                                 value={activeFilter}
                                 onChange={handleActiveFilter}
-                                className="px-4 py-3 bg-white/10 border-2 border-white/30 rounded-xl text-white focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
+                                className="px-4 py-3 bg-white/10 border-2 border-yellow-400/70 rounded-xl text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
                             >
                                 <option value="" className="bg-brand-primary text-white">All Status</option>
                                 <option value="true" className="bg-brand-primary text-white">Active</option>
@@ -268,7 +268,7 @@ export default function Index({ schools, filters }) {
                                             type="text"
                                             value={addForm.data.name}
                                             onChange={(e) => addForm.setData('name', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
                                             placeholder="e.g. Jefferson Elementary"
                                             required
                                         />
@@ -281,7 +281,7 @@ export default function Index({ schools, filters }) {
                                             rows={2}
                                             value={addForm.data.address}
                                             onChange={(e) => addForm.setData('address', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
                                             placeholder="Full street address"
                                         />
                                         <InputError message={addForm.errors.address} className="mt-1 text-red-300 text-sm" />
@@ -293,7 +293,7 @@ export default function Index({ schools, filters }) {
                                             type="text"
                                             value={addForm.data.phone}
                                             onChange={(e) => addForm.setData('phone', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
                                             placeholder="555-1234"
                                         />
                                         <InputError message={addForm.errors.phone} className="mt-1 text-red-300 text-sm" />
@@ -304,7 +304,7 @@ export default function Index({ schools, filters }) {
                                             id="add-active"
                                             value={addForm.data.active ? 'true' : 'false'}
                                             onChange={(e) => addForm.setData('active', e.target.value === 'true')}
-                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white focus:border-yellow-400 outline-none"
+                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white focus:border-yellow-400 outline-none"
                                         >
                                             <option value="true" className="bg-brand-primary">Active</option>
                                             <option value="false" className="bg-brand-primary">Inactive</option>

@@ -267,8 +267,8 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [initialized, students, setData]);
 
-    // Show loading state if students haven't loaded yet
-    if (!students || students.length === 0) {
+    // Show loading only when students prop hasn't been received yet (e.g. during Inertia visit)
+    if (students === undefined || students === null) {
         return (
             <AuthenticatedLayout user={auth.user}>
                 <Head title="Book Transport" />
