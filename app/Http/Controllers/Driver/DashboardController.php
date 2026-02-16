@@ -314,7 +314,8 @@ class DashboardController extends Controller
                 $query->whereDate('pickup_date', $today)
                     ->where('period', $currentPeriod);
             }])
-            ->get();
+            ->get()
+            ->filter(fn ($b) => $b->student !== null); // Skip orphaned bookings (e.g. soft-deleted students)
 
         // Debug logging for driver dashboard
         \Log::info("Driver Dashboard - Route {$route->id} ({$route->name})", [
@@ -327,9 +328,9 @@ class DashboardController extends Controller
                     'status' => $b->status,
                     'start_date' => $b->start_date?->toDateString(),
                     'end_date' => $b->end_date?->toDateString(),
-                    'student' => $b->student->name ?? 'N/A',
+                    'student' => $b->student?->name ?? 'N/A',
                 ];
-            })->toArray(),
+            })->values()->toArray(),
         ]);
 
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
@@ -348,8 +349,8 @@ class DashboardController extends Controller
                     'description' => "Pickup {$pointBookings->count()} student(s)",
                     'students' => $pointBookings->map(function ($booking) {
                         return [
-                            'name' => $booking->student->name,
-                            'address' => $booking->pickup_address ?? $booking->pickupPoint->address ?? 'Address not set',
+                            'name' => $booking->student?->name ?? 'Unknown',
+                            'address' => $booking->pickup_address ?? ($booking->pickupPoint?->address ?? 'Address not set'),
                             'booking_id' => $booking->id,
                         ];
                     })->toArray(),
@@ -382,8 +383,8 @@ class DashboardController extends Controller
                 'description' => "Pickup {$customAddressBookings->count()} student(s)",
                 'students' => $customAddressBookings->map(function ($booking) {
                     return [
-                        'name' => $booking->student->name,
-                        'address' => $booking->pickup_address ?? ($booking->pickupPoint->address ?? 'Address not set'),
+                        'name' => $booking->student?->name ?? 'Unknown',
+                        'address' => $booking->pickup_address ?? ($booking->pickupPoint?->address ?? 'Address not set'),
                         'booking_id' => $booking->id,
                     ];
                 })->toArray(),
@@ -420,6 +421,7 @@ class DashboardController extends Controller
             
             if ($pointBookings->count() > 0) {
                 foreach ($pointBookings as $booking) {
+                    if (!$booking->student) continue;
                     $processedBookingIds[] = $booking->id;
                     $studentsList[] = [
                         'id' => $booking->student->id,
@@ -439,6 +441,7 @@ class DashboardController extends Controller
 
         // Add all other bookings (custom addresses, missing pickup points, etc.)
         foreach ($todayBookingsList as $booking) {
+            if (!$booking->student) continue;
             // Skip if already processed
             if (in_array($booking->id, $processedBookingIds)) {
                 continue;
@@ -660,7 +663,8 @@ class DashboardController extends Controller
                     ->orWhereDate('end_date', '>=', $today);
             })
             ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
-            ->get();
+            ->get()
+            ->filter(fn ($b) => $b->student !== null);
 
         // Group by pickup point and sort by sequence order
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
@@ -671,18 +675,19 @@ class DashboardController extends Controller
             
             if ($pointBookings->count() > 0) {
                 foreach ($pointBookings as $booking) {
+                    if (!$booking->student) continue;
                     $studentsList[] = [
                         'id' => $booking->student->id,
                         'name' => $booking->student->name,
                         'grade' => $booking->student->grade,
-                        'school' => $booking->student->school->name ?? 'N/A',
+                        'school' => $booking->student->school?->name ?? 'N/A',
                         'pickup_point_id' => $pickupPoint->id,
                         'pickup_point_name' => $pickupPoint->name,
                         'pickup_point_address' => $pickupPoint->address,
                         'pickup_address' => $booking->pickup_address ?? null,
                         'pickup_time' => $pickupPoint->pickup_time,
                         'dropoff_time' => $pickupPoint->dropoff_time,
-                        'dropoff_point_name' => $booking->dropoffPoint->name ?? $pickupPoint->name,
+                        'dropoff_point_name' => $booking->dropoffPoint?->name ?? $pickupPoint->name,
                         'sequence_order' => $pickupPoint->sequence_order,
                         'booking_id' => $booking->id,
                         'plan_type' => $booking->plan_type,
@@ -699,18 +704,19 @@ class DashboardController extends Controller
         });
 
         foreach ($customAddressBookings as $booking) {
+            if (!$booking->student) continue;
             $studentsList[] = [
                 'id' => $booking->student->id,
                 'name' => $booking->student->name,
                 'grade' => $booking->student->grade,
-                'school' => $booking->student->school->name ?? 'N/A',
+                'school' => $booking->student->school?->name ?? 'N/A',
                 'pickup_point_id' => null,
                 'pickup_point_name' => 'Custom Location',
                 'pickup_point_address' => $booking->pickup_address,
                 'pickup_address' => $booking->pickup_address,
                 'pickup_time' => $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD',
                 'dropoff_time' => $route->dropoff_time ? (is_string($route->dropoff_time) ? substr($route->dropoff_time, 0, 5) : $route->dropoff_time->format('H:i')) : null,
-                'dropoff_point_name' => $booking->dropoffPoint->name ?? 'Custom Location',
+                'dropoff_point_name' => $booking->dropoffPoint?->name ?? 'Custom Location',
                 'sequence_order' => 9999, // Put custom addresses at the end
                 'booking_id' => $booking->id,
                 'plan_type' => $booking->plan_type,

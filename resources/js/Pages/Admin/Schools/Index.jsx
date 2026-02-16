@@ -1,11 +1,32 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
-import { useState } from 'react';
+import GlassButton from '@/Components/GlassButton';
+import InputError from '@/Components/InputError';
+import { useState, useEffect } from 'react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function Index({ schools, filters }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
+    const [showFlash, setShowFlash] = useState(true);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [deleting, setDeleting] = useState(null);
+
+    const addForm = useForm({
+        name: '',
+        address: '',
+        phone: '',
+        active: true,
+    });
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
     const [search, setSearch] = useState(filters.search || '');
     const [activeFilter, setActiveFilter] = useState(filters.active || '');
 
@@ -34,6 +55,17 @@ export default function Index({ schools, filters }) {
         });
     };
 
+    const handleAddSubmit = (e) => {
+        e.preventDefault();
+        addForm.post('/admin/schools', {
+            preserveScroll: true,
+            onSuccess: () => {
+                setShowAddModal(false);
+                addForm.reset();
+            },
+        });
+    };
+
     return (
         <AdminLayout>
             <Head title="Schools" />
@@ -47,14 +79,25 @@ export default function Index({ schools, filters }) {
                                 <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Schools</h1>
                                 <p className="text-lg text-brand-primary/80 font-medium">Manage all registered schools</p>
                             </div>
-                            <Link
-                                href="/admin/schools/create"
+                            <button
+                                onClick={() => setShowAddModal(true)}
                                 className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
                             >
                                 Add School
-                            </Link>
+                            </button>
                         </div>
                     </div>
+
+                    {/* Flash Messages */}
+                    {showFlash && (flash?.success || flash?.error) && (
+                        <div className={`mb-6 px-6 py-4 rounded-xl font-bold ${
+                            flash.success
+                                ? 'bg-green-500/20 border-2 border-green-400/50 text-green-200'
+                                : 'bg-red-500/20 border-2 border-red-400/50 text-red-200'
+                        }`}>
+                            {flash.success || flash.error}
+                        </div>
+                    )}
 
                     {/* Filters */}
                     <GlassCard className="mb-6 p-6">
@@ -194,6 +237,92 @@ export default function Index({ schools, filters }) {
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Add School Modal */}
+                    {showAddModal && (
+                        <div
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                            onClick={() => { setShowAddModal(false); addForm.reset(); }}
+                        >
+                            <div
+                                className="relative w-full max-w-lg glass-card rounded-xl p-6 max-h-[90vh] overflow-y-auto"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-2xl font-extrabold text-brand-primary">Add School</h2>
+                                    <button
+                                        onClick={() => { setShowAddModal(false); addForm.reset(); }}
+                                        className="p-2 rounded-lg hover:bg-white/10 text-brand-primary transition-colors"
+                                    >
+                                        <XMarkIcon className="w-6 h-6" />
+                                    </button>
+                                </div>
+                                <form onSubmit={handleAddSubmit} className="space-y-4">
+                                    <div>
+                                        <label htmlFor="add-name" className="block text-sm font-bold text-brand-primary mb-1">School Name *</label>
+                                        <input
+                                            id="add-name"
+                                            type="text"
+                                            value={addForm.data.name}
+                                            onChange={(e) => addForm.setData('name', e.target.value)}
+                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            placeholder="e.g. Jefferson Elementary"
+                                            required
+                                        />
+                                        <InputError message={addForm.errors.name} className="mt-1 text-red-300 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="add-address" className="block text-sm font-bold text-brand-primary mb-1">Address</label>
+                                        <textarea
+                                            id="add-address"
+                                            rows={2}
+                                            value={addForm.data.address}
+                                            onChange={(e) => addForm.setData('address', e.target.value)}
+                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            placeholder="Full street address"
+                                        />
+                                        <InputError message={addForm.errors.address} className="mt-1 text-red-300 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="add-phone" className="block text-sm font-bold text-brand-primary mb-1">Phone</label>
+                                        <input
+                                            id="add-phone"
+                                            type="text"
+                                            value={addForm.data.phone}
+                                            onChange={(e) => addForm.setData('phone', e.target.value)}
+                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            placeholder="555-1234"
+                                        />
+                                        <InputError message={addForm.errors.phone} className="mt-1 text-red-300 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="add-active" className="block text-sm font-bold text-brand-primary mb-1">Status</label>
+                                        <select
+                                            id="add-active"
+                                            value={addForm.data.active ? 'true' : 'false'}
+                                            onChange={(e) => addForm.setData('active', e.target.value === 'true')}
+                                            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white focus:border-yellow-400 outline-none"
+                                        >
+                                            <option value="true" className="bg-brand-primary">Active</option>
+                                            <option value="false" className="bg-brand-primary">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex justify-end gap-3 pt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => { setShowAddModal(false); addForm.reset(); }}
+                                            className="px-4 py-2 rounded-xl border-2 border-white/30 text-brand-primary font-bold hover:bg-white/10 transition-all"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <GlassButton type="submit" disabled={addForm.processing}>
+                                            {addForm.processing ? 'Creating...' : 'Create School'}
+                                        </GlassButton>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     )}
