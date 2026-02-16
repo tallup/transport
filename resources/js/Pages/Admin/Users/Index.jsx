@@ -178,7 +178,7 @@ export default function Index({ users, filters }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
                                         <Link
                                             href={`/admin/users/${user.id}/edit`}
                                             className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
@@ -237,7 +237,7 @@ export default function Index({ users, filters }) {
                                         className={`px-3 py-2 rounded-lg ${
                                             link.active
                                                 ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
-                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                                : 'bg-white/10 border-2 border-yellow-400/60 text-white hover:bg-white/20 hover:border-yellow-400'
                                         } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />

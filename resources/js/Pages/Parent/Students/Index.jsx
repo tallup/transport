@@ -119,7 +119,7 @@ export default function StudentsIndex({ students }) {
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 {/* Date of Birth */}
                                                 {student.date_of_birth && (
-                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/20 hover:bg-white/10 transition">
+                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-yellow-400/50 hover:bg-white/10 transition">
                                                         <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                                             <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -134,7 +134,7 @@ export default function StudentsIndex({ students }) {
 
                                                 {/* Grade */}
                                                 {student.grade && (
-                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/20 hover:bg-white/10 transition">
+                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-yellow-400/50 hover:bg-white/10 transition">
                                                         <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                                             <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -149,7 +149,7 @@ export default function StudentsIndex({ students }) {
 
                                                 {/* Emergency Contact */}
                                                 {student.emergency_contact_name && (
-                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/20 hover:bg-white/10 transition sm:col-span-2">
+                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-yellow-400/50 hover:bg-white/10 transition sm:col-span-2">
                                                         <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                                             <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -167,7 +167,7 @@ export default function StudentsIndex({ students }) {
 
                                                 {/* Home Address */}
                                                 {student.home_address && (
-                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/20 hover:bg-white/10 transition sm:col-span-2">
+                                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-yellow-400/50 hover:bg-white/10 transition sm:col-span-2">
                                                         <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                                             <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -214,7 +214,7 @@ export default function StudentsIndex({ students }) {
                                                     {/* Pickup and Dropoff Times */}
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-emerald-400/30">
                                                         {/* Pickup Information */}
-                                                        <div className="bg-white/10 rounded-lg p-4 border border-white/20">
+                                                        <div className="bg-white/10 rounded-lg p-4 border border-yellow-400/50">
                                                             <div className="flex items-center gap-2 mb-3">
                                                                 <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -244,7 +244,7 @@ export default function StudentsIndex({ students }) {
                                                         </div>
 
                                                         {/* Dropoff Information */}
-                                                        <div className="bg-white/10 rounded-lg p-4 border border-white/20">
+                                                        <div className="bg-white/10 rounded-lg p-4 border border-yellow-400/50">
                                                             <div className="flex items-center gap-2 mb-3">
                                                                 <svg className="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -280,7 +280,7 @@ export default function StudentsIndex({ students }) {
 
                                             {/* Authorized Pickup Persons */}
                                             {student.authorized_pickup_persons && Array.isArray(student.authorized_pickup_persons) && student.authorized_pickup_persons.length > 0 && (
-                                                <div className="pt-4 border-t border-white/20">
+                                                <div className="pt-4 border-t border-yellow-400/40">
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
                                                             <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +305,7 @@ export default function StudentsIndex({ students }) {
 
                                             {/* Medical Notes */}
                                             {student.medical_notes && (
-                                                <div className="pt-4 border-t border-white/20">
+                                                <div className="pt-4 border-t border-yellow-400/40">
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
                                                             <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,12 +314,12 @@ export default function StudentsIndex({ students }) {
                                                         </div>
                                                         <h4 className="text-sm font-bold text-white uppercase tracking-wide">Medical Notes</h4>
                                                     </div>
-                                                    <p className="text-sm font-semibold text-white/90 bg-white/5 rounded-lg p-3 border border-white/20">{student.medical_notes}</p>
+                                                    <p className="text-sm font-semibold text-white/90 bg-white/5 rounded-lg p-3 border border-yellow-400/50">{student.medical_notes}</p>
                                                 </div>
                                             )}
 
                                             {/* Action Button */}
-                                            <div className="pt-4 border-t border-white/20">
+                                            <div className="pt-4 border-t border-yellow-400/40">
                                                 <Link
                                                     href={`/parent/bookings/create?student_id=${student.id}`}
                                                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]"

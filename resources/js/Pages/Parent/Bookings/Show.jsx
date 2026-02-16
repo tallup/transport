@@ -223,7 +223,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                     </p>
                                 </div>
                                 {price && (
-                                    <div className="pt-4 border-t border-white/20">
+                                    <div className="pt-4 border-t border-yellow-400/40">
                                         <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Total Price</p>
                                         <p className="text-2xl font-extrabold text-green-200">{price.formatted}</p>
                                     </div>

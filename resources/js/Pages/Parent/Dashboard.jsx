@@ -78,7 +78,7 @@ export default function Dashboard({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         {/* Students Card */}
                         <Link href="/parent/students">
-                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-transparent hover:border-blue-400/50">
+                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-yellow-400/40 hover:border-yellow-400">
                                 <div className="p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center backdrop-blur-sm border border-yellow-400/40">
@@ -102,7 +102,7 @@ export default function Dashboard({
 
                         {/* Active Bookings Card */}
                         <Link href="/parent/bookings">
-                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-transparent hover:border-green-400/50">
+                            <GlassCard className="cursor-pointer hover:bg-white/10 transition-all hover:scale-105 duration-200 border-2 border-yellow-400/40 hover:border-yellow-400">
                                 <div className="p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center backdrop-blur-sm border border-yellow-400/40">
@@ -125,7 +125,7 @@ export default function Dashboard({
                         </Link>
 
                         {/* Upcoming Pickups Card */}
-                        <GlassCard className="border-2 border-transparent hover:border-cyan-400/50 transition-all">
+                        <GlassCard className="border-2 border-yellow-400/40 hover:border-yellow-400 transition-all">
                             <div className="p-4">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center backdrop-blur-sm border border-yellow-400/40">
@@ -160,7 +160,7 @@ export default function Dashboard({
                                                 type="button"
                                                 onClick={() => setPickupsPage((p) => Math.max(1, p - 1))}
                                                 disabled={pickupsPage <= 1}
-                                                className="px-3 py-1 rounded-lg text-xs font-bold border border-white/15 bg-white/10 text-white/80 hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-white/10 transition"
+                                                className="px-3 py-1 rounded-lg text-xs font-bold border border-yellow-400/40 bg-white/10 text-white/80 hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-white/10 transition"
                                             >
                                                 Prev
                                             </button>
@@ -171,7 +171,7 @@ export default function Dashboard({
                                                 type="button"
                                                 onClick={() => setPickupsPage((p) => Math.min(totalPickupsPages, p + 1))}
                                                 disabled={pickupsPage >= totalPickupsPages}
-                                                className="px-3 py-1 rounded-lg text-xs font-bold border border-white/15 bg-white/10 text-white/80 hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-white/10 transition"
+                                                className="px-3 py-1 rounded-lg text-xs font-bold border border-yellow-400/40 bg-white/10 text-white/80 hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-white/10 transition"
                                             >
                                                 Next
                                             </button>
@@ -189,7 +189,7 @@ export default function Dashboard({
                                 <div className="divide-y divide-white/10">
                                     {pagedUpcomingPickups.map((pickup, index) => (
                                         <div key={index} className="py-4 first:pt-0 last:pb-0">
-                                            <div className="p-4 bg-gradient-to-r from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-all hover:bg-white/15">
+                                            <div className="p-4 bg-gradient-to-r from-white/10 to-white/5 rounded-xl border border-yellow-400/40 hover:border-yellow-400 transition-all hover:bg-white/15">
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex items-start gap-4">
                                                         <div className="w-12 h-12 bg-yellow-400/30 rounded-lg flex items-center justify-center flex-shrink-0 border border-yellow-400/40">
@@ -316,7 +316,7 @@ export default function Dashboard({
                                         <div key={booking.id} className="py-3 first:pt-0 last:pb-0">
                                             <Link
                                                 href={`/parent/bookings/${booking.id}`}
-                                                className="block p-4 bg-gradient-to-r from-white/10 to-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-all hover:bg-white/15 group"
+                                                className="block p-4 bg-gradient-to-r from-white/10 to-white/5 rounded-xl border border-yellow-400/40 hover:border-yellow-400 transition-all hover:bg-white/15 group"
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-4 flex-1">

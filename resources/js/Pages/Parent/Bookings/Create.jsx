@@ -320,7 +320,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-brand-primary shadow-lg scale-110'
                                                                 : step === s
                                                                     ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-brand-primary shadow-xl scale-125 ring-4 ring-yellow-400/40'
-                                                                    : 'bg-white/20 text-white/50 border-2 border-white/30'
+                                                                    : 'bg-white/20 text-white/50 border-2 border-yellow-400/60'
                                                 }`}
                                             >
                                                         {step > s ? (
@@ -502,7 +502,7 @@ export default function CreateBooking({ students, routes }) {
                                                             className={`group relative flex cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
                                                                 isSelected
                                                                     ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.02]'
-                                                                    : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40 hover:shadow-lg'
+                                                                    : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
                                                             }`}
                                                         >
                                                             <input
@@ -535,7 +535,7 @@ export default function CreateBooking({ students, routes }) {
                                                                     )}
                                                                     {/* Schedule strip */}
                                                                     {(route.pickup_time || route.dropoff_time) && (
-                                                                        <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/10 border border-white/10">
+                                                                        <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/10 border border-yellow-400/20">
                                                                             {route.pickup_time && (
                                                                                 <span className="flex items-center gap-1.5 text-sm">
                                                                                     <span className="w-2 h-2 rounded-full bg-green-400" />
@@ -607,7 +607,7 @@ export default function CreateBooking({ students, routes }) {
                                                     <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         pickupOption === 'pickup_point'
                                                             ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -644,7 +644,7 @@ export default function CreateBooking({ students, routes }) {
                                                     <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         pickupOption === 'custom'
                                                             ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -694,7 +694,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 className={`group relative flex cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
                                                                     isSelected
                                                                         ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.01]'
-                                                                        : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40 hover:shadow-lg'
+                                                                        : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
                                                                 }`}
                                                             >
                                                                 <input
@@ -722,7 +722,7 @@ export default function CreateBooking({ students, routes }) {
                                                                         <p className="text-base font-extrabold text-white mb-1">{point.name}</p>
                                                                         <p className="text-sm text-white/75">{point.address}</p>
                                                                         {(point.pickup_time || point.dropoff_time) && (
-                                                                            <div className="flex flex-wrap items-center gap-2 mt-2 p-2 rounded-lg bg-black/10 border border-white/10">
+                                                                            <div className="flex flex-wrap items-center gap-2 mt-2 p-2 rounded-lg bg-black/10 border border-yellow-400/20">
                                                                                 {point.pickup_time && (
                                                                                     <span className="flex items-center gap-1 text-xs">
                                                                                         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
@@ -757,8 +757,8 @@ export default function CreateBooking({ students, routes }) {
                                                 )}
                                             </div>
                                         ) : (
-                                            <div className="rounded-2xl border-2 border-white/25 bg-white/5 overflow-hidden">
-                                                <div className="flex items-center gap-3 p-4 border-b border-white/10 bg-white/5">
+                                            <div className="rounded-2xl border-2 border-yellow-400/60 bg-white/5 overflow-hidden">
+                                                <div className="flex items-center gap-3 p-4 border-b border-yellow-400/30 bg-white/5">
                                                     <div className="w-10 h-10 rounded-xl bg-yellow-400/20 flex items-center justify-center">
                                                         <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -776,7 +776,7 @@ export default function CreateBooking({ students, routes }) {
                                                         onChange={(e) => setData('pickup_address', e.target.value)}
                                                         placeholder="e.g. 123 Main St, City, State ZIP"
                                                         rows={4}
-                                                        className="block w-full p-4 rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
+                                                        className="block w-full p-4 rounded-xl border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
                                                         required={pickupOption === 'custom'}
                                                     />
                                                     <p className="mt-3 flex items-center gap-2 text-xs text-white/70">
@@ -820,7 +820,7 @@ export default function CreateBooking({ students, routes }) {
                                                             className={`group relative flex flex-col cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
                                                                 isSelected
                                                                     ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.02]'
-                                                                    : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40 hover:shadow-lg'
+                                                                    : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
                                                             }`}
                                                         >
                                                             <input
@@ -858,7 +858,7 @@ export default function CreateBooking({ students, routes }) {
                                                 })}
                                             </div>
                                             {loading && (
-                                                <div className="mt-4 p-4 rounded-xl bg-white/10 border border-white/20 flex items-center gap-3">
+                                                <div className="mt-4 p-4 rounded-xl bg-white/10 border border-yellow-400/50 flex items-center gap-3">
                                                     <svg className="animate-spin w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
                                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -874,8 +874,8 @@ export default function CreateBooking({ students, routes }) {
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="rounded-2xl border-2 border-white/25 bg-white/5 overflow-hidden">
-                                                <div className="flex items-center gap-3 p-4 border-b border-white/10 bg-white/5">
+                                            <div className="rounded-2xl border-2 border-yellow-400/60 bg-white/5 overflow-hidden">
+                                                <div className="flex items-center gap-3 p-4 border-b border-yellow-400/30 bg-white/5">
                                                     <div className="w-10 h-10 rounded-xl bg-yellow-400/20 flex items-center justify-center">
                                                         <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -892,7 +892,7 @@ export default function CreateBooking({ students, routes }) {
                                                         value={data.start_date}
                                                         onChange={(e) => setData('start_date', e.target.value)}
                                                         min={new Date().toISOString().split('T')[0]}
-                                                        className="block w-full p-3 rounded-xl border-2 border-white/30 bg-white/10 text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
+                                                        className="block w-full p-3 rounded-xl border-2 border-yellow-400/70 bg-white/10 text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
                                                         required
                                                     />
                                                     {errors.start_date && (
@@ -907,7 +907,7 @@ export default function CreateBooking({ students, routes }) {
                                                     <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         data.trip_type === 'one_way'
                                                             ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -940,7 +940,7 @@ export default function CreateBooking({ students, routes }) {
                                                     <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         data.trip_type === 'two_way'
                                                             ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-white/25 bg-white/5 hover:bg-white/10 hover:border-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -1004,8 +1004,8 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                         )}
                                         
-                                        <div className="bg-gradient-to-br from-white/15 to-white/10 border-2 border-white/30 p-8 rounded-xl space-y-6 shadow-lg">
-                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                        <div className="bg-gradient-to-br from-white/15 to-white/10 border-2 border-yellow-400/60 p-8 rounded-xl space-y-6 shadow-lg">
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                                                     <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -1017,7 +1017,7 @@ export default function CreateBooking({ students, routes }) {
                                                 </div>
                                             </div>
                                             
-                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                                                     <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -1049,7 +1049,7 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                             </div>
                                             
-                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                                                     <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -1070,7 +1070,7 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                             
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                     <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
                                                         <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -1083,7 +1083,7 @@ export default function CreateBooking({ students, routes }) {
                                                         </p>
                                             </div>
                                                 </div>
-                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                     <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
                                                         <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -1098,7 +1098,7 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                             </div>
                                             
-                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-white/20">
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                                                     <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -1111,7 +1111,7 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                             
                                             {price && (
-                                                <div className="border-t-2 border-white/30 pt-6 mt-6">
+                                                <div className="border-t-2 border-yellow-400/50 pt-6 mt-6">
                                                     <div className="flex justify-between items-center p-5 bg-gradient-to-r from-green-500/20 to-green-500/10 rounded-xl border-2 border-green-400/30">
                                                         <span className="text-xl font-extrabold text-white">Total Amount:</span>
                                                         <span className="text-3xl font-extrabold text-green-200">
@@ -1125,7 +1125,7 @@ export default function CreateBooking({ students, routes }) {
                                 )}
 
                                 {/* Navigation Buttons */}
-                                <div className="flex justify-between items-center mt-10 pt-8 border-t-2 border-white/20">
+                                <div className="flex justify-between items-center mt-10 pt-8 border-t-2 border-yellow-400/40">
                                     <button
                                         type="button"
                                         onClick={prevStep}
@@ -1133,7 +1133,7 @@ export default function CreateBooking({ students, routes }) {
                                         className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 ${
                                             step === 0 && !studentIdParam
                                                 ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
-                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:scale-105'
+                                                : 'bg-white/10 border-2 border-yellow-400/60 text-white hover:bg-white/20 hover:scale-105'
                                         }`}
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

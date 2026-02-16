@@ -148,7 +148,7 @@ export default function Create() {
                                             className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                                                 data.role === 'parent'
                                                     ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
-                                                    : 'border-white/20 bg-white/5 hover:border-yellow-400/50 hover:bg-white/10'
+                                                    : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
                                             }`}
                                         >
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -169,7 +169,7 @@ export default function Create() {
                                             className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                                                 data.role === 'driver'
                                                     ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
-                                                    : 'border-white/20 bg-white/5 hover:border-yellow-400/50 hover:bg-white/10'
+                                                    : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
                                             }`}
                                         >
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -190,10 +190,10 @@ export default function Create() {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-6 border-t border-white/20">
+                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-6 border-t border-yellow-400/40">
                                 <Link
                                     href="/admin/users"
-                                    className="px-6 py-3 rounded-xl border-2 border-white/30 text-brand-primary font-bold hover:bg-white/10 transition-all text-center"
+                                    className="px-6 py-3 rounded-xl border-2 border-yellow-400/60 text-brand-primary font-bold hover:bg-white/10 hover:border-yellow-400 transition-all text-center"
                                 >
                                     Cancel
                                 </Link>

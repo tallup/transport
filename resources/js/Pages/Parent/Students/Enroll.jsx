@@ -480,7 +480,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             <button
                                                 type="button"
                                                 onClick={addAuthorizedPickupPerson}
-                                                className="px-4 py-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-md text-white font-bold transition"
+                                                className="px-4 py-2 bg-white/20 hover:bg-white/30 border-2 border-yellow-400/60 rounded-md text-white font-bold transition hover:border-yellow-400"
                                             >
                                                 + Add Authorized Pickup Person
                                             </button>
@@ -740,7 +740,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 )}
 
                                 {/* Navigation Buttons */}
-                                <div className="flex justify-between mt-8 pt-6 border-t border-white/10">
+                                <div className="flex justify-between mt-8 pt-6 border-t border-yellow-400/30">
                                     <button
                                         type="button"
                                         onClick={prevStep}
@@ -748,7 +748,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                         className={`px-6 py-3 rounded font-bold transition ${
                                             step === 0
                                                 ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
-                                                : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
+                                                : 'bg-white/20 backdrop-blur-sm border-2 border-yellow-400/60 text-white hover:bg-white/30 hover:border-yellow-400'
                                         }`}
                                     >
                                         Previous

@@ -250,7 +250,7 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                         
                                                         {/* Notes */}
                                                         {pickup.notes && (
-                                                            <div className="mt-4 pt-4 border-t border-white/10">
+                                                            <div className="mt-4 pt-4 border-t border-yellow-400/30">
                                                                 <span className="text-white/70 font-semibold text-sm">Notes:</span>
                                                                 <p className="text-white/90 text-sm mt-1 whitespace-pre-wrap">{pickup.notes}</p>
                                                             </div>

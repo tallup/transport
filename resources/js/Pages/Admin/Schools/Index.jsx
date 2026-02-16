@@ -170,7 +170,7 @@ export default function Index({ schools, filters }) {
                                                 <p className="text-sm text-white/90 font-medium">{school.phone}</p>
                                             </div>
                                         )}
-                                        <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                        <div className="flex items-center gap-4 pt-2 border-t border-yellow-400/30">
                                             <div className="flex items-center gap-2">
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -191,7 +191,7 @@ export default function Index({ schools, filters }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
                                         <Link
                                             href={`/admin/schools/${school.id}/edit`}
                                             className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
@@ -232,7 +232,7 @@ export default function Index({ schools, filters }) {
                                         className={`px-3 py-2 rounded-lg ${
                                             link.active
                                                 ? 'bg-brand-primary/30 text-brand-primary border-2 border-brand-primary/50'
-                                                : 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20'
+                                                : 'bg-white/10 border-2 border-yellow-400/60 text-white hover:bg-white/20 hover:border-yellow-400'
                                         } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
@@ -314,7 +314,7 @@ export default function Index({ schools, filters }) {
                                         <button
                                             type="button"
                                             onClick={() => { setShowAddModal(false); addForm.reset(); }}
-                                            className="px-4 py-2 rounded-xl border-2 border-white/30 text-brand-primary font-bold hover:bg-white/10 transition-all"
+                                            className="px-4 py-2 rounded-xl border-2 border-yellow-400/60 text-brand-primary font-bold hover:bg-white/10 hover:border-yellow-400 transition-all"
                                         >
                                             Cancel
                                         </button>

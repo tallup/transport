@@ -152,7 +152,7 @@ export default function Checkout({ booking, price }) {
                             <PayPalCheckoutButton booking={booking} price={price} />
 
                             {/* Skip Payment Option */}
-                            <div className="mt-6 pt-6 border-t border-white/20">
+                            <div className="mt-6 pt-6 border-t border-yellow-400/40">
                                 <div className="text-center">
                                     <p className="text-sm text-white/70 mb-4 font-medium">
                                         Don't want to pay now? You can complete payment later.

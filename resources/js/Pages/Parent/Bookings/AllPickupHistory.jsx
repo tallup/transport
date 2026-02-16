@@ -168,21 +168,21 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                     )}
 
                                                     {pickup.driver && (
-                                                        <div className="mt-3 pt-3 border-t border-white/20">
+                                                        <div className="mt-3 pt-3 border-t border-yellow-400/40">
                                                             <p className="text-white/70 text-xs font-semibold mb-1">Driver</p>
                                                             <p className="text-white font-bold">{pickup.driver.name}</p>
                                                         </div>
                                                     )}
 
                                                     {pickup.notes && (
-                                                        <div className="mt-3 pt-3 border-t border-white/20">
+                                                        <div className="mt-3 pt-3 border-t border-yellow-400/40">
                                                             <p className="text-white/70 text-xs font-semibold mb-1">Notes</p>
                                                             <p className="text-white/90 text-sm whitespace-pre-wrap">{pickup.notes}</p>
                                                         </div>
                                                     )}
 
                                                     {pickup.booking_id && (
-                                                        <div className="mt-3 pt-3 border-t border-white/20">
+                                                        <div className="mt-3 pt-3 border-t border-yellow-400/40">
                                                             <Link
                                                                 href={`/parent/bookings/${pickup.booking_id}`}
                                                                 className="text-blue-400 hover:text-blue-300 text-sm font-semibold inline-flex items-center gap-1"

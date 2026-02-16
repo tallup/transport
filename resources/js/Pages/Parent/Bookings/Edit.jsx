@@ -749,7 +749,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                 <span className="text-white/90 font-semibold">{new Date(data.start_date).toLocaleDateString()}</span>
                                             </div>
                                             {price && (
-                                                <div className="border-t border-white/30 pt-4">
+                                                <div className="border-t border-yellow-400/40 pt-4">
                                                     <div className="flex justify-between items-center">
                                                         <span className="text-lg font-bold text-white">Total:</span>
                                                         <span className="text-2xl font-extrabold text-green-200">

@@ -92,10 +92,10 @@ export default function Create() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end gap-4 mt-6 pt-6 border-t border-white/20">
+                                <div className="flex justify-end gap-4 mt-6 pt-6 border-t border-yellow-400/40">
                                     <Link
                                         href="/admin/schools"
-                                        className="px-4 py-2 bg-white/10 border-2 border-white/30 rounded-xl text-brand-primary font-bold hover:bg-white/20 transition-all"
+                                        className="px-4 py-2 bg-white/10 border-2 border-yellow-400/60 rounded-xl text-brand-primary font-bold hover:bg-white/20 hover:border-yellow-400 transition-all"
                                     >
                                         Cancel
                                     </Link>

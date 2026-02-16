@@ -202,7 +202,7 @@ export default function Dashboard({
                                     <div className="space-y-3 max-h-[600px] overflow-y-auto">
                                         {(studentsList || []).length > 0 ? (
                                             studentsList.map((student, index) => (
-                                                <div key={`${student.id}-${student.booking_id}`} className="p-4 glass-card rounded-lg border border-white/20">
+                                                <div key={`${student.id}-${student.booking_id}`} className="p-4 glass-card rounded-lg border border-yellow-400/50">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <div className="flex-1">
                                                             <p className="text-base font-bold text-white">{student.name}</p>
@@ -242,19 +242,19 @@ export default function Dashboard({
                                         </Link>
                                     </div>
                                     <div className="space-y-4">
-                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
+                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-yellow-400/50 rounded-lg">
                                             <p className="text-base font-bold text-white">On-Time Percentage</p>
                                             <p className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mt-2 drop-shadow">
                                                 {performanceMetrics?.on_time_percentage || 0}%
                                             </p>
                                         </div>
-                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
+                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-yellow-400/50 rounded-lg">
                                             <p className="text-base font-bold text-white">Total Trips</p>
                                             <p className="text-4xl font-extrabold text-yellow-400 mt-2 drop-shadow">
                                                 {performanceMetrics?.total_trips || 0}
                                             </p>
                                         </div>
-                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
+                                        <div className="p-4 bg-white/10 backdrop-blur-sm border border-yellow-400/50 rounded-lg">
                                             <p className="text-base font-bold text-white">Average Students per Trip</p>
                                             <p className="text-4xl font-extrabold text-yellow-400 mt-2 drop-shadow">
                                                 {performanceMetrics?.average_students_per_trip || 0}

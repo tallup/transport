@@ -134,7 +134,7 @@ export default function BookingsIndex({ bookings }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
                                         <Link
                                             href={`/parent/bookings/${booking.id}`}
                                             className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
