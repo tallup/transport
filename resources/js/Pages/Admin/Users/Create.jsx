@@ -69,14 +69,14 @@ export default function Create() {
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <UserIcon className="h-5 w-5 text-brand-primary/60" />
+                                            <UserIcon className="h-5 w-5 text-brand-primary" />
                                         </div>
                                         <TextInput
                                             id="name"
                                             type="text"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className={`pl-12 pr-4 py-3 w-full ${errors.name ? 'border-red-500' : ''}`}
+                                            className={`pl-12 pr-4 py-3 w-full !bg-white/20 !text-brand-primary !placeholder-brand-primary/60 border-2 focus:!border-yellow-400 ${errors.name ? '!border-red-500' : '!border-brand-primary/40'}`}
                                             placeholder="John Doe"
                                             required
                                         />
@@ -91,14 +91,14 @@ export default function Create() {
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <EnvelopeIcon className="h-5 w-5 text-brand-primary/60" />
+                                            <EnvelopeIcon className="h-5 w-5 text-brand-primary" />
                                         </div>
                                         <TextInput
                                             id="email"
                                             type="email"
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
-                                            className={`pl-12 pr-4 py-3 w-full ${errors.email ? 'border-red-500' : ''}`}
+                                            className={`pl-12 pr-4 py-3 w-full !bg-white/20 !text-brand-primary !placeholder-brand-primary/60 border-2 focus:!border-yellow-400 ${errors.email ? '!border-red-500' : '!border-brand-primary/40'}`}
                                             placeholder="john@example.com"
                                             required
                                         />
@@ -113,14 +113,14 @@ export default function Create() {
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <LockClosedIcon className="h-5 w-5 text-brand-primary/60" />
+                                            <LockClosedIcon className="h-5 w-5 text-brand-primary" />
                                         </div>
                                         <TextInput
                                             id="password"
                                             type={showPassword ? 'text' : 'password'}
                                             value={data.password}
                                             onChange={(e) => setData('password', e.target.value)}
-                                            className={`pl-12 pr-12 py-3 w-full ${errors.password ? 'border-red-500' : ''}`}
+                                            className={`pl-12 pr-12 py-3 w-full !bg-white/20 !text-brand-primary !placeholder-brand-primary/60 border-2 focus:!border-yellow-400 ${errors.password ? '!border-red-500' : '!border-brand-primary/40'}`}
                                             placeholder="Create a secure password"
                                             required
                                             minLength={8}
@@ -128,7 +128,7 @@ export default function Create() {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-primary/60 hover:text-brand-primary transition-colors"
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-primary hover:text-yellow-500 transition-colors"
                                         >
                                             {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                                         </button>
