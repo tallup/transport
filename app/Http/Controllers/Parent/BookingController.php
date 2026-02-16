@@ -222,6 +222,7 @@ class BookingController extends Controller
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
             'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+            'stripeKey' => config('cashier.key'),
         ]);
     }
 
@@ -278,6 +279,7 @@ class BookingController extends Controller
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
             'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+            'stripeKey' => config('cashier.key'),
         ]);
     }
 
@@ -317,7 +319,7 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'booking_id' => 'required|exists:bookings,id',
-            'amount' => 'required|numeric|min:50', // Minimum $0.50
+            'amount' => 'required|numeric|min:0.5', // Amount in dollars, minimum $0.50
         ]);
 
         $user = $request->user();
@@ -328,9 +330,11 @@ class BookingController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
+        $amountCents = (int) round($validated['amount'] * 100);
+
         try {
             $paymentIntent = PaymentIntent::create([
-                'amount' => $validated['amount'],
+                'amount' => $amountCents,
                 'currency' => 'usd',
                 'metadata' => [
                     'booking_id' => $booking->id,
@@ -338,7 +342,10 @@ class BookingController extends Controller
                 ],
             ]);
 
-            return response()->json(['clientSecret' => $paymentIntent->client_secret]);
+            return response()->json([
+                'clientSecret' => $paymentIntent->client_secret,
+                'paymentIntentId' => $paymentIntent->id,
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

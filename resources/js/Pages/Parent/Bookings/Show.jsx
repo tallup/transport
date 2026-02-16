@@ -64,19 +64,15 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                     </div>
 
                     {flash?.success && (
-                        <GlassCard className="mb-6">
-                            <div className="p-4 bg-green-500/20 border border-green-400/50 rounded-lg">
-                                <p className="text-green-200 font-semibold">{flash.success}</p>
-                            </div>
-                        </GlassCard>
+                        <div className="mb-6 p-4 rounded-xl bg-emerald-600 border-2 border-emerald-500 shadow-md">
+                            <p className="text-white font-bold">{flash.success}</p>
+                        </div>
                     )}
 
                     {flash?.error && (
-                        <GlassCard className="mb-6">
-                            <div className="p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
-                                <p className="text-red-200 font-semibold">{flash.error}</p>
-                            </div>
-                        </GlassCard>
+                        <div className="mb-6 p-4 rounded-xl bg-red-600 border-2 border-red-500 shadow-md">
+                            <p className="text-white font-bold">{flash.error}</p>
+                        </div>
                     )}
 
                     {/* Header Section */}

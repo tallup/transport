@@ -89,10 +89,10 @@ export default function Index({ users, filters }) {
 
                     {/* Flash Messages */}
                     {showFlash && (flash?.success || flash?.error) && (
-                        <div className={`mb-6 px-6 py-4 rounded-xl font-bold ${
-                            flash.success 
-                                ? 'bg-green-500/20 border-2 border-green-400/50 text-green-200' 
-                                : 'bg-red-500/20 border-2 border-red-400/50 text-red-200'
+                        <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
+                            flash.success
+                                ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
+                                : 'bg-red-600 border-2 border-red-500 text-white'
                         }`}>
                             {flash.success || flash.error}
                         </div>

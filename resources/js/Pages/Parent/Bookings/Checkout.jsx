@@ -1,71 +1,113 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
-import { useState } from 'react';
 
 const axios = window.axios;
 
-function PayPalCheckoutButton({ booking, price }) {
+const CARD_ELEMENT_OPTIONS = {
+    style: {
+        base: {
+            color: '#22304d',
+            fontFamily: 'system-ui, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': { color: '#6b7280' },
+        },
+        invalid: {
+            color: '#dc2626',
+            iconColor: '#dc2626',
+        },
+    },
+};
+
+function StripeCheckoutForm({ booking, price, stripeKey }) {
+    const stripe = useStripe();
+    const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { post } = useForm();
 
-    const handlePayPalPayment = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!stripe || !elements) return;
+
         setLoading(true);
         setError(null);
 
         try {
-            await axios.get('/api/keep-alive', {
-                headers: {
-                    'X-Keep-Alive': 'true',
-                },
-            });
-
-            const response = await axios.post('/parent/bookings/create-paypal-order', {
-                booking_id: booking.id,
-                amount: price.price,
-            });
-            const data = response.data;
-
-            if (data.error) {
-                setError(data.error);
-                setLoading(false);
-            } else if (data.approvalUrl) {
-                // Redirect to PayPal
-                window.location.href = data.approvalUrl;
-            } else {
-                setError('Failed to initialize PayPal payment');
-                setLoading(false);
-            }
+            await axios.get('/api/keep-alive', { headers: { 'X-Keep-Alive': 'true' } });
         } catch (err) {
             if (err?.response?.status === 419) {
                 window.location.href = '/login';
                 return;
             }
-            setError('An error occurred. Please try again.');
+        }
+
+        try {
+            const { data } = await axios.post('/parent/bookings/create-payment-intent', {
+                booking_id: booking.id,
+                amount: price.price,
+            });
+
+            if (data.error) {
+                setError(data.error);
+                setLoading(false);
+                return;
+            }
+
+            const { clientSecret, paymentIntentId } = data;
+            const cardElement = elements.getElement(CardElement);
+
+            const { error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: { card: cardElement },
+            });
+
+            if (confirmError) {
+                setError(confirmError.message || 'Payment failed.');
+                setLoading(false);
+                return;
+            }
+
+            post(route('parent.bookings.payment-success'), {
+                booking_id: booking.id,
+                payment_intent_id: paymentIntentId,
+            });
+        } catch (err) {
+            if (err?.response?.status === 419) {
+                window.location.href = '/login';
+                return;
+            }
+            setError(err?.response?.data?.error || 'An error occurred. Please try again.');
             setLoading(false);
         }
     };
 
     return (
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-                <div className="bg-red-500/20 border border-red-400/50 text-red-300 px-4 py-3 rounded-lg font-semibold">
+                <div className="bg-red-600/20 border-2 border-red-500 text-white px-4 py-3 rounded-xl font-semibold">
                     {error}
                 </div>
             )}
-            
-            <div className="glass-card p-4 rounded-lg">
+
+            <div className="glass-card p-4 rounded-xl">
                 <div className="flex justify-between items-center mb-4">
-                    <span className="font-bold text-white text-lg">Total Amount:</span>
-                    <span className="text-2xl font-bold text-green-400">{price.formatted}</span>
+                    <span className="font-bold text-brand-primary text-lg">Total Amount:</span>
+                    <span className="text-2xl font-bold text-emerald-600">{price.formatted}</span>
+                </div>
+                <div className="p-4 rounded-xl bg-white/80 border-2 border-yellow-400/60">
+                    <label className="block text-sm font-bold text-brand-primary mb-2">Card details</label>
+                    <CardElement options={CARD_ELEMENT_OPTIONS} />
                 </div>
             </div>
 
             <GlassButton
-                type="button"
-                onClick={handlePayPalPayment}
-                disabled={loading}
+                type="submit"
+                disabled={loading || !stripe}
                 variant="success"
                 className="w-full py-3 text-lg flex items-center justify-center gap-2"
             >
@@ -73,37 +115,32 @@ function PayPalCheckoutButton({ booking, price }) {
                     'Processing...'
                 ) : (
                     <>
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.533zm14.146-14.42a6.813 6.813 0 0 0-.44-.767c-.783-1.177-2.178-1.91-4.336-1.91H9.557c-.524 0-.968.382-1.05.9L7.306 15.933h2.19c3.519 0 6.268-1.236 7.27-5.58.096-.452.172-.894.227-1.304.061-.437.096-.842.096-1.206 0-1.019-.253-1.744-.668-2.207z"/>
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                            <line x1="1" y1="10" x2="23" y2="10" />
                         </svg>
-                        {`Pay ${price.formatted} with PayPal`}
+                        Pay {price.formatted} with Stripe
                     </>
                 )}
             </GlassButton>
-        </div>
+        </form>
     );
 }
 
-export default function Checkout({ booking, price }) {
-    const { auth } = usePage().props;
+export default function Checkout({ booking, price, stripeKey }) {
     const { post, processing } = useForm();
+    const [stripePromise] = useState(() => (stripeKey ? loadStripe(stripeKey) : null));
 
     const handleSkipPayment = async () => {
         try {
-            await axios.get('/api/keep-alive', {
-                headers: {
-                    'X-Keep-Alive': 'true',
-                },
-            });
+            await axios.get('/api/keep-alive', { headers: { 'X-Keep-Alive': 'true' } });
         } catch (err) {
             if (err?.response?.status === 419) {
                 window.location.href = '/login';
                 return;
             }
         }
-        post('/parent/bookings/skip-payment', {
-            booking_id: booking.id,
-        });
+        post('/parent/bookings/skip-payment', { booking_id: booking.id });
     };
 
     return (
@@ -119,43 +156,48 @@ export default function Checkout({ booking, price }) {
                             {/* Booking Summary */}
                             <div className="glass-card p-6 rounded-lg mb-6 space-y-3">
                                 <div className="flex justify-between">
-                                    <span className="text-white font-semibold">Student:</span>
-                                    <span className="font-bold text-white">{booking.student?.name}</span>
+                                    <span className="text-brand-primary font-semibold">Student:</span>
+                                    <span className="font-bold text-brand-primary">{booking.student?.name}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white font-semibold">Route:</span>
-                                    <span className="font-bold text-white">{booking.route?.name}</span>
+                                    <span className="text-brand-primary font-semibold">Route:</span>
+                                    <span className="font-bold text-brand-primary">{booking.route?.name}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white font-semibold">Pickup Location:</span>
-                                    <span className="font-bold text-white">
+                                    <span className="text-brand-primary font-semibold">Pickup Location:</span>
+                                    <span className="font-bold text-brand-primary">
                                         {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white font-semibold">Plan:</span>
-                                    <span className="font-bold text-white capitalize">
-                                        {booking.plan_type.replace('_', '-')}
+                                    <span className="text-brand-primary font-semibold">Plan:</span>
+                                    <span className="font-bold text-brand-primary capitalize">
+                                        {booking.plan_type?.replace('_', '-')}
                                     </span>
                                 </div>
                             </div>
 
-                            {/* Payment Method */}
+                            {/* Payment Method - Stripe */}
                             <div className="glass-card p-6 rounded-lg mb-6">
-                                <h3 className="text-xl font-bold text-white mb-4">Payment Method</h3>
-                                <div className="p-4 rounded-lg border-2 border-brand-primary bg-brand-primary/20">
-                                    <div className="text-white font-semibold">PayPal</div>
-                                    <div className="text-white/70 text-sm mt-1">Pay with PayPal</div>
+                                <h3 className="text-xl font-bold text-brand-primary mb-4">Payment Method</h3>
+                                <div className="p-4 rounded-xl border-2 border-yellow-400/60 bg-white/10 mb-4">
+                                    <div className="font-bold text-brand-primary">Stripe</div>
+                                    <div className="text-brand-primary/70 text-sm mt-1">Pay securely with your card (credit or debit)</div>
                                 </div>
+                                {stripePromise ? (
+                                    <Elements stripe={stripePromise}>
+                                        <StripeCheckoutForm booking={booking} price={price} stripeKey={stripeKey} />
+                                    </Elements>
+                                ) : (
+                                    <p className="text-red-500 font-semibold">Stripe is not configured. Please set STRIPE_KEY in your .env file.</p>
+                                )}
                             </div>
-
-                            <PayPalCheckoutButton booking={booking} price={price} />
 
                             {/* Skip Payment Option */}
                             <div className="mt-6 pt-6 border-t border-yellow-400/40">
                                 <div className="text-center">
                                     <p className="text-sm text-white/70 mb-4 font-medium">
-                                        Don't want to pay now? You can complete payment later.
+                                        Don&apos;t want to pay now? You can complete payment later.
                                     </p>
                                     <GlassButton
                                         type="button"
@@ -170,7 +212,7 @@ export default function Checkout({ booking, price }) {
                             </div>
 
                             <p className="text-xs text-gray-300 mt-4 text-center font-medium">
-                                Your payment is secure and encrypted.
+                                Your payment is secure and encrypted by Stripe.
                             </p>
                         </div>
                     </GlassCard>
@@ -179,4 +221,3 @@ export default function Checkout({ booking, price }) {
         </AuthenticatedLayout>
     );
 }
-
