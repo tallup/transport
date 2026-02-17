@@ -53,6 +53,8 @@ class Student extends Model
         'liability_waiver_signed_at' => 'datetime',
     ];
 
+    protected $appends = ['profile_picture_url'];
+
     /**
      * Get the parent user that owns the student.
      */

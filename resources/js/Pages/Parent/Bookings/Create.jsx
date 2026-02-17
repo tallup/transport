@@ -105,6 +105,11 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [data.student_id, students]);
 
+    // Clear step-0 validation message when user selects a student
+    useEffect(() => {
+        if (data.student_id) setStudentStepError(false);
+    }, [data.student_id]);
+
     // Load route details when route is selected
     useEffect(() => {
         if (data.route_id) {
@@ -189,9 +194,16 @@ export default function CreateBooking({ students, routes }) {
         });
     };
 
+    const [studentStepError, setStudentStepError] = useState(false);
+
     const nextStep = () => {
         // Step 0: Student (only if not pre-selected)
-        if (step === 0 && !data.student_id) return;
+        if (step === 0 && !data.student_id) {
+            setStudentStepError(true);
+            alert('Please select a student first.');
+            return;
+        }
+        setStudentStepError(false);
         // Step 1: Route
         if (step === 1 && !data.route_id) {
             alert('Please select a route.');
@@ -452,9 +464,9 @@ export default function CreateBooking({ students, routes }) {
                                                 ))}
                                             </div>
                                                 )}
-                                        {errors.student_id && (
-                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-lg">
-                                                <p className="text-red-200 text-sm font-bold">{errors.student_id}</p>
+                                        {(studentStepError || errors.student_id) && (
+                                            <div className="mt-4 p-4 bg-red-500/20 border-2 border-red-400/50 rounded-xl">
+                                                <p className="text-red-200 text-sm font-bold">{errors.student_id || 'Please select a student before continuing.'}</p>
                                             </div>
                                         )}
                                     </div>
