@@ -112,7 +112,7 @@
             <p>All students on this route have been safely picked up from their locations and dropped off at their designated drop-off points.</p>
             @endif
             
-            <a href="{{ url('/parent/bookings/pickup-history/' . $booking->id) }}" class="button">View Pickup History</a>
+            <a href="{{ route('parent.bookings.pickup-history', $booking) }}" class="button">View Pickup History</a>
             
             <p>Thank you for trusting us with your child's transportation!</p>
         </div>

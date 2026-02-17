@@ -107,7 +107,7 @@
                 </div>
             </div>
             
-            <a href="{{ url('/parent/bookings/pickup-history/' . $booking->id) }}" class="button">View Pickup History</a>
+            <a href="{{ route('parent.bookings.pickup-history', $booking) }}" class="button">View Pickup History</a>
             
             <p>Thank you for trusting us with your child's transportation!</p>
         </div>
