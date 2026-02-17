@@ -84,7 +84,7 @@ export default function Edit({ student, parents, schools = [] }) {
                                             </label>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                    <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
                                     <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
                                 </div>
 

@@ -60,7 +60,7 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:parent,driver',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -111,7 +111,7 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:parent,driver',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
 
         if (empty($validated['password'])) {

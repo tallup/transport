@@ -105,51 +105,67 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 </GlassCard>
                             </div>
 
-                            {/* Vehicle Information */}
+                            {/* Vehicle Information - Redesigned */}
                             {route.vehicle && (
-                                <GlassCard className="mb-8">
-                                    <h3 className="text-2xl font-bold text-white mb-6">Vehicle Information</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Make & Model</p>
-                                                <p className="text-lg font-bold text-white">
-                                                    {route.vehicle.make} {route.vehicle.model}
+                                <GlassCard className="mb-8 overflow-hidden">
+                                    <div className="p-6 sm:p-8">
+                                        {/* Header with icon and primary info */}
+                                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-8 pb-6 border-b border-white/20">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg border-2 border-yellow-400/50 flex-shrink-0">
+                                                    <svg className="w-8 h-8 sm:w-10 sm:h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+                                                        {route.vehicle.make} {route.vehicle.model}
+                                                    </h3>
+                                                    <p className="text-base text-white/80 font-medium mt-1">
+                                                        {route.vehicle.year || ''} • {route.vehicle.type ? route.vehicle.type.charAt(0).toUpperCase() + route.vehicle.type.slice(1) : 'N/A'}
+                                                    </p>
+                                                    <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 mt-3 text-sm font-bold rounded-xl ${
+                                                        route.vehicle.status === 'active' 
+                                                            ? 'bg-green-500/30 text-green-100 border-2 border-green-400/50' 
+                                                            : 'bg-yellow-500/30 text-yellow-100 border-2 border-yellow-400/50'
+                                                    }`}>
+                                                        <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+                                                        {route.vehicle.status || 'N/A'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="sm:text-right">
+                                                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-1">License Plate</p>
+                                                <p className="text-2xl sm:text-3xl font-black text-brand-primary tracking-wider border-2 border-yellow-400/50 rounded-xl px-4 py-2 inline-block bg-white/5">
+                                                    {route.vehicle.license_plate}
                                                 </p>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Year</p>
-                                                <p className="text-lg font-bold text-white">{route.vehicle.year || 'N/A'}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">License Plate</p>
-                                                <p className="text-lg font-bold text-white">{route.vehicle.license_plate}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Registration Number</p>
-                                                <p className="text-lg font-bold text-white">
-                                                    {route.vehicle.registration_number || 'N/A'}
+                                        </div>
+
+                                        {/* Details grid - compact cards */}
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
+                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Capacity</p>
+                                                <p className="text-xl font-extrabold text-white">
+                                                    {route.vehicle.capacity || 'N/A'}
+                                                    <span className="text-sm font-medium text-white/70 ml-1">seats</span>
                                                 </p>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Capacity</p>
-                                                <p className="text-lg font-bold text-white">{route.vehicle.capacity || 'N/A'}</p>
+                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
+                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Year</p>
+                                                <p className="text-xl font-extrabold text-white">{route.vehicle.year || 'N/A'}</p>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Vehicle Type</p>
-                                                <p className="text-lg font-bold text-white capitalize">
-                                                    {route.vehicle.type || 'N/A'}
+                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
+                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Type</p>
+                                                <p className="text-xl font-extrabold text-white capitalize">{route.vehicle.type || 'N/A'}</p>
+                                            </div>
+                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
+                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Registration</p>
+                                                <p className="text-lg font-bold text-white truncate" title={route.vehicle.registration_number || 'N/A'}>
+                                                    {route.vehicle.registration_number || '—'}
                                                 </p>
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white/70 mb-1">Status</p>
-                                                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                                                    route.vehicle.status === 'active' 
-                                                        ? 'bg-green-500/30 text-green-100 border border-green-400/50' 
-                                                        : 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                }`}>
-                                                    {route.vehicle.status || 'N/A'}
-                                                </span>
-                                            </div>
+                                        </div>
                                     </div>
                                 </GlassCard>
                             )}

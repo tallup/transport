@@ -46,8 +46,8 @@ export default function Register() {
                 return;
             }
             
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Image size must be less than 5MB');
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image size must be less than 10MB');
                 return;
             }
             
@@ -178,7 +178,7 @@ export default function Register() {
                                         {profilePicturePreview ? 'Profile Picture' : 'Add Profile Picture'}
                                     </p>
                                     <p className="text-xs text-brand-primary/60">
-                                        {profilePicturePreview ? 'Click to change' : 'Optional • JPG, PNG up to 5MB'}
+                                        {profilePicturePreview ? 'Click to change' : 'Optional • JPG, PNG up to 10MB'}
                                     </p>
                                 </div>
                                 <InputError message={errors.profile_picture} className="mt-2 text-center" />

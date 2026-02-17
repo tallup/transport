@@ -217,7 +217,7 @@ export default function Create() {
                                                 }}
                                                 className="block w-full text-sm text-brand-primary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
                                             />
-                                            <p className="text-xs text-brand-primary/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                            <p className="text-xs text-brand-primary/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
                                         </div>
                                     </div>
                                     <InputError message={errors.profile_picture} className="mt-1 text-red-300" />

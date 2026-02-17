@@ -326,11 +326,20 @@ export default function StudentsIndex({ students }) {
                                                 </div>
                                             )}
 
-                                            {/* Action Button */}
-                                            <div className="pt-4 border-t border-yellow-400/40">
+                                            {/* Action Buttons */}
+                                            <div className="pt-4 border-t border-yellow-400/40 flex flex-col sm:flex-row gap-3">
+                                                <Link
+                                                    href={route('parent.students.edit', student.id)}
+                                                    className="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 border-2 border-yellow-400/50 text-white font-bold rounded-xl hover:bg-white/20 hover:border-yellow-400 transition-all"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                    Edit Details
+                                                </Link>
                                                 <Link
                                                     href={`/parent/bookings/create?student_id=${student.id}`}
-                                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                                                 >
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />

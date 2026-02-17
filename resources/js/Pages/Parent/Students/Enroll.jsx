@@ -239,7 +239,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                         className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
                                                     />
                                                 </div>
-                                                <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                                <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
                                                 {errors.profile_picture && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.profile_picture}</p>}
                                             </div>
 

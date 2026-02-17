@@ -38,6 +38,8 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::get('/students/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');

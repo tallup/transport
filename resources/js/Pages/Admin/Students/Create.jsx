@@ -104,7 +104,7 @@ export default function Create({ parents, schools = [] }) {
                                                 className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
                                             />
                                         </div>
-                                        <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                        <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
                                         <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 

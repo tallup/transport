@@ -30,7 +30,7 @@ export default function UpdateProfileInformation({
             if (!file.type.startsWith('image/')) {
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) return;
+            if (file.size > 10 * 1024 * 1024) return;
             setData('profile_picture', file);
             const reader = new FileReader();
             reader.onloadend = () => setProfilePreview(reader.result);
@@ -108,7 +108,7 @@ export default function UpdateProfileInformation({
                             )}
                         </div>
                     </div>
-                    <p className="text-xs text-brand-primary/70 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                    <p className="text-xs text-brand-primary/70 mt-1">JPEG, PNG, GIF. Max 10MB</p>
                     <InputError className="mt-2 text-red-300 font-semibold" message={errors.profile_picture} />
                 </div>
 
