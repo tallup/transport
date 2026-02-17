@@ -42,6 +42,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * Accessors to append when serializing to array/JSON (e.g. for Inertia).
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'profile_picture_url',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

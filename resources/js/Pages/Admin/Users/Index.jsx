@@ -133,13 +133,11 @@ export default function Index({ users, filters }) {
                                                 <img
                                                     src={user.profile_picture_url}
                                                     alt={user.name}
-                                                    className="w-12 h-12 rounded-xl object-cover shadow-md flex-shrink-0 border-2 border-yellow-400/50"
+                                                    className="w-14 h-14 rounded-xl object-cover shadow-md flex-shrink-0 border-2 border-yellow-400/50 bg-white/10"
                                                 />
                                             ) : (
-                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
+                                                <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0 border-2 border-yellow-400/50 text-brand-primary text-lg font-bold">
+                                                    {(user.name || '?').trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join('').toUpperCase() || '?'}
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">

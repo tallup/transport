@@ -138,11 +138,24 @@ export default function DriverLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center px-3 py-2 border border-gray-300 text-base leading-4 font-bold rounded-lg text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150"
+                                            className="inline-flex items-center gap-2 px-2 py-1.5 border border-gray-300 text-base leading-4 font-bold rounded-full text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150"
+                                            title={auth?.user?.name || 'Driver'}
                                         >
-                                            {auth?.user?.name || 'Driver'}
+                                            {auth?.user?.profile_picture_url ? (
+                                                <img
+                                                    src={auth.user.profile_picture_url}
+                                                    alt={auth.user.name || 'Driver'}
+                                                    className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400/50"
+                                                />
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                                                    <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                            )}
                                             <svg
-                                                className="ml-2 -mr-0.5 h-4 w-4"
+                                                className="-mr-0.5 h-4 w-4"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20"
                                                 fill="currentColor"
