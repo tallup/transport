@@ -26,7 +26,7 @@ class BookingConfirmed extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -76,7 +76,9 @@ class BookingConfirmed extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'type' => 'success',
+            'message' => 'Payment processed successfully. Your booking is pending approval.',
+            'booking_id' => $this->booking->id,
         ];
     }
 }

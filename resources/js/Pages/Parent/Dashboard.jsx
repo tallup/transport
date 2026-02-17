@@ -12,7 +12,8 @@ export default function Dashboard({
     upcomingPickups, 
     paymentHistory, 
     transportHistory,
-    notifications 
+    notifications,
+    notificationsUnreadCount = 0,
 }) {
     const { auth } = usePage().props;
 
@@ -242,9 +243,9 @@ export default function Dashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-2xl font-bold text-white">Notifications</h3>
-                                {(notifications && notifications.length > 0) && (
+                                {((notificationsUnreadCount ?? 0) > 0 || (notifications && notifications.length > 0)) && (
                                     <span className="px-2 py-1 bg-blue-500/30 text-blue-200 text-xs font-bold rounded-full">
-                                        {notifications.length}
+                                        {notificationsUnreadCount > 0 ? notificationsUnreadCount : notifications.length}
                                     </span>
                                 )}
                             </div>
@@ -252,7 +253,7 @@ export default function Dashboard({
                                 {(notifications && notifications.length > 0) ? (
                                     notifications.map((notification, index) => (
                                         <div 
-                                            key={index} 
+                                            key={notification.id ?? index} 
                                             className={`p-4 rounded-xl border ${
                                                 notification.type === 'success' ? 'bg-green-500/10 border-green-400/30' :
                                                 notification.type === 'error' ? 'bg-red-500/10 border-red-400/30' :

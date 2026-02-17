@@ -136,19 +136,18 @@ class DashboardController extends Controller
             ];
         });
 
-        // Notifications
-        $notifications = [
-            [
-                'type' => 'info',
-                'message' => 'Your booking is active',
-                'time' => Carbon::now()->subHours(2)->diffForHumans(),
-            ],
-            [
-                'type' => 'success',
-                'message' => 'Payment processed successfully',
-                'time' => Carbon::now()->subDays(5)->diffForHumans(),
-            ],
-        ];
+        // Notifications from database (booking approved, payment, pickup completed)
+        $notificationsUnreadCount = $user->unreadNotifications()->count();
+        $notifications = $user->notifications()->latest()->take(30)->get()->map(function ($n) {
+            $data = $n->data;
+            return [
+                'id' => $n->id,
+                'type' => $data['type'] ?? 'info',
+                'message' => $data['message'] ?? 'Notification',
+                'time' => $n->created_at->diffForHumans(),
+                'read_at' => $n->read_at?->toIso8601String(),
+            ];
+        })->values()->all();
 
         return Inertia::render('Parent/Dashboard', [
             'students' => $students,
@@ -159,6 +158,7 @@ class DashboardController extends Controller
             'paymentHistory' => $paymentHistory,
             'transportHistory' => $transportHistory,
             'notifications' => $notifications,
+            'notificationsUnreadCount' => $notificationsUnreadCount,
         ]);
     }
 }
