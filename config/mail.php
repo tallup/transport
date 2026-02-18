@@ -146,4 +146,16 @@ return [
         'name' => env('MAIL_FALLBACK_TO_NAME', env('MAIL_FROM_NAME')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin notification copy
+    |--------------------------------------------------------------------------
+    |
+    | When set, this address always receives a copy of every admin notification
+    | (new booking, payment received, pickup completed, etc.) even if no user
+    | in the database has an admin role. Example: support@ontimetransportwa.com
+    |
+    */
+    'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL'),
+
 ];
