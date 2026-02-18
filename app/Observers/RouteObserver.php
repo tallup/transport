@@ -23,7 +23,7 @@ class RouteObserver
             if ($newDriverId && $oldDriverId != $newDriverId) {
                 $driver = User::find($newDriverId);
                 
-                if ($driver) {
+                if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
                     // Notify the driver
                     $driver->notify(new DriverAssigned(null, $driver, $route));
                     

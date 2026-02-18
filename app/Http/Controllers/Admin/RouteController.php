@@ -133,8 +133,7 @@ class RouteController extends Controller
         // Send driver assignment notification if driver was assigned during creation
         if (!empty($validated['driver_id'])) {
             $driver = User::find($validated['driver_id']);
-            if ($driver) {
-                // Notify the driver about the new route assignment
+            if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
                 $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
             }
         }
@@ -271,10 +270,13 @@ class RouteController extends Controller
         // Validate route assignment limits (pass existing route to exclude from check)
         $this->validateRouteAssignment($validated, $route);
 
-        // Check if driver is being assigned or changed
+        // Check if driver or vehicle is being assigned or changed
         $oldDriverId = $route->driver_id;
+        $oldVehicleId = $route->vehicle_id;
         $newDriverId = $validated['driver_id'] ?? null;
+        $newVehicleId = $validated['vehicle_id'] ?? null;
         $driverChanged = $oldDriverId != $newDriverId && $newDriverId !== null;
+        $vehicleChanged = $oldVehicleId != $newVehicleId;
 
         $route->update($validated);
         
@@ -285,8 +287,7 @@ class RouteController extends Controller
         // Send driver assignment notification if driver was assigned or changed
         if ($driverChanged) {
             $driver = User::find($newDriverId);
-            if ($driver) {
-                // Notify the driver
+            if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
                 $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
                 
                 // Notify all parents with active bookings on this route
@@ -309,6 +310,14 @@ class RouteController extends Controller
                         ));
                     }
                 }
+            }
+        }
+
+        // Notify driver when vehicle is assigned or changed on their route
+        if ($vehicleChanged && $route->driver_id) {
+            $driver = $route->driver;
+            if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                $driver->notifyNow(new \App\Notifications\DriverVehicleAssigned($route));
             }
         }
 
