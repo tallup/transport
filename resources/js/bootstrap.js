@@ -15,11 +15,10 @@ window.axios.interceptors.response.use(
         return response;
     },
     (error) => {
-        // Handle CSRF token mismatch
+        // Handle CSRF token mismatch (419) - redirect to fresh login so user gets new token and a message
         if (error.response?.status === 419 && !handling419) {
             handling419 = true;
-            // Redirect to login silently on session expiration
-            window.location.href = '/login';
+            window.location.href = '/login?expired=1';
         }
         return Promise.reject(error);
     }

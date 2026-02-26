@@ -17,17 +17,22 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
         try {
             $canResetPassword = Route::has('password.request');
         } catch (\Exception $e) {
             $canResetPassword = false;
         }
-        
+
+        $status = session('status');
+        if ($request->query('expired')) {
+            $status = $status ?: 'Your session expired. Please sign in again.';
+        }
+
         return Inertia::render('Auth/Login', [
             'canResetPassword' => $canResetPassword,
-            'status' => session('status'),
+            'status' => $status,
         ]);
     }
 

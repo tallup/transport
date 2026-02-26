@@ -39,8 +39,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (TokenMismatchException $e, $request) {
+            $loginWithMessage = route('login', ['expired' => 1]);
+
             if ($request->header('X-Inertia')) {
-                return Inertia::location(route('login'));
+                return Inertia::location($loginWithMessage);
             }
 
             if ($request->expectsJson()) {
@@ -49,6 +51,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 419);
             }
 
-            return redirect()->route('login');
+            return redirect($loginWithMessage);
         });
     })->create();
