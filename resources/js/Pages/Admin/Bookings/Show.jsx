@@ -248,12 +248,14 @@ export default function Show({ booking }) {
                                         {booking.trip_type?.replace('_', ' ').toUpperCase() || 'N/A'}
                                     </p>
                                 </div>
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Service</p>
-                                    <p className="text-lg font-extrabold text-white">
-                                        {booking.trip_direction === 'pickup_only' ? 'Pickup only' : booking.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both'}
-                                    </p>
-                                </div>
+                                {booking.trip_type === 'one_way' && (
+                                    <div>
+                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Service</p>
+                                        <p className="text-lg font-extrabold text-white">
+                                            {booking.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </GlassCard>
 

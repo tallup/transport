@@ -169,7 +169,12 @@ export default function Edit({ booking, students, routes }) {
                                         <select
                                             id="trip_type"
                                             value={data.trip_type}
-                                            onChange={(e) => setData('trip_type', e.target.value)}
+                                            onChange={(e) => {
+                                                const v = e.target.value;
+                                                setData('trip_type', v);
+                                                if (v === 'two_way') setData('trip_direction', 'both');
+                                                else if (data.trip_direction === 'both') setData('trip_direction', 'pickup_only');
+                                            }}
                                             className="mt-1 block w-full glass-input text-white"
                                             required
                                         >
@@ -179,20 +184,21 @@ export default function Edit({ booking, students, routes }) {
                                         <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="trip_direction" className="block text-base font-bold text-white mb-2">Service</label>
-                                        <select
-                                            id="trip_direction"
-                                            value={data.trip_direction}
-                                            onChange={(e) => setData('trip_direction', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
-                                        >
-                                            <option value="pickup_only" className="bg-indigo-700">Pickup only</option>
-                                            <option value="dropoff_only" className="bg-indigo-700">Dropoff only</option>
-                                            <option value="both" className="bg-indigo-700">Both</option>
-                                        </select>
-                                        <InputError message={errors.trip_direction} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
+                                    {data.trip_type === 'one_way' && (
+                                        <div>
+                                            <label htmlFor="trip_direction" className="block text-base font-bold text-white mb-2">Service (one way only)</label>
+                                            <select
+                                                id="trip_direction"
+                                                value={data.trip_direction}
+                                                onChange={(e) => setData('trip_direction', e.target.value)}
+                                                className="mt-1 block w-full glass-input text-white"
+                                            >
+                                                <option value="pickup_only" className="bg-indigo-700">Pickup only</option>
+                                                <option value="dropoff_only" className="bg-indigo-700">Dropoff only</option>
+                                            </select>
+                                            <InputError message={errors.trip_direction} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+                                    )}
 
                                     <div>
                                         <label htmlFor="status" className="block text-base font-bold text-white mb-2">

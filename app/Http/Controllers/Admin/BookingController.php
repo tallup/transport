@@ -68,7 +68,8 @@ class BookingController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
-        $validated['trip_direction'] = $validated['trip_direction'] ?? 'both';
+        // Two way = both; one way = pickup_only or dropoff_only
+        $validated['trip_direction'] = $validated['trip_type'] === 'two_way' ? 'both' : ($validated['trip_direction'] ?? 'pickup_only');
 
         // Auto-calculate end date if not provided
         if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {
@@ -138,7 +139,8 @@ class BookingController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
-        $validated['trip_direction'] = $validated['trip_direction'] ?? $booking->trip_direction ?? 'both';
+        // Two way = both; one way = pickup_only or dropoff_only
+        $validated['trip_direction'] = $validated['trip_type'] === 'two_way' ? 'both' : ($validated['trip_direction'] ?? $booking->trip_direction ?? 'pickup_only');
 
         // Auto-calculate end date if not provided
         if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {

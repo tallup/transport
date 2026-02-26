@@ -132,6 +132,15 @@ export default function EditBooking({ booking, students, routes, price: initialP
         }
     }, [data.route_id, filteredRoutes]);
 
+    // When Two way is selected, trip direction is always both. When One way, require pickup or dropoff.
+    useEffect(() => {
+        if (data.trip_type === 'two_way') {
+            setData('trip_direction', 'both');
+        } else if (data.trip_type === 'one_way' && data.trip_direction === 'both') {
+            setData('trip_direction', 'pickup_only');
+        }
+    }, [data.trip_type]);
+
     // Calculate price when route, plan type, or trip type changes
     useEffect(() => {
         if (data.route_id && data.plan_type) {
@@ -661,32 +670,34 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                     <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_type}</p>
                                                 )}
                                             </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-base font-bold text-white mb-2">Service</label>
-                                                <p className="text-sm text-white/70 mb-2">Pickup only, dropoff only, or both</p>
-                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                                    {['pickup_only', 'dropoff_only', 'both'].map((value) => (
-                                                        <label key={value} className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                            data.trip_direction === value ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm' : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                        }`}>
-                                                            <input
-                                                                type="radio"
-                                                                name="trip_direction"
-                                                                value={value}
-                                                                checked={data.trip_direction === value}
-                                                                onChange={(e) => setData('trip_direction', e.target.value)}
-                                                                className="mr-3"
-                                                            />
-                                                            <span className="font-bold text-white">
-                                                                {value === 'pickup_only' ? 'Pickup only' : value === 'dropoff_only' ? 'Dropoff only' : 'Both'}
-                                                            </span>
-                                                        </label>
-                                                    ))}
+                                            {data.trip_type === 'one_way' && (
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-base font-bold text-white mb-2">Service</label>
+                                                    <p className="text-sm text-white/70 mb-2">One way: choose pickup only or dropoff only</p>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        {['pickup_only', 'dropoff_only'].map((value) => (
+                                                            <label key={value} className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                                data.trip_direction === value ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm' : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            }`}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="trip_direction"
+                                                                    value={value}
+                                                                    checked={data.trip_direction === value}
+                                                                    onChange={(e) => setData('trip_direction', e.target.value)}
+                                                                    className="mr-3"
+                                                                />
+                                                                <span className="font-bold text-white">
+                                                                    {value === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
+                                                                </span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    {errors.trip_direction && (
+                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_direction}</p>
+                                                    )}
                                                 </div>
-                                                {errors.trip_direction && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_direction}</p>
-                                                )}
-                                            </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -771,12 +782,14 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                     {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
                                                 </span>
                                             </div>
-                                            <div>
-                                                <span className="font-bold text-white">Service:</span>{' '}
-                                                <span className="text-white/90 font-semibold">
-                                                    {data.trip_direction === 'pickup_only' ? 'Pickup only' : data.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both (pickup & dropoff)'}
-                                                </span>
-                                            </div>
+                                            {data.trip_type === 'one_way' && (
+                                                <div>
+                                                    <span className="font-bold text-white">Service:</span>{' '}
+                                                    <span className="text-white/90 font-semibold">
+                                                        {data.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
+                                                    </span>
+                                                </div>
+                                            )}
                                             <div>
                                                 <span className="font-bold text-white">Start Date:</span>{' '}
                                                 <span className="text-white/90 font-semibold">{new Date(data.start_date).toLocaleDateString()}</span>

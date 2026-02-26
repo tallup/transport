@@ -347,9 +347,9 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                             <span className="px-2 py-1 rounded-lg text-xs font-bold bg-purple-500/30 text-brand-primary border border-purple-400/50 capitalize">
                                                                 {booking.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
                                                             </span>
-                                                            {booking.trip_direction && (
+                                                            {booking.trip_type === 'one_way' && booking.trip_direction && (
                                                                 <span className="px-2 py-1 rounded-lg text-xs font-bold bg-cyan-500/30 text-brand-primary border border-cyan-400/50">
-                                                                    {booking.trip_direction === 'pickup_only' ? 'Pickup only' : booking.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both'}
+                                                                    {booking.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
                                                                 </span>
                                                             )}
                                                         </div>

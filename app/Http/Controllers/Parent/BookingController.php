@@ -171,6 +171,9 @@ class BookingController extends Controller
             \Carbon\Carbon::parse($validated['start_date'])
         );
 
+        // Two way = both pickup and dropoff; one way = pickup_only or dropoff_only (set by parent)
+        $tripDirection = $validated['trip_type'] === 'two_way' ? 'both' : ($validated['trip_direction'] ?? 'pickup_only');
+
         // Create booking (pending until payment)
         $booking = Booking::create([
             'student_id' => $validated['student_id'],
@@ -181,7 +184,7 @@ class BookingController extends Controller
             'pickup_longitude' => $validated['pickup_longitude'] ?? null,
             'plan_type' => $validated['plan_type'],
             'trip_type' => $validated['trip_type'],
-            'trip_direction' => $validated['trip_direction'] ?? 'both',
+            'trip_direction' => $tripDirection,
             'status' => 'pending',
             'start_date' => $validated['start_date'],
             'end_date' => $endDate?->format('Y-m-d'),

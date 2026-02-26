@@ -15,6 +15,16 @@ class UpdateBookingRequest extends FormRequest
     }
 
     /**
+     * Two way = both; one way uses pickup_only or dropoff_only.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->trip_type === 'two_way') {
+            $this->merge(['trip_direction' => 'both']);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
