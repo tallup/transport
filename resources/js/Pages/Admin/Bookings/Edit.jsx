@@ -17,6 +17,7 @@ export default function Edit({ booking, students, routes }) {
         dropoff_point_id: booking.dropoff_point_id || '',
         plan_type: booking.plan_type || 'weekly',
         trip_type: booking.trip_type || 'two_way',
+        trip_direction: booking.trip_direction || 'both',
         status: booking.status || 'pending',
         start_date: booking.start_date ? (typeof booking.start_date === 'string' ? booking.start_date.split('T')[0] : booking.start_date) : '',
         end_date: booking.end_date ? (typeof booking.end_date === 'string' ? booking.end_date.split('T')[0] : booking.end_date) : '',
@@ -176,6 +177,21 @@ export default function Edit({ booking, students, routes }) {
                                             <option value="two_way" className="bg-indigo-700">Two Way</option>
                                         </select>
                                         <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="trip_direction" className="block text-base font-bold text-white mb-2">Service</label>
+                                        <select
+                                            id="trip_direction"
+                                            value={data.trip_direction}
+                                            onChange={(e) => setData('trip_direction', e.target.value)}
+                                            className="mt-1 block w-full glass-input text-white"
+                                        >
+                                            <option value="pickup_only" className="bg-indigo-700">Pickup only</option>
+                                            <option value="dropoff_only" className="bg-indigo-700">Dropoff only</option>
+                                            <option value="both" className="bg-indigo-700">Both</option>
+                                        </select>
+                                        <InputError message={errors.trip_direction} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>

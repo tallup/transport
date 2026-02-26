@@ -63,10 +63,12 @@ class BookingController extends Controller
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
+            'trip_direction' => 'nullable|in:pickup_only,dropoff_only,both',
             'status' => 'required|in:pending,awaiting_approval,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
+        $validated['trip_direction'] = $validated['trip_direction'] ?? 'both';
 
         // Auto-calculate end date if not provided
         if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {
@@ -131,10 +133,12 @@ class BookingController extends Controller
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
+            'trip_direction' => 'nullable|in:pickup_only,dropoff_only,both',
             'status' => 'required|in:pending,awaiting_approval,active,completed,expired,cancelled',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
         ]);
+        $validated['trip_direction'] = $validated['trip_direction'] ?? $booking->trip_direction ?? 'both';
 
         // Auto-calculate end date if not provided
         if (empty($validated['end_date']) && !empty($validated['start_date']) && !empty($validated['plan_type'])) {

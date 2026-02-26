@@ -23,6 +23,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         pickup_address: previousBooking.pickup_address || previousBooking.student?.home_address || '',
         plan_type: previousBooking.plan_type || '',
         trip_type: previousBooking.trip_type || 'two_way',
+        trip_direction: previousBooking.trip_direction || 'both',
         start_date: new Date().toISOString().split('T')[0],
     });
 
@@ -101,7 +102,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         e.preventDefault();
 
         // Validate required fields before submitting
-        if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
+        if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.trip_direction || !data.start_date) {
             alert('Please complete all required fields before proceeding to payment.');
             return;
         }
@@ -126,7 +127,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
             alert('Please enter a pickup address.');
             return;
         }
-        if (step === 4 && !data.plan_type) return;
+        if (step === 4 && (!data.plan_type || !data.trip_direction)) return;
         setStep(step + 1);
     };
 
@@ -448,6 +449,32 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         <p className="text-red-400 text-xs mt-2 font-bold uppercase ml-1">{errors.trip_type}</p>
                                                     )}
                                                 </div>
+                                                <div>
+                                                    <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">Service</label>
+                                                    <p className="text-xs text-white/70 mb-2">Pickup only, dropoff only, or both</p>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                        {['pickup_only', 'dropoff_only', 'both'].map((value) => (
+                                                            <label key={value} className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${
+                                                                data.trip_direction === value ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                            }`}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="trip_direction"
+                                                                    value={value}
+                                                                    checked={data.trip_direction === value}
+                                                                    onChange={(e) => setData('trip_direction', e.target.value)}
+                                                                    className="mr-2"
+                                                                />
+                                                                <span className="font-black text-white uppercase text-sm">
+                                                                    {value === 'pickup_only' ? 'Pickup only' : value === 'dropoff_only' ? 'Dropoff only' : 'Both'}
+                                                                </span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    {errors.trip_direction && (
+                                                        <p className="text-red-400 text-xs mt-2 font-bold uppercase ml-1">{errors.trip_direction}</p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -486,6 +513,12 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     <div>
                                                         <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Trip Type</p>
                                                         <p className="text-xl font-black text-white uppercase">{data.trip_type.replace('_', ' ')}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Service</p>
+                                                        <p className="text-xl font-black text-white uppercase">
+                                                            {data.trip_direction === 'pickup_only' ? 'Pickup only' : data.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both'}
+                                                        </p>
                                                     </div>
                                                     <div>
                                                         <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Pickup Information</p>

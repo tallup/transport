@@ -30,6 +30,7 @@ class StoreBookingRequest extends FormRequest
             'pickup_longitude' => 'nullable|numeric|between:-180,180',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
+            'trip_direction' => 'required|in:pickup_only,dropoff_only,both',
             'start_date' => 'required|date|after_or_equal:today',
         ];
     }
@@ -54,6 +55,8 @@ class StoreBookingRequest extends FormRequest
             'plan_type.in' => 'The selected plan type is invalid.',
             'trip_type.required' => 'Please select a trip type.',
             'trip_type.in' => 'The selected trip type is invalid.',
+            'trip_direction.required' => 'Please select pickup only, dropoff only, or both.',
+            'trip_direction.in' => 'The selected service type is invalid.',
             'start_date.required' => 'Please select a start date.',
             'start_date.date' => 'The start date must be a valid date.',
             'start_date.after_or_equal' => 'The start date must be today or in the future.',

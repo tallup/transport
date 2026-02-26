@@ -67,6 +67,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
         pickup_address: booking?.pickup_address || '',
         plan_type: booking?.plan_type || '',
         trip_type: booking?.trip_type || 'two_way',
+        trip_direction: booking?.trip_direction || 'both',
         start_date: booking?.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     });
 
@@ -660,6 +661,32 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                     <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_type}</p>
                                                 )}
                                             </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-base font-bold text-white mb-2">Service</label>
+                                                <p className="text-sm text-white/70 mb-2">Pickup only, dropoff only, or both</p>
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                    {['pickup_only', 'dropoff_only', 'both'].map((value) => (
+                                                        <label key={value} className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                            data.trip_direction === value ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm' : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="trip_direction"
+                                                                value={value}
+                                                                checked={data.trip_direction === value}
+                                                                onChange={(e) => setData('trip_direction', e.target.value)}
+                                                                className="mr-3"
+                                                            />
+                                                            <span className="font-bold text-white">
+                                                                {value === 'pickup_only' ? 'Pickup only' : value === 'dropoff_only' ? 'Dropoff only' : 'Both'}
+                                                            </span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                                {errors.trip_direction && (
+                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_direction}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -742,6 +769,12 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                 <span className="font-bold text-white">Trip Type:</span>{' '}
                                                 <span className="text-white/90 font-semibold">
                                                     {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="font-bold text-white">Service:</span>{' '}
+                                                <span className="text-white/90 font-semibold">
+                                                    {data.trip_direction === 'pickup_only' ? 'Pickup only' : data.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both (pickup & dropoff)'}
                                                 </span>
                                             </div>
                                             <div>

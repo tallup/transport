@@ -67,6 +67,7 @@ export default function CreateBooking({ students, routes }) {
         pickup_address: '',
         plan_type: '',
         trip_type: 'two_way',
+        trip_direction: 'both',
         start_date: new Date().toISOString().split('T')[0],
     });
 
@@ -220,10 +221,16 @@ export default function CreateBooking({ students, routes }) {
                 return;
             }
         }
-        // Step 3: Plan
-        if (step === 3 && !data.plan_type) {
-            alert('Please select a plan.');
-            return;
+        // Step 3: Plan, trip type, and service (trip_direction)
+        if (step === 3) {
+            if (!data.plan_type) {
+                alert('Please select a plan.');
+                return;
+            }
+            if (!data.trip_direction) {
+                alert('Please select pickup only, dropoff only, or both.');
+                return;
+            }
         }
         setStep(step + 1);
     };
@@ -987,6 +994,110 @@ export default function CreateBooking({ students, routes }) {
                                                     <p className="mt-2 text-red-300 text-sm font-bold">{errors.trip_type}</p>
                                                 )}
                                             </div>
+
+                                            {/* Pickup / Dropoff: Pickup only, Dropoff only, or Both */}
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Service</p>
+                                                <p className="text-xs text-white/60 mb-3">Choose pickup only, dropoff only, or both</p>
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                    <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                                                        data.trip_direction === 'pickup_only'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="trip_direction"
+                                                            value="pickup_only"
+                                                            checked={data.trip_direction === 'pickup_only'}
+                                                            onChange={(e) => setData('trip_direction', e.target.value)}
+                                                            className="sr-only"
+                                                        />
+                                                        {data.trip_direction === 'pickup_only' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_direction === 'pickup_only' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-4 h-4 ${data.trip_direction === 'pickup_only' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-extrabold text-white">Pickup only</p>
+                                                            <p className="text-xs text-white/60">To school (AM)</p>
+                                                        </div>
+                                                        {data.trip_direction === 'pickup_only' && (
+                                                            <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                            </div>
+                                                        )}
+                                                    </label>
+                                                    <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                                                        data.trip_direction === 'dropoff_only'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="trip_direction"
+                                                            value="dropoff_only"
+                                                            checked={data.trip_direction === 'dropoff_only'}
+                                                            onChange={(e) => setData('trip_direction', e.target.value)}
+                                                            className="sr-only"
+                                                        />
+                                                        {data.trip_direction === 'dropoff_only' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_direction === 'dropoff_only' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-4 h-4 ${data.trip_direction === 'dropoff_only' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-extrabold text-white">Dropoff only</p>
+                                                            <p className="text-xs text-white/60">From school (PM)</p>
+                                                        </div>
+                                                        {data.trip_direction === 'dropoff_only' && (
+                                                            <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                            </div>
+                                                        )}
+                                                    </label>
+                                                    <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                                                        data.trip_direction === 'both'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
+                                                    }`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="trip_direction"
+                                                            value="both"
+                                                            checked={data.trip_direction === 'both'}
+                                                            onChange={(e) => setData('trip_direction', e.target.value)}
+                                                            className="sr-only"
+                                                        />
+                                                        {data.trip_direction === 'both' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_direction === 'both' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-4 h-4 ${data.trip_direction === 'both' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-extrabold text-white">Both</p>
+                                                            <p className="text-xs text-white/60">Pickup & dropoff</p>
+                                                        </div>
+                                                        {data.trip_direction === 'both' && (
+                                                            <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                            </div>
+                                                        )}
+                                                    </label>
+                                                </div>
+                                                {errors.trip_direction && (
+                                                    <p className="mt-2 text-red-300 text-sm font-bold">{errors.trip_direction}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -1104,10 +1215,23 @@ export default function CreateBooking({ students, routes }) {
                                                     <div className="flex-1">
                                                         <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Trip Type</p>
                                                         <p className="text-base font-extrabold text-white">
-                                                    {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                            {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
                                                         </p>
-                                            </div>
-                                            </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                                                        <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Service</p>
+                                                        <p className="text-base font-extrabold text-white">
+                                                            {data.trip_direction === 'pickup_only' ? 'Pickup only' : data.trip_direction === 'dropoff_only' ? 'Dropoff only' : 'Both (pickup & dropoff)'}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                             <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">

@@ -30,6 +30,7 @@ class UpdateBookingRequest extends FormRequest
             'pickup_longitude' => 'nullable|numeric|between:-180,180',
             'plan_type' => 'sometimes|required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'sometimes|required|in:one_way,two_way',
+            'trip_direction' => 'sometimes|required|in:pickup_only,dropoff_only,both',
             'status' => 'sometimes|required|in:pending,awaiting_approval,active,cancelled,expired,completed',
             'start_date' => 'sometimes|required|date',
             'end_date' => 'nullable|date|after:start_date',

@@ -20,6 +20,7 @@ export default function Create({ students, routes }) {
         dropoff_point_id: '',
         plan_type: 'weekly',
         trip_type: 'two_way',
+        trip_direction: 'both',
         status: 'pending',
         start_date: '',
         end_date: '',
@@ -197,6 +198,21 @@ export default function Create({ students, routes }) {
                                         <option value="two_way" className="text-gray-900">Two Way</option>
                                     </Select>
                                     <InputError message={errors.trip_type} className="mt-2" />
+                                </div>
+
+                                <div>
+                                    <InputLabel htmlFor="trip_direction" value="Service" className="text-white font-bold" />
+                                    <Select
+                                        id="trip_direction"
+                                        value={data.trip_direction}
+                                        onChange={(e) => setData('trip_direction', e.target.value)}
+                                        className="mt-1 block w-full glass-input text-white"
+                                    >
+                                        <option value="pickup_only" className="text-gray-900">Pickup only</option>
+                                        <option value="dropoff_only" className="text-gray-900">Dropoff only</option>
+                                        <option value="both" className="text-gray-900">Both</option>
+                                    </Select>
+                                    <InputError message={errors.trip_direction} className="mt-2" />
                                 </div>
 
                                 <div>

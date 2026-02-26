@@ -24,6 +24,7 @@ class Booking extends Model
         'pickup_longitude',
         'plan_type',
         'trip_type',
+        'trip_direction',
         'status',
         'start_date',
         'end_date',
