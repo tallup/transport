@@ -479,6 +479,22 @@ class RosterController extends Controller
             $pickupLocation
         ));
 
+        // Real-time: notify parent and admins
+        $userIds = [];
+        if ($parent) {
+            $userIds[] = $parent->id;
+        }
+        $userIds = array_merge($userIds, $adminService->getAdmins()->pluck('id')->toArray());
+        $userIds = array_unique(array_filter($userIds));
+        if (!empty($userIds)) {
+            event(new \App\Events\PortalUpdate(
+                $userIds,
+                'pickup_completed',
+                $period === 'pm' ? 'Student dropped off.' : 'Student picked up.',
+                ['booking_id' => $booking->id]
+            ));
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Pickup marked as complete successfully.',
@@ -542,7 +558,9 @@ class RosterController extends Controller
 
         // Create daily pickup records for all bookings instead of updating booking status
         $createdCount = 0;
-        $bookings->each(function ($booking) use ($driver, $route, $date, $period, &$createdCount) {
+        $notifyUserIds = [];
+        $adminService = app(\App\Services\AdminNotificationService::class);
+        $bookings->each(function ($booking) use ($driver, $route, $date, $period, &$createdCount, &$notifyUserIds, $adminService) {
             // Check if daily pickup already exists
             $existingPickup = DailyPickup::where('booking_id', $booking->id)
                 ->whereDate('pickup_date', $date)
@@ -564,13 +582,16 @@ class RosterController extends Controller
                 // Send pickup completed notification to parent
                 $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
                 $parent = $booking->student?->parent;
-                if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-                    $parent->notifyNow(new \App\Notifications\PickupCompleted(
-                        $booking,
-                        $pickupLocation,
-                        $period,
-                        $dailyPickup->completed_at
-                    ));
+                if ($parent) {
+                    $notifyUserIds[] = $parent->id;
+                    if (filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+                        $parent->notifyNow(new \App\Notifications\PickupCompleted(
+                            $booking,
+                            $pickupLocation,
+                            $period,
+                            $dailyPickup->completed_at
+                        ));
+                    }
                 } else {
                     \Log::warning('PickupCompleted notification skipped: missing parent email', [
                         'booking_id' => $booking->id,
@@ -578,7 +599,6 @@ class RosterController extends Controller
                 }
 
                 // Notify admins of pickup/drop-off completion
-                $adminService = app(\App\Services\AdminNotificationService::class);
                 $adminService->notifyAdmins(new \App\Notifications\Admin\PickupCompletedAlert(
                     $booking,
                     $driver,
@@ -588,6 +608,16 @@ class RosterController extends Controller
                 ));
             }
         });
+
+        $notifyUserIds = array_unique(array_merge($notifyUserIds, $adminService->getAdmins()->pluck('id')->toArray()));
+        if ($createdCount > 0 && !empty($notifyUserIds)) {
+            event(new \App\Events\PortalUpdate(
+                array_values($notifyUserIds),
+                'pickup_completed',
+                $period === 'pm' ? 'Student(s) dropped off.' : 'Student(s) picked up.',
+                []
+            ));
+        }
 
         return response()->json([
             'success' => true,

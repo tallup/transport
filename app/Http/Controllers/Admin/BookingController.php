@@ -195,6 +195,17 @@ class BookingController extends Controller
         // Notify driver when booking is approved and becomes active
         $this->notifyDriverStudentAdded($booking);
 
+        // Real-time: notify parent so their portal updates
+        $parentId = $booking->student?->parent_id;
+        if ($parentId) {
+            event(new \App\Events\PortalUpdate(
+                [$parentId],
+                'booking_approved',
+                'Your booking has been approved and is now active.',
+                ['booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+            ));
+        }
+
         return back()->with('success', 'Booking approved successfully.');
     }
 

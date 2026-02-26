@@ -406,6 +406,16 @@ class BookingController extends Controller
                     $amount,
                     'stripe'
                 ));
+                // Real-time: notify admins so their portal updates
+                $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
+                if (!empty($adminIds)) {
+                    event(new \App\Events\PortalUpdate(
+                        $adminIds,
+                        'payment_received',
+                        'New payment received for a booking.',
+                        ['booking_id' => $booking->id]
+                    ));
+                }
 
                 return redirect()->route('parent.bookings.index')
                     ->with('success', 'Payment received. Your booking is pending admin approval.');
@@ -602,6 +612,16 @@ class BookingController extends Controller
                     $amount,
                     'paypal'
                 ));
+                // Real-time: notify admins
+                $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
+                if (!empty($adminIds)) {
+                    event(new \App\Events\PortalUpdate(
+                        $adminIds,
+                        'payment_received',
+                        'New payment received for a booking.',
+                        ['booking_id' => $booking->id]
+                    ));
+                }
 
                 return redirect()->route('parent.bookings.index')
                     ->with('success', 'Payment received. Your booking is pending admin approval.');

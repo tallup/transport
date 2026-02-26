@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
+import RealTimeListener from '@/Components/RealTimeListener';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
@@ -141,6 +142,7 @@ export default function AuthenticatedLayout({ header, children }) {
             )}
 
             <main className={header ? '' : 'pt-16'}>{children}</main>
+            <RealTimeListener />
         </div>
     );
 }
