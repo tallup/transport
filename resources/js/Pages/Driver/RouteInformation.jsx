@@ -105,69 +105,124 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 </GlassCard>
                             </div>
 
-                            {/* Vehicle Information - Redesigned */}
+                            {/* Vehicle Information - Card style (matches Route Overview) */}
                             {route.vehicle && (
-                                <GlassCard className="mb-8 overflow-hidden">
-                                    <div className="p-6 sm:p-8">
-                                        {/* Header with icon and primary info */}
-                                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-8 pb-6 border-b border-white/20">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg border-2 border-yellow-400/50 flex-shrink-0">
-                                                    <svg className="w-8 h-8 sm:w-10 sm:h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                <div className="mb-8">
+                                    <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Vehicle Information</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {/* Primary vehicle card: name, year, type, status */}
+                                        <GlassCard className="md:col-span-2">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-4 min-w-0">
+                                                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                        <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                        </svg>
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-base font-bold text-white/90">Vehicle</p>
+                                                        <p className="text-xl font-extrabold text-white truncate">
+                                                            {route.vehicle.make} {route.vehicle.model}
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-white/70 mt-0.5">
+                                                            {route.vehicle.year || '—'} • {route.vehicle.type ? route.vehicle.type.charAt(0).toUpperCase() + route.vehicle.type.slice(1) : 'N/A'}
+                                                        </p>
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 mt-2 text-xs font-bold rounded-lg border-2 ${
+                                                            route.vehicle.status === 'active'
+                                                                ? 'bg-green-500/20 text-green-200 border-green-400/50'
+                                                                : 'bg-yellow-500/20 text-yellow-200 border-yellow-400/50'
+                                                        }`}>
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                                            {route.vehicle.status || 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </GlassCard>
+
+                                        {/* License plate card */}
+                                        <GlassCard>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-base font-bold text-white">License Plate</p>
+                                                    <p className="text-xl font-bold text-brand-primary tracking-wider mt-2">
+                                                        {route.vehicle.license_plate}
+                                                    </p>
+                                                </div>
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                                     </svg>
                                                 </div>
+                                            </div>
+                                        </GlassCard>
+
+                                        {/* Capacity */}
+                                        <GlassCard>
+                                            <div className="flex items-center justify-between">
                                                 <div>
-                                                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-                                                        {route.vehicle.make} {route.vehicle.model}
-                                                    </h3>
-                                                    <p className="text-base text-white/80 font-medium mt-1">
-                                                        {route.vehicle.year || ''} • {route.vehicle.type ? route.vehicle.type.charAt(0).toUpperCase() + route.vehicle.type.slice(1) : 'N/A'}
+                                                    <p className="text-base font-bold text-white">Capacity</p>
+                                                    <p className="text-xl font-bold text-cyan-200 mt-2">
+                                                        {route.vehicle.capacity ?? 'N/A'}
+                                                        {route.vehicle.capacity != null && <span className="text-sm font-medium text-white/70 ml-1">seats</span>}
                                                     </p>
-                                                    <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 mt-3 text-sm font-bold rounded-xl ${
-                                                        route.vehicle.status === 'active' 
-                                                            ? 'bg-green-500/30 text-green-100 border-2 border-green-400/50' 
-                                                            : 'bg-yellow-500/30 text-yellow-100 border-2 border-yellow-400/50'
-                                                    }`}>
-                                                        <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-                                                        {route.vehicle.status || 'N/A'}
-                                                    </span>
+                                                </div>
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
                                                 </div>
                                             </div>
-                                            <div className="sm:text-right">
-                                                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-1">License Plate</p>
-                                                <p className="text-2xl sm:text-3xl font-black text-brand-primary tracking-wider border-2 border-yellow-400/50 rounded-xl px-4 py-2 inline-block bg-white/5">
-                                                    {route.vehicle.license_plate}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        </GlassCard>
 
-                                        {/* Details grid - compact cards */}
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
-                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Capacity</p>
-                                                <p className="text-xl font-extrabold text-white">
-                                                    {route.vehicle.capacity || 'N/A'}
-                                                    <span className="text-sm font-medium text-white/70 ml-1">seats</span>
-                                                </p>
+                                        {/* Year */}
+                                        <GlassCard>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-base font-bold text-white">Year</p>
+                                                    <p className="text-xl font-bold text-white mt-2">{route.vehicle.year || 'N/A'}</p>
+                                                </div>
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
-                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Year</p>
-                                                <p className="text-xl font-extrabold text-white">{route.vehicle.year || 'N/A'}</p>
+                                        </GlassCard>
+
+                                        {/* Type */}
+                                        <GlassCard>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-base font-bold text-white">Type</p>
+                                                    <p className="text-xl font-bold text-white mt-2 capitalize">{route.vehicle.type || 'N/A'}</p>
+                                                </div>
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
-                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Type</p>
-                                                <p className="text-xl font-extrabold text-white capitalize">{route.vehicle.type || 'N/A'}</p>
+                                        </GlassCard>
+
+                                        {/* Registration */}
+                                        <GlassCard>
+                                            <div className="flex items-center justify-between">
+                                                <div className="min-w-0">
+                                                    <p className="text-base font-bold text-white">Registration</p>
+                                                    <p className="text-lg font-bold text-white mt-2 truncate" title={route.vehicle.registration_number || ''}>
+                                                        {route.vehicle.registration_number || '—'}
+                                                    </p>
+                                                </div>
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-400/30 transition-colors">
-                                                <p className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Registration</p>
-                                                <p className="text-lg font-bold text-white truncate" title={route.vehicle.registration_number || 'N/A'}>
-                                                    {route.vehicle.registration_number || '—'}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        </GlassCard>
                                     </div>
-                                </GlassCard>
+                                </div>
                             )}
 
                             {/* Driver Information */}

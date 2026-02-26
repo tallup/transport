@@ -75,7 +75,7 @@ export default function Show({ booking }) {
                                 <p className="text-lg text-brand-primary/80 font-medium">View and manage booking information</p>
                             </div>
                             <div className="flex gap-3">
-                                {(booking.status === 'pending' || booking.status === 'awaiting_approval') && (
+                                {booking.status === 'awaiting_approval' && (
                                     <GlassButton
                                         type="button"
                                         variant="success"
@@ -124,6 +124,9 @@ export default function Show({ booking }) {
 
                     {/* Status Badge */}
                     <div className="mb-6">
+                        {booking.status === 'pending' && (
+                            <p className="text-sm text-yellow-200/90 mb-2">Parent must complete payment before this booking can be approved. You will be notified when payment is received.</p>
+                        )}
                         <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm ${
                             booking.status === 'active' ? 'bg-green-500/30 text-green-200 border border-green-400/50' :
                             booking.status === 'pending' || booking.status === 'awaiting_approval' ? 'bg-yellow-500/30 text-yellow-200 border border-yellow-400/50' :

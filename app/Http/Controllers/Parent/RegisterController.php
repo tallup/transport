@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -32,7 +33,7 @@ class RegisterController extends Controller
 
     /**
      * Handle an incoming parent registration request.
-     * Parent is not logged in; admin must approve before they can access the system.
+     * Account is auto-approved; parent is logged in and redirected to dashboard.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -49,7 +50,7 @@ class RegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'registration_approved_at' => null,
+            'registration_approved_at' => now(),
         ];
 
         // Handle profile picture upload
@@ -73,7 +74,9 @@ class RegisterController extends Controller
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
 
-        return redirect()->route('parent.registration.pending');
+        Auth::login($user);
+
+        return redirect()->route('parent.dashboard');
     }
 }
 

@@ -163,8 +163,9 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to update this booking.');
         }
 
-        if (!in_array($booking->status, ['pending', 'awaiting_approval'])) {
-            return back()->withErrors(['error' => 'Only pending or awaiting approval bookings can be approved.']);
+        // Only allow approving bookings that have been paid (awaiting_approval). Pending = not yet paid.
+        if ($booking->status !== 'awaiting_approval') {
+            return back()->withErrors(['error' => 'Only bookings with completed payment can be approved. The parent must pay first.']);
         }
 
         $booking->update(['status' => 'active']);

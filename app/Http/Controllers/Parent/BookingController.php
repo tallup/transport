@@ -198,26 +198,8 @@ class BookingController extends Controller
             ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
         );
         
-        // Notify driver if route has a driver assigned
-        $booking->loadMissing(['route.driver']);
-        $driver = $booking->route?->driver;
-        if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-            try {
-                $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
-            } catch (\Exception $e) {
-                \Log::error('DriverStudentAdded notification failed on booking creation', [
-                    'booking_id' => $booking->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-        
-        // Notify admins of new booking attempt
-        $adminService = app(\App\Services\AdminNotificationService::class);
-        $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
-            $booking,
-            $user
-        ));
+        // Notify driver only after payment (when booking becomes awaiting_approval/active)
+        // Admins are notified only when payment is complete (see paymentSuccess / PayPal success).
 
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
@@ -465,16 +447,11 @@ class BookingController extends Controller
         $pushHelper->sendIfSubscribed(
             $user,
             'Booking Created',
-            'Your booking has been created and is pending approval.',
+            'Complete payment to submit your booking for admin approval.',
             ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
         );
         
-        // Notify admins of new booking
-        $adminService = app(\App\Services\AdminNotificationService::class);
-        $adminService->notifyAdmins(new \App\Notifications\Admin\NewBookingCreated(
-            $booking,
-            $user
-        ));
+        // Admin is not notified until payment is complete (see paymentSuccess / PayPal success).
 
         return redirect()->route('parent.bookings.index')
             ->with('success', 'Booking created successfully! You can complete payment later from your bookings page.');
