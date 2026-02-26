@@ -1006,7 +1006,9 @@ class DashboardController extends Controller
         $driver = $request->user();
 
         // Get all route completions for this driver, ordered by completion date (newest first)
+        // Only include completions that still have an associated route (skip orphaned records)
         $completions = RouteCompletion::where('driver_id', $driver->id)
+            ->whereHas('route')
             ->with(['route.vehicle', 'route.pickupPoints'])
             ->orderBy('completion_date', 'desc')
             ->orderBy('completed_at', 'desc')
@@ -1015,7 +1017,11 @@ class DashboardController extends Controller
         // Format the completions data
         $completedRoutes = $completions->map(function ($completion) {
             $route = $completion->route;
-            
+
+            if ($route === null) {
+                return null;
+            }
+
             // Get route stats
             $totalBookings = Booking::where('route_id', $route->id)
                 ->whereDate('start_date', '<=', $completion->completion_date)
@@ -1070,7 +1076,7 @@ class DashboardController extends Controller
                     'completed_pickups' => $completedPickups,
                 ],
             ];
-        });
+        })->filter()->values();
 
         return Inertia::render('Driver/CompletedRoutes', [
             'completedRoutes' => $completedRoutes,
