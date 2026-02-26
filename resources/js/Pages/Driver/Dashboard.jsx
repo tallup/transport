@@ -14,6 +14,8 @@ export default function Dashboard({
     studentsList,
     canCompleteRoute,
     isRouteCompleted,
+    canStartTrip,
+    isTripStarted,
     availablePeriods,
     routeCompletion,
 }) {
@@ -21,6 +23,7 @@ export default function Dashboard({
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [notes, setNotes] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [startTripSubmitting, setStartTripSubmitting] = useState(false);
 
     const handleCompleteRoute = async (e) => {
         e.preventDefault();
@@ -44,6 +47,28 @@ export default function Dashboard({
             alert('An error occurred while marking the route as complete');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleStartTrip = async (e) => {
+        e.preventDefault();
+        if (!route || !canStartTrip || isTripStarted) return;
+
+        setStartTripSubmitting(true);
+        try {
+            const response = await window.axios.post(`/driver/routes/${route.id}/start-trip`);
+            const data = response.data;
+
+            if (data.success) {
+                router.reload();
+            } else {
+                alert(data.message || 'Failed to start trip');
+            }
+        } catch (error) {
+            const message = error.response?.data?.message || 'An error occurred while starting the trip';
+            alert(message);
+        } finally {
+            setStartTripSubmitting(false);
         }
     };
 
@@ -166,7 +191,22 @@ export default function Dashboard({
                             <GlassCard className="mb-8">
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="text-xl font-bold text-white">Today's Schedule</h3>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-wrap gap-3">
+                                        {!isRouteCompleted && (
+                                            isTripStarted ? (
+                                                <GlassButton variant="secondary" disabled>
+                                                    Trip started
+                                                </GlassButton>
+                                            ) : canStartTrip ? (
+                                                <GlassButton
+                                                    variant="primary"
+                                                    onClick={handleStartTrip}
+                                                    disabled={startTripSubmitting}
+                                                >
+                                                    {startTripSubmitting ? 'Starting...' : 'Start Trip'}
+                                                </GlassButton>
+                                            ) : null
+                                        )}
                                         {canCompleteRoute && (
                                             <GlassButton
                                                 variant="success"

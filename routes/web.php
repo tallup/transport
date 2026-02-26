@@ -121,6 +121,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::post('/bookings/{booking}/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markComplete'])->name('bookings.mark-complete');
     Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete');
     Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete');
+    Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip');
 });
 
 Route::middleware('auth')->group(function () {

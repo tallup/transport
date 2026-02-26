@@ -9,6 +9,7 @@ use App\Models\DailyPickup;
 use App\Models\PickupPoint;
 use App\Models\Route;
 use App\Models\RouteCompletion;
+use App\Models\RouteStart;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -241,6 +242,8 @@ class DashboardController extends Controller
                 'studentsList' => [],
                 'canCompleteRoute' => false,
                 'isRouteCompleted' => false,
+                'canStartTrip' => false,
+                'isTripStarted' => false,
             ]);
         }
 
@@ -257,6 +260,13 @@ class DashboardController extends Controller
 
         // Check if all bookings are completed for this period
         $canCompleteRoute = $this->areAllBookingsCompleted($route, $currentPeriod) && !$isRouteCompleted;
+
+        // Check if trip has already been started today for this period (for Start Trip button)
+        $isTripStarted = RouteStart::where('route_id', $route->id)
+            ->where('start_date', $today)
+            ->where('period', $currentPeriod)
+            ->exists();
+        $canStartTrip = !$isTripStarted && !$isRouteCompleted;
 
         // Calculate stats for the active route
         // Use Carbon instance for date comparison to ensure proper type handling
@@ -514,6 +524,8 @@ class DashboardController extends Controller
             'studentsList' => $studentsList,
             'canCompleteRoute' => $canCompleteRoute,
             'isRouteCompleted' => $isRouteCompleted,
+            'canStartTrip' => $canStartTrip,
+            'isTripStarted' => $isTripStarted,
         ]);
     }
 
@@ -626,6 +638,83 @@ class DashboardController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Route marked as complete successfully.',
+        ]);
+    }
+
+    /**
+     * Start the trip for the current route/period and notify all parents.
+     */
+    public function startTrip(Request $request, Route $route)
+    {
+        $driver = $request->user();
+
+        if ($route->driver_id !== $driver->id || !$route->active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. This route does not belong to you.',
+            ], 403);
+        }
+
+        $period = $this->getRoutePeriod($route);
+        $today = Carbon::today();
+
+        $existingStart = RouteStart::where('route_id', $route->id)
+            ->where('start_date', $today)
+            ->where('period', $period)
+            ->first();
+
+        if ($existingStart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Trip has already been started for this route today.',
+            ], 400);
+        }
+
+        RouteStart::create([
+            'route_id' => $route->id,
+            'driver_id' => $driver->id,
+            'period' => $period,
+            'start_date' => $today,
+            'started_at' => Carbon::now(),
+        ]);
+
+        $activeBookings = Booking::where('route_id', $route->id)
+            ->where('status', 'active')
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', $today);
+            })
+            ->with(['student.parent'])
+            ->get();
+
+        $pushHelper = app(\App\Services\PushNotificationHelper::class);
+        $periodLabel = strtoupper($period);
+        $pushTitle = 'Trip Started';
+        $pushBody = "The driver has started the {$periodLabel} route. Please have your child ready at the pickup point.";
+
+        foreach ($activeBookings as $booking) {
+            $parent = $booking->student?->parent;
+            if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
+                $parent->notifyNow(new \App\Notifications\TripStarted(
+                    $booking,
+                    $route,
+                    $period,
+                    Carbon::now()
+                ));
+            }
+            if ($parent) {
+                $pushHelper->sendIfSubscribed(
+                    $parent,
+                    $pushTitle,
+                    $pushBody,
+                    ['type' => 'trip_started', 'booking_id' => $booking->id, 'route_id' => $route->id, 'period' => $period, 'url' => route('parent.bookings.show', $booking)]
+                );
+            }
+        }
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 
