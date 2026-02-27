@@ -21,7 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
-        
+
+        // When session expires or user is not logged in, send to login with message
+        $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) => route('login', ['expired' => 1]));
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'driver' => \App\Http\Middleware\EnsureUserIsDriver::class,
