@@ -58,9 +58,6 @@ export default function EditBooking({ booking, students, routes, price: initialP
     const [loading, setLoading] = useState(false);
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
     const [pickupOption, setPickupOption] = useState(booking?.pickup_point_id ? 'pickup_point' : 'custom');
-    const latestDataRef = useRef(data);
-    const priceRequestIdRef = useRef(0);
-    const isFirstPriceEffectRun = useRef(true);
 
     // Pre-fill form data from booking
     const { data, setData, put, errors, processing } = useForm({
@@ -73,6 +70,10 @@ export default function EditBooking({ booking, students, routes, price: initialP
         trip_direction: booking?.trip_direction || 'both',
         start_date: booking?.start_date ? new Date(booking.start_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     });
+
+    const latestDataRef = useRef(data);
+    const priceRequestIdRef = useRef(0);
+    const isFirstPriceEffectRun = useRef(true);
 
     // Filter routes for booking's student's school
     useEffect(() => {
