@@ -1,5 +1,5 @@
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -58,6 +58,9 @@ export default function EditBooking({ booking, students, routes, price: initialP
     const [loading, setLoading] = useState(false);
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
     const [pickupOption, setPickupOption] = useState(booking?.pickup_point_id ? 'pickup_point' : 'custom');
+    const latestDataRef = useRef(data);
+    const priceRequestIdRef = useRef(0);
+    const isFirstPriceEffectRun = useRef(true);
 
     // Pre-fill form data from booking
     const { data, setData, put, errors, processing } = useForm({
@@ -141,9 +144,16 @@ export default function EditBooking({ booking, students, routes, price: initialP
         }
     }, [data.trip_type]);
 
+    // Keep ref in sync so async callbacks can read current form state
+    latestDataRef.current = data;
+
     // Calculate price when route, plan type, or trip type changes
     useEffect(() => {
         if (data.route_id && data.plan_type) {
+            if (!isFirstPriceEffectRun.current) {
+                setPrice(null);
+            }
+            isFirstPriceEffectRun.current = false;
             calculatePrice();
         } else {
             setPrice(null);
@@ -161,16 +171,28 @@ export default function EditBooking({ booking, students, routes, price: initialP
 
     const calculatePrice = async () => {
         if (!data.route_id || !data.plan_type) return;
+        const requestParams = {
+            route_id: data.route_id,
+            plan_type: data.plan_type,
+            trip_type: data.trip_type,
+        };
+        const requestId = ++priceRequestIdRef.current;
         setLoading(true);
         try {
-            const response = await axios.post('/parent/calculate-price', {
-                route_id: data.route_id,
-                plan_type: data.plan_type,
-                trip_type: data.trip_type,
-            });
-            setPrice(response.data);
+            const response = await axios.post('/parent/calculate-price', requestParams);
+            const current = latestDataRef.current;
+            const stillMatches =
+                String(current.route_id) === String(requestParams.route_id) &&
+                current.plan_type === requestParams.plan_type &&
+                current.trip_type === requestParams.trip_type;
+            if (stillMatches && response.data && !response.data.error) {
+                setPrice(response.data);
+            }
         } catch (error) {
             console.error('Error calculating price:', error);
+            if (requestId === priceRequestIdRef.current) {
+                setPrice(null);
+            }
         } finally {
             setLoading(false);
         }
