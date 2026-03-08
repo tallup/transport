@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,7 +38,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse|HttpResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
@@ -63,11 +62,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('driver.dashboard');
         }
 
-        // Force full-page redirect for parent so the dashboard loads with a proper
-        // document request and session cookie (avoids login → dashboard → back to login)
-        $parentDashboardUrl = url()->route('parent.dashboard');
-        return response('', 409)
-            ->header('X-Inertia-Location', $parentDashboardUrl);
+        // Use same server redirect as admin/driver so session cookie is set reliably.
+        // The previous 409 + X-Inertia-Location could cause "session expired" when the
+        // cookie wasn't applied before the client-side redirect in some environments.
+        return redirect()->route('parent.dashboard');
     }
 
     /**

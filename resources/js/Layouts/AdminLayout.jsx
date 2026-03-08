@@ -22,6 +22,7 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
         { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
+        { href: '/admin/discounts', label: 'Discounts', active: currentUrl?.startsWith('/admin/discounts') },
         { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl?.startsWith('/admin/pricing/manage') },
         { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl?.startsWith('/admin/calendar-events') },
     ];
@@ -126,6 +127,7 @@ export default function AdminLayout({ header, children }) {
                                     </Dropdown.Trigger>
                                     <Dropdown.Content align="left" width="56">
                                         <Dropdown.Link href="/admin/pricing-rules">Pricing Rules</Dropdown.Link>
+                                        <Dropdown.Link href="/admin/discounts">Discounts</Dropdown.Link>
                                         <Dropdown.Link href="/admin/pricing/manage">Manage Pricing</Dropdown.Link>
                                         <Dropdown.Link href="/admin/calendar-events">Calendar Events</Dropdown.Link>
                                     </Dropdown.Content>
