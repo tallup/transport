@@ -3,27 +3,71 @@
 namespace App\Services;
 
 use App\Exceptions\PricingNotFoundException;
+use App\Models\Booking;
+use App\Models\Discount;
 use App\Models\PricingRule;
 use App\Models\Route;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class PricingService
 {
     /**
      * Calculate price for a booking based on plan type, trip type, route, and vehicle type.
-     * Priority: route-specific > vehicle-type-specific > global pricing
+     * Applies time-based discount when forDate is provided; optional booking for manual discount.
      *
      * @param string $planType
      * @param string $tripType 'one_way' or 'two_way'
      * @param Route $route
+     * @param \Carbon\Carbon|null $forDate Date used to resolve time-based discounts (default: today)
+     * @param Booking|null $booking When set and has manual discount, that overrides time-based
      * @return float
      * @throws \Exception
      */
-    public function calculatePrice(string $planType, string $tripType, Route $route): float
+    public function calculatePrice(string $planType, string $tripType, Route $route, ?Carbon $forDate = null, ?Booking $booking = null): float
+    {
+        $base = $this->getBasePrice($planType, $tripType, $route);
+
+        if ($booking && $this->bookingHasManualDiscount($booking)) {
+            return $this->applyDiscount($base, $booking->manual_discount_type, (float) $booking->manual_discount_value);
+        }
+
+        $discount = $this->getActiveTimeBasedDiscount($route->id, $planType, $forDate);
+        if ($discount) {
+            return $this->applyDiscount($base, $discount->type, (float) $discount->value);
+        }
+
+        return $base;
+    }
+
+    /**
+     * Calculate final price for an existing booking (manual discount or time-based applied).
+     */
+    public function calculatePriceForBooking(Booking $booking): float
+    {
+        $booking->loadMissing('route.vehicle');
+        $route = $booking->route;
+        if (! $route) {
+            throw new PricingNotFoundException($booking->plan_type ?? 'unknown');
+        }
+
+        $planType = $booking->plan_type;
+        $tripType = $booking->trip_type ?? 'two_way';
+        $forDate = $booking->start_date ? Carbon::parse($booking->start_date) : Carbon::today();
+
+        return $this->calculatePrice($planType, $tripType, $route, $forDate, $booking);
+    }
+
+    /**
+     * Base price from pricing rules only (no discounts).
+     * Priority: route-specific > vehicle-type-specific > global pricing.
+     *
+     * @throws PricingNotFoundException
+     */
+    public function getBasePrice(string $planType, string $tripType, Route $route): float
     {
         $vehicleType = $route->vehicle->type;
 
-        // Cache key for route-specific pricing
         $routeCacheKey = "pricing_route_{$route->id}_{$planType}_{$tripType}";
         $routePricing = Cache::remember($routeCacheKey, 3600, function () use ($planType, $tripType, $route) {
             return PricingRule::where('plan_type', $planType)
@@ -37,7 +81,6 @@ class PricingService
             return (float) $routePricing->amount;
         }
 
-        // Cache key for vehicle-type-specific pricing
         $vehicleCacheKey = "pricing_vehicle_{$vehicleType}_{$planType}_{$tripType}";
         $vehiclePricing = Cache::remember($vehicleCacheKey, 3600, function () use ($planType, $tripType, $vehicleType) {
             return PricingRule::where('plan_type', $planType)
@@ -52,7 +95,6 @@ class PricingService
             return (float) $vehiclePricing->amount;
         }
 
-        // Cache key for global pricing
         $globalCacheKey = "pricing_global_{$planType}_{$tripType}";
         $globalPricing = Cache::remember($globalCacheKey, 3600, function () use ($planType, $tripType) {
             return PricingRule::where('plan_type', $planType)
@@ -68,6 +110,40 @@ class PricingService
         }
 
         throw new PricingNotFoundException($planType);
+    }
+
+    /**
+     * Apply a single discount (percentage or fixed). Result is never below zero.
+     */
+    public function applyDiscount(float $base, string $type, float $value): float
+    {
+        if ($type === 'percentage') {
+            $value = min(100, max(0, $value));
+            $reduction = $base * ($value / 100);
+        } else {
+            $reduction = min($base, max(0, $value));
+        }
+
+        return max(0, round($base - $reduction, 2));
+    }
+
+    /**
+     * Get one active time-based discount for the given route/plan and date (first matching by id).
+     */
+    protected function getActiveTimeBasedDiscount(int $routeId, string $planType, ?Carbon $forDate = null): ?Discount
+    {
+        $forDate = $forDate ?? Carbon::today();
+
+        return Discount::activeForDate($forDate)
+            ->forRoute($routeId)
+            ->forPlanType($planType)
+            ->orderBy('id')
+            ->first();
+    }
+
+    protected function bookingHasManualDiscount(Booking $booking): bool
+    {
+        return $booking->manual_discount_type && $booking->manual_discount_value !== null;
     }
 
     /**

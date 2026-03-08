@@ -33,6 +33,8 @@ class Booking extends Model
         'payment_method',
         'payment_id',
         'paypal_order_id',
+        'manual_discount_type',
+        'manual_discount_value',
     ];
 
     protected $casts = [
@@ -40,6 +42,7 @@ class Booking extends Model
         'end_date' => 'date',
         'pickup_latitude' => 'decimal:8',
         'pickup_longitude' => 'decimal:8',
+        'manual_discount_value' => 'decimal:2',
     ];
 
     /**

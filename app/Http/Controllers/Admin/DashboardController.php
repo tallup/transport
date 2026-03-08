@@ -36,7 +36,7 @@ class DashboardController extends Controller
             foreach ($activeBookings as $booking) {
                 try {
                     if ($booking->route) {
-                        $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
+                        $price = $this->pricingService->calculatePriceForBooking($booking);
                         $totalRevenue += $price;
                     }
                 } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class DashboardController extends Controller
                 foreach ($dayBookings as $booking) {
                     try {
                         if ($booking->route) {
-                            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
+                            $price = $this->pricingService->calculatePriceForBooking($booking);
                             $dayRevenue += $price;
                         }
                     } catch (\Exception $e) {

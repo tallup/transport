@@ -63,11 +63,7 @@ class AnalyticsService
             foreach ($periodBookings as $booking) {
                 try {
                     if ($booking->route) {
-                        $price = $this->pricingService->calculatePrice(
-                            $booking->plan_type,
-                            $booking->trip_type ?? 'two_way',
-                            $booking->route
-                        );
+                        $price = $this->pricingService->calculatePriceForBooking($booking);
                         $revenue += $price;
                     }
                 } catch (\Exception $e) {
@@ -368,11 +364,7 @@ class AnalyticsService
         foreach ($bookings as $booking) {
             try {
                 if ($booking->route) {
-                    $price = $this->pricingService->calculatePrice(
-                        $booking->plan_type,
-                        $booking->trip_type ?? 'two_way',
-                        $booking->route
-                    );
+                    $price = $this->pricingService->calculatePriceForBooking($booking);
                     $totalRevenue += $price;
 
                     if (!isset($byPlanType[$booking->plan_type])) {
@@ -430,11 +422,7 @@ class AnalyticsService
         foreach ($prevBookings as $booking) {
             try {
                 if ($booking->route) {
-                    $price = $this->pricingService->calculatePrice(
-                        $booking->plan_type,
-                        $booking->trip_type ?? 'two_way',
-                        $booking->route
-                    );
+                    $price = $this->pricingService->calculatePriceForBooking($booking);
                     $prevRevenue += $price;
                 }
             } catch (\Exception $e) {

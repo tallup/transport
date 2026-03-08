@@ -90,6 +90,30 @@ class BookingResource extends Resource
                     ->native(false),
                 Forms\Components\DatePicker::make('end_date')
                     ->native(false),
+                Forms\Components\Section::make('Manual discount')
+                    ->description('Optional: apply a discount to this booking. Overrides any time-based promotion.')
+                    ->schema([
+                        Forms\Components\Select::make('manual_discount_type')
+                            ->label('Discount type')
+                            ->options([
+                                'percentage' => 'Percentage off',
+                                'fixed' => 'Fixed amount off',
+                            ])
+                            ->live()
+                            ->placeholder('None'),
+                        Forms\Components\TextInput::make('manual_discount_value')
+                            ->label('Discount value')
+                            ->numeric()
+                            ->minValue(0)
+                            ->step(fn ($get) => $get('manual_discount_type') === 'percentage' ? 1 : 0.01)
+                            ->suffix(fn ($get) => $get('manual_discount_type') === 'percentage' ? '%' : ' USD')
+                            ->visible(fn ($get) => (bool) $get('manual_discount_type'))
+                            ->required(fn ($get) => (bool) $get('manual_discount_type'))
+                            ->rule(fn ($get) => $get('manual_discount_type') === 'percentage' ? 'numeric|min:0|max:100' : 'numeric|min:0')
+                            ->helperText('Percentage: 0–100. Fixed: amount in dollars'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

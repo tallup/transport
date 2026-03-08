@@ -157,9 +157,10 @@ class BookingController extends Controller
             return back()->withErrors(['route_id' => $e->getMessage()]);
         }
 
-        // Calculate price
+        // Calculate price (time-based discount applied using start_date)
+        $forDate = \Carbon\Carbon::parse($validated['start_date']);
         try {
-            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route);
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route, $forDate, null);
         } catch (PricingNotFoundException $e) {
             return back()->withErrors(['plan_type' => $e->getMessage()]);
         }
@@ -254,9 +255,9 @@ class BookingController extends Controller
                 ->with('error', 'This booking is not pending payment.');
         }
 
-        // Calculate price
+        // Calculate price (manual or time-based discount applied)
         try {
-            $price = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
+            $price = $this->pricingService->calculatePriceForBooking($booking);
         } catch (PricingNotFoundException $e) {
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'Unable to calculate price for this booking.');
@@ -287,14 +288,25 @@ class BookingController extends Controller
     public function calculatePrice(Request $request)
     {
         $validated = $request->validate([
-            'route_id' => 'required|exists:routes,id',
-            'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
-            'trip_type' => 'required|in:one_way,two_way',
+            'route_id' => 'required_without:booking_id|exists:routes,id',
+            'booking_id' => 'nullable|exists:bookings,id',
+            'plan_type' => 'required_without:booking_id|in:weekly,monthly,academic_term,annual',
+            'trip_type' => 'required_without:booking_id|in:one_way,two_way',
+            'for_date' => 'nullable|date',
         ]);
 
         try {
-            $route = Route::findOrFail($validated['route_id']);
-            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route);
+            if (!empty($validated['booking_id'])) {
+                $booking = Booking::findOrFail($validated['booking_id']);
+                if (!$request->user()->students->contains($booking->student_id)) {
+                    return response()->json(['error' => 'Unauthorized'], 403);
+                }
+                $price = $this->pricingService->calculatePriceForBooking($booking);
+            } else {
+                $route = Route::findOrFail($validated['route_id']);
+                $forDate = isset($validated['for_date']) ? \Carbon\Carbon::parse($validated['for_date']) : null;
+                $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route, $forDate, null);
+            }
             return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -305,7 +317,7 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'booking_id' => 'required|exists:bookings,id',
-            'amount' => 'required|numeric|min:0.5', // Amount in dollars, minimum $0.50
+            'amount' => 'nullable|numeric|min:0', // Optional; server recalculates for security
         ]);
 
         $user = $request->user();
@@ -316,7 +328,14 @@ class BookingController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $amountCents = (int) round($validated['amount'] * 100);
+        // Use server-calculated price (applies manual and time-based discounts)
+        try {
+            $amount = $this->pricingService->calculatePriceForBooking($booking);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to calculate price for this booking.'], 400);
+        }
+        $amount = max(0.5, round($amount, 2)); // Stripe minimum $0.50
+        $amountCents = (int) round($amount * 100);
 
         try {
             $paymentIntent = PaymentIntent::create([
@@ -706,11 +725,11 @@ class BookingController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Calculate price if booking is pending
+        // Calculate price if booking is pending (manual or time-based discount applied)
         $price = null;
         if ($booking->status === 'pending' && $booking->route) {
             try {
-                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
+                $calculatedPrice = $this->pricingService->calculatePriceForBooking($booking);
                 $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
             } catch (PricingNotFoundException $e) {
                 // Price calculation failed, but still show booking
@@ -1067,11 +1086,11 @@ class BookingController extends Controller
                 return $route;
             });
 
-        // Calculate price
+        // Calculate price (manual or time-based discount applied)
         $price = null;
         if ($booking->route) {
             try {
-                $calculatedPrice = $this->pricingService->calculatePrice($booking->plan_type, $booking->trip_type ?? 'two_way', $booking->route);
+                $calculatedPrice = $this->pricingService->calculatePriceForBooking($booking);
                 $price = ['price' => $calculatedPrice, 'formatted' => $this->pricingService->formatPrice($calculatedPrice)];
             } catch (PricingNotFoundException $e) {
                 // Price calculation failed
