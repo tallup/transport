@@ -92,6 +92,19 @@ class BookingController extends Controller
     public function store(StoreBookingRequest $request)
     {
         $validated = $request->validated();
+        $user = $request->user();
+        
+        // Support booking for one or multiple students
+        $studentIds = [];
+        if (!empty($validated['student_ids']) && is_array($validated['student_ids'])) {
+            $studentIds = array_unique(array_map('intval', $validated['student_ids']));
+        } elseif (!empty($validated['student_id'])) {
+            $studentIds = [intval($validated['student_id'])];
+        }
+        
+        if (empty($studentIds)) {
+            return back()->withErrors(['student_id' => 'Please select at least one student.']);
+        }
         
         // Sanitize text inputs
         if (isset($validated['pickup_address'])) {
@@ -103,9 +116,11 @@ class BookingController extends Controller
             return back()->withErrors(['pickup_address' => 'Please either select a pickup point or enter a pickup address.']);
         }
 
-        // Verify student belongs to parent (authorization check)
-        $user = $request->user();
-        $student = $user->students()->findOrFail($validated['student_id']);
+        // Verify all selected students belong to parent (authorization check)
+        $students = $user->students()->whereIn('id', $studentIds)->get();
+        if ($students->count() !== count($studentIds)) {
+            abort(403, 'Unauthorized to create bookings for one or more selected students.');
+        }
         
         // Additional authorization check using policy
         if (!$request->user()->can('create', Booking::class)) {
@@ -123,35 +138,47 @@ class BookingController extends Controller
         $bookingService = app(BookingService::class);
         $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
         
-        // Get the overlapping booking for better error message
-        $overlappingBooking = Booking::where('student_id', $validated['student_id'])
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
-            ->where(function ($q) use ($startDate, $endDate) {
-                $q->where(function ($subQ) use ($startDate, $endDate) {
-                    $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
-                        ->where(function ($endQ) use ($startDate) {
-                            $endQ->whereNull('end_date')
-                                ->orWhere('end_date', '>=', $startDate);
-                        });
-                });
-            })
-            ->with(['route', 'student'])
-            ->first();
-        
-        if ($overlappingBooking) {
-            $bookingInfo = sprintf(
-                'This student already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
-                $overlappingBooking->status,
-                $overlappingBooking->id,
-                $overlappingBooking->start_date->format('M d, Y'),
-                $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
-            );
-            return back()->withErrors(['start_date' => $bookingInfo]);
+        // Check for overlapping bookings for each selected student
+        foreach ($studentIds as $sid) {
+            $overlappingBooking = Booking::where('student_id', $sid)
+                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+                ->where(function ($q) use ($startDate, $endDate) {
+                    $q->where(function ($subQ) use ($startDate, $endDate) {
+                        $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
+                            ->where(function ($endQ) use ($startDate) {
+                                $endQ->whereNull('end_date')
+                                    ->orWhere('end_date', '>=', $startDate);
+                            });
+                    });
+                })
+                ->with(['route', 'student'])
+                ->first();
+            
+            if ($overlappingBooking) {
+                $bookingInfo = sprintf(
+                    'Student %s already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
+                    $overlappingBooking->student->name ?? 'selected',
+                    $overlappingBooking->status,
+                    $overlappingBooking->id,
+                    $overlappingBooking->start_date->format('M d, Y'),
+                    $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
+                );
+                return back()->withErrors(['start_date' => $bookingInfo]);
+            }
         }
 
         // Check capacity
         $route = Route::findOrFail($validated['route_id']);
         try {
+            // Ensure there are enough seats for all selected students
+            $availableSeats = $this->capacityGuard->getAvailableSeats($route);
+            if ($availableSeats < count($studentIds)) {
+                return back()->withErrors([
+                    'route_id' => 'Not enough available seats on this route for all selected students.',
+                ]);
+            }
+            
+            // Also run existing single-booking capacity validation for safety
             $this->capacityGuard->validateBookingCapacity($route);
         } catch (CapacityExceededException $e) {
             return back()->withErrors(['route_id' => $e->getMessage()]);
@@ -174,43 +201,54 @@ class BookingController extends Controller
 
         // Two way = both pickup and dropoff; one way = pickup_only or dropoff_only (set by parent)
         $tripDirection = $validated['trip_type'] === 'two_way' ? 'both' : ($validated['trip_direction'] ?? 'pickup_only');
-
-        // Create booking (pending until payment)
-        $booking = Booking::create([
-            'student_id' => $validated['student_id'],
-            'route_id' => $validated['route_id'],
-            'pickup_point_id' => $validated['pickup_point_id'] ?? null,
-            'pickup_address' => $validated['pickup_address'] ?? null,
-            'pickup_latitude' => $validated['pickup_latitude'] ?? null,
-            'pickup_longitude' => $validated['pickup_longitude'] ?? null,
-            'plan_type' => $validated['plan_type'],
-            'trip_type' => $validated['trip_type'],
-            'trip_direction' => $tripDirection,
-            'status' => 'pending',
-            'start_date' => $validated['start_date'],
-            'end_date' => $endDate?->format('Y-m-d'),
-        ]);
-
-        // Send booking created notification to parent
-        $user->notifyNow(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
         
-        // Send push notification
-        $pushHelper = app(\App\Services\PushNotificationHelper::class);
-        $pushHelper->sendIfSubscribed(
-            $user,
-            'Booking Received',
-            'Your booking has been created. Please complete payment to confirm.',
-            ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
+        // Create booking(s) (pending until payment)
+        $createdBookings = [];
+        foreach ($studentIds as $sid) {
+            $booking = Booking::create([
+                'student_id' => $sid,
+                'route_id' => $validated['route_id'],
+                'pickup_point_id' => $validated['pickup_point_id'] ?? null,
+                'pickup_address' => $validated['pickup_address'] ?? null,
+                'pickup_latitude' => $validated['pickup_latitude'] ?? null,
+                'pickup_longitude' => $validated['pickup_longitude'] ?? null,
+                'plan_type' => $validated['plan_type'],
+                'trip_type' => $validated['trip_type'],
+                'trip_direction' => $tripDirection,
+                'status' => 'pending',
+                'start_date' => $validated['start_date'],
+                'end_date' => $endDate?->format('Y-m-d'),
+            ]);
+            $createdBookings[] = $booking;
+            
+            // Send booking created notification to parent
+            $user->notifyNow(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
+            
+            // Send push notification
+            $pushHelper = app(\App\Services\PushNotificationHelper::class);
+            $pushHelper->sendIfSubscribed(
+                $user,
+                'Booking Received',
+                'Your booking has been created. Please complete payment to confirm.',
+                ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
+            );
+        }
+        
+        // If only one booking was created, keep existing checkout behaviour
+        if (count($createdBookings) === 1) {
+            $booking = $createdBookings[0];
+            return Inertia::render('Parent/Bookings/Checkout', [
+                'booking' => $booking->load(['student', 'route', 'pickupPoint']),
+                'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+                'stripeKey' => config('cashier.key'),
+            ]);
+        }
+        
+        // If multiple bookings were created, redirect to bookings list and let parent pay each separately
+        return redirect()->route('parent.bookings.index')->with(
+            'success',
+            'Bookings created for ' . count($createdBookings) . ' students. You can complete payment for each booking from your bookings page.'
         );
-        
-        // Notify driver only after payment (when booking becomes awaiting_approval/active)
-        // Admins are notified only when payment is complete (see paymentSuccess / PayPal success).
-
-        return Inertia::render('Parent/Bookings/Checkout', [
-            'booking' => $booking->load(['student', 'route', 'pickupPoint']),
-            'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
-            'stripeKey' => config('cashier.key'),
-        ]);
     }
 
     public function index(Request $request)

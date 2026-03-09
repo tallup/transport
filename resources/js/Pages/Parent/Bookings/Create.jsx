@@ -52,6 +52,7 @@ export default function CreateBooking({ students, routes }) {
     const [initialized, setInitialized] = useState(false);
     
     const [step, setStep] = useState(0);
+    const [selectedStudentIds, setSelectedStudentIds] = useState([]);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
@@ -62,6 +63,7 @@ export default function CreateBooking({ students, routes }) {
     const { data, setData, post, errors, processing } = useForm({
         school_id: '',
         student_id: '',
+        student_ids: [],
         route_id: '',
         pickup_point_id: '',
         pickup_address: '',
@@ -108,8 +110,8 @@ export default function CreateBooking({ students, routes }) {
 
     // Clear step-0 validation message when user selects a student
     useEffect(() => {
-        if (data.student_id) setStudentStepError(false);
-    }, [data.student_id]);
+        if (selectedStudentIds.length > 0) setStudentStepError(false);
+    }, [selectedStudentIds]);
 
     // Load route details when route is selected
     useEffect(() => {
@@ -177,13 +179,25 @@ export default function CreateBooking({ students, routes }) {
         e.preventDefault();
         
         // Validate required fields before submitting
+        if (selectedStudentIds.length === 0) {
+            alert('Please select at least one student.');
+            setStudentStepError(true);
+            return;
+        }
+        
         const hasPickupLocation = pickupOption === 'pickup_point' 
             ? data.pickup_point_id 
             : data.pickup_address;
         
-        if (!data.student_id || !data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
+        if (!data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
             alert('Please complete all required fields before proceeding to payment.');
             return;
+        }
+        
+        // Sync selected students into form data
+        setData('student_ids', selectedStudentIds);
+        if (!data.student_id && selectedStudentIds.length > 0) {
+            setData('student_id', selectedStudentIds[0]);
         }
         
         post('/parent/bookings', {
@@ -208,9 +222,9 @@ export default function CreateBooking({ students, routes }) {
 
     const nextStep = () => {
         // Step 0: Student (only if not pre-selected)
-        if (step === 0 && !data.student_id) {
+        if (step === 0 && selectedStudentIds.length === 0) {
             setStudentStepError(true);
-            alert('Please select a student first.');
+            alert('Please select at least one student first.');
             return;
         }
         setStudentStepError(false);
@@ -269,6 +283,7 @@ export default function CreateBooking({ students, routes }) {
                     const studentIdInt = parseInt(studentId, 10);
                     if (!isNaN(studentIdInt)) {
                         setData('student_id', studentIdInt);
+                        setSelectedStudentIds([studentIdInt]);
                         setStep(1);
                         
                         // Find student and set school_id and pickup_address
@@ -413,8 +428,8 @@ export default function CreateBooking({ students, routes }) {
                                 {step === 0 && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-2xl font-extrabold text-brand-primary mb-2">Select Student</h3>
-                                            <p className="text-sm text-brand-primary/70">Choose the student you want to book transport for</p>
+                                            <h3 className="text-2xl font-extrabold text-brand-primary mb-2">Select Student(s)</h3>
+                                            <p className="text-sm text-brand-primary/70">Choose one or more students you want to book transport for</p>
                                         </div>
                                         {students.length === 0 ? (
                                             <div className="text-center py-16">
@@ -433,51 +448,71 @@ export default function CreateBooking({ students, routes }) {
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                                {students.map((student) => (
-                                                    <label
-                                                        key={student.id}
-                                                        className={`group relative flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] max-w-xs mx-auto md:mx-0 ${
-                                                            data.student_id == student.id
-                                                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
-                                                                : 'border-yellow-400/50 bg-white/10 hover:bg-white/15 hover:border-yellow-400'
-                                                        }`}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="student_id"
-                                                            value={student.id}
-                                                            checked={data.student_id == student.id}
-                                                            onChange={(e) => setData('student_id', e.target.value)}
-                                                            className="sr-only"
-                                                        />
-                                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
-                                                            data.student_id == student.id
-                                                                ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md'
-                                                                : 'bg-white/20 group-hover:bg-white/30'
-                                                        }`}>
-                                                            <svg className={`w-5 h-5 ${data.student_id == student.id ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                {students.map((student) => {
+                                                    const isSelected = selectedStudentIds.includes(student.id);
+                                                    return (
+                                                        <label
+                                                            key={student.id}
+                                                            className={`group relative flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] max-w-xs mx-auto md:mx-0 ${
+                                                                isSelected
+                                                                    ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 shadow-lg ring-2 ring-yellow-400/30'
+                                                                    : 'border-yellow-400/50 bg-white/10 hover:bg-white/15 hover:border-yellow-400'
+                                                            }`}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                const alreadySelected = selectedStudentIds.includes(student.id);
+                                                                let next;
+                                                                if (alreadySelected) {
+                                                                    next = selectedStudentIds.filter(id => id !== student.id);
+                                                                } else {
+                                                                    next = [...selectedStudentIds, student.id];
+                                                                }
+                                                                setSelectedStudentIds(next);
+                                                                if (next.length > 0) {
+                                                                    // Use the first selected student as the primary for school/route logic
+                                                                    setData('student_id', next[0]);
+                                                                } else {
+                                                                    setData('student_id', '');
+                                                                }
+                                                            }}
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                name="student_ids[]"
+                                                                value={student.id}
+                                                                checked={isSelected}
+                                                                onChange={() => {}}
+                                                                className="sr-only"
+                                                            />
+                                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                                                                isSelected
+                                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md'
+                                                                    : 'bg-white/20 group-hover:bg-white/30'
+                                                            }`}>
+                                                                <svg className={`w-5 h-5 ${isSelected ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                             </svg>
                                                         </div>
-                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex-1 min-w-0">
                                                             <p className="text-base font-extrabold text-white mb-1 truncate">{student.name}</p>
-                                                        {student.school && (
+                                                                {student.school && (
                                                                 <div className="flex items-center gap-2 mt-1.5">
                                                                     <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/30 text-blue-100 border border-blue-400/50 truncate">
                                                                         {student.school.name}
                                                                     </span>
                                                                 </div>
-                                                            )}
-                                                        </div>
-                                                        {data.student_id == student.id && (
-                                                            <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
-                                                                <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                </svg>
+                                                                )}
                                                             </div>
-                                                        )}
-                                                    </label>
-                                                ))}
+                                                            {isSelected && (
+                                                                <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
+                                                                    <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
+                                                        </label>
+                                                    );
+                                                })}
                                             </div>
                                                 )}
                                         {(studentStepError || errors.student_id) && (

@@ -32,7 +32,9 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'required|exists:students,id',
+            'student_id' => 'required_without:student_ids|exists:students,id',
+            'student_ids' => 'required_without:student_id|array',
+            'student_ids.*' => 'exists:students,id',
             'route_id' => 'required|exists:routes,id',
             'pickup_point_id' => 'nullable|exists:pickup_points,id',
             'pickup_address' => 'nullable|string|max:500',
@@ -53,8 +55,11 @@ class StoreBookingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'student_id.required' => 'Please select a student.',
+            'student_id.required_without' => 'Please select at least one student.',
             'student_id.exists' => 'The selected student is invalid.',
+            'student_ids.required_without' => 'Please select at least one student.',
+            'student_ids.array' => 'Selected students must be provided as a list.',
+            'student_ids.*.exists' => 'One or more selected students are invalid.',
             'route_id.required' => 'Please select a route.',
             'route_id.exists' => 'The selected route is invalid.',
             'pickup_point_id.exists' => 'The selected pickup point is invalid.',
