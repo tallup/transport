@@ -198,6 +198,36 @@ export default function Home({ auth }) {
                     </div>
                 </section>
 
+                {/* Our Story / Biography Section */}
+                <section id="our-story" className="py-12 px-4 sm:px-6 lg:px-8 relative">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
+                                Our Story
+                            </h2>
+                            <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
+                                Why we do what we do
+                            </p>
+                            <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
+                        </div>
+
+                        <GlassCard className="p-6 md:p-8 text-left border border-brand-primary/20">
+                            <p className="text-brand-primary/90 leading-relaxed mb-4">
+                                On-Time Transportation for Kids was born out of a deeply personal experience. <strong className="text-brand-primary">Amie Njie</strong>, a single mother and full-time professional, struggled to juggle work and getting her own child to preschool and school on time. She faced daily challenges balancing her job and her child's needs, and when she couldn't find a reliable transportation solution, she decided to create one. Amie realized that many other parents, like herself, were in the same boat—desperately needing a safe, dependable way to get their children to school and activities.
+                            </p>
+                            <p className="text-brand-primary/90 leading-relaxed mb-0">
+                                This is why she founded On-Time Transportation for Kids—so no parent would have to choose between their career and their child's safety and education. With a focus on <strong className="text-yellow-600">punctuality</strong>, <strong className="text-yellow-600">trust</strong>, and <strong className="text-yellow-600">care</strong>, Amie ensures every child rides with confidence, and every parent knows their child is in good hands.
+                            </p>
+                            <div className="mt-6 pt-6 border-t border-brand-primary/20 flex items-center justify-center gap-2 text-brand-primary/80">
+                                <svg className="w-5 h-5 text-yellow-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                </svg>
+                                <span className="font-semibold text-brand-primary">Amie Njie — Founder</span>
+                            </div>
+                        </GlassCard>
+                    </div>
+                </section>
+
                 {/* How It Works Section - Compact */}
                 <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-7xl mx-auto">
@@ -414,6 +444,14 @@ export default function Home({ auth }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                             </svg>
                                             <span className="group-hover:translate-x-1 transition-transform duration-200">Register</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/#our-story" className="text-white/70 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                            <span className="group-hover:translate-x-1 transition-transform duration-200">Our Story</span>
                                         </Link>
                                     </li>
                                     <li>
