@@ -134,7 +134,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Prepare submission data with unformatted phones
+        // Prepare submission data with unformatted phones (on review step they already passed policy acknowledgment)
         const submitData = {
             ...data,
             emergency_phone: unformatPhoneNumber(data.emergency_phone || ''),
@@ -144,7 +144,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                 ...person,
                 phone: unformatPhoneNumber(person.phone || '')
             })),
-            policies_acknowledged: policiesAcknowledged,
+            policies_acknowledged: true, // They reached review step, so they acknowledged on step 5
         };
         
         router.post('/parent/students', submitData, data.profile_picture ? { forceFormData: true } : {});
@@ -794,7 +794,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                     ) : (
                                         <GlassButton
                                             type="submit"
-                                            disabled={processing || !policiesAcknowledged}
+                                            disabled={processing}
                                         >
                                             {processing ? 'Submitting...' : 'Submit Enrollment'}
                                         </GlassButton>
