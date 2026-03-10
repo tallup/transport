@@ -322,18 +322,26 @@ export default function EditBooking({ booking, students, routes, price: initialP
         );
     }
 
+    const stepLabels = ['Route', 'Pickup', 'Plan', 'Review'];
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Book Transport" />
 
             <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
+                    {/* Header Section - match Create */}
+                    <div className="text-center mb-10">
+                        <h1 className="text-4xl font-extrabold text-brand-primary mb-3">Edit Booking</h1>
+                        <p className="text-lg text-brand-primary/80 font-medium">Update your booking in a few simple steps</p>
+                    </div>
+
                     <GlassCard className="overflow-hidden">
-                        <div className="p-6">
+                        <div className="p-8 sm:p-10">
                             <div className="mb-6">
                                 <Link
                                     href={`/parent/bookings/${booking.id}`}
-                                    className="text-white/80 hover:text-white font-semibold mb-4 inline-flex items-center gap-2"
+                                    className="text-brand-primary/80 hover:text-brand-primary font-semibold inline-flex items-center gap-2 transition-colors"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -341,50 +349,75 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                     Back to Booking Details
                                 </Link>
                             </div>
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Booking</h2>
+
                             {booking?.student && (
-                                <div className="mb-6 p-4 bg-blue-500/30 border border-blue-400/50 rounded-lg">
-                                    <p className="text-sm font-semibold text-blue-100 mb-1">Editing booking for:</p>
-                                    <p className="text-lg font-bold text-white">
-                                        {booking.student.name}
-                                        {booking.student.school && (
-                                            <span className="text-base font-semibold text-white/90 ml-2">
-                                                - {booking.student.school.name}
-                                            </span>
-                                        )}
-                                    </p>
+                                <div className="mb-8 p-5 bg-gradient-to-r from-blue-500/20 via-blue-500/15 to-blue-500/10 border-2 border-blue-400/40 rounded-xl shadow-lg">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                                <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-blue-200 uppercase tracking-wide mb-1">Editing booking for:</p>
+                                                <p className="text-lg font-extrabold text-white">
+                                                    {booking.student.name}
+                                                    {booking.student.school && (
+                                                        <span className="text-base font-semibold text-white/90 ml-2">
+                                                            - {booking.student.school.name}
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Link
+                                            href={`/parent/bookings/${booking.id}`}
+                                            className="px-4 py-2 bg-blue-500/30 hover:bg-blue-500/40 border border-blue-400/50 rounded-lg text-blue-100 hover:text-white font-semibold text-sm transition-all"
+                                        >
+                                            View details
+                                        </Link>
+                                    </div>
                                 </div>
                             )}
 
-                            {/* Step Indicator */}
-                            <div className="mb-8">
-                                <div className="flex justify-between">
+                            {/* Step Indicator - match Create (4 steps) */}
+                            <div className="mb-12">
+                                <div className="flex items-center justify-between relative">
+                                    <div className="absolute top-4 left-0 right-0 h-1 bg-white/20 rounded-full -z-0"></div>
                                     {[1, 2, 3, 4].map((s) => (
-                                        <div key={s} className="flex items-center">
-                                            <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                                                    step >= s
-                                                        ? 'bg-blue-500 text-white'
-                                                        : 'bg-white/20 text-white/60 border border-white/30'
-                                                }`}
-                                            >
-                                                {s}
+                                        <div key={s} className="flex items-center flex-1 relative z-10">
+                                            <div className="flex flex-col items-center flex-1">
+                                                <div className="relative">
+                                                    {s < 4 && step > s && (
+                                                        <div className="absolute top-4 left-1/2 w-full h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full -z-0" style={{ width: 'calc(100% + 1rem)' }}></div>
+                                                    )}
+                                                    <div
+                                                        className={`relative w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                                                            step > s
+                                                                ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-brand-primary shadow-lg scale-110'
+                                                                : step === s
+                                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-brand-primary shadow-xl scale-125 ring-4 ring-yellow-400/40'
+                                                                    : 'bg-white/20 text-white/50 border-2 border-yellow-400/60'
+                                                        }`}
+                                                    >
+                                                        {step > s ? (
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        ) : (
+                                                            <span className="text-base">{s}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <span className={`mt-3 text-xs font-bold uppercase tracking-wider transition-colors ${
+                                                    step >= s ? 'text-brand-primary' : 'text-white/40'
+                                                }`}>
+                                                    {stepLabels[s - 1]}
+                                                </span>
                                             </div>
-                                            {s < 4 && (
-                                                <div
-                                                    className={`w-12 h-1 mx-1 ${
-                                                        step > s ? 'bg-blue-500' : 'bg-white/20'
-                                                    }`}
-                                                />
-                                            )}
                                         </div>
                                     ))}
-                                </div>
-                                <div className="flex justify-between mt-2 text-xs font-bold text-white">
-                                    <span>Route</span>
-                                    <span>Pickup</span>
-                                    <span>Plan</span>
-                                    <span>Review</span>
                                 </div>
                             </div>
 
@@ -392,77 +425,123 @@ export default function EditBooking({ booking, students, routes, price: initialP
                             <form onSubmit={handleSubmit}>
                                 {/* Step 1: Select Route */}
                                 {step === 1 && (
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-white mb-2">Select Route</h3>
-                                            {booking?.student?.school && (
-                                                <p className="text-sm text-white/80 font-semibold mb-4">
-                                                    Showing routes for: <span className="text-blue-200 font-bold">{booking.student.school.name}</span>
-                                                </p>
-                                            )}
+                                    <div className="space-y-8">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                            <div>
+                                                <h3 className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-2">Choose your route</h3>
+                                                {booking?.student?.school && (
+                                                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-brand-primary font-semibold text-sm">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                        </svg>
+                                                        {booking.student.school.name}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                         {filteredRoutes.length === 0 ? (
-                                            <div className="text-center py-8">
-                                                <p className="text-white text-lg font-semibold mb-4">No routes available for the selected school.</p>
-                                                <p className="text-white text-sm font-semibold">
-                                                    No routes are currently configured for this student's school. Please contact the administrator.
+                                            <div className="text-center py-16">
+                                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
+                                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-brand-primary text-lg font-bold mb-2">No routes available</p>
+                                                <p className="text-brand-primary/70 text-sm">
+                                                    No routes are currently configured for this student's school.
                                                 </p>
                                             </div>
                                         ) : (
-                                            <div className="space-y-4">
-                                                {filteredRoutes.map((route) => (
-                                                <label
-                                                    key={route.id}
-                                                    className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                        data.route_id == route.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                    }`}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        name="route_id"
-                                                        value={route.id}
-                                                        checked={data.route_id == route.id}
-                                                        onChange={(e) => setData('route_id', e.target.value)}
-                                                        className="mr-3"
-                                                    />
-                                                    <div className="flex justify-between items-start">
-                                                        <div className="flex-1">
-                                                            <span className="font-bold text-white">{route.name}</span>
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">
-                                                                Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
-                                                            </p>
-                                                            {(route.pickup_time || route.dropoff_time) && (
-                                                                <div className="mt-2 space-y-1">
-                                                                    {route.pickup_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Pickup: <span className="font-bold text-white">{formatTime(route.pickup_time)}</span>
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                                {filteredRoutes.map((route) => {
+                                                    const isSelected = data.route_id == route.id;
+                                                    return (
+                                                        <label
+                                                            key={route.id}
+                                                            className={`group relative flex cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
+                                                                isSelected
+                                                                    ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.02]'
+                                                                    : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="route_id"
+                                                                value={route.id}
+                                                                checked={isSelected}
+                                                                onChange={(e) => setData('route_id', e.target.value)}
+                                                                className="sr-only"
+                                                            />
+                                                            {isSelected && (
+                                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                            )}
+                                                            <div className="flex-1 flex flex-col sm:flex-row gap-4 p-5 pl-6 min-w-0">
+                                                                <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                                                                    isSelected ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg' : 'bg-white/15 group-hover:bg-white/25'
+                                                                }`}>
+                                                                    <svg className={`w-7 h-7 ${isSelected ? '!text-brand-primary' : 'text-white/80'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                                    </svg>
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-lg font-extrabold text-white mb-1 pr-8">{route.name}</p>
+                                                                    {route.vehicle && (
+                                                                        <p className="text-sm text-white/75 font-medium mb-3">
+                                                                            {route.vehicle.make} {route.vehicle.model} · {route.vehicle.license_plate}
                                                                         </p>
                                                                     )}
-                                                                    {route.dropoff_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Dropoff: <span className="font-bold text-white">{formatTime(route.dropoff_time)}</span>
-                                                                        </p>
+                                                                    {(route.pickup_time || route.dropoff_time) && (
+                                                                        <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/10 border border-yellow-400/20">
+                                                                            {route.pickup_time && (
+                                                                                <span className="flex items-center gap-1.5 text-sm">
+                                                                                    <span className="w-2 h-2 rounded-full bg-green-400" />
+                                                                                    <span className="text-white/90 font-medium">Pickup</span>
+                                                                                    <span className="text-green-200 font-bold">{formatTime(route.pickup_time)}</span>
+                                                                                </span>
+                                                                            )}
+                                                                            {(route.pickup_time && route.dropoff_time) && (
+                                                                                <svg className="w-4 h-4 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                                                </svg>
+                                                                            )}
+                                                                            {route.dropoff_time && (
+                                                                                <span className="flex items-center gap-1.5 text-sm">
+                                                                                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                                                                                    <span className="text-white/90 font-medium">Dropoff</span>
+                                                                                    <span className="text-blue-200 font-bold">{formatTime(route.dropoff_time)}</span>
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
                                                                     )}
                                                                 </div>
+                                                                <div className="flex-shrink-0 self-start sm:self-center">
+                                                                    <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold border ${
+                                                                        route.available_seats > 0
+                                                                            ? 'bg-emerald-500/25 text-emerald-100 border-emerald-400/50'
+                                                                            : 'bg-red-500/25 text-red-100 border-red-400/50'
+                                                                    }`}>
+                                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                                        </svg>
+                                                                        {route.available_seats} seats
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {isSelected && (
+                                                                <div className="absolute top-4 right-4 w-7 h-7 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
+                                                                    <svg className="w-4 h-4 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </div>
                                                             )}
-                                                        </div>
-                                                        <div className="text-right ml-4">
-                                                            <span className={`text-sm px-2 py-1 rounded border font-semibold ${
-                                                                route.available_seats > 0
-                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
-                                                            }`}>
-                                                                {route.available_seats} seats available
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </label>
-                                                ))}
-                                                {errors.route_id && (
-                                                    <p className="text-red-300 text-sm font-semibold">{errors.route_id}</p>
-                                                )}
+                                                        </label>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        {errors.route_id && (
+                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
+                                                <p className="text-red-200 text-sm font-bold">{errors.route_id}</p>
                                             </div>
                                         )}
                                     </div>
@@ -470,19 +549,20 @@ export default function EditBooking({ booking, students, routes, price: initialP
 
                                 {/* Step 2: Enter Pickup Address */}
                                 {step === 2 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Pickup and Dropoff Location</h3>
-                                        
+                                    <div className="space-y-8">
+                                        <div>
+                                            <h3 className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-2">Where should we pick up?</h3>
+                                            <p className="text-sm text-brand-primary/70">Choose a stop from your route or enter a custom address</p>
+                                        </div>
+
                                         {selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 && (
-                                            <div className="mb-6">
-                                                <label className="block text-base font-bold text-white mb-3">
-                                                    Choose Pickup Option <span className="text-red-300">*</span>
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-4 mb-4">
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Pickup type</p>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         pickupOption === 'pickup_point'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -494,14 +574,32 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                                 setData('pickup_point_id', '');
                                                                 setData('pickup_address', '');
                                                             }}
-                                                            className="mr-3"
+                                                            className="sr-only"
                                                         />
-                                                        <span className="font-bold text-white">Select from Route</span>
+                                                        {pickupOption === 'pickup_point' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${pickupOption === 'pickup_point' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-6 h-6 ${pickupOption === 'pickup_point' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-base font-extrabold text-white">From route stop</p>
+                                                            <p className="text-xs text-white/70 mt-0.5">Choose a scheduled pickup point</p>
+                                                        </div>
+                                                        {pickupOption === 'pickup_point' && (
+                                                            <div className="ml-auto w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow">
+                                                                <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                     </label>
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                    <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         pickupOption === 'custom'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -512,83 +610,141 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                                 setPickupOption(e.target.value);
                                                                 setData('pickup_point_id', '');
                                                             }}
-                                                            className="mr-3"
+                                                            className="sr-only"
                                                         />
-                                                        <span className="font-bold text-white">Custom Address</span>
+                                                        {pickupOption === 'custom' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${pickupOption === 'custom' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-6 h-6 ${pickupOption === 'custom' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-base font-extrabold text-white">Custom address</p>
+                                                            <p className="text-xs text-white/70 mt-0.5">Enter your own pickup location</p>
+                                                        </div>
+                                                        {pickupOption === 'custom' && (
+                                                            <div className="ml-auto w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow">
+                                                                <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                     </label>
                                                 </div>
                                             </div>
                                         )}
 
                                         {pickupOption === 'pickup_point' && selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 ? (
-                                            <div className="space-y-4">
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Select Pickup Point <span className="text-red-300">*</span>
-                                                </label>
-                                                <div className="space-y-2">
-                                                    {selectedRoute.pickup_points.map((point) => (
-                                                        <label
-                                                            key={point.id}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                                data.pickup_point_id == point.id
-                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                            }`}
-                                                        >
-                                                            <input
-                                                                type="radio"
-                                                                name="pickup_point_id"
-                                                                value={point.id}
-                                                                checked={data.pickup_point_id == point.id}
-                                                                onChange={(e) => {
-                                                                    setData('pickup_point_id', e.target.value);
-                                                                    setData('pickup_address', point.address);
-                                                                }}
-                                                                className="mr-3"
-                                                            />
-                                                            <div className="flex-1">
-                                                                <span className="font-bold text-white">{point.name}</span>
-                                                                <p className="text-sm text-white/90 mt-1 font-semibold">{point.address}</p>
-                                                                <div className="mt-2 space-y-1">
-                                                                    {point.pickup_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Pickup: <span className="font-bold text-white">{formatTime(point.pickup_time)}</span>
-                                                                        </p>
-                                                                    )}
-                                                                    {point.dropoff_time && (
-                                                                        <p className="text-xs text-white/90">
-                                                                            Dropoff: <span className="font-bold text-white">{formatTime(point.dropoff_time)}</span>
-                                                                        </p>
-                                                                    )}
+                                            <div>
+                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Select a stop</p>
+                                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                                    {selectedRoute.pickup_points.map((point) => {
+                                                        const isSelected = data.pickup_point_id == point.id;
+                                                        return (
+                                                            <label
+                                                                key={point.id}
+                                                                className={`group relative flex cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
+                                                                    isSelected
+                                                                        ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.01]'
+                                                                        : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
+                                                                }`}
+                                                            >
+                                                                <input
+                                                                    type="radio"
+                                                                    name="pickup_point_id"
+                                                                    value={point.id}
+                                                                    checked={isSelected}
+                                                                    onChange={(e) => {
+                                                                        setData('pickup_point_id', e.target.value);
+                                                                        setData('pickup_address', point.address);
+                                                                    }}
+                                                                    className="sr-only"
+                                                                />
+                                                                {isSelected && (
+                                                                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                                )}
+                                                                <div className="flex-1 flex gap-4 p-5 pl-6 min-w-0">
+                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${isSelected ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                                        <svg className={`w-6 h-6 ${isSelected ? '!text-brand-primary' : 'text-white/80'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0 pr-8">
+                                                                        <p className="text-base font-extrabold text-white mb-1">{point.name}</p>
+                                                                        <p className="text-sm text-white/75">{point.address}</p>
+                                                                        {(point.pickup_time || point.dropoff_time) && (
+                                                                            <div className="flex flex-wrap items-center gap-2 mt-2 p-2 rounded-lg bg-black/10 border border-yellow-400/20">
+                                                                                {point.pickup_time && (
+                                                                                    <span className="flex items-center gap-1 text-xs">
+                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                                                                                        <span className="text-green-200 font-bold">{formatTime(point.pickup_time)}</span>
+                                                                                    </span>
+                                                                                )}
+                                                                                {point.dropoff_time && (
+                                                                                    <span className="flex items-center gap-1 text-xs">
+                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                                                                                        <span className="text-blue-200 font-bold">{formatTime(point.dropoff_time)}</span>
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </label>
-                                                    ))}
+                                                                {isSelected && (
+                                                                    <div className="absolute top-4 right-4 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
+                                                                        <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                        </svg>
+                                                                    </div>
+                                                                )}
+                                                            </label>
+                                                        );
+                                                    })}
                                                 </div>
                                                 {errors.pickup_point_id && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_point_id}</p>
+                                                    <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
+                                                        <p className="text-red-200 text-sm font-bold">{errors.pickup_point_id}</p>
+                                                    </div>
                                                 )}
                                             </div>
                                         ) : (
-                                            <div className="space-y-4">
-                                                <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
-                                                        Pickup Address <span className="text-red-300">*</span>
-                                                    </label>
+                                            <div className="rounded-2xl border-2 border-yellow-400/60 bg-white/5 overflow-hidden">
+                                                <div className="flex items-center gap-3 p-4 border-b border-yellow-400/30 bg-white/5">
+                                                    <div className="w-10 h-10 rounded-xl bg-yellow-400/20 flex items-center justify-center">
+                                                        <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-extrabold text-white">Pickup address</p>
+                                                        <p className="text-xs text-white/70">Full street address for daily pickup</p>
+                                                    </div>
+                                                </div>
+                                                <div className="p-5">
                                                     <textarea
                                                         value={data.pickup_address}
                                                         onChange={(e) => setData('pickup_address', e.target.value)}
-                                                        placeholder="Enter the full address where the student will be picked up"
-                                                        rows={3}
-                                                        className="block w-full glass-input text-white"
+                                                        placeholder="e.g. 123 Main St, City, State ZIP"
+                                                        rows={4}
+                                                        className="block w-full p-4 rounded-xl border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
                                                         required={pickupOption === 'custom'}
                                                     />
-                                                    {errors.pickup_address && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_address}</p>
-                                                    )}
-                                                    <p className="text-sm text-white/80 mt-2 font-semibold">
-                                                        This address will be used for daily pickup. Make sure it's accurate and complete.
+                                                    <p className="mt-3 flex items-center gap-2 text-xs text-white/70">
+                                                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        This address will be used for daily pickup.
                                                     </p>
+                                                    {errors.pickup_address && (
+                                                        <div className="mt-3 p-3 bg-red-500/20 border border-red-400/50 rounded-xl">
+                                                            <p className="text-red-200 text-sm font-bold">{errors.pickup_address}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         )}
@@ -597,71 +753,118 @@ export default function EditBooking({ booking, students, routes, price: initialP
 
                                 {/* Step 3: Select Plan */}
                                 {step === 3 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Plan</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
-                                                <div className="space-y-4">
-                                                    {['weekly', 'monthly', 'academic_term', 'annual'].map((plan) => (
+                                    <div className="space-y-8">
+                                        <div>
+                                            <h3 className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-2">Choose your plan</h3>
+                                            <p className="text-sm text-brand-primary/70">Select duration, start date, and trip type</p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Plan duration</p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {[
+                                                    { id: 'weekly', label: 'Weekly', desc: 'Pay as you go' },
+                                                    { id: 'monthly', label: 'Monthly', desc: 'Most popular' },
+                                                    { id: 'academic_term', label: 'Academic Term', desc: 'Full term' },
+                                                    { id: 'annual', label: 'Annual', desc: 'Best value' },
+                                                ].map(({ id: plan, label, desc }) => {
+                                                    const isSelected = data.plan_type === plan;
+                                                    return (
                                                         <label
                                                             key={plan}
-                                                            className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                                data.plan_type === plan
-                                                                    ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                                    : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            className={`group relative flex flex-col cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
+                                                                isSelected
+                                                                    ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.02]'
+                                                                    : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400 hover:shadow-lg'
                                                             }`}
                                                         >
                                                             <input
                                                                 type="radio"
                                                                 name="plan_type"
                                                                 value={plan}
-                                                                checked={data.plan_type === plan}
+                                                                checked={isSelected}
                                                                 onChange={(e) => setData('plan_type', e.target.value)}
-                                                                className="mr-3"
+                                                                className="sr-only"
                                                             />
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="font-bold text-white capitalize">
-                                                                    {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', '-')}
-                                                                </span>
-                                                                {price && data.plan_type === plan && (
-                                                                    <span className="text-lg font-bold text-green-200">
-                                                                        {price.formatted}
-                                                                    </span>
+                                                            {isSelected && (
+                                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                            )}
+                                                            <div className="flex-1 p-5 pl-6 min-w-0">
+                                                                <div className={`inline-flex w-11 h-11 rounded-xl items-center justify-center mb-3 transition-all ${isSelected ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                                    <svg className={`w-5 h-5 ${isSelected ? '!text-brand-primary' : 'text-white/80'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                    </svg>
+                                                                </div>
+                                                                <p className="text-base font-extrabold text-white">{label}</p>
+                                                                <p className="text-xs text-white/70 mt-0.5">{desc}</p>
+                                                                {price && isSelected && (
+                                                                    <p className="mt-3 text-lg font-extrabold text-green-200">
+                                                                        {price.per_booking_formatted ?? price.formatted}
+                                                                    </p>
                                                                 )}
                                                             </div>
+                                                            {isSelected && (
+                                                                <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
+                                                                    <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
                                                         </label>
-                                                    ))}
-                                                    {loading && <p className="text-white text-base font-semibold">Calculating price...</p>}
-                                                    {errors.plan_type && (
-                                                        <p className="text-red-300 text-sm font-semibold">{errors.plan_type}</p>
+                                                    );
+                                                })}
+                                            </div>
+                                            {loading && (
+                                                <div className="mt-4 p-4 rounded-xl bg-white/10 border border-yellow-400/50 flex items-center gap-3">
+                                                    <svg className="animate-spin w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                    </svg>
+                                                    <p className="text-white text-sm font-medium">Calculating price...</p>
+                                                </div>
+                                            )}
+                                            {errors.plan_type && (
+                                                <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
+                                                    <p className="text-red-200 text-sm font-bold">{errors.plan_type}</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="rounded-2xl border-2 border-yellow-400/60 bg-white/5 overflow-hidden">
+                                                <div className="flex items-center gap-3 p-4 border-b border-yellow-400/30 bg-white/5">
+                                                    <div className="w-10 h-10 rounded-xl bg-yellow-400/20 flex items-center justify-center">
+                                                        <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-extrabold text-white">Start date</p>
+                                                        <p className="text-xs text-white/70">When transport begins</p>
+                                                    </div>
+                                                </div>
+                                                <div className="p-4">
+                                                    <input
+                                                        type="date"
+                                                        value={data.start_date}
+                                                        onChange={(e) => setData('start_date', e.target.value)}
+                                                        min={new Date().toISOString().split('T')[0]}
+                                                        className="block w-full p-3 rounded-xl border-2 border-yellow-400/70 bg-white/10 text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition backdrop-blur-sm font-medium"
+                                                        required
+                                                    />
+                                                    {errors.start_date && (
+                                                        <p className="mt-2 text-red-300 text-sm font-bold">{errors.start_date}</p>
                                                     )}
                                                 </div>
                                             </div>
+
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Start Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={data.start_date}
-                                                    onChange={(e) => setData('start_date', e.target.value)}
-                                                    min={new Date().toISOString().split('T')[0]}
-                                                    className="block w-full glass-input text-white"
-                                                    required
-                                                />
-                                                {errors.start_date && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.start_date}</p>
-                                                )}
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-base font-bold text-white mb-2">
-                                                    Trip Type *
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Trip type</p>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         data.trip_type === 'one_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -669,14 +872,32 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                             value="one_way"
                                                             checked={data.trip_type === 'one_way'}
                                                             onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
+                                                            className="sr-only"
                                                         />
-                                                        <span className="font-bold text-white">One Way</span>
+                                                        {data.trip_type === 'one_way' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_type === 'one_way' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-4 h-4 ${data.trip_type === 'one_way' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-extrabold text-white">One way</p>
+                                                            <p className="text-xs text-white/60">AM or PM only</p>
+                                                        </div>
+                                                        {data.trip_type === 'one_way' && (
+                                                            <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                     </label>
-                                                    <label className={`block p-4 border rounded-lg cursor-pointer transition ${
+                                                    <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
                                                         data.trip_type === 'two_way'
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                            : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
                                                     }`}>
                                                         <input
                                                             type="radio"
@@ -684,40 +905,104 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                             value="two_way"
                                                             checked={data.trip_type === 'two_way'}
                                                             onChange={(e) => setData('trip_type', e.target.value)}
-                                                            className="mr-3"
+                                                            className="sr-only"
                                                         />
-                                                        <span className="font-bold text-white">Two Way</span>
+                                                        {data.trip_type === 'two_way' && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                        )}
+                                                        <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_type === 'two_way' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                            <svg className={`w-4 h-4 ${data.trip_type === 'two_way' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-extrabold text-white">Two way</p>
+                                                            <p className="text-xs text-white/60">AM & PM</p>
+                                                        </div>
+                                                        {data.trip_type === 'two_way' && (
+                                                            <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
                                                     </label>
                                                 </div>
                                                 {errors.trip_type && (
-                                                    <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_type}</p>
+                                                    <p className="mt-2 text-red-300 text-sm font-bold">{errors.trip_type}</p>
                                                 )}
                                             </div>
+
                                             {data.trip_type === 'one_way' && (
                                                 <div className="md:col-span-2">
-                                                    <label className="block text-base font-bold text-white mb-2">Service</label>
-                                                    <p className="text-sm text-white/70 mb-2">One way: choose pickup only or dropoff only</p>
+                                                    <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Service</p>
+                                                    <p className="text-xs text-white/60 mb-3">One way: choose pickup only or dropoff only</p>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                        {['pickup_only', 'dropoff_only'].map((value) => (
-                                                            <label key={value} className={`block p-4 border rounded-lg cursor-pointer transition ${
-                                                                data.trip_direction === value ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm' : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
-                                                            }`}>
-                                                                <input
-                                                                    type="radio"
-                                                                    name="trip_direction"
-                                                                    value={value}
-                                                                    checked={data.trip_direction === value}
-                                                                    onChange={(e) => setData('trip_direction', e.target.value)}
-                                                                    className="mr-3"
-                                                                />
-                                                                <span className="font-bold text-white">
-                                                                    {value === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
-                                                                </span>
-                                                            </label>
-                                                        ))}
+                                                        <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                                                            data.trip_direction === 'pickup_only'
+                                                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                                : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
+                                                        }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="trip_direction"
+                                                                value="pickup_only"
+                                                                checked={data.trip_direction === 'pickup_only'}
+                                                                onChange={(e) => setData('trip_direction', e.target.value)}
+                                                                className="sr-only"
+                                                            />
+                                                            {data.trip_direction === 'pickup_only' && (
+                                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                            )}
+                                                            <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_direction === 'pickup_only' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                                <svg className={`w-4 h-4 ${data.trip_direction === 'pickup_only' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                </svg>
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="text-sm font-extrabold text-white">Pickup only</p>
+                                                                <p className="text-xs text-white/60">To school (AM)</p>
+                                                            </div>
+                                                            {data.trip_direction === 'pickup_only' && (
+                                                                <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                    <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                                </div>
+                                                            )}
+                                                        </label>
+                                                        <label className={`group relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                                                            data.trip_direction === 'dropoff_only'
+                                                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 to-yellow-500/15 shadow-lg ring-2 ring-yellow-400/40'
+                                                                : 'border-yellow-400/60 bg-white/5 hover:bg-white/10 hover:border-yellow-400'
+                                                        }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="trip_direction"
+                                                                value="dropoff_only"
+                                                                checked={data.trip_direction === 'dropoff_only'}
+                                                                onChange={(e) => setData('trip_direction', e.target.value)}
+                                                                className="sr-only"
+                                                            />
+                                                            {data.trip_direction === 'dropoff_only' && (
+                                                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                                                            )}
+                                                            <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${data.trip_direction === 'dropoff_only' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-white/15 group-hover:bg-white/25'}`}>
+                                                                <svg className={`w-4 h-4 ${data.trip_direction === 'dropoff_only' ? '!text-brand-primary' : 'text-white/70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                                </svg>
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="text-sm font-extrabold text-white">Dropoff only</p>
+                                                                <p className="text-xs text-white/60">From school (PM)</p>
+                                                            </div>
+                                                            {data.trip_direction === 'dropoff_only' && (
+                                                                <div className="ml-auto w-5 h-5 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                                                    <svg className="w-2.5 h-2.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                                                </div>
+                                                            )}
+                                                        </label>
                                                     </div>
                                                     {errors.trip_direction && (
-                                                        <p className="text-red-300 text-sm mt-1 font-semibold">{errors.trip_direction}</p>
+                                                        <p className="mt-2 text-red-300 text-sm font-bold">{errors.trip_direction}</p>
                                                     )}
                                                 </div>
                                             )}
@@ -727,102 +1012,158 @@ export default function EditBooking({ booking, students, routes, price: initialP
 
                                 {/* Step 4: Review */}
                                 {step === 4 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Review Your Booking</h3>
-                                        
-                                        {/* Display general form errors */}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h3 className="text-2xl font-extrabold text-brand-primary mb-2">Review Your Booking</h3>
+                                            <p className="text-sm text-brand-primary/70">Please review all details before saving changes</p>
+                                        </div>
+
                                         {Object.keys(errors).length > 0 && (
-                                            <div className="bg-red-500/30 border border-red-400/50 p-4 rounded-lg mb-4">
-                                                <p className="text-white font-bold mb-2">Please fix the following errors:</p>
-                                                <ul className="list-disc list-inside space-y-1">
+                                            <div className="bg-red-500/20 border-2 border-red-400/50 p-5 rounded-xl mb-6">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <svg className="w-6 h-6 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <p className="text-white font-extrabold">Please fix the following errors:</p>
+                                                </div>
+                                                <ul className="list-disc list-inside space-y-1 ml-2">
                                                     {Object.entries(errors).map(([key, message]) => (
                                                         <li key={key} className="text-red-100 text-sm font-semibold">{message}</li>
                                                     ))}
                                                 </ul>
                                             </div>
                                         )}
-                                        
-                                        <div className="bg-white/10 backdrop-blur-sm border border-white/30 p-6 rounded-lg space-y-4">
-                                            <div>
-                                                <span className="font-bold text-white">Student:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{students.find(s => s.id == data.student_id)?.name}</span>
+
+                                        <div className="bg-gradient-to-br from-white/15 to-white/10 border-2 border-yellow-400/60 p-8 rounded-xl space-y-6 shadow-lg">
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Student</p>
+                                                    <p className="text-lg font-extrabold text-white">{booking?.student?.name}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <span className="font-bold text-white">Route:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{selectedRoute?.name}</span>
-                                                {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
-                                                    <div className="mt-1 ml-4 space-y-0.5">
-                                                        {selectedRoute.pickup_time && (
-                                                            <p className="text-xs text-white/90">
-                                                                Pickup: <span className="font-bold text-white">{formatTime(selectedRoute.pickup_time)}</span>
+
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                                    </svg>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Route</p>
+                                                    <p className="text-lg font-extrabold text-white mb-2">{selectedRoute?.name}</p>
+                                                    {selectedRoute && (selectedRoute.pickup_time || selectedRoute.dropoff_time) && (
+                                                        <div className="flex flex-wrap gap-4 text-xs text-white/70 mt-2">
+                                                            {selectedRoute.pickup_time && (
+                                                                <span className="flex items-center gap-1.5">
+                                                                    <svg className="w-3.5 h-3.5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                    </svg>
+                                                                    Pickup: <span className="font-bold text-green-200">{formatTime(selectedRoute.pickup_time)}</span>
+                                                                </span>
+                                                            )}
+                                                            {selectedRoute.dropoff_time && (
+                                                                <span className="flex items-center gap-1.5">
+                                                                    <svg className="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                    </svg>
+                                                                    Dropoff: <span className="font-bold text-blue-200">{formatTime(selectedRoute.dropoff_time)}</span>
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Pickup Location</p>
+                                                    <p className="text-lg font-extrabold text-white">
+                                                        {data.pickup_point_id
+                                                            ? (() => {
+                                                                const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
+                                                                return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
+                                                              })()
+                                                            : data.pickup_address || 'Not set'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                                                        <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                        </svg>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Plan</p>
+                                                        <p className="text-base font-extrabold text-white">
+                                                            {data.plan_type === 'academic_term' ? 'Academic Term' : (data.plan_type || '').replace('_', '-')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                                                        <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                        </svg>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Trip Type</p>
+                                                        <p className="text-base font-extrabold text-white">
+                                                            {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {data.trip_type === 'one_way' && (
+                                                    <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                                                            <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Service</p>
+                                                            <p className="text-base font-extrabold text-white">
+                                                                {data.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
                                                             </p>
-                                                        )}
-                                                        {selectedRoute.dropoff_time && (
-                                                            <p className="text-xs text-white/90">
-                                                                Dropoff: <span className="font-bold text-white">{formatTime(selectedRoute.dropoff_time)}</span>
-                                                            </p>
-                                                        )}
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
-                                            <div>
-                                                <span className="font-bold text-white">Pickup Location:</span>{' '}
-                                                <span className="text-white/90 font-semibold">
-                                                    {data.pickup_point_id 
-                                                        ? (() => {
-                                                            const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
-                                                            return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
-                                                          })()
-                                                        : data.pickup_address || 'Not set'}
-                                                </span>
-                                                {data.pickup_point_id && (() => {
-                                                    const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
-                                                    return selectedPoint && (selectedPoint.pickup_time || selectedPoint.dropoff_time) ? (
-                                                        <div className="mt-1 ml-4 space-y-0.5">
-                                                            {selectedPoint.pickup_time && (
-                                                                <p className="text-xs text-white/90">
-                                                                    Pickup: <span className="font-bold text-white">{formatTime(selectedPoint.pickup_time)}</span>
-                                                                </p>
-                                                            )}
-                                                            {selectedPoint.dropoff_time && (
-                                                                <p className="text-xs text-white/90">
-                                                                    Dropoff: <span className="font-bold text-white">{formatTime(selectedPoint.dropoff_time)}</span>
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    ) : null;
-                                                })()}
-                                            </div>
-                                            <div>
-                                                <span className="font-bold text-white">Plan:</span>{' '}
-                                                <span className="text-white/90 font-semibold">
-                                                    {data.plan_type === 'academic_term' ? 'Academic Term' : data.plan_type.replace('_', '-').toUpperCase()}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <span className="font-bold text-white">Trip Type:</span>{' '}
-                                                <span className="text-white/90 font-semibold">
-                                                    {data.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
-                                                </span>
-                                            </div>
-                                            {data.trip_type === 'one_way' && (
-                                                <div>
-                                                    <span className="font-bold text-white">Service:</span>{' '}
-                                                    <span className="text-white/90 font-semibold">
-                                                        {data.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
-                                                    </span>
+
+                                            <div className="flex items-start gap-4 p-4 bg-white/10 rounded-xl border border-yellow-400/50">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
                                                 </div>
-                                            )}
-                                            <div>
-                                                <span className="font-bold text-white">Start Date:</span>{' '}
-                                                <span className="text-white/90 font-semibold">{new Date(data.start_date).toLocaleDateString()}</span>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-bold text-white/70 uppercase tracking-wide mb-1">Start Date</p>
+                                                    <p className="text-lg font-extrabold text-white">{new Date(data.start_date).toLocaleDateString()}</p>
+                                                </div>
                                             </div>
+
                                             {price && (
-                                                <div className="border-t border-yellow-400/40 pt-4">
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-lg font-bold text-white">Total:</span>
-                                                        <span className="text-2xl font-extrabold text-green-200">
-                                                            {price.formatted}
+                                                <div className="border-t-2 border-yellow-400/50 pt-6 mt-6">
+                                                    {price.discount_label && (
+                                                        <p className="mb-2 text-sm font-semibold text-yellow-300">{price.discount_label} applied</p>
+                                                    )}
+                                                    <div className="flex justify-between items-center p-5 bg-gradient-to-r from-green-500/20 to-green-500/10 rounded-xl border-2 border-green-400/30">
+                                                        <span className="text-xl font-extrabold text-white">Total Amount:</span>
+                                                        <span className="text-3xl font-extrabold text-green-200">
+                                                            {price.total_formatted ?? price.formatted}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -831,28 +1172,51 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                     </div>
                                 )}
 
-                                {/* Navigation Buttons */}
-                                <div className="flex justify-between mt-8">
+                                {/* Navigation Buttons - match Create */}
+                                <div className="flex justify-between items-center mt-10 pt-8 border-t-2 border-yellow-400/40">
                                     <button
                                         type="button"
                                         onClick={prevStep}
-                                        className="px-4 py-2 rounded font-bold transition bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30"
+                                        className="px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 bg-white/10 border-2 border-yellow-400/60 text-white hover:bg-white/20 hover:scale-105"
                                     >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                        </svg>
                                         {step === 1 ? 'Back' : 'Previous'}
                                     </button>
                                     {step < 4 ? (
                                         <GlassButton
                                             type="button"
                                             onClick={nextStep}
+                                            className="px-8 py-3 rounded-xl font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-brand-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all flex items-center gap-2"
                                         >
                                             Next
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
                                         </GlassButton>
                                     ) : (
                                         <GlassButton
                                             type="submit"
                                             disabled={processing}
+                                            className="px-8 py-3 rounded-xl font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-brand-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                                         >
-                                            {processing ? 'Updating...' : 'Update Booking'}
+                                            {processing ? (
+                                                <>
+                                                    <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Updating...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Update Booking
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </>
+                                            )}
                                         </GlassButton>
                                     )}
                                 </div>
