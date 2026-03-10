@@ -13,8 +13,15 @@ use Inertia\Inertia;
 
 // Serve profile pictures through Laravel (works even when public/storage symlink is missing on Forge)
 Route::get('/profile-pictures/{path}', function (string $path) {
-    $path = ltrim($path, '/');
-    if ($path === '' || !Storage::disk('public')->exists($path)) {
+    $path = ltrim(rawurldecode($path), '/');
+    if ($path === '') {
+        abort(404);
+    }
+    // Stored paths are "profile-pictures/filename.jpg"; support both that and bare "filename.jpg"
+    if (!Storage::disk('public')->exists($path) && !str_starts_with($path, 'profile-pictures/')) {
+        $path = 'profile-pictures/' . $path;
+    }
+    if (!Storage::disk('public')->exists($path)) {
         abort(404);
     }
     $fullPath = Storage::disk('public')->path($path);

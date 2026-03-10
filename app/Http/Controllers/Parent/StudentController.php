@@ -116,7 +116,8 @@ class StudentController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            $filename = 'student_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
+            $filename = 'student_' . time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
         } else {
             unset($validated['profile_picture']);
@@ -210,7 +211,8 @@ class StudentController extends Controller
                 Storage::disk('public')->delete($student->profile_picture);
             }
             $file = $request->file('profile_picture');
-            $filename = 'student_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
+            $filename = 'student_' . time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
         } else {
             unset($validated['profile_picture']);

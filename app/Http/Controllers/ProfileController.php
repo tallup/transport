@@ -47,7 +47,8 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->profile_picture);
             }
             $file = $request->file('profile_picture');
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
+            $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
             $user->profile_picture = $file->storeAs('profile-pictures', $filename, 'public');
         }
 

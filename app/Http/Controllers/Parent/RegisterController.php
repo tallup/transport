@@ -56,7 +56,8 @@ class RegisterController extends Controller
         // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
+            $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
             $path = $file->storeAs('profile-pictures', $filename, 'public');
             $userData['profile_picture'] = $path;
         }
