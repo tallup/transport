@@ -22,12 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
-        $middleware->redirectGuestsTo(function (\Illuminate\Http\Request $request) {
-            $hasSessionCookie = $request->cookies->has(config('session.cookie'));
-            return $hasSessionCookie
-                ? route('login', ['expired' => 1])
-                : route('login');
-        });
+        $middleware->redirectGuestsTo(fn () => route('login'));
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
@@ -46,10 +41,20 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (TokenMismatchException $e, $request) {
-            $loginWithMessage = route('login', ['expired' => 1]);
+            // CSRF mismatch on the login form → just reload the form with a fresh token
+            if ($request->is('login') || $request->routeIs('login')) {
+                $loginUrl = route('login');
+                if ($request->header('X-Inertia')) {
+                    return Inertia::location($loginUrl);
+                }
+                return redirect($loginUrl);
+            }
+
+            // CSRF mismatch elsewhere → session genuinely expired
+            $loginExpired = route('login', ['expired' => 1]);
 
             if ($request->header('X-Inertia')) {
-                return Inertia::location($loginWithMessage);
+                return Inertia::location($loginExpired);
             }
 
             if ($request->expectsJson()) {
@@ -58,6 +63,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 419);
             }
 
-            return redirect($loginWithMessage);
+            return redirect($loginExpired);
         });
     })->create();

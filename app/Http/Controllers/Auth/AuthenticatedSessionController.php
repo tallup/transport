@@ -54,7 +54,7 @@ class AuthenticatedSessionController extends Controller
         // Clear any intended URL to prevent redirecting to wrong portal
         $request->session()->forget('url.intended');
         
-        if (in_array($role, ['super_admin', 'transport_admin'])) {
+        if (in_array($role, ['super_admin', 'transport_admin', 'admin'])) {
             return redirect()->route('admin.dashboard');
         }
         

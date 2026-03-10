@@ -93,8 +93,8 @@ Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->grou
     Route::get('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
 });
 
-// Admin Routes
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin Routes (admin accounts are created by the system; no email verification required)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Redirect /admin to /admin/dashboard
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');
@@ -136,8 +136,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/bookings/{booking}/refund', [\App\Http\Controllers\Admin\BookingController::class, 'refund'])->name('bookings.refund');
 });
 
-// Driver Routes
-Route::middleware(['auth', 'verified', 'driver'])->prefix('driver')->name('driver.')->group(function () {
+// Driver Routes (driver accounts are created by admins; no email verification required)
+Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(function () {
     // Redirect /driver to /driver/dashboard
     Route::get('/', function () {
         return redirect()->route('driver.dashboard');
