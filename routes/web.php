@@ -59,8 +59,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Parent Portal Routes (no 'verified' — approved parents can access without email verification)
-Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function () {
+// Parent Portal Routes (require email verification)
+Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Students
@@ -94,7 +94,7 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
 });
 
 // Admin Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Redirect /admin to /admin/dashboard
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');
@@ -137,7 +137,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // Driver Routes
-Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(function () {
+Route::middleware(['auth', 'verified', 'driver'])->prefix('driver')->name('driver.')->group(function () {
     // Redirect /driver to /driver/dashboard
     Route::get('/', function () {
         return redirect()->route('driver.dashboard');
@@ -155,7 +155,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -185,7 +185,7 @@ Route::get('/faq', function (Request $request) {
 })->name('faq');
 
 // Keep-alive endpoint to prevent session expiration during active use
-Route::middleware(['auth'])->get('/api/keep-alive', function (Request $request) {
+Route::middleware(['auth', 'verified'])->get('/api/keep-alive', function (Request $request) {
     // This endpoint simply touches the session to keep it alive
     // Return minimal response
     return response()->json(['status' => 'ok'], 200);
