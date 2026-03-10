@@ -26,6 +26,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // New registrations are parents and redirect to parent dashboard
+        $response->assertRedirect(route('parent.dashboard', absolute: false));
     }
 }

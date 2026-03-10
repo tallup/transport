@@ -118,19 +118,28 @@ return new class extends Migration
         }
 
         // Re-add unique constraint with period included
-        // Check if it already exists first
-        $indexExists = DB::select("
-            SELECT COUNT(*) as count 
-            FROM information_schema.statistics 
-            WHERE table_schema = ? 
-            AND table_name = 'route_completions' 
-            AND index_name = 'unique_route_driver_date_period'
-        ", [DB::connection()->getDatabaseName()]);
-
-        if (isset($indexExists[0]) && $indexExists[0]->count == 0) {
-            Schema::table('route_completions', function (Blueprint $table) {
-                $table->unique(['route_id', 'driver_id', 'completion_date', 'period'], 'unique_route_driver_date_period');
-            });
+        if ($driverName === 'mysql' || $driverName === 'mariadb') {
+            $indexExists = DB::select("
+                SELECT COUNT(*) as count
+                FROM information_schema.statistics
+                WHERE table_schema = ?
+                AND table_name = 'route_completions'
+                AND index_name = 'unique_route_driver_date_period'
+            ", [DB::connection()->getDatabaseName()]);
+            if (isset($indexExists[0]) && $indexExists[0]->count == 0) {
+                Schema::table('route_completions', function (Blueprint $table) {
+                    $table->unique(['route_id', 'driver_id', 'completion_date', 'period'], 'unique_route_driver_date_period');
+                });
+            }
+        } else {
+            // SQLite, PostgreSQL, etc.: try to add; ignore if already exists
+            try {
+                Schema::table('route_completions', function (Blueprint $table) {
+                    $table->unique(['route_id', 'driver_id', 'completion_date', 'period'], 'unique_route_driver_date_period');
+                });
+            } catch (\Exception $e) {
+                \Log::warning('Could not add unique_route_driver_date_period (may already exist): ' . $e->getMessage());
+            }
         }
     }
 

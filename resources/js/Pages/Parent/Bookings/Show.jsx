@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import StatusBadge from '@/Components/StatusBadge';
 import { useState, useEffect } from 'react';
 
 export default function ShowBooking({ booking, price, dailyPickups }) {
@@ -47,13 +48,6 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         } catch (e) {
             return timeString;
         }
-    };
-
-    const formatStatus = (status) => {
-        if (status === 'awaiting_approval') {
-            return 'AWAITING APPROVAL';
-        }
-        return status.toUpperCase();
     };
 
     return (
@@ -116,16 +110,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
 
                     {/* Status Badge */}
                     <div className="mb-6">
-                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm ${
-                            booking.status === 'active' ? 'bg-green-500/30 text-brand-primary border border-green-400/50' :
-                            booking.status === 'pending' ? 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50' :
-                            booking.status === 'awaiting_approval' ? 'bg-amber-500/30 text-brand-primary border border-amber-400/50' :
-                            booking.status === 'cancelled' ? 'bg-red-500/30 text-brand-primary border border-red-400/50' :
-                            booking.status === 'completed' ? 'bg-blue-500/30 text-brand-primary border border-blue-400/50' :
-                            'bg-gray-500/30 text-brand-primary border border-gray-400/50'
-                        }`}>
-                            {formatStatus(booking.status)}
-                        </span>
+                        <StatusBadge type="booking" status={booking.status} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm" />
                     </div>
 
                     {booking.status === 'awaiting_approval' && (

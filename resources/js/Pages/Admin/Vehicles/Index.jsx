@@ -1,6 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
+import PaginationLinks from '@/Components/PaginationLinks';
+import StatusBadge from '@/Components/StatusBadge';
 import { useState } from 'react';
 
 export default function Index({ vehicles }) {
@@ -13,19 +15,6 @@ export default function Index({ vehicles }) {
             router.delete(`/admin/vehicles/${id}`, {
                 onFinish: () => setDeleting(null),
             });
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-500/30 text-brand-primary border border-green-400/50';
-            case 'maintenance':
-                return 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50';
-            case 'retired':
-                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
-            default:
-                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
         }
     };
 
@@ -70,9 +59,7 @@ export default function Index({ vehicles }) {
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getStatusColor(vehicle.status)}`}>
-                                            {vehicle.status}
-                                        </span>
+                                        <StatusBadge type="vehicle" status={vehicle.status} />
                                     </div>
 
                                     {/* Card Content */}
@@ -135,34 +122,7 @@ export default function Index({ vehicles }) {
                         </GlassCard>
                     )}
 
-                    {vehicles.links && (
-                        <div className="mt-8 flex justify-center">
-                            <div className="flex gap-2">
-                                {vehicles.links.map((link, index) => {
-                                    const baseClass = `px-4 py-2.5 rounded-xl font-bold text-sm ${
-                                        link.active
-                                            ? 'bg-yellow-400/35 text-brand-primary border-2 border-yellow-400 shadow-sm'
-                                            : 'bg-yellow-400/20 text-white border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400'
-                                    } ${!link.url ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`;
-                                    return link.url ? (
-                                        <button
-                                            key={index}
-                                            type="button"
-                                            onClick={() => router.get(link.url)}
-                                            className={baseClass}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                        />
-                                    ) : (
-                                        <span
-                                            key={index}
-                                            className={baseClass}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
+                    <PaginationLinks links={vehicles.links} />
                 </div>
             </div>
         </AdminLayout>

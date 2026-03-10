@@ -3,14 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import StatusBadge from '@/Components/StatusBadge';
 
 export default function Dashboard({ 
     students, 
-    bookings, 
     activeBookings, 
     activeBookingsCount,
     upcomingPickups, 
-    paymentHistory, 
     transportHistory,
     notifications,
     notificationsUnreadCount = 0,
@@ -326,14 +325,7 @@ export default function Dashboard({
                                                                 <p className="text-base font-bold text-white group-hover:text-blue-200 transition">
                                                                     {booking.student}
                                                                 </p>
-                                                                <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                                                                    booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
-                                                                    booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                                                    booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
-                                                                    'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                                }`}>
-                                                                    {booking.status.toUpperCase()}
-                                                                </span>
+                                                                <StatusBadge type="booking" status={booking.status} variant="light" label={booking.status.replace(/_/g, ' ').toUpperCase()} className="px-2.5 py-1 text-xs font-semibold rounded-full" />
                                                             </div>
                                                             <p className="text-sm font-semibold text-white/80 mb-1">{booking.route}</p>
                                                             <p className="text-xs font-medium text-white/60">

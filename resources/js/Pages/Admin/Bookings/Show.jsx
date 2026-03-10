@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import StatusBadge from '@/Components/StatusBadge';
 
 export default function Show({ booking }) {
     const { auth, flash } = usePage().props;
@@ -18,10 +19,6 @@ export default function Show({ booking }) {
             setShowFlash(true);
         }
     }, [flash?.success, flash?.error]);
-
-    const formatStatus = (status) => {
-        return status.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
-    };
 
     const handleApprove = () => {
         if (confirm('Approve this booking and activate it?')) {
@@ -137,15 +134,7 @@ export default function Show({ booking }) {
                         {booking.status === 'pending' && (
                             <p className="text-sm text-yellow-200/90 mb-2">Parent must complete payment before this booking can be approved. You will be notified when payment is received.</p>
                         )}
-                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm ${
-                            booking.status === 'active' ? 'bg-green-500/30 text-green-200 border border-green-400/50' :
-                            booking.status === 'pending' || booking.status === 'awaiting_approval' ? 'bg-yellow-500/30 text-yellow-200 border border-yellow-400/50' :
-                            booking.status === 'cancelled' ? 'bg-red-500/30 text-red-200 border border-red-400/50' :
-                            booking.status === 'refunded' ? 'bg-emerald-600/30 text-emerald-200 border border-emerald-400/50' :
-                            'bg-gray-500/30 text-gray-200 border border-gray-400/50'
-                        }`}>
-                            {formatStatus(booking.status)}
-                        </span>
+                        <StatusBadge type="booking" status={booking.status} variant="light" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm" />
                     </div>
 
                     {/* Partial refund (when eligible) */}

@@ -1,6 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
+import PaginationLinks from '@/Components/PaginationLinks';
+import StatusBadge from '@/Components/StatusBadge';
 import { useState } from 'react';
 
 export default function Index({ bookings }) {
@@ -29,23 +31,6 @@ export default function Index({ bookings }) {
             router.post(`/admin/bookings/${id}/cancel`, {}, {
                 preserveScroll: true,
             });
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-500/30 text-brand-primary border border-green-400/50';
-            case 'pending':
-                return 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50';
-            case 'awaiting_approval':
-                return 'bg-amber-500/30 text-brand-primary border border-amber-400/50';
-            case 'cancelled':
-                return 'bg-red-500/30 text-brand-primary border border-red-400/50';
-            case 'expired':
-                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
-            default:
-                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
         }
     };
 
@@ -100,9 +85,7 @@ export default function Index({ bookings }) {
                                                 <p className="text-sm text-white/70 font-medium truncate">{booking.route?.name || 'No route'}</p>
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getStatusColor(booking.status)}`}>
-                                            {formatStatus(booking.status)}
-                                        </span>
+                                        <StatusBadge type="booking" status={booking.status} />
                                     </div>
 
                                     {/* Card Content */}
@@ -189,34 +172,7 @@ export default function Index({ bookings }) {
                         </GlassCard>
                     )}
 
-                    {bookings.links && (
-                        <div className="mt-8 flex justify-center">
-                            <div className="flex gap-2">
-                                {bookings.links.map((link, index) => {
-                                    const baseClass = `px-4 py-2.5 rounded-xl font-bold text-sm ${
-                                        link.active
-                                            ? 'bg-yellow-400/35 text-brand-primary border-2 border-yellow-400 shadow-sm'
-                                            : 'bg-yellow-400/20 text-white border-2 border-yellow-400/80 hover:bg-yellow-400/30 hover:border-yellow-400'
-                                    } ${!link.url ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`;
-                                    return link.url ? (
-                                        <button
-                                            key={index}
-                                            type="button"
-                                            onClick={() => router.get(link.url)}
-                                            className={baseClass}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                        />
-                                    ) : (
-                                        <span
-                                            key={index}
-                                            className={baseClass}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
+                    <PaginationLinks links={bookings.links} />
                 </div>
             </div>
         </AdminLayout>

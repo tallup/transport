@@ -19,7 +19,9 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'registration_approved_at' => now(), // Parent users must be approved to log in
+        ]);
 
         $response = $this->post('/login', [
             'email' => $user->email,
@@ -27,7 +29,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // App redirects by role; factory user has no role so is treated as parent
+        $response->assertRedirect(route('parent.dashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

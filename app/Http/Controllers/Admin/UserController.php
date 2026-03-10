@@ -16,23 +16,25 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $validated = $request->validate([
+            'role' => 'nullable|in:parent,driver',
+            'search' => 'nullable|string|max:255',
+        ]);
+
         $query = User::query();
 
-        // Filter by role
-        if ($request->has('role') && $request->role !== '') {
-            $query->where('role', $request->role);
+        if (!empty($validated['role'])) {
+            $query->where('role', $validated['role']);
         }
 
-        // Search by name or email
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        // Only show parents and drivers (not admins)
         $query->whereIn('role', ['parent', 'driver']);
 
         $users = $query->orderBy('created_at', 'desc')
@@ -42,8 +44,8 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
             'filters' => [
-                'role' => $request->role ?? '',
-                'search' => $request->search ?? '',
+                'role' => $validated['role'] ?? '',
+                'search' => $validated['search'] ?? '',
             ],
         ]);
     }

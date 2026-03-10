@@ -25,7 +25,13 @@ class MessageController extends Controller
             $query->where('participant_1_id', $user->id)
                 ->orWhere('participant_2_id', $user->id);
         })
-            ->with(['participant1', 'participant2', 'booking', 'route'])
+            ->with([
+                'participant1',
+                'participant2',
+                'booking.student',
+                'route',
+                'messages' => fn ($q) => $q->latest()->limit(1),
+            ])
             ->withCount(['messages as unread_count' => function ($query) use ($user) {
                 $query->where('recipient_id', $user->id)->whereNull('read_at');
             }])
@@ -33,7 +39,7 @@ class MessageController extends Controller
             ->get()
             ->map(function ($thread) use ($user) {
                 $otherParticipant = $thread->getOtherParticipant($user);
-                $lastMessage = $thread->messages()->latest()->first();
+                $lastMessage = $thread->messages->first();
 
                 return [
                     'id' => $thread->id,

@@ -3,6 +3,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import ChartCard from '@/Components/ChartCard';
 import GlassButton from '@/Components/GlassButton';
+import StatusBadge from '@/Components/StatusBadge';
 import { LineChart, Line, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboard({
@@ -429,14 +430,7 @@ export default function AdminDashboard({
                                                         {booking.route?.name}
                                                     </td>
                                                     <td className="px-4 py-3">
-                                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${booking.status === 'active' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
-                                                                booking.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                                                    booking.status === 'awaiting_approval' ? 'bg-orange-500/30 text-orange-100 border-orange-400/50' :
-                                                                        booking.status === 'cancelled' ? 'bg-red-500/30 text-red-100 border-red-400/50' :
-                                                                            'bg-gray-500/30 text-gray-200 border-gray-400/50'
-                                                            }`}>
-                                                            {booking.status}
-                                                        </span>
+                                                        <StatusBadge type="booking" status={booking.status} variant="light" className="px-2 py-1 text-xs font-semibold rounded-full" />
                                                     </td>
                                                     <td className="px-4 py-3 text-base font-bold text-white/90">
                                                         {new Date(booking.created_at).toLocaleDateString()}

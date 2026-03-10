@@ -20,11 +20,13 @@ class DashboardController extends Controller
         $bookingService = app(BookingService::class);
         $bookingService->updateBookingStatuses();
         
-        $students = Student::where('parent_id', $user->id)->get();
-            
-        $bookings = Booking::whereIn('student_id', $students->pluck('id'))
+        $students = Student::where('parent_id', $user->id)->get(['id', 'name', 'parent_id', 'school_id']);
+        $studentIds = $students->pluck('id');
+
+        $bookings = Booking::whereIn('student_id', $studentIds)
             ->with(['student', 'route', 'pickupPoint'])
             ->orderBy('created_at', 'desc')
+            ->limit(100)
             ->get();
 
         // Active bookings: Include pending, awaiting approval, and active status
@@ -108,22 +110,6 @@ class DashboardController extends Controller
         });
         $upcomingPickups = array_slice($upcomingPickups, 0, 10); // Limit to 10
 
-        // Payment history (simplified - would need actual payment data)
-        $paymentHistory = [
-            [
-                'date' => Carbon::now()->subDays(5)->format('Y-m-d'),
-                'amount' => 150.00,
-                'status' => 'paid',
-                'description' => 'Monthly subscription',
-            ],
-            [
-                'date' => Carbon::now()->subDays(35)->format('Y-m-d'),
-                'amount' => 150.00,
-                'status' => 'paid',
-                'description' => 'Monthly subscription',
-            ],
-        ];
-
         // Transport history
         $transportHistory = $bookings->take(10)->map(function ($booking) {
             return [
@@ -151,11 +137,9 @@ class DashboardController extends Controller
 
         return Inertia::render('Parent/Dashboard', [
             'students' => $students,
-            'bookings' => $bookings,
-            'activeBookings' => $activeBookings->values()->all(), // Convert to array for Inertia
-            'activeBookingsCount' => $activeBookings->count(), // Explicit count for frontend
+            'activeBookings' => $activeBookings->values()->all(),
+            'activeBookingsCount' => $activeBookings->count(),
             'upcomingPickups' => $upcomingPickups,
-            'paymentHistory' => $paymentHistory,
             'transportHistory' => $transportHistory,
             'notifications' => $notifications,
             'notificationsUnreadCount' => $notificationsUnreadCount,

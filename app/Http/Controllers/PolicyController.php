@@ -24,10 +24,11 @@ class PolicyController extends Controller
     }
 
     /**
-     * Get a single policy.
+     * Get a single policy (active only).
      */
-    public function show(Policy $policy)
+    public function show(Request $request)
     {
+        $policy = Policy::active()->findOrFail($request->route('policy'));
         return response()->json($policy);
     }
 }

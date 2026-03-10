@@ -7,12 +7,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE bookings MODIFY COLUMN status ENUM('pending', 'awaiting_approval', 'active', 'cancelled', 'expired', 'completed') DEFAULT 'pending'");
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            DB::statement("ALTER TABLE bookings MODIFY COLUMN status ENUM('pending', 'awaiting_approval', 'active', 'cancelled', 'expired', 'completed') DEFAULT 'pending'");
+        }
+        // SQLite/PostgreSQL: status is already a string column; 'awaiting_approval' is valid. No schema change needed.
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE bookings MODIFY COLUMN status ENUM('pending', 'active', 'cancelled', 'expired', 'completed') DEFAULT 'pending'");
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            DB::statement("ALTER TABLE bookings MODIFY COLUMN status ENUM('pending', 'active', 'cancelled', 'expired', 'completed') DEFAULT 'pending'");
+        }
     }
 };
 

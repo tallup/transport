@@ -16,10 +16,14 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
+        $validated = $request->validate([
+            'status' => 'nullable|in:active,pending,awaiting_approval,completed,expired,cancelled',
+        ]);
+
         $query = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint']);
 
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
+        if (!empty($validated['status'])) {
+            $query->where('status', $validated['status']);
         }
 
         $bookings = $query->orderBy('created_at', 'desc')
@@ -28,7 +32,7 @@ class BookingController extends Controller
 
         return Inertia::render('Admin/Bookings/Index', [
             'bookings' => $bookings,
-            'filters' => $request->only(['status']),
+            'filters' => $validated,
         ]);
     }
 
