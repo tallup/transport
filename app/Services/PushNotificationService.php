@@ -13,6 +13,9 @@ class PushNotificationService
     protected $webPush;
     protected $isConfigured = false;
 
+    /** Log VAPID warning only once per process to avoid filling logs */
+    protected static bool $vapidWarningLogged = false;
+
     public function __construct()
     {
         $publicKey = config('services.webpush.public_key');
@@ -31,7 +34,10 @@ class PushNotificationService
             $this->webPush = new WebPush($auth);
             $this->isConfigured = true;
         } else {
-            Log::warning('Push notifications not configured: VAPID keys missing');
+            if (! static::$vapidWarningLogged) {
+                Log::warning('Push notifications not configured: VAPID keys missing');
+                static::$vapidWarningLogged = true;
+            }
         }
     }
 
