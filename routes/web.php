@@ -22,7 +22,12 @@ Route::get('/profile-pictures/{path}', function (string $path) {
         $path = 'profile-pictures/' . $path;
     }
     if (!Storage::disk('public')->exists($path)) {
-        abort(404);
+        // File missing (e.g. DB has path but file wasn't synced to server) – serve placeholder so no broken image
+        $placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
+        return response()->make($placeholderSvg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
     }
     $fullPath = Storage::disk('public')->path($path);
     $mime = match (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
