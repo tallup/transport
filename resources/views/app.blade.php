@@ -8,8 +8,20 @@
             <meta name="user-id" content="{{ auth()->id() }}">
         @endauth
 
-        <title inertia>{{ config('app.name', 'Student Transport System') }}</title>
-        
+        <title inertia>{{ config('app.name') }}</title>
+
+        <!-- SEO: default description (overridden per-page via Inertia Head) -->
+        <meta name="description" content="Punctual pickups and drop-offs with real-time tracking. Safe, reliable school transport. Flexible weekly and monthly plans. Marysville, Everett, Lynnwood.">
+        <meta name="robots" content="index, follow">
+
+        <!-- Open Graph / social -->
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ config('app.name') }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ config('app.name') }}">
+        <meta property="og:description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible plans. Safe, reliable school transport.">
+        <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
+
         <!-- PWA Manifest -->
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <meta name="theme-color" content="#22304d">

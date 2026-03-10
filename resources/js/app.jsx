@@ -39,7 +39,7 @@ if (document.querySelector('meta[name="user-id"]')) {
 }
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => (title ? `${title} | ${appName}` : appName),
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.jsx`,

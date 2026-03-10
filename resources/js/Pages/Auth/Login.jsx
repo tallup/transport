@@ -32,7 +32,9 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <div className="min-h-screen logo-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
-            <Head title="Sign In - On-Time Transportation" />
+            <Head title="Sign In">
+                <meta name="description" content="Sign in to your On-Time Transportation account. Manage bookings, students, and transport." />
+            </Head>
 
             <div className="w-full max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">

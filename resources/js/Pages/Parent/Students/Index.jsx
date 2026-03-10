@@ -49,7 +49,9 @@ export default function StudentsIndex({ students }) {
     
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="My Students" />
+            <Head title="My Students">
+                <meta name="description" content="Manage your registered students and their transport information. View bookings, emergency contacts, and student details." />
+            </Head>
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
