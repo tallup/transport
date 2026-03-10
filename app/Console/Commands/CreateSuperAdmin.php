@@ -45,7 +45,11 @@ class CreateSuperAdmin extends Command
         $existing = User::where('email', $email)->first();
 
         if ($existing) {
-            $existing->update(['role' => 'super_admin', 'name' => $name]);
+            $existing->update([
+                'role' => 'super_admin',
+                'name' => $name,
+                'email_verified_at' => now(), // so they can log in without clicking the verification link
+            ]);
             if ($password !== null && $password !== '') {
                 $existing->update(['password' => Hash::make($password)]);
                 $this->info('Password updated.');
