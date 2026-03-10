@@ -8,7 +8,7 @@ import { registerServiceWorker, subscribeToPushNotifications } from './utils/ser
 import offlineManager from './utils/offlineManager';
 import ErrorBoundary from './Components/ErrorBoundary';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'On-Time Transportation';
 
 // Refresh CSRF token before every non-GET request
 router.on('before', (event) => {
