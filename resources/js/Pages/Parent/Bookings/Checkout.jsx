@@ -1,4 +1,4 @@
-import { Head, useForm, usePage, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -138,20 +138,7 @@ function StripeCheckoutForm({ booking, price, stripeKey }) {
 }
 
 export default function Checkout({ booking, price, stripeKey }) {
-    const { post, processing } = useForm();
     const [stripePromise] = useState(() => (stripeKey ? loadStripe(stripeKey) : null));
-
-    const handleSkipPayment = async () => {
-        try {
-            await axios.get('/api/keep-alive', { headers: { 'X-Keep-Alive': 'true' } });
-        } catch (err) {
-            if (err?.response?.status === 419) {
-                window.location.href = '/login';
-                return;
-            }
-        }
-        post('/parent/bookings/skip-payment', { booking_id: booking.id });
-    };
 
     return (
         <AuthenticatedLayout>
@@ -201,24 +188,6 @@ export default function Checkout({ booking, price, stripeKey }) {
                                 ) : (
                                     <p className="text-red-500 font-semibold">Stripe is not configured. Please set STRIPE_KEY in your .env file.</p>
                                 )}
-                            </div>
-
-                            {/* Skip Payment Option */}
-                            <div className="mt-6 pt-6 border-t border-yellow-400/40">
-                                <div className="text-center">
-                                    <p className="text-sm text-white/70 mb-4 font-medium">
-                                        Don&apos;t want to pay now? You can complete payment later.
-                                    </p>
-                                    <GlassButton
-                                        type="button"
-                                        onClick={handleSkipPayment}
-                                        disabled={processing}
-                                        variant="secondary"
-                                        className="w-full py-3 text-lg"
-                                    >
-                                        {processing ? 'Processing...' : 'Skip Payment & Complete Booking'}
-                                    </GlassButton>
-                                </div>
                             </div>
 
                             <p className="text-xs text-gray-300 mt-4 text-center font-medium">

@@ -53,6 +53,7 @@ export default function CreateBooking({ students, routes }) {
     
     const [step, setStep] = useState(0);
     const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [availableSeats, setAvailableSeats] = useState(null);
     const [price, setPrice] = useState(null);
@@ -60,7 +61,7 @@ export default function CreateBooking({ students, routes }) {
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
     const [pickupOption, setPickupOption] = useState('custom'); // 'pickup_point' or 'custom'
 
-    const { data, setData, post, errors, processing } = useForm({
+    const { data, setData, post, processing } = useForm({
         school_id: '',
         student_id: '',
         student_ids: [],
@@ -72,6 +73,8 @@ export default function CreateBooking({ students, routes }) {
         trip_direction: 'both',
         start_date: new Date().toISOString().split('T')[0],
     });
+    const page = usePage();
+    const errors = page.props.errors || {};
 
     // Filter routes when school is selected
     useEffect(() => {
@@ -194,27 +197,20 @@ export default function CreateBooking({ students, routes }) {
             return;
         }
         
-        // Sync selected students into form data
-        setData('student_ids', selectedStudentIds);
-        if (!data.student_id && selectedStudentIds.length > 0) {
-            setData('student_id', selectedStudentIds[0]);
-        }
-        
-        post('/parent/bookings', {
+        // Send payload with current selection so backend receives student_ids (setData is async and post would otherwise send stale data)
+        const payload = {
+            ...data,
+            student_ids: selectedStudentIds,
+            student_id: data.student_id || (selectedStudentIds.length > 0 ? selectedStudentIds[0] : ''),
+        };
+        setSubmitting(true);
+        router.post('/parent/bookings', payload, {
             preserveScroll: false,
-            onSuccess: (page) => {
-                // Inertia will automatically navigate to the checkout page
-                // The controller returns Inertia::render('Parent/Bookings/Checkout', ...)
-            },
             onError: (errors) => {
-                // Errors will be available in the errors object
                 console.log('Form errors:', errors);
-                // Scroll to top to show errors
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
-            onFinish: () => {
-                // This runs after the request completes (success or error)
-            },
+            onFinish: () => setSubmitting(false),
         });
     };
 
@@ -1308,10 +1304,10 @@ export default function CreateBooking({ students, routes }) {
                                     ) : (
                                         <GlassButton
                                             type="submit"
-                                            disabled={processing}
+                                            disabled={processing || submitting}
                                             className="px-8 py-3 rounded-xl font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-brand-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                                         >
-                                            {processing ? (
+                                            {(processing || submitting) ? (
                                                 <>
                                                     <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
