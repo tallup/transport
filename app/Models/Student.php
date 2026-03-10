@@ -104,7 +104,8 @@ class Student extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->profile_picture);
+        // Use relative URL so images work regardless of APP_URL (e.g. Forge env with quotes)
+        return '/storage/' . ltrim($this->profile_picture, '/');
     }
 
     /**
