@@ -913,7 +913,9 @@ export default function CreateBooking({ students, routes }) {
                                                                             )}
                                                                         </p>
                                                                         {price.discount_label && (
-                                                                            <p className="mt-1 text-sm font-semibold text-yellow-300">{price.discount_label} applied</p>
+                                                                            <p className="mt-1 text-sm font-semibold text-yellow-300">
+                                                                                Discount applied ({price.discount_label})
+                                                                            </p>
                                                                         )}
                                                                     </>
                                                                 )}
@@ -1275,7 +1277,9 @@ export default function CreateBooking({ students, routes }) {
                                             {price && (
                                                 <div className="border-t-2 border-yellow-400/50 pt-6 mt-6">
                                                     {price.discount_label && (
-                                                        <p className="mb-2 text-sm font-semibold text-yellow-300">{price.discount_label} applied</p>
+                                                        <p className="mb-2 text-sm font-semibold text-yellow-300">
+                                                            Discount applied ({price.discount_label})
+                                                        </p>
                                                     )}
                                                     {selectedStudentIds.length > 1 && price.per_booking_formatted && (
                                                         <p className="mb-2 text-sm text-white/80">{selectedStudentIds.length} children × {price.per_booking_formatted} per child</p>
