@@ -22,8 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
-        // When session expires or user is not logged in, send to login with message
-        $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) => route('login', ['expired' => 1]));
+        $middleware->redirectGuestsTo(function (\Illuminate\Http\Request $request) {
+            $hasSessionCookie = $request->cookies->has(config('session.cookie'));
+            return $hasSessionCookie
+                ? route('login', ['expired' => 1])
+                : route('login');
+        });
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
