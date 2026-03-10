@@ -17,14 +17,18 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $validated = $request->validate([
-            'role' => 'nullable|in:parent,driver',
+            'role' => 'nullable|in:parent,driver,admin',
             'search' => 'nullable|string|max:255',
         ]);
 
         $query = User::query();
 
         if (!empty($validated['role'])) {
-            $query->where('role', $validated['role']);
+            if ($validated['role'] === 'admin') {
+                $query->whereIn('role', ['super_admin', 'transport_admin', 'admin']);
+            } else {
+                $query->where('role', $validated['role']);
+            }
         }
 
         if (!empty($validated['search'])) {
@@ -34,8 +38,6 @@ class UserController extends Controller
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
-
-        $query->whereIn('role', ['parent', 'driver']);
 
         $users = $query->orderBy('created_at', 'desc')
             ->paginate(15)
@@ -61,7 +63,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:parent,driver',
+            'role' => 'required|in:parent,driver,transport_admin,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
 
@@ -113,7 +115,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
-            'role' => 'required|in:parent,driver',
+            'role' => 'required|in:parent,driver,transport_admin,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
 

@@ -120,6 +120,7 @@ export default function Index({ users, filters }) {
                                 <option value="" className="bg-brand-primary text-white">All Roles</option>
                                 <option value="parent" className="bg-brand-primary text-white">Parent</option>
                                 <option value="driver" className="bg-brand-primary text-white">Driver</option>
+                                <option value="admin" className="bg-brand-primary text-white">Admin</option>
                             </select>
                         </div>
                     </GlassCard>
@@ -150,13 +151,15 @@ export default function Index({ users, filters }) {
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
                                             <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
-                                                user.role === 'driver' 
-                                                    ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
+                                                user.role === 'driver'
+                                                    ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
                                                     : user.role === 'parent'
                                                     ? 'bg-blue-500/30 text-brand-primary border border-blue-400/50'
-                                                    : 'bg-purple-500/30 text-brand-primary border border-purple-400/50'
+                                                    : ['super_admin', 'transport_admin', 'admin'].includes(user.role)
+                                                    ? 'bg-purple-500/30 text-brand-primary border border-purple-400/50'
+                                                    : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
                                             }`}>
-                                                {user.role}
+                                                {user.role === 'super_admin' ? 'Super Admin' : user.role === 'transport_admin' ? 'Transport Admin' : user.role === 'admin' ? 'Admin' : user.role}
                                             </span>
                                             {user.role === 'parent' && (
                                                 <span className={`px-2 py-0.5 rounded text-xs font-bold ${
@@ -188,12 +191,14 @@ export default function Index({ users, filters }) {
 
                                     {/* Card Actions */}
                                     <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
-                                        <Link
-                                            href={`/admin/users/${user.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
-                                        >
-                                            Edit
-                                        </Link>
+                                        {!['super_admin', 'transport_admin'].includes(user.role) && (
+                                            <Link
+                                                href={`/admin/users/${user.id}/edit`}
+                                                className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            >
+                                                Edit
+                                            </Link>
+                                        )}
                                         {user.role === 'parent' && (
                                             <button
                                                 onClick={() => handleToggleParentStatus(user)}
@@ -212,13 +217,15 @@ export default function Index({ users, filters }) {
                                                 }
                                             </button>
                                         )}
-                                        <button
-                                            onClick={() => handleDelete(user.id)}
-                                            disabled={deleting === user.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
-                                        >
-                                            {deleting === user.id ? 'Deleting...' : 'Delete'}
-                                        </button>
+                                        {!['super_admin', 'transport_admin', 'admin'].includes(user.role) && (
+                                            <button
+                                                onClick={() => handleDelete(user.id)}
+                                                disabled={deleting === user.id}
+                                                className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            >
+                                                {deleting === user.id ? 'Deleting...' : 'Delete'}
+                                            </button>
+                                        )}
                                     </div>
                                 </GlassCard>
                             ))}
