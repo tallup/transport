@@ -1,11 +1,21 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Index({ discounts }) {
     const { auth, flash } = usePage().props;
     const [deleting, setDeleting] = useState(null);
+    const [showFlash, setShowFlash] = useState(true);
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
 
     const handleDelete = (id) => {
         if (confirm('Are you sure you want to delete this discount?')) {
@@ -57,9 +67,13 @@ export default function Index({ discounts }) {
                         </div>
                     </div>
 
-                    {flash?.success && (
-                        <div className="mb-6 px-4 py-3 rounded-xl bg-green-500/20 border border-green-400/50 text-green-200 font-semibold">
-                            {flash.success}
+                    {showFlash && (flash?.success || flash?.error) && (
+                        <div className={`mb-6 px-4 py-3 rounded-xl font-semibold ${
+                            flash?.success
+                                ? 'bg-green-500/20 border border-green-400/50 text-green-200'
+                                : 'bg-amber-600/90 border-2 border-amber-500 text-white'
+                        }`}>
+                            {flash?.success || flash?.error}
                         </div>
                     )}
 

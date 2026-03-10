@@ -8,7 +8,25 @@ use App\Http\Controllers\PolicyController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+
+// Serve profile pictures through Laravel (works even when public/storage symlink is missing on Forge)
+Route::get('/profile-pictures/{path}', function (string $path) {
+    $path = ltrim($path, '/');
+    if ($path === '' || !Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+    $fullPath = Storage::disk('public')->path($path);
+    $mime = match (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        default => 'application/octet-stream',
+    };
+    return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
+})->where('path', '.*')->name('profile-pictures.serve');
 
 Route::get('/', function (Request $request) {
     $user = $request->user();

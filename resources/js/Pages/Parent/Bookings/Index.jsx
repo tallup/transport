@@ -1,12 +1,22 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function BookingsIndex({ bookings }) {
     const { auth, flash } = usePage().props;
     const [cancelling, setCancelling] = useState(null);
     const [deleting, setDeleting] = useState(null);
+    const [showFlash, setShowFlash] = useState(true);
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
 
     const formatStatus = (status) => {
         if (status === 'awaiting_approval') {
@@ -65,12 +75,12 @@ export default function BookingsIndex({ bookings }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {/* Success / Error messages */}
-                    {(flash?.success || flash?.error) && (
+                    {/* Success / Error messages - auto-dismiss after 5 seconds */}
+                    {showFlash && (flash?.success || flash?.error) && (
                         <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
                             flash.success
                                 ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
-                                : 'bg-red-600 border-2 border-red-500 text-white'
+                                : 'bg-amber-600/90 border-2 border-amber-500 text-white'
                         }`}>
                             {flash.success || flash.error}
                         </div>

@@ -2,9 +2,20 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { useState, useEffect } from 'react';
 
 export default function ShowBooking({ booking, price, dailyPickups }) {
     const { auth, flash } = usePage().props;
+    const [showFlash, setShowFlash] = useState(true);
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
 
     // Helper function to format time
     const formatTime = (timeString) => {
@@ -63,14 +74,14 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                         </Link>
                     </div>
 
-                    {flash?.success && (
+                    {showFlash && flash?.success && (
                         <div className="mb-6 p-4 rounded-xl bg-emerald-600 border-2 border-emerald-500 shadow-md">
                             <p className="text-white font-bold">{flash.success}</p>
                         </div>
                     )}
 
-                    {flash?.error && (
-                        <div className="mb-6 p-4 rounded-xl bg-red-600 border-2 border-red-500 shadow-md">
+                    {showFlash && flash?.error && (
+                        <div className="mb-6 p-4 rounded-xl bg-amber-600/90 border-2 border-amber-500 shadow-md">
                             <p className="text-white font-bold">{flash.error}</p>
                         </div>
                     )}

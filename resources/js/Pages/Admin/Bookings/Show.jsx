@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -8,6 +8,16 @@ export default function Show({ booking }) {
     const { auth, flash } = usePage().props;
     const [partialAmount, setPartialAmount] = useState('');
     const [refunding, setRefunding] = useState(false);
+    const [showFlash, setShowFlash] = useState(true);
+
+    useEffect(() => {
+        if (flash?.success || flash?.error) {
+            const timer = setTimeout(() => setShowFlash(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowFlash(true);
+        }
+    }, [flash?.success, flash?.error]);
 
     const formatStatus = (status) => {
         return status.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
@@ -57,13 +67,13 @@ export default function Show({ booking }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {flash?.success && (
+                    {showFlash && flash?.success && (
                         <div className="mb-6 rounded-xl bg-emerald-600 text-white px-4 py-3 font-medium shadow">
                             {flash.success}
                         </div>
                     )}
-                    {flash?.error && (
-                        <div className="mb-6 rounded-xl bg-red-600 text-white px-4 py-3 font-medium shadow">
+                    {showFlash && flash?.error && (
+                        <div className="mb-6 rounded-xl bg-amber-600/90 border-2 border-amber-500 text-white px-4 py-3 font-medium shadow">
                             {flash.error}
                         </div>
                     )}

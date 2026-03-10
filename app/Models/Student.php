@@ -104,8 +104,8 @@ class Student extends Model
             return null;
         }
 
-        // Use relative URL so images work regardless of APP_URL (e.g. Forge env with quotes)
-        return '/storage/' . ltrim($this->profile_picture, '/');
+        // Served by Laravel route (works when public/storage symlink is missing on Forge)
+        return '/profile-pictures/' . ltrim($this->profile_picture, '/');
     }
 
     /**

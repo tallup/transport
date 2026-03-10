@@ -93,7 +93,7 @@ export default function Index({ schools, filters }) {
                         <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
                             flash.success
                                 ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
-                                : 'bg-red-600 border-2 border-red-500 text-white'
+                                : 'bg-amber-600/90 border-2 border-amber-500 text-white'
                         }`}>
                             {flash.success || flash.error}
                         </div>
