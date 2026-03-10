@@ -192,6 +192,16 @@ class BookingController extends Controller
             return back()->withErrors(['plan_type' => $e->getMessage()]);
         }
 
+        $numChildren = count($studentIds);
+        $multiChild = $numChildren >= 2
+            ? $this->pricingService->getMultiChildDiscountedPerBooking($price, $numChildren, $forDate, (int) $route->id, $validated['plan_type'])
+            : ['per_booking' => $price, 'discount' => null, 'discount_label' => null];
+        $pricePerBooking = $multiChild['per_booking'];
+        $basePrice = $this->pricingService->getBasePrice($validated['plan_type'], $validated['trip_type'], $route);
+        $manualDiscount = $multiChild['discount']
+            ? $this->pricingService->manualDiscountForTarget($basePrice, $pricePerBooking)
+            : ['manual_discount_type' => null, 'manual_discount_value' => null];
+
         // Calculate end date based on plan type
         $bookingService = app(BookingService::class);
         $endDate = $bookingService->calculateEndDate(
@@ -205,7 +215,7 @@ class BookingController extends Controller
         // Create booking(s) (pending until payment)
         $createdBookings = [];
         foreach ($studentIds as $sid) {
-            $booking = Booking::create([
+            $bookingData = [
                 'student_id' => $sid,
                 'route_id' => $validated['route_id'],
                 'pickup_point_id' => $validated['pickup_point_id'] ?? null,
@@ -218,7 +228,12 @@ class BookingController extends Controller
                 'status' => 'pending',
                 'start_date' => $validated['start_date'],
                 'end_date' => $endDate?->format('Y-m-d'),
-            ]);
+            ];
+            if ($manualDiscount['manual_discount_type'] !== null) {
+                $bookingData['manual_discount_type'] = $manualDiscount['manual_discount_type'];
+                $bookingData['manual_discount_value'] = $manualDiscount['manual_discount_value'];
+            }
+            $booking = Booking::create($bookingData);
             $createdBookings[] = $booking;
             
             // Send booking created notification to parent
@@ -239,7 +254,7 @@ class BookingController extends Controller
             $booking = $createdBookings[0];
             return Inertia::render('Parent/Bookings/Checkout', [
                 'booking' => $booking->load(['student', 'route', 'pickupPoint']),
-                'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
+                'price' => ['price' => $pricePerBooking, 'formatted' => $this->pricingService->formatPrice($pricePerBooking)],
                 'stripeKey' => config('cashier.key'),
             ]);
         }
@@ -331,6 +346,7 @@ class BookingController extends Controller
             'plan_type' => 'required_without:booking_id|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required_without:booking_id|in:one_way,two_way',
             'for_date' => 'nullable|date',
+            'student_count' => 'nullable|integer|min:1|max:255',
         ]);
 
         try {
@@ -340,12 +356,30 @@ class BookingController extends Controller
                     return response()->json(['error' => 'Unauthorized'], 403);
                 }
                 $price = $this->pricingService->calculatePriceForBooking($booking);
-            } else {
-                $route = Route::findOrFail($validated['route_id']);
-                $forDate = isset($validated['for_date']) ? \Carbon\Carbon::parse($validated['for_date']) : null;
-                $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route, $forDate, null);
+                return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
             }
-            return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
+
+            $route = Route::findOrFail($validated['route_id']);
+            $forDate = isset($validated['for_date']) ? \Carbon\Carbon::parse($validated['for_date']) : null;
+            $price = $this->pricingService->calculatePrice($validated['plan_type'], $validated['trip_type'], $route, $forDate, null);
+            $studentCount = isset($validated['student_count']) ? (int) $validated['student_count'] : 1;
+            $payload = ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)];
+
+            if ($studentCount >= 2) {
+                $multiChild = $this->pricingService->getMultiChildDiscountedPerBooking($price, $studentCount, $forDate, (int) $route->id, $validated['plan_type']);
+                $perBooking = $multiChild['per_booking'];
+                $payload['price'] = $perBooking;
+                $payload['formatted'] = $this->pricingService->formatPrice($perBooking);
+                $payload['per_booking'] = $perBooking;
+                $payload['per_booking_formatted'] = $this->pricingService->formatPrice($perBooking);
+                $payload['total'] = round($perBooking * $studentCount, 2);
+                $payload['total_formatted'] = $this->pricingService->formatPrice($perBooking * $studentCount);
+                if ($multiChild['discount_label']) {
+                    $payload['discount_label'] = $multiChild['discount_label'];
+                }
+            }
+
+            return response()->json($payload);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }

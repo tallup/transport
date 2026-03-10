@@ -38,14 +38,18 @@ class DiscountController extends Controller
             'value' => 'required|numeric|min:0',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'scope' => 'required|in:all,route,plan_type',
+            'scope' => 'required|in:all,route,plan_type,multi_child',
             'route_id' => 'nullable|required_if:scope,route|exists:routes,id',
             'plan_type' => 'nullable|required_if:scope,plan_type|in:weekly,monthly,academic_term,annual',
+            'min_children' => 'nullable|integer|min:2|max:255',
             'active' => 'nullable|boolean',
         ]);
 
         if ($validated['type'] === 'percentage') {
             $request->validate(['value' => 'numeric|min:0|max:100']);
+        }
+        if (($validated['scope'] ?? '') === 'multi_child') {
+            $request->validate(['min_children' => 'required|integer|min:2|max:255']);
         }
 
         $validated['active'] = $request->boolean('active', true);
@@ -54,6 +58,11 @@ class DiscountController extends Controller
         }
         if ($validated['scope'] !== 'plan_type') {
             $validated['plan_type'] = null;
+        }
+        if ($validated['scope'] !== 'multi_child') {
+            $validated['min_children'] = null;
+        } else {
+            $validated['min_children'] = (int) ($validated['min_children'] ?? 2);
         }
 
         Discount::create($validated);
@@ -81,14 +90,18 @@ class DiscountController extends Controller
             'value' => 'required|numeric|min:0',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'scope' => 'required|in:all,route,plan_type',
+            'scope' => 'required|in:all,route,plan_type,multi_child',
             'route_id' => 'nullable|required_if:scope,route|exists:routes,id',
             'plan_type' => 'nullable|required_if:scope,plan_type|in:weekly,monthly,academic_term,annual',
+            'min_children' => 'nullable|integer|min:2|max:255',
             'active' => 'nullable|boolean',
         ]);
 
         if ($validated['type'] === 'percentage') {
             $request->validate(['value' => 'numeric|min:0|max:100']);
+        }
+        if (($validated['scope'] ?? '') === 'multi_child') {
+            $request->validate(['min_children' => 'required|integer|min:2|max:255']);
         }
 
         $validated['active'] = $request->boolean('active', true);
@@ -97,6 +110,11 @@ class DiscountController extends Controller
         }
         if ($validated['scope'] !== 'plan_type') {
             $validated['plan_type'] = null;
+        }
+        if ($validated['scope'] !== 'multi_child') {
+            $validated['min_children'] = null;
+        } else {
+            $validated['min_children'] = (int) ($validated['min_children'] ?? 2);
         }
 
         $discount->update($validated);

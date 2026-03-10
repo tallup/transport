@@ -140,14 +140,14 @@ export default function CreateBooking({ students, routes }) {
         }
     }, [data.trip_type]);
 
-    // Calculate price when route, plan type, or trip type changes
+    // Calculate price when route, plan type, trip type, or number of students changes
     useEffect(() => {
         if (data.route_id && data.plan_type && data.trip_type) {
             calculatePrice();
         } else {
             setPrice(null);
         }
-    }, [data.route_id, data.plan_type, data.trip_type]);
+    }, [data.route_id, data.plan_type, data.trip_type, selectedStudentIds.length]);
 
     const checkCapacity = async (routeId) => {
         try {
@@ -162,11 +162,14 @@ export default function CreateBooking({ students, routes }) {
         if (!data.route_id || !data.plan_type || !data.trip_type) return;
         setLoading(true);
         try {
+            const studentCount = Math.max(1, selectedStudentIds.length);
             const response = await axios.get('/parent/calculate-price', {
                 params: {
                     route_id: data.route_id,
                     plan_type: data.plan_type,
                     trip_type: data.trip_type,
+                    for_date: data.start_date || undefined,
+                    student_count: studentCount,
                 },
             });
             setPrice(response.data);
@@ -902,7 +905,17 @@ export default function CreateBooking({ students, routes }) {
                                                                 <p className="text-base font-extrabold text-white">{label}</p>
                                                                 <p className="text-xs text-white/70 mt-0.5">{desc}</p>
                                                                 {price && isSelected && (
-                                                                    <p className="mt-3 text-lg font-extrabold text-green-200">{price.formatted}</p>
+                                                                    <>
+                                                                        <p className="mt-3 text-lg font-extrabold text-green-200">
+                                                                            {price.per_booking_formatted ?? price.formatted}
+                                                                            {selectedStudentIds.length > 1 && price.per_booking_formatted && (
+                                                                                <span className="text-sm font-semibold text-white/80 block mt-1">per child</span>
+                                                                            )}
+                                                                        </p>
+                                                                        {price.discount_label && (
+                                                                            <p className="mt-1 text-sm font-semibold text-yellow-300">{price.discount_label} applied</p>
+                                                                        )}
+                                                                    </>
                                                                 )}
                                                             </div>
                                                             {isSelected && (
@@ -1261,10 +1274,16 @@ export default function CreateBooking({ students, routes }) {
                                             
                                             {price && (
                                                 <div className="border-t-2 border-yellow-400/50 pt-6 mt-6">
+                                                    {price.discount_label && (
+                                                        <p className="mb-2 text-sm font-semibold text-yellow-300">{price.discount_label} applied</p>
+                                                    )}
+                                                    {selectedStudentIds.length > 1 && price.per_booking_formatted && (
+                                                        <p className="mb-2 text-sm text-white/80">{selectedStudentIds.length} children × {price.per_booking_formatted} per child</p>
+                                                    )}
                                                     <div className="flex justify-between items-center p-5 bg-gradient-to-r from-green-500/20 to-green-500/10 rounded-xl border-2 border-green-400/30">
                                                         <span className="text-xl font-extrabold text-white">Total Amount:</span>
                                                         <span className="text-3xl font-extrabold text-green-200">
-                                                            {price.formatted}
+                                                            {price.total_formatted ?? price.formatted}
                                                         </span>
                                                     </div>
                                                 </div>

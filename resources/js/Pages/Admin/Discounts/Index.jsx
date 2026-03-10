@@ -17,6 +17,9 @@ export default function Index({ discounts }) {
     };
 
     const formatScope = (discount) => {
+        if (discount.scope === 'multi_child' && discount.min_children != null) {
+            return `Multi-child (${discount.min_children}+ children)`;
+        }
         if (discount.scope === 'route' && discount.route) return `Route: ${discount.route.name}`;
         if (discount.scope === 'plan_type' && discount.plan_type) {
             return discount.plan_type.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());

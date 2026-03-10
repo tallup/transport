@@ -18,9 +18,10 @@ class Discount extends Model
         'value',
         'start_date',
         'end_date',
-        'scope',      // 'all', 'route', 'plan_type'
+        'scope',      // 'all', 'route', 'plan_type', 'multi_child'
         'route_id',
         'plan_type',
+        'min_children', // when scope = 'multi_child'
         'active',
     ];
 
@@ -79,5 +80,14 @@ class Discount extends Model
                     $q2->where('scope', 'plan_type')->where('plan_type', $planType);
                 });
         });
+    }
+
+    /**
+     * Scope: multi-child discount where number of children meets minimum.
+     */
+    public function scopeForMultiChild(Builder $query, int $numberOfChildren): Builder
+    {
+        return $query->where('scope', 'multi_child')
+            ->where('min_children', '<=', $numberOfChildren);
     }
 }

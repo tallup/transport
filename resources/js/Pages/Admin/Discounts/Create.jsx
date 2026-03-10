@@ -15,6 +15,7 @@ export default function Create({ routes }) {
         scope: 'all',
         route_id: '',
         plan_type: '',
+        min_children: '2',
         active: true,
     });
 
@@ -134,9 +135,11 @@ export default function Create({ routes }) {
                                             id="scope"
                                             value={data.scope}
                                             onChange={(e) => {
-                                                setData('scope', e.target.value);
-                                                if (e.target.value !== 'route') setData('route_id', '');
-                                                if (e.target.value !== 'plan_type') setData('plan_type', '');
+                                                const v = e.target.value;
+                                                setData('scope', v);
+                                                if (v !== 'route') setData('route_id', '');
+                                                if (v !== 'plan_type') setData('plan_type', '');
+                                                if (v === 'multi_child') setData('min_children', '2');
                                             }}
                                             className="mt-1 block w-full glass-input text-white"
                                             required
@@ -144,10 +147,31 @@ export default function Create({ routes }) {
                                             <option value="all" className="bg-indigo-700">All bookings</option>
                                             <option value="route" className="bg-indigo-700">Specific route</option>
                                             <option value="plan_type" className="bg-indigo-700">Specific plan type</option>
+                                            <option value="multi_child" className="bg-indigo-700">Multi-child / Sibling</option>
                                         </select>
                                         <p className="mt-1 text-sm text-white/80">Who gets this discount</p>
                                         <InputError message={errors.scope} className="mt-2 text-red-300 font-semibold" />
                                     </div>
+
+                                    {data.scope === 'multi_child' && (
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="min_children" className="block text-base font-bold text-white mb-2">
+                                                Minimum number of children *
+                                            </label>
+                                            <input
+                                                id="min_children"
+                                                type="number"
+                                                min="2"
+                                                max="255"
+                                                value={data.min_children}
+                                                onChange={(e) => setData('min_children', e.target.value)}
+                                                className="mt-1 block w-full glass-input text-white"
+                                                required
+                                            />
+                                            <p className="mt-1 text-sm text-white/80">Discount applies when parent books for this many children or more (e.g. 2 = 2+ children)</p>
+                                            <InputError message={errors.min_children} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+                                    )}
 
                                     {data.scope === 'route' && (
                                         <div className="md:col-span-2">

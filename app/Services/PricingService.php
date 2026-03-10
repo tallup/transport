@@ -147,6 +147,69 @@ class PricingService
     }
 
     /**
+     * Get the first active multi-child discount where numberOfChildren >= min_children.
+     */
+    public function getActiveMultiChildDiscount(int $numberOfChildren, ?Carbon $forDate = null, ?int $routeId = null, ?string $planType = null): ?Discount
+    {
+        $forDate = $forDate ?? Carbon::today();
+
+        $query = Discount::activeForDate($forDate)
+            ->forMultiChild($numberOfChildren)
+            ->orderBy('min_children', 'desc');
+
+        return $query->first();
+    }
+
+    /**
+     * Given price per booking (after time-based discount), apply multi-child discount if active.
+     * Returns ['per_booking' => float, 'discount' => Discount|null, 'discount_label' => string].
+     */
+    public function getMultiChildDiscountedPerBooking(float $priceAfterTimeBased, int $numberOfChildren, ?Carbon $forDate = null, ?int $routeId = null, ?string $planType = null): array
+    {
+        $discount = $this->getActiveMultiChildDiscount($numberOfChildren, $forDate, $routeId, $planType);
+        if (! $discount) {
+            return [
+                'per_booking' => $priceAfterTimeBased,
+                'discount' => null,
+                'discount_label' => null,
+            ];
+        }
+        $perBooking = $this->applyDiscount($priceAfterTimeBased, $discount->type, (float) $discount->value);
+        $label = $discount->name;
+        if ($discount->type === 'percentage') {
+            $label .= ' (' . (int) $discount->value . '%)';
+        } else {
+            $label .= ' ($' . number_format((float) $discount->value, 2) . ')';
+        }
+
+        return [
+            'per_booking' => $perBooking,
+            'discount' => $discount,
+            'discount_label' => $label,
+        ];
+    }
+
+    /**
+     * Compute manual_discount type and value so that applyDiscount(basePrice, type, value) === targetPerBooking.
+     * Returns ['manual_discount_type' => 'percentage'|'fixed', 'manual_discount_value' => float].
+     */
+    public function manualDiscountForTarget(float $basePrice, float $targetPerBooking): array
+    {
+        if ($basePrice <= 0 || $targetPerBooking >= $basePrice) {
+            return ['manual_discount_type' => null, 'manual_discount_value' => null];
+        }
+        $targetPerBooking = max(0, round($targetPerBooking, 2));
+        $reduction = $basePrice - $targetPerBooking;
+        if ($reduction <= 0) {
+            return ['manual_discount_type' => null, 'manual_discount_value' => null];
+        }
+        return [
+            'manual_discount_type' => 'fixed',
+            'manual_discount_value' => round($reduction, 2),
+        ];
+    }
+
+    /**
      * Format price with currency.
      *
      * @param float $amount
