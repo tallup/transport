@@ -104,7 +104,7 @@ class Student extends Model
             return null;
         }
 
-        return Storage::url($this->profile_picture);
+        return Storage::disk('public')->url($this->profile_picture);
     }
 
     /**

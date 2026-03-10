@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
@@ -6,6 +7,7 @@ import RealTimeListener from '@/Components/RealTimeListener';
 
 export default function AdminLayout({ header, children }) {
     const { auth } = usePage().props;
+    const [navAvatarError, setNavAvatarError] = useState(false);
     const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
     
     // Build navigation items for mobile menu
@@ -144,11 +146,12 @@ export default function AdminLayout({ header, children }) {
                                             className="inline-flex items-center gap-2 px-2 py-1.5 border border-white/30 text-sm leading-4 font-semibold rounded-full text-gray-800 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150 shadow-sm"
                                             title={auth?.user?.name || 'Admin'}
                                         >
-                                            {auth?.user?.profile_picture_url ? (
+                                            {auth?.user?.profile_picture_url && !navAvatarError ? (
                                                 <img
                                                     src={auth.user.profile_picture_url}
                                                     alt={auth.user.name || 'Admin'}
                                                     className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400/50"
+                                                    onError={() => setNavAvatarError(true)}
                                                 />
                                             ) : (
                                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">

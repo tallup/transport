@@ -10,6 +10,7 @@ export default function Index({ users, filters }) {
     const [search, setSearch] = useState(filters.search || '');
     const [roleFilter, setRoleFilter] = useState(filters.role || '');
     const [showFlash, setShowFlash] = useState(true);
+    const [imageErrors, setImageErrors] = useState(new Set());
 
     useEffect(() => {
         if (flash?.success || flash?.error) {
@@ -129,11 +130,12 @@ export default function Index({ users, filters }) {
                                     {/* Card Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                                            {user.profile_picture_url ? (
+                                            {user.profile_picture_url && !imageErrors.has(user.id) ? (
                                                 <img
                                                     src={user.profile_picture_url}
                                                     alt={user.name}
                                                     className="w-14 h-14 rounded-xl object-cover shadow-md flex-shrink-0 border-2 border-yellow-400/50 bg-white/10"
+                                                    onError={() => setImageErrors((prev) => new Set(prev).add(user.id))}
                                                 />
                                             ) : (
                                                 <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0 border-2 border-yellow-400/50 text-brand-primary text-lg font-bold">

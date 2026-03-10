@@ -174,7 +174,7 @@ class User extends Authenticatable
             return null;
         }
 
-        return Storage::url($this->profile_picture);
+        return Storage::disk('public')->url($this->profile_picture);
     }
 
     /**
