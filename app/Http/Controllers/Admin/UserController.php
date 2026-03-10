@@ -52,9 +52,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return Inertia::render('Admin/Users/Create');
+        $user = $request->user();
+        $isSuperAdmin = ($user->attributes['role'] ?? $user->role ?? null) === 'super_admin';
+
+        return Inertia::render('Admin/Users/Create', [
+            'canAddAdmins' => $isSuperAdmin,
+        ]);
     }
 
     public function store(Request $request)
@@ -66,6 +71,14 @@ class UserController extends Controller
             'role' => 'required|in:parent,driver,transport_admin,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
+
+        // Only super_admin can create transport_admin or admin users
+        if (in_array($validated['role'], ['transport_admin', 'admin'])) {
+            $role = $request->user()->attributes['role'] ?? $request->user()->role ?? null;
+            if ($role !== 'super_admin') {
+                abort(403, 'Only the super admin can add admin users.');
+            }
+        }
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['email_verified_at'] = now();
@@ -86,12 +99,15 @@ class UserController extends Controller
             ->with('success', 'User created successfully.');
     }
 
-    public function edit(User $user)
+    public function edit(Request $request, User $user)
     {
         // Prevent editing admin users
         if (in_array($user->role, ['super_admin', 'transport_admin'])) {
             abort(403, 'Cannot edit admin users.');
         }
+
+        $currentUser = $request->user();
+        $isSuperAdmin = ($currentUser->attributes['role'] ?? $currentUser->role ?? null) === 'super_admin';
 
         return Inertia::render('Admin/Users/Edit', [
             'user' => [
@@ -101,6 +117,7 @@ class UserController extends Controller
                 'role' => $user->role,
                 'profile_picture_url' => $user->profile_picture_url,
             ],
+            'canAddAdmins' => $isSuperAdmin,
         ]);
     }
 
@@ -118,6 +135,14 @@ class UserController extends Controller
             'role' => 'required|in:parent,driver,transport_admin,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
         ]);
+
+        // Only super_admin can assign transport_admin or admin role
+        if (in_array($validated['role'], ['transport_admin', 'admin'])) {
+            $role = $request->user()->attributes['role'] ?? $request->user()->role ?? null;
+            if ($role !== 'super_admin') {
+                abort(403, 'Only the super admin can assign admin roles.');
+            }
+        }
 
         if (empty($validated['password'])) {
             unset($validated['password']);

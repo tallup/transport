@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Super Admin Email
+    |--------------------------------------------------------------------------
+    | The only account that can be super_admin and that can add other admins.
+    |
+    */
+
+    'super_admin_email' => env('SUPER_ADMIN_EMAIL', 'support@ontimetransportwa.com'),
+
 ];

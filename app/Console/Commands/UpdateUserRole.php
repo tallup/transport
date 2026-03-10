@@ -43,6 +43,15 @@ class UpdateUserRole extends Command
             return 1;
         }
 
+        // Only the configured super admin email can hold the super_admin role
+        if ($role === 'super_admin') {
+            $allowedEmail = config('app.super_admin_email');
+            if (strtolower($email) !== strtolower($allowedEmail)) {
+                $this->error("Only the account " . ($allowedEmail ?: 'SUPER_ADMIN_EMAIL') . " can be super_admin. Set SUPER_ADMIN_EMAIL in .env.");
+                return 1;
+            }
+        }
+
         $oldRole = $user->role;
         $user->role = $role;
         $user->save();

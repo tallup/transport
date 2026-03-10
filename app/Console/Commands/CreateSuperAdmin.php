@@ -25,24 +25,33 @@ class CreateSuperAdmin extends Command
 
     /**
      * Execute the console command.
+     * If the email already exists, that user is upgraded to super_admin (password optional).
      */
     public function handle()
     {
         $name = $this->option('name') ?: $this->ask('Enter admin name', 'Super Admin');
         $email = $this->option('email') ?: $this->ask('Enter admin email');
-        $password = $this->option('password') ?: $this->secret('Enter admin password (leave empty to generate)');
+        $passwordOption = $this->option('password');
+        $password = $passwordOption ?: $this->secret('Enter admin password (leave empty to generate or to only upgrade role)');
+
+        $existing = User::where('email', $email)->first();
+
+        if ($existing) {
+            $existing->update(['role' => 'super_admin']);
+            if ($password !== null && $password !== '') {
+                $existing->update(['password' => Hash::make($password)]);
+                $this->info("Password updated.");
+            }
+            $this->info("User {$email} is now super admin.");
+            return Command::SUCCESS;
+        }
 
         if (empty($password)) {
             $password = Str::random(12);
             $this->info("Generated password: {$password}");
         }
 
-        if (User::where('email', $email)->exists()) {
-            $this->error("User with email {$email} already exists!");
-            return Command::FAILURE;
-        }
-
-        $user = User::create([
+        User::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
@@ -52,7 +61,7 @@ class CreateSuperAdmin extends Command
 
         $this->info("Super admin created successfully!");
         $this->info("Email: {$email}");
-        if (!$this->option('password')) {
+        if (!$passwordOption) {
             $this->warn("Please save this password: {$password}");
         }
 

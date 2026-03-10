@@ -6,7 +6,7 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { PhotoIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
-export default function Edit({ user }) {
+export default function Edit({ user, canAddAdmins = false }) {
     const { auth } = usePage().props;
     const [profilePreview, setProfilePreview] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
@@ -167,8 +167,12 @@ export default function Edit({ user }) {
                                         >
                                             <option value="parent" className="bg-indigo-700">Parent</option>
                                             <option value="driver" className="bg-indigo-700">Driver</option>
-                                            <option value="transport_admin" className="bg-indigo-700">Transport Admin</option>
-                                            <option value="admin" className="bg-indigo-700">Admin</option>
+                                            {(canAddAdmins || ['transport_admin', 'admin'].includes(user.role)) && (
+                                                <>
+                                                    <option value="transport_admin" className="bg-indigo-700">Transport Admin</option>
+                                                    <option value="admin" className="bg-indigo-700">Admin</option>
+                                                </>
+                                            )}
                                         </select>
                                         <InputError message={errors.role} className="mt-2 text-red-300 font-semibold" />
                                     </div>

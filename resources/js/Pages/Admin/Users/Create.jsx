@@ -18,7 +18,7 @@ import {
     ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
-export default function Create() {
+export default function Create({ canAddAdmins = false }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
@@ -58,7 +58,7 @@ export default function Create() {
                             <div>
                                 <h1 className="text-3xl font-extrabold text-brand-primary">Create User</h1>
                                 <p className="text-brand-primary/70 font-medium mt-1">
-                                    Add a new user (parent, driver, or admin)
+                                    {canAddAdmins ? 'Add a new user (parent, driver, or admin)' : 'Add a new parent or driver'}
                                 </p>
                             </div>
                         </div>
@@ -187,48 +187,52 @@ export default function Create() {
                                                 <p className="text-xs text-brand-primary/60">Operate routes & pickups</p>
                                             </div>
                                         </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setData('role', 'transport_admin')}
-                                            className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
-                                                data.role === 'transport_admin'
-                                                    ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
-                                                    : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
-                                            }`}
-                                        >
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                                data.role === 'transport_admin'
-                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
-                                                    : 'bg-white/10'
-                                            }`}>
-                                                <ShieldCheckIcon className={`w-6 h-6 ${data.role === 'transport_admin' ? '!text-yellow-500' : 'text-yellow-500/70'}`} />
-                                            </div>
-                                            <div className="text-left">
-                                                <p className={`font-bold ${data.role === 'transport_admin' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Transport Admin</p>
-                                                <p className="text-xs text-brand-primary/60">Full admin access</p>
-                                            </div>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setData('role', 'admin')}
-                                            className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
-                                                data.role === 'admin'
-                                                    ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
-                                                    : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
-                                            }`}
-                                        >
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                                data.role === 'admin'
-                                                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
-                                                    : 'bg-white/10'
-                                            }`}>
-                                                <ShieldCheckIcon className={`w-6 h-6 ${data.role === 'admin' ? '!text-yellow-500' : 'text-yellow-500/70'}`} />
-                                            </div>
-                                            <div className="text-left">
-                                                <p className={`font-bold ${data.role === 'admin' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Admin</p>
-                                                <p className="text-xs text-brand-primary/60">Admin access</p>
-                                            </div>
-                                        </button>
+                                        {canAddAdmins && (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setData('role', 'transport_admin')}
+                                                    className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                                                        data.role === 'transport_admin'
+                                                            ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
+                                                            : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
+                                                    }`}
+                                                >
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                                        data.role === 'transport_admin'
+                                                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                            : 'bg-white/10'
+                                                    }`}>
+                                                        <ShieldCheckIcon className={`w-6 h-6 ${data.role === 'transport_admin' ? '!text-yellow-500' : 'text-yellow-500/70'}`} />
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className={`font-bold ${data.role === 'transport_admin' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Transport Admin</p>
+                                                        <p className="text-xs text-brand-primary/60">Full admin access</p>
+                                                    </div>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setData('role', 'admin')}
+                                                    className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                                                        data.role === 'admin'
+                                                            ? 'border-yellow-400 bg-yellow-400/20 shadow-lg'
+                                                            : 'border-yellow-400/50 bg-white/5 hover:border-yellow-400 hover:bg-white/10'
+                                                    }`}
+                                                >
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                                        data.role === 'admin'
+                                                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                                                            : 'bg-white/10'
+                                                    }`}>
+                                                        <ShieldCheckIcon className={`w-6 h-6 ${data.role === 'admin' ? '!text-yellow-500' : 'text-yellow-500/70'}`} />
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className={`font-bold ${data.role === 'admin' ? 'text-brand-primary' : 'text-brand-primary/80'}`}>Admin</p>
+                                                        <p className="text-xs text-brand-primary/60">Admin access</p>
+                                                    </div>
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
                                     <InputError message={errors.role} className="mt-2 text-red-300" />
                                 </div>
