@@ -4,11 +4,12 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import InputError from '@/Components/InputError';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
-import { PhotoIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function Edit({ user }) {
     const { auth } = usePage().props;
     const [profilePreview, setProfilePreview] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const fileInputRef = useRef(null);
     const { data, setData, put, processing, errors } = useForm({
         name: user.name || '',
@@ -131,14 +132,24 @@ export default function Edit({ user }) {
                                         <label htmlFor="password" className="block text-base font-bold text-white mb-2">
                                             Password (leave blank to keep current)
                                         </label>
-                                        <input
-                                            id="password"
-                                            type="password"
-                                            value={data.password}
-                                            onChange={(e) => setData('password', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
-                                            minLength={8}
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                id="password"
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={data.password}
+                                                onChange={(e) => setData('password', e.target.value)}
+                                                className="mt-1 block w-full glass-input text-white placeholder-gray-300 pr-12"
+                                                minLength={8}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-yellow-500 hover:text-yellow-400 transition-colors"
+                                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                            >
+                                                {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                                            </button>
+                                        </div>
                                         <InputError message={errors.password} className="mt-2 text-red-300 font-semibold" />
                                         <p className="mt-1 text-sm font-semibold text-white/80">Leave blank to keep current password</p>
                                     </div>
