@@ -26,21 +26,29 @@ class CreateSuperAdmin extends Command
     /**
      * Execute the console command.
      * If the email already exists, that user is upgraded to super_admin (password optional).
+     * When --email is provided, the command does not prompt (safe for Forge/cron).
      */
     public function handle()
     {
-        $name = $this->option('name') ?: $this->ask('Enter admin name', 'Super Admin');
-        $email = $this->option('email') ?: $this->ask('Enter admin email');
+        $email = $this->option('email');
+
+        if (empty($email)) {
+            $this->error('Email is required. Run with --email=support@ontimetransportwa.com');
+            return Command::FAILURE;
+        }
+
+        $email = strtolower(trim($email));
+        $name = $this->option('name') ?: 'Super Admin';
         $passwordOption = $this->option('password');
-        $password = $passwordOption ?: $this->secret('Enter admin password (leave empty to generate or to only upgrade role)');
+        $password = $passwordOption ?: null;
 
         $existing = User::where('email', $email)->first();
 
         if ($existing) {
-            $existing->update(['role' => 'super_admin']);
+            $existing->update(['role' => 'super_admin', 'name' => $name]);
             if ($password !== null && $password !== '') {
                 $existing->update(['password' => Hash::make($password)]);
-                $this->info("Password updated.");
+                $this->info('Password updated.');
             }
             $this->info("User {$email} is now super admin.");
             return Command::SUCCESS;
@@ -48,7 +56,7 @@ class CreateSuperAdmin extends Command
 
         if (empty($password)) {
             $password = Str::random(12);
-            $this->info("Generated password: {$password}");
+            $this->line("Generated password: {$password}");
         }
 
         User::create([
@@ -59,10 +67,10 @@ class CreateSuperAdmin extends Command
             'email_verified_at' => now(),
         ]);
 
-        $this->info("Super admin created successfully!");
+        $this->info('Super admin created successfully.');
         $this->info("Email: {$email}");
         if (!$passwordOption) {
-            $this->warn("Please save this password: {$password}");
+            $this->warn("Save this password: {$password}");
         }
 
         return Command::SUCCESS;
