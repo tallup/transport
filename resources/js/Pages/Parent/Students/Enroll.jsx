@@ -18,6 +18,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     const { auth } = usePage().props;
     const [step, setStep] = useState(0);
     const [policiesAcknowledged, setPoliciesAcknowledged] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const { data, setData, post, processing, errors } = useForm({
         // Basic Information
@@ -132,8 +133,9 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        
+        e?.preventDefault?.();
+        if (step !== 9) return;
+
         // Prepare submission data with unformatted phones (on review step they already passed policy acknowledgment)
         const submitData = {
             ...data,
@@ -146,8 +148,18 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
             })),
             policies_acknowledged: true, // They reached review step, so they acknowledged on step 5
         };
-        
-        router.post('/parent/students', submitData, data.profile_picture ? { forceFormData: true } : {});
+
+        const options = data.profile_picture ? { forceFormData: true } : {};
+        setIsSubmitting(true);
+        router.post('/parent/students', submitData, {
+            ...options,
+            onError: (errors) => {
+                console.error('Enrollment validation errors:', errors);
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
+            },
+        });
     };
 
     return (
@@ -793,10 +805,11 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                         </GlassButton>
                                     ) : (
                                         <GlassButton
-                                            type="submit"
-                                            disabled={processing}
+                                            type="button"
+                                            disabled={processing || isSubmitting}
+                                            onClick={handleSubmit}
                                         >
-                                            {processing ? 'Submitting...' : 'Submit Enrollment'}
+                                            {processing || isSubmitting ? 'Submitting...' : 'Submit Enrollment'}
                                         </GlassButton>
                                     )}
                                 </div>
