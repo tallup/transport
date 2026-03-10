@@ -138,7 +138,7 @@ class DashboardController extends Controller
 
         // Notifications from database (booking approved, payment, pickup completed)
         $notificationsUnreadCount = $user->unreadNotifications()->count();
-        $notifications = $user->notifications()->latest()->take(30)->get()->map(function ($n) {
+        $notifications = $user->notifications()->latest()->take(5)->get()->map(function ($n) {
             $data = $n->data;
             return [
                 'id' => $n->id,
