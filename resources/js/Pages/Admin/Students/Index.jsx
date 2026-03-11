@@ -27,12 +27,12 @@ export default function Index({ students }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Students</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all registered students</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Students</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all registered students</p>
                             </div>
                             <Link
                                 href="/admin/students/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add Student
                             </Link>
@@ -60,8 +60,8 @@ export default function Index({ students }) {
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{student.name}</h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{student.name}</h3>
+                                                <p className="truncate text-sm font-medium text-slate-500">
                                                     {student.parent?.name || 'No parent assigned'}
                                                 </p>
                                             </div>
@@ -74,7 +74,7 @@ export default function Index({ students }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium truncate">
+                                            <p className="truncate text-sm font-medium text-slate-700">
                                                 {student.school || 'No school assigned'}
                                             </p>
                                         </div>
@@ -83,7 +83,7 @@ export default function Index({ students }) {
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
-                                                <p className="text-sm text-white/90 font-medium">
+                                                <p className="text-sm font-medium text-slate-700">
                                                     DOB: {new Date(student.date_of_birth).toLocaleDateString()}
                                                 </p>
                                             </div>
@@ -94,11 +94,11 @@ export default function Index({ students }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                                 </svg>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm text-white/90 font-medium truncate">
+                                                    <p className="truncate text-sm font-medium text-slate-700">
                                                         {student.emergency_contact_name || 'No name'}
                                                     </p>
                                                     {student.emergency_phone && (
-                                                        <p className="text-xs text-white/70 font-medium truncate">
+                                                        <p className="truncate text-xs font-medium text-slate-500">
                                                             {student.emergency_phone}
                                                         </p>
                                                     )}
@@ -108,17 +108,17 @@ export default function Index({ students }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/students/${student.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(student.id)}
                                             disabled={deleting === student.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === student.id ? 'Deleting...' : 'Delete'}
                                         </button>

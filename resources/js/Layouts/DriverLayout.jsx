@@ -4,6 +4,13 @@ import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
 import RealTimeListener from '@/Components/RealTimeListener';
 
+const navLinkClasses = (isActive) =>
+    `rounded-lg px-3 py-2 text-sm font-medium transition ${
+        isActive
+            ? 'bg-brand-primary text-white shadow-sm'
+            : 'text-slate-700 hover:bg-white hover:text-slate-900'
+    }`;
+
 export default function DriverLayout({ header, children }) {
     const { auth, currentPeriod, availablePeriods, routeCompletion } = usePage().props;
     const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -13,105 +20,49 @@ export default function DriverLayout({ header, children }) {
         : null;
     const withPeriod = (href) => (periodParam ? `${href}?period=${periodParam}` : href);
     const canSwitchToPm = !(currentPeriod === 'am' && availablePeriods?.am && !routeCompletion?.am);
-    
-    // Build navigation items for mobile menu
+
     const navigationItems = [
         { href: withPeriod('/driver/dashboard'), label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
-        { href: withPeriod('/driver/roster'), label: 'Daily Roster', active: currentUrl?.startsWith('/driver/roster') },
-        { href: withPeriod('/driver/students-schedule'), label: 'Students Schedule', active: currentUrl?.startsWith('/driver/students-schedule') },
-        { href: withPeriod('/driver/route-performance'), label: 'Route Performance', active: currentUrl?.startsWith('/driver/route-performance') },
-        { href: withPeriod('/driver/route-information'), label: 'Route Information', active: currentUrl?.startsWith('/driver/route-information') },
-        { href: withPeriod('/driver/completed-routes'), label: 'Completed Routes', active: currentUrl?.startsWith('/driver/completed-routes') },
+        { href: withPeriod('/driver/roster'), label: 'Daily Roster', active: currentUrl.startsWith('/driver/roster') },
+        { href: withPeriod('/driver/students-schedule'), label: 'Students', active: currentUrl.startsWith('/driver/students-schedule') },
+        { href: withPeriod('/driver/route-performance'), label: 'Performance', active: currentUrl.startsWith('/driver/route-performance') },
+        { href: withPeriod('/driver/route-information'), label: 'Route Info', active: currentUrl.startsWith('/driver/route-information') },
+        { href: withPeriod('/driver/completed-routes'), label: 'Completed', active: currentUrl.startsWith('/driver/completed-routes') },
     ];
 
     const userMenuItems = [
         { href: '/profile', label: 'Profile' },
         { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
     ];
-    
+
     return (
         <div className="min-h-screen logo-background">
-            <nav className="glass-nav fixed w-full top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="flex-shrink-0 flex items-center">
-                                <Link href={withPeriod('/driver/dashboard')}>
-                                    <ApplicationLogo className="block h-9 w-auto text-gray-800" />
-                                </Link>
-                            </div>
-                            <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
-                                <Link
-                                    href={withPeriod('/driver/dashboard')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl === '/driver/dashboard'
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    href={withPeriod('/driver/roster')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl?.startsWith('/driver/roster')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Daily Roster
-                                </Link>
-                                <Link
-                                    href={withPeriod('/driver/students-schedule')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl?.startsWith('/driver/students-schedule')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Students Schedule
-                                </Link>
-                                <Link
-                                    href={withPeriod('/driver/route-performance')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl?.startsWith('/driver/route-performance')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Performance
-                                </Link>
-                                <Link
-                                    href={withPeriod('/driver/route-information')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl?.startsWith('/driver/route-information')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Route Info
-                                </Link>
-                                <Link
-                                    href={withPeriod('/driver/completed-routes')}
-                                    className={`whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition ${
-                                        currentUrl?.startsWith('/driver/completed-routes')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary'
-                                    }`}
-                                >
-                                    Completed
-                                </Link>
+            <nav className="premium-nav">
+                <div className="container">
+                    <div className="flex h-16 items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                            <Link href={withPeriod('/driver/dashboard')}>
+                                <ApplicationLogo className="block h-9 w-auto" />
+                            </Link>
+
+                            <div className="hidden items-center gap-1 lg:flex">
+                                {navigationItems.map((item) => (
+                                    <Link key={item.href} href={item.href} className={navLinkClasses(item.active)}>
+                                        {item.label}
+                                    </Link>
+                                ))}
                             </div>
                         </div>
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
+
+                        <div className="hidden items-center gap-3 sm:flex">
                             {availablePeriods?.am && availablePeriods?.pm && (
-                                <div className="flex items-center gap-2 mr-4">
+                                <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1">
                                     <Link
                                         href={`${currentUrl}?period=am`}
-                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                                        className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                                             currentPeriod === 'am'
-                                                ? 'bg-yellow-500/40 text-brand-primary border-yellow-400/60'
-                                                : 'bg-white/90 text-brand-primary border-brand-primary/30 hover:bg-white'
+                                                ? 'bg-brand-primary text-white'
+                                                : 'text-slate-600 hover:bg-slate-100'
                                         }`}
                                     >
                                         {routeCompletion?.am ? 'AM Completed' : 'AM Route'}
@@ -119,88 +70,71 @@ export default function DriverLayout({ header, children }) {
                                     {canSwitchToPm ? (
                                         <Link
                                             href={`${currentUrl}?period=pm`}
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                                            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                                                 currentPeriod === 'pm'
-                                                    ? 'bg-blue-500/40 text-white border-blue-400/60'
-                                                    : 'bg-white/90 text-brand-primary border-brand-primary/30 hover:bg-white'
+                                                    ? 'bg-brand-primary text-white'
+                                                    : 'text-slate-600 hover:bg-slate-100'
                                             }`}
                                         >
                                             {routeCompletion?.pm ? 'PM Completed' : 'PM Route'}
                                         </Link>
                                     ) : (
-                                        <span className="px-3 py-1 rounded-full text-xs font-bold border bg-white/50 text-brand-primary/60 border-brand-primary/20 cursor-not-allowed">
+                                        <span className="cursor-not-allowed rounded-full px-3 py-1 text-xs font-medium text-slate-400">
                                             PM Locked
                                         </span>
                                     )}
                                 </div>
                             )}
-                            <div className="ml-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center gap-2 px-2 py-1.5 border border-gray-300 text-base leading-4 font-bold rounded-full text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150"
-                                            title={auth?.user?.name || 'Driver'}
-                                        >
-                                            {auth?.user?.profile_picture_url ? (
-                                                <img
-                                                    src={auth.user.profile_picture_url}
-                                                    alt={auth.user.name || 'Driver'}
-                                                    className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400/50"
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                                                    <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                            <svg
-                                                className="-mr-0.5 h-4 w-4"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href="/profile">Profile</Dropdown.Link>
-                                        <Dropdown.Link href="/logout" method="post" as="button">
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
+                                        title={auth?.user?.name || 'Driver'}
+                                    >
+                                        {auth?.user?.profile_picture_url ? (
+                                            <img
+                                                src={auth.user.profile_picture_url}
+                                                alt={auth.user.name || 'Driver'}
+                                                className="h-8 w-8 rounded-full border border-slate-200 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">
+                                                {(auth?.user?.name || 'D').slice(0, 1).toUpperCase()}
+                                            </div>
+                                        )}
+                                        <span className="max-w-24 truncate">{auth?.user?.name || 'Driver'}</span>
+                                    </button>
+                                </Dropdown.Trigger>
+
+                                <Dropdown.Content>
+                                    <Dropdown.Link href="/profile">Profile</Dropdown.Link>
+                                    <Dropdown.Link href="/logout" method="post" as="button">
+                                        Log Out
+                                    </Dropdown.Link>
+                                </Dropdown.Content>
+                            </Dropdown>
                         </div>
 
-                        {/* Mobile Menu - Visible on mobile only */}
-                        <div className="flex items-center sm:hidden ml-auto">
-                        <MobileMenu
-                            navigationItems={navigationItems}
-                            userMenuItems={userMenuItems}
-                            user={auth?.user}
-                            currentPath={currentUrl}
-                            currentPeriod={currentPeriod}
-                            availablePeriods={availablePeriods}
-                            routeCompletion={routeCompletion}
-                        />
+                        <div className="ml-auto flex items-center sm:hidden">
+                            <MobileMenu
+                                navigationItems={navigationItems}
+                                userMenuItems={userMenuItems}
+                                user={auth?.user}
+                                currentPath={currentUrl}
+                                currentPeriod={currentPeriod}
+                                availablePeriods={availablePeriods}
+                                routeCompletion={routeCompletion}
+                            />
                         </div>
                     </div>
                 </div>
             </nav>
 
             {header && (
-                <header className="glass-nav mt-16 shadow-lg">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
+                <header className="pt-16">
+                    <div className="container py-6">{header}</div>
                 </header>
             )}
 
@@ -209,4 +143,3 @@ export default function DriverLayout({ header, children }) {
         </div>
     );
 }
-

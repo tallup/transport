@@ -153,26 +153,26 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         <AuthenticatedLayout user={auth.user}>
             <Head title="Rebook Transport" />
 
-            <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div className="py-10">
+                <div className="container max-w-4xl">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg">Rebook Transport Service</h2>
-                            <p className="text-xl font-bold text-blue-200 mb-6 drop-shadow">Quickly renew service for {previousBooking.student?.name}</p>
+                            <h2 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">Rebook Transport Service</h2>
+                            <p className="mb-6 text-base font-medium text-slate-600">Quickly renew service for {previousBooking.student?.name}</p>
 
                             {/* Rebook Summary (Always visible for rebook) */}
-                            <div className="bg-white/10 backdrop-blur-md border-2 border-white/10 p-5 rounded-2xl mb-10 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-2xl">
+                            <div className="mb-10 grid grid-cols-1 gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm md:grid-cols-3">
                                 <div>
-                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Student</p>
-                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.student?.name}</p>
+                                    <p className="mb-1 text-xs font-black uppercase tracking-[0.2em] text-slate-500">Student</p>
+                                    <p className="text-lg font-black text-slate-900">{previousBooking.student?.name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Current Route</p>
-                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.route?.name}</p>
+                                    <p className="mb-1 text-xs font-black uppercase tracking-[0.2em] text-slate-500">Current Route</p>
+                                    <p className="text-lg font-black text-slate-900">{previousBooking.route?.name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">School</p>
-                                    <p className="text-lg font-black text-white drop-shadow">{previousBooking.student?.school?.name || 'Assigned School'}</p>
+                                    <p className="mb-1 text-xs font-black uppercase tracking-[0.2em] text-slate-500">School</p>
+                                    <p className="text-lg font-black text-slate-900">{previousBooking.student?.school?.name || 'Assigned School'}</p>
                                 </div>
                             </div>
 
@@ -180,14 +180,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                             <div className="mb-10">
                                 <div className="flex justify-between relative px-2">
                                     {/* Background Line */}
-                                    <div className="absolute top-5 left-8 right-8 h-0.5 bg-white/10 -z-10"></div>
+                                    <div className="absolute top-5 left-8 right-8 h-0.5 bg-slate-200 -z-10"></div>
 
                                     {[0, 1, 2, 3, 4, 5].map((s) => (
                                         <div key={s} className="flex flex-col items-center">
                                             <div
                                                 className={`w-10 h-10 rounded-full flex items-center justify-center font-black transition-all duration-500 shadow-lg ${step >= s
                                                     ? 'bg-blue-600 text-white scale-110 shadow-blue-500/50'
-                                                    : 'bg-white/10 text-white/40 border-2 border-white/10'
+                                                    : 'bg-slate-100 text-slate-400 border-2 border-slate-300'
                                                     }`}
                                             >
                                                 {step > s ? (
@@ -199,7 +199,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-between mt-3 text-[10px] font-black tracking-tighter text-white/60 uppercase px-1">
+                                <div className="flex justify-between mt-3 px-1 text-[10px] font-black uppercase tracking-tighter text-slate-400">
                                     <span className={step >= 0 ? 'text-blue-400' : ''}>School</span>
                                     <span className={step >= 1 ? 'text-blue-400' : ''}>Student</span>
                                     <span className={step >= 2 ? 'text-blue-400' : ''}>Route</span>

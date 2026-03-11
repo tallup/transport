@@ -32,13 +32,13 @@ export default function Create({ routes }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Create Discount</h2>
-                            <p className="text-white/80 mb-6">Time-based promotion applied to bookings in the selected date range and scope.</p>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Create Discount</h2>
+                            <p className="mb-6 text-slate-500">Time-based promotion applied to bookings in the selected date range and scope.</p>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
-                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="name" className="mb-2 block text-base font-semibold text-slate-700">
                                             Name *
                                         </label>
                                         <input
@@ -46,7 +46,7 @@ export default function Create({ routes }) {
                                             type="text"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             placeholder="e.g. March 2026 promo"
                                             required
                                         />
@@ -54,29 +54,29 @@ export default function Create({ routes }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="type" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="type" className="mb-2 block text-base font-semibold text-slate-700">
                                             Discount type *
                                         </label>
                                         <select
                                             id="type"
                                             value={data.type}
                                             onChange={(e) => setData('type', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="percentage" className="bg-indigo-700">Percentage off</option>
-                                            <option value="fixed" className="bg-indigo-700">Fixed amount off</option>
+                                            <option value="percentage">Percentage off</option>
+                                            <option value="fixed">Fixed amount off</option>
                                         </select>
                                         <InputError message={errors.type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="value" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="value" className="mb-2 block text-base font-semibold text-slate-700">
                                             Value *
                                         </label>
                                         <div className="mt-1 relative flex items-center">
                                             {data.type === 'fixed' && (
-                                                <span className="absolute left-3 text-white font-semibold">$</span>
+                                                <span className="absolute left-3 font-semibold text-slate-500">$</span>
                                             )}
                                             <input
                                                 id="value"
@@ -86,21 +86,21 @@ export default function Create({ routes }) {
                                                 max={data.type === 'percentage' ? 100 : undefined}
                                                 value={data.value}
                                                 onChange={(e) => setData('value', e.target.value)}
-                                                className={`block w-full glass-input text-white placeholder-gray-300 ${data.type === 'fixed' ? 'pl-7' : ''}`}
+                                                className={`form-control ${data.type === 'fixed' ? 'pl-7' : ''}`}
                                                 required
                                             />
                                             {data.type === 'percentage' && (
-                                                <span className="absolute right-3 text-white font-semibold">%</span>
+                                                <span className="absolute right-3 font-semibold text-slate-500">%</span>
                                             )}
                                         </div>
-                                        <p className="mt-1 text-sm text-white/80">
+                                        <p className="mt-1 text-sm text-slate-500">
                                             {data.type === 'percentage' ? '0–100' : 'Amount in dollars'}
                                         </p>
                                         <InputError message={errors.value} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="start_date" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="start_date" className="mb-2 block text-base font-semibold text-slate-700">
                                             Start date
                                         </label>
                                         <input
@@ -108,13 +108,13 @@ export default function Create({ routes }) {
                                             type="date"
                                             value={data.start_date}
                                             onChange={(e) => setData('start_date', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         />
                                         <InputError message={errors.start_date} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="end_date" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="end_date" className="mb-2 block text-base font-semibold text-slate-700">
                                             End date
                                         </label>
                                         <input
@@ -122,13 +122,13 @@ export default function Create({ routes }) {
                                             type="date"
                                             value={data.end_date}
                                             onChange={(e) => setData('end_date', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         />
                                         <InputError message={errors.end_date} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="scope" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="scope" className="mb-2 block text-base font-semibold text-slate-700">
                                             Scope *
                                         </label>
                                         <select
@@ -141,21 +141,21 @@ export default function Create({ routes }) {
                                                 if (v !== 'plan_type') setData('plan_type', '');
                                                 if (v === 'multi_child') setData('min_children', '2');
                                             }}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="all" className="bg-indigo-700">All bookings</option>
-                                            <option value="route" className="bg-indigo-700">Specific route</option>
-                                            <option value="plan_type" className="bg-indigo-700">Specific plan type</option>
-                                            <option value="multi_child" className="bg-indigo-700">Multi-child / Sibling</option>
+                                            <option value="all">All bookings</option>
+                                            <option value="route">Specific route</option>
+                                            <option value="plan_type">Specific plan type</option>
+                                            <option value="multi_child">Multi-child / Sibling</option>
                                         </select>
-                                        <p className="mt-1 text-sm text-white/80">Who gets this discount</p>
+                                        <p className="mt-1 text-sm text-slate-500">Who gets this discount</p>
                                         <InputError message={errors.scope} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     {data.scope === 'multi_child' && (
                                         <div className="md:col-span-2">
-                                            <label htmlFor="min_children" className="block text-base font-bold text-white mb-2">
+                                            <label htmlFor="min_children" className="mb-2 block text-base font-semibold text-slate-700">
                                                 Minimum number of children *
                                             </label>
                                             <input
@@ -165,29 +165,29 @@ export default function Create({ routes }) {
                                                 max="255"
                                                 value={data.min_children}
                                                 onChange={(e) => setData('min_children', e.target.value)}
-                                                className="mt-1 block w-full glass-input text-white"
+                                                className="form-control"
                                                 required
                                             />
-                                            <p className="mt-1 text-sm text-white/80">Discount applies when parent books for this many children or more (e.g. 2 = 2+ children)</p>
+                                            <p className="mt-1 text-sm text-slate-500">Discount applies when parent books for this many children or more (e.g. 2 = 2+ children)</p>
                                             <InputError message={errors.min_children} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                     )}
 
                                     {data.scope === 'route' && (
                                         <div className="md:col-span-2">
-                                            <label htmlFor="route_id" className="block text-base font-bold text-white mb-2">
+                                            <label htmlFor="route_id" className="mb-2 block text-base font-semibold text-slate-700">
                                                 Route *
                                             </label>
                                             <select
                                                 id="route_id"
                                                 value={data.route_id}
                                                 onChange={(e) => setData('route_id', e.target.value)}
-                                                className="mt-1 block w-full glass-input text-white"
+                                                className="form-control"
                                                 required
                                             >
-                                                <option value="" className="bg-indigo-700">Select route</option>
+                                                <option value="">Select route</option>
                                                 {routes.map((route) => (
-                                                    <option key={route.id} value={route.id} className="bg-indigo-700">
+                                                    <option key={route.id} value={route.id}>
                                                         {route.name}
                                                     </option>
                                                 ))}
@@ -198,21 +198,21 @@ export default function Create({ routes }) {
 
                                     {data.scope === 'plan_type' && (
                                         <div className="md:col-span-2">
-                                            <label htmlFor="plan_type" className="block text-base font-bold text-white mb-2">
+                                            <label htmlFor="plan_type" className="mb-2 block text-base font-semibold text-slate-700">
                                                 Plan type *
                                             </label>
                                             <select
                                                 id="plan_type"
                                                 value={data.plan_type}
                                                 onChange={(e) => setData('plan_type', e.target.value)}
-                                                className="mt-1 block w-full glass-input text-white"
+                                                className="form-control"
                                                 required
                                             >
-                                                <option value="" className="bg-indigo-700">Select plan type</option>
-                                                <option value="weekly" className="bg-indigo-700">Weekly</option>
-                                                <option value="monthly" className="bg-indigo-700">Monthly</option>
-                                                <option value="academic_term" className="bg-indigo-700">Academic Term</option>
-                                                <option value="annual" className="bg-indigo-700">Annual</option>
+                                                <option value="">Select plan type</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                                <option value="academic_term">Academic Term</option>
+                                                <option value="annual">Annual</option>
                                             </select>
                                             <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
                                         </div>
@@ -225,7 +225,7 @@ export default function Create({ routes }) {
                                                 checked={data.active}
                                                 onChange={(e) => setData('active', e.target.checked)}
                                             />
-                                            <label htmlFor="active" className="ml-2 text-base font-bold text-white">
+                                            <label htmlFor="active" className="ml-2 text-base font-semibold text-slate-700">
                                                 Active (discount will be applied when dates and scope match)
                                             </label>
                                         </div>
@@ -235,7 +235,7 @@ export default function Create({ routes }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/discounts"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

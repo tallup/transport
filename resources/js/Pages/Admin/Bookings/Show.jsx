@@ -78,8 +78,8 @@ export default function Show({ booking }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Booking Details</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">View and manage booking information</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Booking Details</h1>
+                                <p className="text-lg font-medium text-text-secondary">View and manage booking information</p>
                             </div>
                             <div className="flex gap-3">
                                 {booking.status === 'awaiting_approval' && (
@@ -115,13 +115,13 @@ export default function Show({ booking }) {
                                 )}
                                 <Link
                                     href={`/admin/bookings/${booking.id}/edit`}
-                                    className="px-6 py-3 bg-yellow-400/25 border-2 border-yellow-400 text-brand-primary font-bold rounded-xl hover:bg-yellow-400/40 hover:border-yellow-500 transition-all shadow-sm"
+                                    className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                                 >
                                     Edit
                                 </Link>
                                 <Link
                                     href="/admin/bookings"
-                                    className="px-6 py-3 bg-yellow-400/25 border-2 border-yellow-400 text-brand-primary font-bold rounded-xl hover:bg-yellow-400/40 hover:border-yellow-500 transition-all shadow-sm"
+                                    className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                                 >
                                     Back
                                 </Link>
@@ -132,15 +132,15 @@ export default function Show({ booking }) {
                     {/* Status Badge */}
                     <div className="mb-6">
                         {booking.status === 'pending' && (
-                            <p className="text-sm text-yellow-200/90 mb-2">Parent must complete payment before this booking can be approved. You will be notified when payment is received.</p>
+                            <p className="mb-2 text-sm text-amber-700">Parent must complete payment before this booking can be approved. You will be notified when payment is received.</p>
                         )}
                         <StatusBadge type="booking" status={booking.status} variant="light" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm" />
                     </div>
 
                     {/* Partial refund (when eligible) */}
                     {canRefund && (
-                        <GlassCard className="mb-6 p-4 flex flex-wrap items-end gap-4">
-                            <span className="text-brand-primary font-semibold">Partial refund:</span>
+                        <GlassCard className="mb-6 flex flex-wrap items-end gap-4 p-4">
+                            <span className="font-semibold text-slate-700">Partial refund:</span>
                             <input
                                 type="number"
                                 step="0.01"
@@ -148,7 +148,7 @@ export default function Show({ booking }) {
                                 placeholder="Amount ($)"
                                 value={partialAmount}
                                 onChange={(e) => setPartialAmount(e.target.value)}
-                                className="glass-input w-32 px-3 py-2 rounded-lg"
+                                className="form-control w-32"
                             />
                             <GlassButton
                                 type="button"
@@ -176,20 +176,20 @@ export default function Show({ booking }) {
                                         </svg>
                                     </div>
                                 )}
-                                <h3 className="text-xl font-extrabold text-brand-primary">Student & Parent</h3>
+                                <h3 className="text-xl font-bold text-slate-900">Student & Parent</h3>
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Student</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.student?.name || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Student</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.student?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Parent</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.student?.parent?.name || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Parent</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.student?.parent?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Email</p>
-                                    <p className="text-base font-semibold text-white/90 break-all">{booking.student?.parent?.email || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
+                                    <p className="break-all text-base font-medium text-slate-700">{booking.student?.parent?.email || 'N/A'}</p>
                                 </div>
                             </div>
                         </GlassCard>
@@ -202,20 +202,20 @@ export default function Show({ booking }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Route & Driver</h3>
+                                <h3 className="text-xl font-bold text-slate-900">Route & Driver</h3>
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Route</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.route?.name || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Route</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.route?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.route?.driver?.name || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Driver</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.route?.driver?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Vehicle</p>
-                                    <p className="text-base font-semibold text-white/90">
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Vehicle</p>
+                                    <p className="text-base font-medium text-slate-700">
                                         {booking.route?.vehicle
                                             ? `${booking.route.vehicle.make} ${booking.route.vehicle.model} (${booking.route.vehicle.license_plate})`
                                             : 'N/A'}
@@ -232,25 +232,25 @@ export default function Show({ booking }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Booking Info</h3>
+                                <h3 className="text-xl font-bold text-slate-900">Booking Info</h3>
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Plan Type</p>
-                                    <p className="text-lg font-extrabold text-white">
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Plan Type</p>
+                                    <p className="text-lg font-bold text-slate-900">
                                         {booking.plan_type?.replace('_', '-').toUpperCase() || 'N/A'}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Trip Type</p>
-                                    <p className="text-lg font-extrabold text-white">
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Trip Type</p>
+                                    <p className="text-lg font-bold text-slate-900">
                                         {booking.trip_type?.replace('_', ' ').toUpperCase() || 'N/A'}
                                     </p>
                                 </div>
                                 {booking.trip_type === 'one_way' && (
                                     <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Service</p>
-                                        <p className="text-lg font-extrabold text-white">
+                                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Service</p>
+                                        <p className="text-lg font-bold text-slate-900">
                                             {booking.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
                                         </p>
                                     </div>
@@ -266,12 +266,12 @@ export default function Show({ booking }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Dates</h3>
+                                <h3 className="text-xl font-bold text-slate-900">Dates</h3>
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Start Date</p>
-                                    <p className="text-lg font-extrabold text-white">
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Start Date</p>
+                                    <p className="text-lg font-bold text-slate-900">
                                         {booking.start_date ? new Date(booking.start_date).toLocaleDateString('en-US', { 
                                             year: 'numeric', 
                                             month: 'long', 
@@ -280,8 +280,8 @@ export default function Show({ booking }) {
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">End Date</p>
-                                    <p className="text-lg font-extrabold text-white">
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">End Date</p>
+                                    <p className="text-lg font-bold text-slate-900">
                                         {booking.end_date ? new Date(booking.end_date).toLocaleDateString('en-US', { 
                                             year: 'numeric', 
                                             month: 'long', 
@@ -301,16 +301,16 @@ export default function Show({ booking }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Pickup Details</h3>
+                                <h3 className="text-xl font-bold text-slate-900">Pickup Details</h3>
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Point</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.pickup_point?.name || booking.pickupPoint?.name || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Pickup Point</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.pickup_point?.name || booking.pickupPoint?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Address</p>
-                                    <p className="text-base font-semibold text-white/90 break-words">{booking.pickup_address || 'N/A'}</p>
+                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Pickup Address</p>
+                                    <p className="break-words text-base font-medium text-slate-700">{booking.pickup_address || 'N/A'}</p>
                                 </div>
                             </div>
                         </GlassCard>

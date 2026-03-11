@@ -77,12 +77,12 @@ export default function Index({ users, filters }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Users</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all system users</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Users</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all system users</p>
                             </div>
                             <Link
                                 href="/admin/users/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add User
                             </Link>
@@ -109,18 +109,18 @@ export default function Index({ users, filters }) {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search by name or email..."
-                                    className="w-full px-4 py-3 bg-white/20 border-2 border-yellow-400/70 rounded-xl text-brand-primary font-medium placeholder-brand-primary/60 focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
+                                    className="form-control"
                                 />
                             </form>
                             <select
                                 value={roleFilter}
                                 onChange={handleRoleFilter}
-                                className="px-4 py-3 bg-white/20 border-2 border-yellow-400/70 rounded-xl text-brand-primary font-medium focus:bg-white/30 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all outline-none"
+                                className="form-control sm:max-w-[180px]"
                             >
-                                <option value="" className="bg-brand-primary text-white">All Roles</option>
-                                <option value="parent" className="bg-brand-primary text-white">Parent</option>
-                                <option value="driver" className="bg-brand-primary text-white">Driver</option>
-                                <option value="admin" className="bg-brand-primary text-white">Admin</option>
+                                <option value="">All Roles</option>
+                                <option value="parent">Parent</option>
+                                <option value="driver">Driver</option>
+                                <option value="admin">Admin</option>
                             </select>
                         </div>
                     </GlassCard>
@@ -145,27 +145,27 @@ export default function Index({ users, filters }) {
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{user.name}</h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">{user.email}</p>
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{user.name}</h3>
+                                                <p className="truncate text-sm font-medium text-slate-500">{user.email}</p>
                                             </div>
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
-                                            <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                            <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
                                                 user.role === 'driver'
-                                                    ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
+                                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                                                     : user.role === 'parent'
-                                                    ? 'bg-blue-500/30 text-brand-primary border border-blue-400/50'
+                                                    ? 'border-sky-200 bg-sky-50 text-sky-700'
                                                     : ['super_admin', 'transport_admin', 'admin'].includes(user.role)
-                                                    ? 'bg-purple-500/30 text-brand-primary border border-purple-400/50'
-                                                    : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                                    ? 'border-violet-200 bg-violet-50 text-violet-700'
+                                                    : 'border-slate-200 bg-slate-100 text-slate-600'
                                             }`}>
                                                 {user.role === 'super_admin' ? 'Super Admin' : user.role === 'transport_admin' ? 'Transport Admin' : user.role === 'admin' ? 'Admin' : user.role}
                                             </span>
                                             {user.role === 'parent' && (
-                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                                <span className={`rounded border px-2 py-0.5 text-xs font-semibold ${
                                                     user.is_active !== false
-                                                        ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
-                                                        : 'bg-red-500/30 text-brand-primary border border-red-400/50'
+                                                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                        : 'border-rose-200 bg-rose-50 text-rose-700'
                                                 }`}>
                                                     {user.is_active !== false ? 'Active' : 'Disabled'}
                                                 </span>
@@ -179,7 +179,7 @@ export default function Index({ users, filters }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium">
+                                            <p className="text-sm font-medium text-slate-700">
                                                 Created: {new Date(user.created_at).toLocaleDateString('en-US', { 
                                                     year: 'numeric', 
                                                     month: 'long', 
@@ -190,11 +190,11 @@ export default function Index({ users, filters }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         {!['super_admin', 'transport_admin'].includes(user.role) && (
                                             <Link
                                                 href={`/admin/users/${user.id}/edit`}
-                                                className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                                className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                             >
                                                 Edit
                                             </Link>
@@ -203,10 +203,10 @@ export default function Index({ users, filters }) {
                                             <button
                                                 onClick={() => handleToggleParentStatus(user)}
                                                 disabled={toggling === user.id}
-                                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${
+                                                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
                                                     user.is_active !== false
-                                                        ? 'bg-orange-500/20 border border-orange-400/50 text-orange-200 hover:bg-orange-500/30'
-                                                        : 'bg-green-500/20 border border-green-400/50 text-green-200 hover:bg-green-500/30'
+                                                        ? 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                        : 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                                                 }`}
                                             >
                                                 {toggling === user.id 
@@ -221,7 +221,7 @@ export default function Index({ users, filters }) {
                                             <button
                                                 onClick={() => handleDelete(user.id)}
                                                 disabled={deleting === user.id}
-                                                className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                                className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                             >
                                                 {deleting === user.id ? 'Deleting...' : 'Delete'}
                                             </button>

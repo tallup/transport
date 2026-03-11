@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
 import GlassButton from '@/Components/GlassButton';
 
 export default function ReportExporter() {
@@ -69,18 +68,18 @@ export default function ReportExporter() {
                         className="fixed inset-0 bg-black/50 z-40"
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-80 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20 p-4 z-50">
-                        <h3 className="text-lg font-bold text-white mb-4">Export Report</h3>
+                    <div className="absolute right-0 z-50 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-slate-900">Export Report</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">
                                     Report Type
                                 </label>
                                 <select
                                     value={reportType}
                                     onChange={(e) => setReportType(e.target.value)}
-                                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="form-control"
                                 >
                                     <option value="revenue">Revenue</option>
                                     <option value="capacity">Capacity</option>
@@ -90,13 +89,13 @@ export default function ReportExporter() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">
                                     Format
                                 </label>
                                 <select
                                     value={format}
                                     onChange={(e) => setFormat(e.target.value)}
-                                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="form-control"
                                 >
                                     <option value="pdf">PDF</option>
                                     <option value="excel">Excel</option>
@@ -104,26 +103,26 @@ export default function ReportExporter() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">
                                     Start Date
                                 </label>
                                 <input
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="form-control"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-white mb-1">
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">
                                     End Date
                                 </label>
                                 <input
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="form-control"
                                 />
                             </div>
 

@@ -4,48 +4,48 @@ export default function CapacityHeatmap({ data = [] }) {
     const getStatusColor = (status) => {
         switch (status) {
             case 'full':
-                return 'bg-red-500/30 border-red-400/50 text-red-100';
+                return 'bg-rose-50 border-rose-200 text-rose-700';
             case 'high':
-                return 'bg-orange-500/30 border-orange-400/50 text-orange-100';
+                return 'bg-amber-50 border-amber-200 text-amber-700';
             case 'medium':
-                return 'bg-yellow-500/30 border-yellow-400/50 text-yellow-100';
+                return 'bg-yellow-50 border-yellow-200 text-yellow-700';
             case 'low':
-                return 'bg-green-500/30 border-green-400/50 text-green-100';
+                return 'bg-emerald-50 border-emerald-200 text-emerald-700';
             default:
-                return 'bg-gray-500/30 border-gray-400/50 text-gray-100';
+                return 'bg-slate-100 border-slate-200 text-slate-600';
         }
     };
 
     return (
         <GlassCard className="p-6">
-            <h3 className="text-xl font-extrabold text-brand-primary mb-4">Capacity Utilization by Route</h3>
+            <h3 className="mb-4 text-xl font-bold text-slate-900">Capacity Utilization by Route</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.map((route) => (
                     <GlassCard
                         key={route.route_id}
-                        className={`p-4 border-2 ${getStatusColor(route.status).replace('text-red-100', 'text-brand-primary').replace('text-orange-100', 'text-brand-primary').replace('text-yellow-100', 'text-brand-primary').replace('text-green-100', 'text-brand-primary').replace('text-gray-100', 'text-brand-primary')}`}
+                        className={`border-2 p-4 ${getStatusColor(route.status)}`}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-extrabold text-lg text-white">{route.route_name}</h4>
-                            <span className={`px-2 py-1 text-xs font-bold rounded-lg border ${getStatusColor(route.status).replace('text-red-100', 'text-brand-primary').replace('text-orange-100', 'text-brand-primary').replace('text-yellow-100', 'text-brand-primary').replace('text-green-100', 'text-brand-primary').replace('text-gray-100', 'text-brand-primary')}`}>
+                            <h4 className="text-lg font-bold text-slate-900">{route.route_name}</h4>
+                            <span className={`rounded-lg border px-2 py-1 text-xs font-semibold ${getStatusColor(route.status)}`}>
                                 {route.status.toUpperCase()}
                             </span>
                         </div>
                         <div className="space-y-1 text-sm">
                             <div className="flex justify-between">
-                                <span className="text-white/70">Capacity:</span>
-                                <span className="font-bold text-white">{route.capacity}</span>
+                                <span className="text-slate-500">Capacity:</span>
+                                <span className="font-semibold text-slate-800">{route.capacity}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-white/70">Active Bookings:</span>
-                                <span className="font-bold text-white">{route.active_bookings}</span>
+                                <span className="text-slate-500">Active Bookings:</span>
+                                <span className="font-semibold text-slate-800">{route.active_bookings}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-white/70">Available:</span>
-                                <span className="font-bold text-white">{route.available_seats}</span>
+                                <span className="text-slate-500">Available:</span>
+                                <span className="font-semibold text-slate-800">{route.available_seats}</span>
                             </div>
                             <div className="mt-2">
-                                <div className="w-full bg-white/20 rounded-full h-2">
+                                <div className="h-2 w-full rounded-full bg-slate-200">
                                     <div
                                         className={`h-2 rounded-full ${
                                             route.utilization_percent >= 80
@@ -57,13 +57,13 @@ export default function CapacityHeatmap({ data = [] }) {
                                         style={{ width: `${Math.min(route.utilization_percent, 100)}%` }}
                                     />
                                 </div>
-                                <div className="text-xs mt-1 text-center font-bold text-brand-primary">
+                                <div className="mt-1 text-center text-xs font-semibold text-slate-600">
                                     {route.utilization_percent}% utilized
                                 </div>
                             </div>
-                            <div className="text-xs mt-2 pt-2 border-t border-white/20">
-                                <div className="text-white/90">Driver: <span className="font-bold text-white">{route.driver_name}</span></div>
-                                <div className="text-white/90">Vehicle: <span className="font-bold text-white">{route.vehicle_type}</span></div>
+                            <div className="mt-2 border-t border-slate-200 pt-2 text-xs">
+                                <div className="text-slate-600">Driver: <span className="font-semibold text-slate-800">{route.driver_name}</span></div>
+                                <div className="text-slate-600">Vehicle: <span className="font-semibold text-slate-800">{route.vehicle_type}</span></div>
                             </div>
                         </div>
                     </GlassCard>

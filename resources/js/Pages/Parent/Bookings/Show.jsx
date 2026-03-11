@@ -1,9 +1,18 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import {
+    ArrowLeft,
+    Calendar,
+    Car,
+    Clock3,
+    MapPin,
+    Route,
+    UserRound,
+} from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import StatusBadge from '@/Components/StatusBadge';
-import { useState, useEffect } from 'react';
 
 export default function ShowBooking({ booking, price, dailyPickups }) {
     const { auth, flash } = usePage().props;
@@ -13,37 +22,30 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         if (flash?.success || flash?.error) {
             const timer = setTimeout(() => setShowFlash(false), 5000);
             return () => clearTimeout(timer);
-        } else {
-            setShowFlash(true);
         }
+        setShowFlash(true);
     }, [flash?.success, flash?.error]);
 
-    // Helper function to format time
     const formatTime = (timeString) => {
         if (!timeString) return 'N/A';
-        
         try {
             let date;
             if (typeof timeString === 'string') {
                 if (timeString.includes('T') || timeString.includes(' ')) {
                     date = new Date(timeString);
                 } else if (timeString.includes(':') && timeString.length <= 8) {
-                    date = new Date('2000-01-01T' + timeString);
+                    date = new Date(`2000-01-01T${timeString}`);
                 } else {
                     return timeString;
                 }
             } else {
                 date = new Date(timeString);
             }
-            
-            if (isNaN(date.getTime())) {
-                return timeString;
-            }
-            
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true 
+            if (Number.isNaN(date.getTime())) return timeString;
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
             });
         } catch (e) {
             return timeString;
@@ -54,541 +56,223 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         <AuthenticatedLayout user={auth.user}>
             <Head title="Booking Details" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="mb-6">
-                        <Link
-                            href="/parent/bookings"
-                            className="text-brand-primary hover:text-brand-primary/80 font-semibold mb-4 inline-flex items-center gap-2"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Back to My Bookings
-                        </Link>
-                    </div>
+            <div className="py-10">
+                <div className="container space-y-6">
+                    <Link
+                        href="/parent/bookings"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-brand-primary hover:text-brand-secondary"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to My Bookings
+                    </Link>
 
                     {showFlash && flash?.success && (
-                        <div className="mb-6 p-4 rounded-xl bg-emerald-600 border-2 border-emerald-500 shadow-md">
-                            <p className="text-white font-bold">{flash.success}</p>
+                        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+                            {flash.success}
                         </div>
                     )}
-
                     {showFlash && flash?.error && (
-                        <div className="mb-6 p-4 rounded-xl bg-amber-600/90 border-2 border-amber-500 shadow-md">
-                            <p className="text-white font-bold">{flash.error}</p>
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+                            {flash.error}
                         </div>
                     )}
 
-                    {/* Header Section */}
-                    <div className="mb-8">
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Booking Details</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">View your booking information</p>
-                            </div>
-                            <div className="flex gap-3">
-                                {booking.status === 'pending' && (
-                                    <Link
-                                        href={`/parent/bookings/${booking.id}/checkout`}
-                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                    >
-                                        Pay Now
+                    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+                                Booking Details
+                            </h1>
+                            <p className="mt-2 text-sm text-slate-600 md:text-base">
+                                Review status, trip info, route, and schedule.
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {booking.status === 'pending' && (
+                                <>
+                                    <Link href={`/parent/bookings/${booking.id}/checkout`}>
+                                        <GlassButton variant="success">Pay Now</GlassButton>
                                     </Link>
-                                )}
-                                {booking.status === 'pending' && (
-                                    <Link
-                                        href={`/parent/bookings/${booking.id}/edit`}
-                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                    >
-                                        Edit Booking
+                                    <Link href={`/parent/bookings/${booking.id}/edit`}>
+                                        <GlassButton variant="secondary">Edit Booking</GlassButton>
                                     </Link>
-                                )}
-                            </div>
+                                </>
+                            )}
                         </div>
                     </div>
 
-                    {/* Status Badge */}
-                    <div className="mb-6">
-                        <StatusBadge type="booking" status={booking.status} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm" />
+                    <div>
+                        <StatusBadge
+                            type="booking"
+                            status={booking.status}
+                            className="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium"
+                        />
                     </div>
 
                     {booking.status === 'awaiting_approval' && (
-                        <GlassCard className="mb-6">
-                            <div className="p-4 bg-amber-500/20 border border-amber-400/50 rounded-xl">
-                                <div className="flex items-center gap-3">
-                                    <svg className="w-6 h-6 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p className="text-amber-100 font-semibold">Payment received. Your booking is awaiting admin approval.</p>
-                                </div>
-                            </div>
+                        <GlassCard>
+                            <p className="text-sm font-medium text-amber-700">
+                                Payment was received and this booking is awaiting admin approval.
+                            </p>
                         </GlassCard>
                     )}
 
-                    {/* Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                        {/* Student Information Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                {booking.student?.profile_picture_url ? (
-                                    <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="w-12 h-12 rounded-xl object-cover shadow-md border-2 border-yellow-400/50" />
-                                ) : (
-                                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                        <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                    </div>
-                                )}
-                                <h3 className="text-xl font-extrabold text-brand-primary">Student Information</h3>
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <GlassCard>
+                            <div className="mb-4 flex items-center gap-2">
+                                <UserRound className="h-5 w-5 text-slate-500" />
+                                <h3 className="text-base font-semibold text-slate-900">Student Information</h3>
                             </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Name</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.student?.name || 'N/A'}</p>
-                                </div>
-                                {booking.student?.school && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">School</p>
-                                        <p className="text-base font-semibold text-white/90">{booking.student.school.name}</p>
-                                    </div>
-                                )}
-                                {booking.student?.grade && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Grade</p>
-                                        <p className="text-base font-semibold text-white/90">{booking.student.grade}</p>
-                                    </div>
-                                )}
+                            <div className="space-y-3 text-sm">
+                                <p className="text-slate-900"><span className="font-medium">Name:</span> {booking.student?.name || 'N/A'}</p>
+                                {booking.student?.school && <p className="text-slate-700"><span className="font-medium">School:</span> {booking.student.school.name}</p>}
+                                {booking.student?.grade && <p className="text-slate-700"><span className="font-medium">Grade:</span> {booking.student.grade}</p>}
                             </div>
                         </GlassCard>
 
-                        {/* Route Information Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Route Information</h3>
+                        <GlassCard>
+                            <div className="mb-4 flex items-center gap-2">
+                                <Route className="h-5 w-5 text-slate-500" />
+                                <h3 className="text-base font-semibold text-slate-900">Route Information</h3>
                             </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Route</p>
-                                    <p className="text-lg font-extrabold text-white">{booking.route?.name || 'N/A'}</p>
-                                </div>
+                            <div className="space-y-3 text-sm">
+                                <p className="text-slate-900"><span className="font-medium">Route:</span> {booking.route?.name || 'N/A'}</p>
                                 {booking.route?.vehicle && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Vehicle</p>
-                                        <p className="text-base font-semibold text-white/90">
-                                            {booking.route.vehicle.make} {booking.route.vehicle.model}
-                                            {booking.route.vehicle.license_plate && ` (${booking.route.vehicle.license_plate})`}
-                                        </p>
-                                    </div>
+                                    <p className="text-slate-700">
+                                        <span className="font-medium">Vehicle:</span> {booking.route.vehicle.make} {booking.route.vehicle.model}
+                                        {booking.route.vehicle.license_plate ? ` (${booking.route.vehicle.license_plate})` : ''}
+                                    </p>
                                 )}
-                                {booking.route?.driver && (
-                                    <div className="flex items-center gap-3">
-                                        {booking.route.driver.profile_picture_url ? (
-                                            <img src={booking.route.driver.profile_picture_url} alt={booking.route.driver.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50" />
-                                        ) : null}
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
-                                            <p className="text-base font-semibold text-white/90">{booking.route.driver.name}</p>
-                                        </div>
-                                    </div>
-                                )}
+                                {booking.route?.driver && <p className="text-slate-700"><span className="font-medium">Driver:</span> {booking.route.driver.name}</p>}
                             </div>
                         </GlassCard>
 
-                        {/* Booking Details Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Booking Details</h3>
+                        <GlassCard>
+                            <div className="mb-4 flex items-center gap-2">
+                                <Car className="h-5 w-5 text-slate-500" />
+                                <h3 className="text-base font-semibold text-slate-900">Booking Details</h3>
                             </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Plan Type</p>
-                                    <p className="text-lg font-extrabold text-white">
-                                        {booking.plan_type === 'academic_term' ? 'Academic Term' : booking.plan_type?.replace('_', '-').toUpperCase() || 'N/A'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Trip Type</p>
-                                    <p className="text-lg font-extrabold text-white">
-                                        {booking.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
-                                    </p>
-                                </div>
+                            <div className="space-y-3 text-sm">
+                                <p className="text-slate-900">
+                                    <span className="font-medium">Plan:</span>{' '}
+                                    {booking.plan_type === 'academic_term'
+                                        ? 'Academic Term'
+                                        : booking.plan_type?.replace('_', '-').toUpperCase() || 'N/A'}
+                                </p>
+                                <p className="text-slate-700">
+                                    <span className="font-medium">Trip type:</span> {booking.trip_type === 'one_way' ? 'One Way' : 'Two Way'}
+                                </p>
                                 {booking.trip_type === 'one_way' && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Service</p>
-                                        <p className="text-lg font-extrabold text-white">
-                                            {booking.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
-                                        </p>
-                                    </div>
+                                    <p className="text-slate-700">
+                                        <span className="font-medium">Service:</span>{' '}
+                                        {booking.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
+                                    </p>
                                 )}
                                 {price && (
-                                    <div className="pt-4 border-t border-yellow-400/40">
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Total Price</p>
-                                        <p className="text-2xl font-extrabold text-green-200">{price.formatted}</p>
-                                    </div>
-                                )}
-                            </div>
-                        </GlassCard>
-
-                        {/* Pickup Information Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Pickup Information</h3>
-                            </div>
-                            <div className="space-y-4">
-                                {booking.pickup_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Point</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
-                                        </div>
-                                        {booking.pickup_point.pickup_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Time</p>
-                                                <p className="text-base font-semibold text-green-200">{formatTime(booking.pickup_point.pickup_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.pickup_address ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Address</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_address}</p>
-                                        </div>
-                                        {booking.route?.pickup_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Pickup Time</p>
-                                                <p className="text-base font-semibold text-green-200">{formatTime(booking.route.pickup_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p className="text-white/70">No pickup information provided</p>
-                                )}
-                            </div>
-                        </GlassCard>
-
-                        {/* Dropoff Information Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Dropoff Information</h3>
-                            </div>
-                            <div className="space-y-4">
-                                {booking.dropoff_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Point</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.dropoff_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.dropoff_point.address}</p>
-                                        </div>
-                                        {booking.dropoff_point.dropoff_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Time</p>
-                                                <p className="text-base font-semibold text-green-200">{formatTime(booking.dropoff_point.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.pickup_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Point</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
-                                        </div>
-                                        {booking.pickup_point.dropoff_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Time</p>
-                                                <p className="text-base font-semibold text-green-200">{formatTime(booking.pickup_point.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.student?.school ? (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Location</p>
-                                        <p className="text-lg font-extrabold text-white">{booking.student.school.name}</p>
-                                        {booking.route?.dropoff_time && (
-                                            <div className="mt-3">
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Dropoff Time</p>
-                                                <p className="text-base font-semibold text-green-200">{formatTime(booking.route.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <p className="text-white/70">Dropoff information not specified</p>
-                                )}
-                            </div>
-                        </GlassCard>
-
-                        {/* Dates Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Dates</h3>
-                            </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Start Date</p>
-                                    <p className="text-lg font-extrabold text-white">
-                                        {new Date(booking.start_date).toLocaleDateString('en-US', { 
-                                            year: 'numeric', 
-                                            month: 'long', 
-                                            day: 'numeric' 
-                                        })}
-                                    </p>
-                                </div>
-                                {booking.end_date && (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">End Date</p>
-                                        <p className="text-lg font-extrabold text-white">
-                                            {new Date(booking.end_date).toLocaleDateString('en-US', { 
-                                                year: 'numeric', 
-                                                month: 'long', 
-                                                day: 'numeric' 
-                                            })}
-                                        </p>
+                                    <div className="border-t border-slate-200 pt-3">
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">Total price</p>
+                                        <p className="text-xl font-semibold text-emerald-700">{price.formatted}</p>
                                     </div>
                                 )}
                             </div>
                         </GlassCard>
                     </div>
 
-                    {/* Action Buttons */}
-                    <GlassCard className="mb-6">
-                        <div className="p-6">
-                            <div className="flex gap-3 flex-wrap">
-                                {booking.status === 'pending' && (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <GlassCard>
+                            <div className="mb-4 flex items-center gap-2">
+                                <MapPin className="h-5 w-5 text-slate-500" />
+                                <h3 className="text-base font-semibold text-slate-900">Morning Pickup</h3>
+                            </div>
+                            <div className="space-y-3 text-sm text-slate-700">
+                                {booking.pickup_point ? (
                                     <>
-                                        <Link
-                                            href={`/parent/bookings/${booking.id}/edit`}
-                                            className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                        >
-                                            Edit Booking
-                                        </Link>
-                                        <Link
-                                            href={`/parent/bookings/${booking.id}/checkout`}
-                                            className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                        >
-                                            Complete Payment
-                                        </Link>
+                                        <p className="text-slate-900 font-medium">{booking.pickup_point.name}</p>
+                                        <p>{booking.pickup_point.address}</p>
+                                        {booking.pickup_point.pickup_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.pickup_point.pickup_time)}</p>
+                                        )}
                                     </>
-                                )}
-                                {(booking.status === 'active' || booking.status === 'expired') && new Date(booking.start_date) > new Date() && (
-                                    <Link
-                                        href={`/parent/bookings/${booking.id}/edit`}
-                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                    >
-                                        Edit Booking
-                                    </Link>
-                                )}
-                                {(booking.status === 'active' || booking.status === 'expired') && (
-                                    <Link
-                                        href={`/parent/bookings/${booking.id}/rebook`}
-                                        className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
-                                    >
-                                        Rebook
-                                    </Link>
+                                ) : booking.pickup_address ? (
+                                    <>
+                                        <p className="text-slate-900 font-medium">{booking.pickup_address}</p>
+                                        {booking.route?.pickup_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.route.pickup_time)}</p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>Pickup location not specified.</p>
                                 )}
                             </div>
+                        </GlassCard>
+
+                        <GlassCard>
+                            <div className="mb-4 flex items-center gap-2">
+                                <Clock3 className="h-5 w-5 text-slate-500" />
+                                <h3 className="text-base font-semibold text-slate-900">Afternoon Dropoff</h3>
+                            </div>
+                            <div className="space-y-3 text-sm text-slate-700">
+                                {booking.dropoff_point ? (
+                                    <>
+                                        <p className="text-slate-900 font-medium">{booking.dropoff_point.name}</p>
+                                        <p>{booking.dropoff_point.address}</p>
+                                        {booking.dropoff_point.dropoff_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.dropoff_point.dropoff_time)}</p>
+                                        )}
+                                    </>
+                                ) : booking.pickup_point ? (
+                                    <>
+                                        <p className="text-slate-900 font-medium">{booking.pickup_point.name}</p>
+                                        <p>{booking.pickup_point.address}</p>
+                                        {booking.pickup_point.dropoff_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.pickup_point.dropoff_time)}</p>
+                                        )}
+                                    </>
+                                ) : booking.student?.school ? (
+                                    <>
+                                        <p className="text-slate-900 font-medium">{booking.student.school.name}</p>
+                                        {booking.route?.dropoff_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.route.dropoff_time)}</p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>Dropoff location not specified.</p>
+                                )}
+                            </div>
+                        </GlassCard>
+                    </div>
+
+                    <GlassCard>
+                        <div className="mb-4 flex items-center gap-2">
+                            <Calendar className="h-5 w-5 text-slate-500" />
+                            <h3 className="text-base font-semibold text-slate-900">Booking Dates</h3>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+                            <p className="text-slate-700">
+                                <span className="font-medium text-slate-900">Start:</span>{' '}
+                                {new Date(booking.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </p>
+                            {booking.end_date && (
+                                <p className="text-slate-700">
+                                    <span className="font-medium text-slate-900">End:</span>{' '}
+                                    {new Date(booking.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                </p>
+                            )}
                         </div>
                     </GlassCard>
 
-                    {/* Pickup History Link */}
-                    {dailyPickups && typeof dailyPickups === 'object' && dailyPickups !== null && Object.keys(dailyPickups).length > 0 && (
-                        <GlassCard className="mb-6">
-                            <div className="p-6">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h3 className="text-2xl font-extrabold text-white drop-shadow-lg mb-2">
-                                            Pickup History
-                                        </h3>
-                                        <p className="text-white/70 font-semibold">
-                                            {Object.values(dailyPickups || {}).flat().length} pickup{Object.values(dailyPickups || {}).flat().length !== 1 ? 's' : ''} recorded
-                                        </p>
-                                    </div>
-                                    <Link
-                                        href={`/parent/bookings/${booking?.id}/pickup-history`}
-                                        className="px-6 py-3 bg-blue-500/30 backdrop-blur-sm border border-blue-400/50 rounded-md text-white font-bold hover:bg-blue-500/50 transition inline-flex items-center gap-2"
-                                    >
-                                        View Full History
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </Link>
+                    {dailyPickups && typeof dailyPickups === 'object' && Object.keys(dailyPickups).length > 0 && (
+                        <GlassCard>
+                            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-slate-900">Pickup History</h3>
+                                    <p className="text-sm text-slate-600">
+                                        {Object.values(dailyPickups || {}).flat().length} pickup
+                                        {Object.values(dailyPickups || {}).flat().length !== 1 ? 's' : ''} recorded
+                                    </p>
                                 </div>
-                            </div>
-                        </GlassCard>
-                    )}
-
-                    {/* Pickup & Dropoff Schedule - Card Style */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        {/* Pickup Details Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Morning Pickup</h3>
-                            </div>
-                            <div className="space-y-4">
-                                {booking.pickup_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
-                                        </div>
-                                        {booking.pickup_point.pickup_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
-                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.pickup_point.pickup_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.pickup_address ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_address}</p>
-                                        </div>
-                                        {booking.route?.pickup_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
-                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.route.pickup_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p className="text-white/70">Pickup location not specified</p>
-                                )}
-                            </div>
-                        </GlassCard>
-
-                        {/* Dropoff Details Card */}
-                        <GlassCard className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                    <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-extrabold text-brand-primary">Afternoon Dropoff</h3>
-                            </div>
-                            <div className="space-y-4">
-                                {booking.dropoff_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.dropoff_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.dropoff_point.address}</p>
-                                        </div>
-                                        {booking.dropoff_point.dropoff_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
-                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.dropoff_point.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.pickup_point ? (
-                                    <>
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
-                                            <p className="text-lg font-extrabold text-white">{booking.pickup_point.name}</p>
-                                            <p className="text-sm text-white/80 mt-1">{booking.pickup_point.address}</p>
-                                        </div>
-                                        {booking.pickup_point.dropoff_time && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
-                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.pickup_point.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : booking.student?.school ? (
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Location</p>
-                                        <p className="text-lg font-extrabold text-white">{booking.student.school.name}</p>
-                                        {booking.route?.dropoff_time && (
-                                            <div className="mt-3">
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Scheduled Time</p>
-                                                <p className="text-lg font-extrabold text-green-200">{formatTime(booking.route.dropoff_time)}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <p className="text-white/70">Dropoff location not specified</p>
-                                )}
-                            </div>
-                        </GlassCard>
-                    </div>
-
-                    {/* Route Information Card */}
-                    {booking.route && (
-                        <GlassCard className="mb-6">
-                            <div className="p-6">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
-                                        <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-xl font-extrabold text-brand-primary">Route Information</h3>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Route Name</p>
-                                        <p className="text-lg font-extrabold text-white">{booking.route.name}</p>
-                                    </div>
-                                    {booking.route.vehicle && (
-                                        <div>
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Vehicle</p>
-                                            <p className="text-lg font-extrabold text-white">
-                                                {booking.route.vehicle.make} {booking.route.vehicle.model}
-                                            </p>
-                                            {booking.route.vehicle.license_plate && (
-                                                <p className="text-sm text-white/80 mt-1">Plate: {booking.route.vehicle.license_plate}</p>
-                                            )}
-                                        </div>
-                                    )}
-                                    {booking.route?.driver && (
-                                        <div className="flex items-center gap-3">
-                                            {booking.route.driver.profile_picture_url && (
-                                                <img src={booking.route.driver.profile_picture_url} alt={booking.route.driver.name} className="w-12 h-12 rounded-xl object-cover border-2 border-yellow-400/50" />
-                                            )}
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-1">Driver</p>
-                                                <p className="text-lg font-extrabold text-white">{booking.route.driver.name}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <Link href={`/parent/bookings/${booking?.id}/pickup-history`}>
+                                    <GlassButton variant="secondary">View Full History</GlassButton>
+                                </Link>
                             </div>
                         </GlassCard>
                     )}
@@ -597,6 +281,3 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         </AuthenticatedLayout>
     );
 }
-
-
-

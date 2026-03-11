@@ -44,28 +44,16 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (TokenMismatchException $e, $request) {
-            // CSRF mismatch on the login form → just reload the form with a fresh token
-            if ($request->is('login') || $request->routeIs('login')) {
-                $loginUrl = route('login');
-                if ($request->header('X-Inertia')) {
-                    return Inertia::location($loginUrl);
-                }
-                return redirect($loginUrl);
-            }
-
-            // CSRF mismatch elsewhere → session genuinely expired
-            $loginExpired = route('login', ['expired' => 1]);
+            $loginUrl = route('login');
 
             if ($request->header('X-Inertia')) {
-                return Inertia::location($loginExpired);
+                return Inertia::location($loginUrl);
             }
 
             if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Your session has expired. Please log in again.',
-                ], 419);
+                return response()->json(['message' => 'Page expired. Please try again.'], 419);
             }
 
-            return redirect($loginExpired);
+            return redirect($loginUrl);
         });
     })->create();

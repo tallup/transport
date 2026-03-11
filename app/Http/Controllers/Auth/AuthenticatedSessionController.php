@@ -25,9 +25,6 @@ class AuthenticatedSessionController extends Controller
         }
 
         $status = session('status');
-        if ($request->query('expired')) {
-            $status = $status ?: 'Your session expired. Please sign in again.';
-        }
 
         return Inertia::render('Auth/Login', [
             'canResetPassword' => $canResetPassword,

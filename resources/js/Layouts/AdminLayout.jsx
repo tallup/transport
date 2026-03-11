@@ -1,213 +1,216 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
 import RealTimeListener from '@/Components/RealTimeListener';
+
+const sidebarLinkClasses = (isActive) =>
+    `flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+        isActive
+            ? 'bg-brand-primary text-white shadow-sm shadow-brand-primary/15'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+    }`;
 
 export default function AdminLayout({ header, children }) {
     const { auth } = usePage().props;
     const [navAvatarError, setNavAvatarError] = useState(false);
+    const sidebarScrollRef = useRef(null);
     const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
-    
-    // Build navigation items for mobile menu
-    const navigationItems = [
+    const sidebarScrollStorageKey = 'admin-sidebar-scroll-top';
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !sidebarScrollRef.current) {
+            return;
+        }
+
+        const savedScrollTop = window.sessionStorage.getItem(sidebarScrollStorageKey);
+        if (savedScrollTop !== null) {
+            sidebarScrollRef.current.scrollTop = Number(savedScrollTop);
+        }
+    }, [currentUrl]);
+
+    const handleSidebarScroll = () => {
+        if (typeof window === 'undefined' || !sidebarScrollRef.current) {
+            return;
+        }
+
+        window.sessionStorage.setItem(
+            sidebarScrollStorageKey,
+            String(sidebarScrollRef.current.scrollTop),
+        );
+    };
+
+    const navigationGroups = [
+        {
+            label: 'Operations',
+            items: [
+                { href: '/admin/dashboard', label: 'Dashboard', active: currentUrl === '/admin/dashboard' },
+                { href: '/admin/bookings', label: 'Bookings', active: currentUrl.startsWith('/admin/bookings') },
+                { href: '/admin/routes', label: 'Routes', active: currentUrl.startsWith('/admin/routes') },
+                { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl.startsWith('/admin/pickup-points') },
+                { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl.startsWith('/admin/vehicles') },
+            ],
+        },
+        {
+            label: 'Monitoring',
+            items: [
+                { href: '/admin/finance', label: 'Finance', active: currentUrl.startsWith('/admin/finance') },
+                { href: '/admin/analytics', label: 'Analytics', active: currentUrl.startsWith('/admin/analytics') },
+                { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl.startsWith('/admin/calendar-events') },
+            ],
+        },
+        {
+            label: 'People & Setup',
+            items: [
+                { href: '/admin/users', label: 'Users', active: currentUrl.startsWith('/admin/users') },
+                { href: '/admin/students', label: 'Students', active: currentUrl.startsWith('/admin/students') },
+                { href: '/admin/schools', label: 'Schools', active: currentUrl.startsWith('/admin/schools') },
+                { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl.startsWith('/admin/registration-requests') },
+                { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl.startsWith('/admin/pricing-rules') },
+                { href: '/admin/discounts', label: 'Discounts', active: currentUrl.startsWith('/admin/discounts') },
+                { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl.startsWith('/admin/pricing/manage') },
+            ],
+        },
+    ];
+
+    const mainNavigationItems = [
         { href: '/admin/dashboard', label: 'Dashboard', active: currentUrl === '/admin/dashboard' },
-        { href: '/admin/bookings', label: 'Bookings', active: currentUrl?.startsWith('/admin/bookings') },
-        { href: '/admin/routes', label: 'Routes', active: currentUrl?.startsWith('/admin/routes') },
-        { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl?.startsWith('/admin/pickup-points') },
-        { href: '/admin/finance', label: 'Finance', active: currentUrl?.startsWith('/admin/finance') },
-        { href: '/admin/analytics', label: 'Analytics', active: currentUrl?.startsWith('/admin/analytics') },
-        { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl?.startsWith('/admin/vehicles') },
-        { href: '/admin/schools', label: 'Schools', active: currentUrl?.startsWith('/admin/schools') },
-        { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl?.startsWith('/admin/registration-requests') },
-        { href: '/admin/users', label: 'Users', active: currentUrl?.startsWith('/admin/users') },
-        { href: '/admin/students', label: 'Students', active: currentUrl?.startsWith('/admin/students') },
-        { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl?.startsWith('/admin/pricing-rules') },
-        { href: '/admin/discounts', label: 'Discounts', active: currentUrl?.startsWith('/admin/discounts') },
-        { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl?.startsWith('/admin/pricing/manage') },
-        { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl?.startsWith('/admin/calendar-events') },
+        { href: '/admin/bookings', label: 'Bookings', active: currentUrl.startsWith('/admin/bookings') },
+        { href: '/admin/routes', label: 'Routes', active: currentUrl.startsWith('/admin/routes') },
+        { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl.startsWith('/admin/pickup-points') },
+        { href: '/admin/finance', label: 'Finance', active: currentUrl.startsWith('/admin/finance') },
+        { href: '/admin/analytics', label: 'Analytics', active: currentUrl.startsWith('/admin/analytics') },
+        { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl.startsWith('/admin/vehicles') },
+    ];
+
+    const navigationItems = [
+        ...mainNavigationItems,
+        { href: '/admin/schools', label: 'Schools', active: currentUrl.startsWith('/admin/schools') },
+        { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl.startsWith('/admin/registration-requests') },
+        { href: '/admin/users', label: 'Users', active: currentUrl.startsWith('/admin/users') },
+        { href: '/admin/students', label: 'Students', active: currentUrl.startsWith('/admin/students') },
+        { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl.startsWith('/admin/pricing-rules') },
+        { href: '/admin/discounts', label: 'Discounts', active: currentUrl.startsWith('/admin/discounts') },
+        { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl.startsWith('/admin/pricing/manage') },
+        { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl.startsWith('/admin/calendar-events') },
     ];
 
     const userMenuItems = [
         { href: '/profile', label: 'Profile' },
         { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
     ];
-    
+
     return (
         <div className="min-h-screen logo-background">
-            <nav className="glass-nav fixed w-full top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="flex-shrink-0 flex items-center">
-                                <Link href="/admin/dashboard">
-                                    <ApplicationLogo className="block h-9 w-auto" />
-                                </Link>
-                            </div>
-                            <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
-                                <Link
-                                    href="/admin/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20 active:border-brand-primary"
-                                >
-                                    Dashboard
-                                </Link>
-
-                                <Link
-                                    href="/admin/bookings"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
-                                >
-                                    Bookings
-                                </Link>
-
-                                <Link
-                                    href="/admin/routes"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
-                                >
-                                    Routes
-                                </Link>
-
-                                <Link
-                                    href="/admin/pickup-points"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
-                                >
-                                    Pickup Points
-                                </Link>
-
-                                <Link
-                                    href="/admin/finance"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
-                                >
-                                    Finance
-                                </Link>
-
-                                <Link
-                                    href="/admin/analytics"
-                                    className={`${
-                                        currentUrl?.startsWith('/admin/analytics')
-                                            ? 'border-brand-primary text-brand-primary'
-                                            : 'border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600'
-                                    } whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20`}
-                                >
-                                    Analytics
-                                </Link>
-                                
-                                <Link
-                                    href="/admin/vehicles"
-                                    className="border-transparent text-gray-800 hover:text-indigo-700 hover:border-indigo-600 whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 rounded-t-lg hover:bg-white/20"
-                                >
-                                    Vehicles
-                                </Link>
-                                
-                                {/* People Dropdown */}
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
-                                            People
-                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-                                    </Dropdown.Trigger>
-                                    <Dropdown.Content align="left" width="56">
-                                        <Dropdown.Link href="/admin/registration-requests">Registration Requests</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/users">Users</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/students">Students</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/schools">Schools</Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-
-                                {/* Operations Dropdown */}
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <button className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 font-bold text-base transition-all duration-200 inline-flex items-center rounded-t-lg hover:bg-white/20">
-                                            Operations
-                                            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-                                    </Dropdown.Trigger>
-                                    <Dropdown.Content align="left" width="56">
-                                        <Dropdown.Link href="/admin/pricing-rules">Pricing Rules</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/discounts">Discounts</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/pricing/manage">Manage Pricing</Dropdown.Link>
-                                        <Dropdown.Link href="/admin/calendar-events">Calendar Events</Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-                        {/* Desktop User Menu - Hidden on mobile */}
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
-                            <div className="ml-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center gap-2 px-2 py-1.5 border border-white/30 text-sm leading-4 font-semibold rounded-full text-gray-800 bg-white/20 backdrop-blur-sm hover:bg-white/30 focus:outline-none transition ease-in-out duration-150 shadow-sm"
-                                            title={auth?.user?.name || 'Admin'}
-                                        >
-                                            {auth?.user?.profile_picture_url && !navAvatarError ? (
-                                                <img
-                                                    src={auth.user.profile_picture_url}
-                                                    alt={auth.user.name || 'Admin'}
-                                                    className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400/50"
-                                                    onError={() => setNavAvatarError(true)}
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                                                    <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                            <svg
-                                                className="-mr-0.5 h-4 w-4"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href="/profile">Profile</Dropdown.Link>
-                                        <Dropdown.Link href="/logout" method="post" as="button">
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
+            <nav className="premium-nav lg:hidden">
+                <div className="container">
+                    <div className="flex h-16 items-center justify-between gap-6">
+                        <div className="flex items-center gap-3">
+                            <Link href="/admin/dashboard" className="flex-shrink-0">
+                                <ApplicationLogo className="block h-9 w-auto" />
+                            </Link>
+                            <div>
+                                <p className="text-sm font-semibold text-slate-900">Admin Console</p>
+                                <p className="text-xs text-slate-500">School transport operations</p>
                             </div>
                         </div>
 
-                        {/* Mobile Menu Button - Visible on mobile only */}
-                        <div className="flex items-center sm:hidden ml-auto">
-                        <MobileMenu
-                            navigationItems={navigationItems}
-                            userMenuItems={userMenuItems}
-                            user={auth?.user}
-                        />
+                        <div className="ml-auto flex items-center">
+                            <MobileMenu
+                                navigationItems={navigationItems}
+                                userMenuItems={userMenuItems}
+                                user={auth?.user}
+                            />
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {header && (
-                <header className="glass-nav mt-16 shadow-lg">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
-            )}
+            <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-slate-200/80 lg:bg-white/80 lg:backdrop-blur-xl">
+                <div className="flex h-full min-h-0 flex-col px-5 py-6">
+                    <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-2xl px-3 py-2">
+                        <ApplicationLogo className="block h-10 w-auto" />
+                        <div>
+                            <p className="text-sm font-semibold text-slate-900">Admin Console</p>
+                            <p className="text-xs text-slate-500">School transport operations</p>
+                        </div>
+                    </Link>
 
-            <main className={header ? '' : 'pt-16'}>{children}</main>
+                    <div
+                        ref={sidebarScrollRef}
+                        onScroll={handleSidebarScroll}
+                        className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1"
+                    >
+                        <div className="space-y-7">
+                            {navigationGroups.map((group) => (
+                                <div key={group.label}>
+                                    <p className="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                        {group.label}
+                                    </p>
+                                    <div className="mt-3 space-y-1">
+                                        {group.items.map((item) => (
+                                            <Link key={item.href} href={item.href} className={sidebarLinkClasses(item.active)}>
+                                                {item.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="mt-4 border-t border-slate-200 pt-4">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-3 shadow-sm">
+                            <div className="flex items-center gap-3 px-2 py-2">
+                                {auth?.user?.profile_picture_url && !navAvatarError ? (
+                                    <img
+                                        src={auth.user.profile_picture_url}
+                                        alt={auth.user.name || 'Admin'}
+                                        className="h-10 w-10 rounded-full border border-slate-200 object-cover"
+                                        onError={() => setNavAvatarError(true)}
+                                    />
+                                ) : (
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">
+                                        {(auth?.user?.name || 'A').slice(0, 1).toUpperCase()}
+                                    </div>
+                                )}
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-sm font-semibold text-slate-900">{auth?.user?.name || 'Admin'}</p>
+                                    <p className="truncate text-xs text-slate-500">{auth?.user?.email || 'Signed in'}</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-3 grid grid-cols-2 gap-2">
+                                <Link
+                                    href="/profile"
+                                    className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                                >
+                                    Profile
+                                </Link>
+                                <Link
+                                    href="/logout"
+                                    method="post"
+                                    as="button"
+                                    className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100"
+                                >
+                                    Log Out
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div className="lg:pl-72">
+                {header && (
+                    <header className="pt-16 lg:pt-0">
+                        <div className="container py-6 lg:px-8">{header}</div>
+                    </header>
+                )}
+
+                <main className={`${header ? '' : 'pt-16'} lg:pt-0`}>{children}</main>
+            </div>
             <RealTimeListener />
         </div>
     );
 }
-

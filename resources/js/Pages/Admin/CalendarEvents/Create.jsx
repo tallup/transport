@@ -1,9 +1,9 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
+import GlassButton from '@/Components/GlassButton';
+import GlassCard from '@/Components/GlassCard';
 import Select from '@/Components/Select';
 
 export default function Create() {
@@ -25,31 +25,31 @@ export default function Create() {
 
             <div className="py-12">
                 <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-6">Create Calendar Event</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Create Calendar Event</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <InputLabel htmlFor="date" value="Date *" />
+                                    <label htmlFor="date" className="mb-2 block text-base font-semibold text-slate-700">Date *</label>
                                     <TextInput
                                         id="date"
                                         type="date"
                                         value={data.date}
                                         onChange={(e) => setData('date', e.target.value)}
-                                        className="mt-1 block w-full"
+                                        className="form-control"
                                         required
                                     />
                                     <InputError message={errors.date} className="mt-2" />
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="type" value="Type *" />
+                                    <label htmlFor="type" className="mb-2 block text-base font-semibold text-slate-700">Type *</label>
                                     <Select
                                         id="type"
                                         value={data.type}
                                         onChange={(e) => setData('type', e.target.value)}
-                                        className="mt-1 block w-full"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="school_day">School Day</option>
@@ -60,12 +60,12 @@ export default function Create() {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="description" value="Description *" />
+                                    <label htmlFor="description" className="mb-2 block text-base font-semibold text-slate-700">Description *</label>
                                     <textarea
                                         id="description"
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                        className="form-control"
                                         rows="4"
                                         required
                                     />
@@ -75,17 +75,17 @@ export default function Create() {
                                 <div className="flex justify-end gap-4">
                                     <Link
                                         href="/admin/calendar-events"
-                                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>
-                                    <PrimaryButton disabled={processing}>
+                                    <GlassButton disabled={processing}>
                                         {processing ? 'Creating...' : 'Create Calendar Event'}
-                                    </PrimaryButton>
+                                    </GlassButton>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         </AdminLayout>

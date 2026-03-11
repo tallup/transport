@@ -28,12 +28,12 @@ export default function Index({ vehicles }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Vehicles</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all transport vehicles</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Vehicles</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all transport vehicles</p>
                             </div>
                             <Link
                                 href="/admin/vehicles/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add Vehicle
                             </Link>
@@ -53,8 +53,8 @@ export default function Index({ vehicles }) {
                                                 </svg>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{vehicle.license_plate}</h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{vehicle.license_plate}</h3>
+                                                <p className="truncate text-sm font-medium text-slate-500">
                                                     {vehicle.make} {vehicle.model}
                                                 </p>
                                             </div>
@@ -68,7 +68,7 @@ export default function Index({ vehicles }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                             </svg>
-                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50">
+                                            <span className="rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-xs font-semibold text-sky-700">
                                                 {vehicle.type}
                                             </span>
                                         </div>
@@ -76,7 +76,7 @@ export default function Index({ vehicles }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium">
+                                            <p className="text-sm font-medium text-slate-700">
                                                 Year: {vehicle.year || 'N/A'}
                                             </p>
                                         </div>
@@ -84,24 +84,24 @@ export default function Index({ vehicles }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium">
+                                            <p className="text-sm font-medium text-slate-700">
                                                 Capacity: {vehicle.capacity} students
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/vehicles/${vehicle.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(vehicle.id)}
                                             disabled={deleting === vehicle.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === vehicle.id ? 'Deleting...' : 'Delete'}
                                         </button>

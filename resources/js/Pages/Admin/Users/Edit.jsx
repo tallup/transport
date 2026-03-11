@@ -48,13 +48,13 @@ export default function Edit({ user, canAddAdmins = false }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit User</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Edit User</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <label className="block text-base font-bold text-white mb-2">Profile Picture</label>
+                                    <label className="mb-2 block text-base font-semibold text-slate-700">Profile Picture</label>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-yellow-400/50 flex-shrink-0">
+                                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
                                             {(profilePreview || user.profile_picture_url) ? (
                                                 <img
                                                     src={profilePreview || user.profile_picture_url}
@@ -62,8 +62,8 @@ export default function Edit({ user, canAddAdmins = false }) {
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                                                    <PhotoIcon className="w-8 h-8 text-brand-primary" />
+                                                <div className="flex h-full w-full items-center justify-center bg-slate-100">
+                                                    <PhotoIcon className="h-8 w-8 text-amber-500" />
                                                 </div>
                                             )}
                                         </div>
@@ -78,7 +78,7 @@ export default function Edit({ user, canAddAdmins = false }) {
                                             />
                                             <label
                                                 htmlFor="profile_picture"
-                                                className="px-4 py-2 bg-white/20 border-2 border-yellow-400/70 rounded-lg text-white font-semibold cursor-pointer hover:bg-white/30 transition"
+                                                className="cursor-pointer rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                             >
                                                 {user.profile_picture_url || profilePreview ? 'Change' : 'Upload'}
                                             </label>
@@ -86,20 +86,20 @@ export default function Edit({ user, canAddAdmins = false }) {
                                                 <button
                                                     type="button"
                                                     onClick={removeProfilePicture}
-                                                    className="px-4 py-2 bg-red-500/20 border border-red-400/50 rounded-lg text-red-200 font-semibold hover:bg-red-500/30"
+                                                    className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:bg-rose-100"
                                                 >
                                                     Remove
                                                 </button>
                                             )}
                                         </div>
                                     </div>
-                                    <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
+                                    <p className="mt-1 text-xs text-slate-500">JPEG, PNG, GIF. Max 10MB</p>
                                     <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="name" className="mb-2 block text-base font-semibold text-slate-700">
                                             Name *
                                         </label>
                                         <input
@@ -107,14 +107,14 @@ export default function Edit({ user, canAddAdmins = false }) {
                                             type="text"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="email" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="email" className="mb-2 block text-base font-semibold text-slate-700">
                                             Email *
                                         </label>
                                         <input
@@ -122,14 +122,14 @@ export default function Edit({ user, canAddAdmins = false }) {
                                             type="email"
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.email} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="password" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="password" className="mb-2 block text-base font-semibold text-slate-700">
                                             Password (leave blank to keep current)
                                         </label>
                                         <div className="relative">
@@ -138,39 +138,39 @@ export default function Edit({ user, canAddAdmins = false }) {
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={data.password}
                                                 onChange={(e) => setData('password', e.target.value)}
-                                                className="mt-1 block w-full glass-input text-white placeholder-gray-300 pr-12"
+                                                className="form-control pr-12"
                                                 minLength={8}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-yellow-500 hover:text-yellow-400 transition-colors"
+                                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 transition-colors hover:text-slate-700"
                                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                                             >
                                                 {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                                             </button>
                                         </div>
                                         <InputError message={errors.password} className="mt-2 text-red-300 font-semibold" />
-                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave blank to keep current password</p>
+                                        <p className="mt-1 text-sm font-medium text-slate-500">Leave blank to keep current password</p>
                                     </div>
 
                                     <div>
-                                        <label htmlFor="role" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="role" className="mb-2 block text-base font-semibold text-slate-700">
                                             Role *
                                         </label>
                                         <select
                                             id="role"
                                             value={data.role}
                                             onChange={(e) => setData('role', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="parent" className="bg-indigo-700">Parent</option>
-                                            <option value="driver" className="bg-indigo-700">Driver</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="driver">Driver</option>
                                             {(canAddAdmins || ['transport_admin', 'admin'].includes(user.role)) && (
                                                 <>
-                                                    <option value="transport_admin" className="bg-indigo-700">Transport Admin</option>
-                                                    <option value="admin" className="bg-indigo-700">Admin</option>
+                                                    <option value="transport_admin">Transport Admin</option>
+                                                    <option value="admin">Admin</option>
                                                 </>
                                             )}
                                         </select>
@@ -181,7 +181,7 @@ export default function Edit({ user, canAddAdmins = false }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/users"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

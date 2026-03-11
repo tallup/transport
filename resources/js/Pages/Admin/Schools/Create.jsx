@@ -25,12 +25,12 @@ export default function Create() {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-brand-primary mb-6">Create School</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Create School</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
-                                        <label htmlFor="name" className="block text-base font-bold text-brand-primary mb-2">
+                                        <label htmlFor="name" className="mb-2 block text-base font-semibold text-slate-700">
                                             School Name *
                                         </label>
                                         <input
@@ -38,7 +38,7 @@ export default function Create() {
                                             type="text"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-white/40"
+                                            className="form-control"
                                             placeholder="e.g. Jefferson Elementary"
                                             required
                                         />
@@ -46,7 +46,7 @@ export default function Create() {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="address" className="block text-base font-bold text-brand-primary mb-2">
+                                        <label htmlFor="address" className="mb-2 block text-base font-semibold text-slate-700">
                                             Address
                                         </label>
                                         <textarea
@@ -54,14 +54,14 @@ export default function Create() {
                                             rows={3}
                                             value={data.address}
                                             onChange={(e) => setData('address', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-white/40"
+                                            className="form-control"
                                             placeholder="Full street address"
                                         />
                                         <InputError message={errors.address} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="phone" className="block text-base font-bold text-brand-primary mb-2">
+                                        <label htmlFor="phone" className="mb-2 block text-base font-semibold text-slate-700">
                                             Phone
                                         </label>
                                         <input
@@ -69,33 +69,33 @@ export default function Create() {
                                             type="text"
                                             value={data.phone}
                                             onChange={(e) => setData('phone', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-white/40"
+                                            className="form-control"
                                             placeholder="555-1234"
                                         />
                                         <InputError message={errors.phone} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="active" className="block text-base font-bold text-brand-primary mb-2">
+                                        <label htmlFor="active" className="mb-2 block text-base font-semibold text-slate-700">
                                             Status
                                         </label>
                                         <select
                                             id="active"
                                             value={data.active ? 'true' : 'false'}
                                             onChange={(e) => setData('active', e.target.value === 'true')}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         >
-                                            <option value="true" className="bg-brand-primary">Active</option>
-                                            <option value="false" className="bg-brand-primary">Inactive</option>
+                                            <option value="true">Active</option>
+                                            <option value="false">Inactive</option>
                                         </select>
                                         <InputError message={errors.active} className="mt-2 text-red-300 font-semibold" />
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end gap-4 mt-6 pt-6 border-t border-yellow-400/40">
+                                <div className="mt-6 flex justify-end gap-4 border-t border-slate-200 pt-6">
                                     <Link
                                         href="/admin/schools"
-                                        className="px-4 py-2 bg-white/10 border-2 border-yellow-400/60 rounded-xl text-brand-primary font-bold hover:bg-white/20 hover:border-yellow-400 transition-all"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

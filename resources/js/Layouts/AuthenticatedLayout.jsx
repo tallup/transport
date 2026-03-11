@@ -4,17 +4,27 @@ import Dropdown from '@/Components/Dropdown';
 import MobileMenu from '@/Components/MobileMenu';
 import RealTimeListener from '@/Components/RealTimeListener';
 
+const navLinkClasses = (isActive) =>
+    `rounded-lg px-3 py-2 text-sm font-medium transition ${
+        isActive
+            ? 'bg-brand-primary text-white shadow-sm'
+            : 'text-slate-700 hover:bg-white hover:text-slate-900'
+    }`;
+
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
     const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
-    
-    // Build navigation items for mobile menu
+
     const navigationItems = [
         { href: '/parent/dashboard', label: 'Dashboard', active: currentUrl === '/parent/dashboard' },
         { href: '/parent/students', label: 'My Students', active: currentUrl === '/parent/students' },
         { href: '/parent/students/enroll', label: 'Add Student', active: currentUrl === '/parent/students/enroll' },
         { href: '/parent/bookings/create', label: 'Book Transport', active: currentUrl === '/parent/bookings/create' },
-        { href: route('parent.bookings.index'), label: 'My Bookings', active: currentUrl?.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' && currentUrl !== '/parent/pickup-history' },
+        {
+            href: route('parent.bookings.index'),
+            label: 'My Bookings',
+            active: currentUrl.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' && currentUrl !== '/parent/pickup-history',
+        },
         { href: '/parent/pickup-history', label: 'Pickup History', active: currentUrl === '/parent/pickup-history' },
     ];
 
@@ -22,122 +32,72 @@ export default function AuthenticatedLayout({ header, children }) {
         { href: '/profile', label: 'Profile' },
         { href: '/logout', label: 'Log Out', method: 'post', as: 'button' },
     ];
+
     return (
         <div className="min-h-screen logo-background">
-            <nav className="glass-nav fixed w-full top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="flex-shrink-0 flex items-center">
-                                <Link href="/parent/dashboard">
-                                    <ApplicationLogo className="block h-9 w-auto text-gray-800" />
-                                </Link>
-                            </div>
-                            <div className="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
-                                <Link
-                                    href="/parent/dashboard"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    href="/parent/students"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    My Students
-                                </Link>
-                                <Link
-                                    href="/parent/students/enroll"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    Add Student
-                                </Link>
-                                <Link
-                                    href="/parent/bookings/create"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    Book Transport
-                                </Link>
-                                <Link
-                                    href={route('parent.bookings.index')}
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    My Bookings
-                                </Link>
-                                <Link
-                                    href="/parent/pickup-history"
-                                    className="border-transparent text-gray-800 hover:text-brand-primary hover:border-brand-primary whitespace-nowrap py-4 px-3 border-b-2 text-base font-bold transition"
-                                >
-                                    Pickup History
-                                </Link>
+            <nav className="premium-nav">
+                <div className="container">
+                    <div className="flex h-16 items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                            <Link href="/parent/dashboard">
+                                <ApplicationLogo className="block h-9 w-auto" />
+                            </Link>
+
+                            <div className="hidden items-center gap-1 lg:flex">
+                                {navigationItems.map((item) => (
+                                    <Link key={item.href} href={item.href} className={navLinkClasses(item.active)}>
+                                        {item.label}
+                                    </Link>
+                                ))}
                             </div>
                         </div>
-                        <div className="flex items-center">
-                            <div className="hidden sm:flex sm:items-center sm:ml-6">
-                                <div className="ml-3 relative">
-                                    <Dropdown>
-                                        <Dropdown.Trigger>
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center gap-2 px-2 py-1.5 border border-gray-300 text-sm leading-4 font-semibold rounded-full text-gray-800 bg-white/80 backdrop-blur-sm hover:bg-white focus:outline-none transition ease-in-out duration-150 shadow-sm"
-                                                title={auth?.user?.name || 'User'}
-                                            >
-                                                {auth?.user?.profile_picture_url ? (
-                                                    <img
-                                                        src={auth.user.profile_picture_url}
-                                                        alt={auth.user.name || 'User'}
-                                                        className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400/50"
-                                                    />
-                                                ) : (
-                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                                                        <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                        </svg>
-                                                    </div>
-                                                )}
-                                                <svg
-                                                    className="-mr-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </Dropdown.Trigger>
 
-                                        <Dropdown.Content>
-                                            <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                            <Dropdown.Link href={route('logout')} method="post" as="button">
-                                                Log Out
-                                            </Dropdown.Link>
-                                        </Dropdown.Content>
-                                    </Dropdown>
-                                </div>
-                            </div>
+                        <div className="hidden sm:flex sm:items-center">
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
+                                        title={auth?.user?.name || 'User'}
+                                    >
+                                        {auth?.user?.profile_picture_url ? (
+                                            <img
+                                                src={auth.user.profile_picture_url}
+                                                alt={auth.user.name || 'User'}
+                                                className="h-8 w-8 rounded-full border border-slate-200 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">
+                                                {(auth?.user?.name || 'U').slice(0, 1).toUpperCase()}
+                                            </div>
+                                        )}
+                                        <span className="max-w-28 truncate">{auth?.user?.name || 'User'}</span>
+                                    </button>
+                                </Dropdown.Trigger>
 
-                            {/* Mobile Menu - Visible on mobile only */}
-                            <div className="flex items-center sm:hidden ml-auto">
+                                <Dropdown.Content>
+                                    <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                    <Dropdown.Link href={route('logout')} method="post" as="button">
+                                        Log Out
+                                    </Dropdown.Link>
+                                </Dropdown.Content>
+                            </Dropdown>
+                        </div>
+
+                        <div className="ml-auto flex items-center sm:hidden">
                             <MobileMenu
                                 navigationItems={navigationItems}
                                 userMenuItems={userMenuItems}
                                 user={auth?.user}
                             />
-                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
             {header && (
-                <header className="glass-nav mt-16 shadow-lg">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
+                <header className="pt-16">
+                    <div className="container py-6">{header}</div>
                 </header>
             )}
 
@@ -146,4 +106,3 @@ export default function AuthenticatedLayout({ header, children }) {
         </div>
     );
 }
-

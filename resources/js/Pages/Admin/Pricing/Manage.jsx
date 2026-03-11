@@ -29,20 +29,20 @@ export default function ManagePricing({ pricingRules, planTypes }) {
     const getScopeBadge = (rule) => {
         if (rule.route_id) {
             return (
-                <span className="px-2 py-1 rounded-lg text-xs font-bold bg-yellow-500/30 text-brand-primary border border-yellow-400/50">
+                <span className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
                     Route: {rule.route_name}
                 </span>
             );
         }
         if (rule.vehicle_type) {
             return (
-                <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50">
+                <span className="rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-xs font-semibold text-sky-700">
                     Vehicle: {rule.vehicle_type.charAt(0).toUpperCase() + rule.vehicle_type.slice(1)}
                 </span>
             );
         }
         return (
-            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-green-500/30 text-brand-primary border border-green-400/50">
+            <span className="rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
                 Global
             </span>
         );
@@ -62,14 +62,14 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Pricing Management</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">
+                                <h1 className="mb-2 text-4xl font-extrabold text-slate-900">Pricing Management</h1>
+                                <p className="text-lg font-medium text-slate-500">
                                     Manage pricing rules for all plan types. Pricing follows priority: Route-specific &gt; Vehicle-specific &gt; Global
                                 </p>
                             </div>
                             <Link
                                 href="/admin/pricing-rules/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                             >
                                 Add Pricing Rule
                             </Link>
@@ -82,27 +82,27 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                         return (
                             <div key={planTypeKey} className="mb-8">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-xl flex items-center justify-center border-2 border-yellow-400/50">
-                                        <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-200 bg-amber-50">
+                                        <svg className="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-2xl font-extrabold text-brand-primary">{planTypeLabel} Pricing</h2>
+                                    <h2 className="text-2xl font-extrabold text-slate-900">{planTypeLabel} Pricing</h2>
                                 </div>
                                 
                                 {rules.length === 0 ? (
                                     <GlassCard className="p-12">
                                         <div className="text-center">
-                                            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
-                                                <svg className="w-8 h-8 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-amber-200 bg-amber-50">
+                                                <svg className="h-8 w-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             </div>
-                                            <p className="text-brand-primary text-lg font-bold mb-2">No pricing rules configured</p>
-                                            <p className="text-white/70 text-sm mb-4">No pricing rules configured for {planTypeLabel}.</p>
+                                            <p className="mb-2 text-lg font-bold text-slate-900">No pricing rules configured</p>
+                                            <p className="mb-4 text-sm text-slate-500">No pricing rules configured for {planTypeLabel}.</p>
                                             <Link
                                                 href={`/admin/pricing-rules/create?plan_type=${planTypeKey}`}
-                                                className="px-4 py-2 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-sm font-bold rounded-lg hover:bg-brand-primary/30 transition-all inline-block"
+                                                className="inline-block rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-secondary"
                                             >
                                                 Create one now
                                             </Link>
@@ -111,28 +111,28 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {rules.map((rule) => (
-                                            <GlassCard key={rule.id} className="p-6 hover:scale-[1.02] transition-all">
+                                            <GlassCard key={rule.id} className="p-6 transition-all hover:scale-[1.01]">
                                                 {/* Card Header */}
                                                 <div className="flex items-start justify-between mb-4">
                                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                                                            <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-400 shadow-sm">
+                                                            <svg className="h-6 w-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                             </svg>
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <h3 className="text-lg font-extrabold text-white truncate">
+                                                            <h3 className="truncate text-lg font-extrabold text-slate-900">
                                                                 {rule.currency} {parseFloat(rule.amount).toFixed(2)}
                                                             </h3>
-                                                            <p className="text-sm text-white/70 font-medium truncate">
+                                                            <p className="truncate text-sm font-medium text-slate-500">
                                                                 {formatPlanType(rule.plan_type)}
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                                    <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
                                                         rule.active
-                                                            ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
-                                                            : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                            : 'border-slate-200 bg-slate-100 text-slate-600'
                                                     }`}>
                                                         {rule.active ? 'Active' : 'Inactive'}
                                                     </span>
@@ -144,30 +144,30 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                                         {getScopeBadge(rule)}
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="h-4 w-4 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                                         </svg>
-                                                        <p className="text-sm text-white/90 font-medium">
+                                                        <p className="text-sm font-medium text-slate-600">
                                                             Vehicle: {rule.vehicle_type ? rule.vehicle_type.charAt(0).toUpperCase() + rule.vehicle_type.slice(1) : 'All Types'}
                                                         </p>
                                                     </div>
                                                 </div>
 
                                                 {/* Card Actions */}
-                                                <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                                <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                                     <Link
                                                         href={`/admin/pricing-rules/${rule.id}/edit`}
-                                                        className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                                        className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                                     >
                                                         Edit
                                                     </Link>
                                                     <button
                                                         onClick={() => handleToggleActive(rule.id)}
                                                         disabled={toggling === rule.id}
-                                                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${
+                                                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
                                                             rule.active
-                                                                ? 'bg-orange-500/20 border border-orange-400/50 text-orange-200 hover:bg-orange-500/30'
-                                                                : 'bg-green-500/20 border border-green-400/50 text-green-200 hover:bg-green-500/30'
+                                                                ? 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                                : 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                                                         }`}
                                                     >
                                                         {toggling === rule.id 
@@ -180,7 +180,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                                     <button
                                                         onClick={() => handleDelete(rule.id)}
                                                         disabled={deleting === rule.id}
-                                                        className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                                        className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                                     >
                                                         {deleting === rule.id ? 'Deleting...' : 'Delete'}
                                                     </button>
@@ -194,24 +194,24 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                     })}
 
                     {/* Info Card */}
-                    <GlassCard className="mt-8 bg-blue-500/10 border-blue-400/30">
+                    <GlassCard className="mt-8 border border-sky-200 bg-sky-50/70">
                         <div className="p-6">
                             <div className="flex items-start gap-4">
                                 <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center border-2 border-blue-400/50">
-                                        <svg className="h-5 w-5 !text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200 bg-white">
+                                        <svg className="h-5 w-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
                                         </svg>
                                     </div>
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="text-lg font-extrabold text-brand-primary mb-2">Pricing Priority</h3>
-                                    <div className="text-sm text-white/90">
+                                    <h3 className="mb-2 text-lg font-extrabold text-slate-900">Pricing Priority</h3>
+                                    <div className="text-sm text-slate-600">
                                         <p className="mb-3">Pricing is determined by the following priority order:</p>
-                                        <ol className="list-decimal list-inside space-y-2 text-white/80">
-                                            <li><strong className="text-brand-primary">Route-specific:</strong> If a pricing rule exists for a specific route, it takes precedence.</li>
-                                            <li><strong className="text-brand-primary">Vehicle-specific:</strong> If no route-specific rule exists, vehicle-type pricing is used.</li>
-                                            <li><strong className="text-brand-primary">Global:</strong> If neither route nor vehicle-specific rules exist, global pricing is applied.</li>
+                                        <ol className="list-inside list-decimal space-y-2 text-slate-600">
+                                            <li><strong className="text-slate-900">Route-specific:</strong> If a pricing rule exists for a specific route, it takes precedence.</li>
+                                            <li><strong className="text-slate-900">Vehicle-specific:</strong> If no route-specific rule exists, vehicle-type pricing is used.</li>
+                                            <li><strong className="text-slate-900">Global:</strong> If neither route nor vehicle-specific rules exist, global pricing is applied.</li>
                                         </ol>
                                     </div>
                                 </div>

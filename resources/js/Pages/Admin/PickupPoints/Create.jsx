@@ -30,24 +30,24 @@ export default function Create({ routes }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Create Pickup Point</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Create Pickup Point</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
-                                        <label htmlFor="route_id" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="route_id" className="mb-2 block text-base font-semibold text-slate-700">
                                             Route *
                                         </label>
                                         <select
                                             id="route_id"
                                             value={data.route_id}
                                             onChange={(e) => setData('route_id', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="" className="bg-indigo-700">Select Route</option>
+                                            <option value="">Select Route</option>
                                             {routes.map((route) => (
-                                                <option key={route.id} value={route.id} className="bg-indigo-700">
+                                                <option key={route.id} value={route.id}>
                                                     {route.name}
                                                 </option>
                                             ))}
@@ -56,7 +56,7 @@ export default function Create({ routes }) {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="name" className="mb-2 block text-base font-semibold text-slate-700">
                                             Name *
                                         </label>
                                         <input
@@ -64,21 +64,21 @@ export default function Create({ routes }) {
                                             type="text"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="address" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="address" className="mb-2 block text-base font-semibold text-slate-700">
                                             Address *
                                         </label>
                                         <textarea
                                             id="address"
                                             value={data.address}
                                             onChange={(e) => setData('address', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             rows="3"
                                             required
                                         />
@@ -86,7 +86,7 @@ export default function Create({ routes }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="latitude" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="latitude" className="mb-2 block text-base font-semibold text-slate-700">
                                             Latitude
                                         </label>
                                         <input
@@ -95,13 +95,13 @@ export default function Create({ routes }) {
                                             step="0.00000001"
                                             value={data.latitude}
                                             onChange={(e) => setData('latitude', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                         />
                                         <InputError message={errors.latitude} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="longitude" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="longitude" className="mb-2 block text-base font-semibold text-slate-700">
                                             Longitude
                                         </label>
                                         <input
@@ -110,13 +110,13 @@ export default function Create({ routes }) {
                                             step="0.00000001"
                                             value={data.longitude}
                                             onChange={(e) => setData('longitude', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                         />
                                         <InputError message={errors.longitude} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="sequence_order" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="sequence_order" className="mb-2 block text-base font-semibold text-slate-700">
                                             Sequence Order *
                                         </label>
                                         <input
@@ -124,7 +124,7 @@ export default function Create({ routes }) {
                                             type="number"
                                             value={data.sequence_order}
                                             onChange={(e) => setData('sequence_order', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             min="0"
                                             required
                                         />
@@ -132,7 +132,7 @@ export default function Create({ routes }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="pickup_time" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="pickup_time" className="mb-2 block text-base font-semibold text-slate-700">
                                             Pickup Time *
                                         </label>
                                         <input
@@ -140,14 +140,14 @@ export default function Create({ routes }) {
                                             type="time"
                                             value={data.pickup_time}
                                             onChange={(e) => setData('pickup_time', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.pickup_time} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="dropoff_time" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="dropoff_time" className="mb-2 block text-base font-semibold text-slate-700">
                                             Dropoff Time *
                                         </label>
                                         <input
@@ -155,7 +155,7 @@ export default function Create({ routes }) {
                                             type="time"
                                             value={data.dropoff_time}
                                             onChange={(e) => setData('dropoff_time', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.dropoff_time} className="mt-2 text-red-300 font-semibold" />
@@ -165,7 +165,7 @@ export default function Create({ routes }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/pickup-points"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

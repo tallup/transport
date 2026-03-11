@@ -77,12 +77,12 @@ export default function Index({ schools, filters }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Schools</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all registered schools</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Schools</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all registered schools</p>
                             </div>
                             <button
                                 onClick={() => setShowAddModal(true)}
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add School
                             </button>
@@ -109,17 +109,17 @@ export default function Index({ schools, filters }) {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search by name or address..."
-                                    className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/70 rounded-xl text-white placeholder-white/40 focus:bg-white/20 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
+                                    className="form-control"
                                 />
                             </form>
                             <select
                                 value={activeFilter}
                                 onChange={handleActiveFilter}
-                                className="px-4 py-3 bg-white/10 border-2 border-yellow-400/70 rounded-xl text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/10 transition-all outline-none"
+                                className="form-control sm:max-w-[180px]"
                             >
-                                <option value="" className="bg-brand-primary text-white">All Status</option>
-                                <option value="true" className="bg-brand-primary text-white">Active</option>
-                                <option value="false" className="bg-brand-primary text-white">Inactive</option>
+                                <option value="">All Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
                             </select>
                         </div>
                     </GlassCard>
@@ -137,16 +137,16 @@ export default function Index({ schools, filters }) {
                                                 </svg>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{school.name}</h3>
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{school.name}</h3>
                                                 {school.address && (
-                                                    <p className="text-sm text-white/70 font-medium truncate">{school.address}</p>
+                                                    <p className="truncate text-sm font-medium text-slate-500">{school.address}</p>
                                                 )}
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                        <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
                                             school.active
-                                                ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
-                                                : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                : 'border-slate-200 bg-slate-100 text-slate-600'
                                         }`}>
                                             {school.active ? 'Active' : 'Inactive'}
                                         </span>
@@ -160,7 +160,7 @@ export default function Index({ schools, filters }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
-                                                <p className="text-sm text-white/90 font-medium line-clamp-2">{school.address}</p>
+                                                <p className="line-clamp-2 text-sm font-medium text-slate-700">{school.address}</p>
                                             </div>
                                         )}
                                         {school.phone && (
@@ -168,15 +168,15 @@ export default function Index({ schools, filters }) {
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                                 </svg>
-                                                <p className="text-sm text-white/90 font-medium">{school.phone}</p>
+                                                <p className="text-sm font-medium text-slate-700">{school.phone}</p>
                                             </div>
                                         )}
-                                        <div className="flex items-center gap-4 pt-2 border-t border-yellow-400/30">
+                                        <div className="flex items-center gap-4 border-t border-slate-200 pt-2">
                                             <div className="flex items-center gap-2">
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                                 </svg>
-                                                <span className="text-sm text-white/90 font-medium">
+                                                <span className="text-sm font-medium text-slate-700">
                                                     {school.students_count || 0} Students
                                                 </span>
                                             </div>
@@ -184,7 +184,7 @@ export default function Index({ schools, filters }) {
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                                 </svg>
-                                                <span className="text-sm text-white/90 font-medium">
+                                                <span className="text-sm font-medium text-slate-700">
                                                     {school.routes_count || 0} Routes
                                                 </span>
                                             </div>
@@ -192,17 +192,17 @@ export default function Index({ schools, filters }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-yellow-400/40">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/schools/${school.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(school.id)}
                                             disabled={deleting === school.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === school.id ? 'Deleting...' : 'Delete'}
                                         </button>
@@ -232,73 +232,73 @@ export default function Index({ schools, filters }) {
                             onClick={() => { setShowAddModal(false); addForm.reset(); }}
                         >
                             <div
-                                className="relative w-full max-w-lg glass-card rounded-xl p-6 max-h-[90vh] overflow-y-auto"
+                                className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl glass-card p-6"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-2xl font-extrabold text-brand-primary">Add School</h2>
+                                    <h2 className="text-2xl font-extrabold text-slate-900">Add School</h2>
                                     <button
                                         onClick={() => { setShowAddModal(false); addForm.reset(); }}
-                                        className="p-2 rounded-lg hover:bg-white/10 text-brand-primary transition-colors"
+                                        className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         <XMarkIcon className="w-6 h-6" />
                                     </button>
                                 </div>
                                 <form onSubmit={handleAddSubmit} className="space-y-4">
                                     <div>
-                                        <label htmlFor="add-name" className="block text-sm font-bold text-brand-primary mb-1">School Name *</label>
+                                        <label htmlFor="add-name" className="mb-1 block text-sm font-semibold text-slate-700">School Name *</label>
                                         <input
                                             id="add-name"
                                             type="text"
                                             value={addForm.data.name}
                                             onChange={(e) => addForm.setData('name', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="form-control"
                                             placeholder="e.g. Jefferson Elementary"
                                             required
                                         />
                                         <InputError message={addForm.errors.name} className="mt-1 text-red-300 text-sm" />
                                     </div>
                                     <div>
-                                        <label htmlFor="add-address" className="block text-sm font-bold text-brand-primary mb-1">Address</label>
+                                        <label htmlFor="add-address" className="mb-1 block text-sm font-semibold text-slate-700">Address</label>
                                         <textarea
                                             id="add-address"
                                             rows={2}
                                             value={addForm.data.address}
                                             onChange={(e) => addForm.setData('address', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="form-control"
                                             placeholder="Full street address"
                                         />
                                         <InputError message={addForm.errors.address} className="mt-1 text-red-300 text-sm" />
                                     </div>
                                     <div>
-                                        <label htmlFor="add-phone" className="block text-sm font-bold text-brand-primary mb-1">Phone</label>
+                                        <label htmlFor="add-phone" className="mb-1 block text-sm font-semibold text-slate-700">Phone</label>
                                         <input
                                             id="add-phone"
                                             type="text"
                                             value={addForm.data.phone}
                                             onChange={(e) => addForm.setData('phone', e.target.value)}
-                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white placeholder-white/40 focus:border-yellow-400 outline-none"
+                                            className="form-control"
                                             placeholder="555-1234"
                                         />
                                         <InputError message={addForm.errors.phone} className="mt-1 text-red-300 text-sm" />
                                     </div>
                                     <div>
-                                        <label htmlFor="add-active" className="block text-sm font-bold text-brand-primary mb-1">Status</label>
+                                        <label htmlFor="add-active" className="mb-1 block text-sm font-semibold text-slate-700">Status</label>
                                         <select
                                             id="add-active"
                                             value={addForm.data.active ? 'true' : 'false'}
                                             onChange={(e) => addForm.setData('active', e.target.value === 'true')}
-                                            className="w-full px-4 py-3 rounded-lg border-2 border-yellow-400/70 bg-white/10 text-white focus:border-yellow-400 outline-none"
+                                            className="form-control"
                                         >
-                                            <option value="true" className="bg-brand-primary">Active</option>
-                                            <option value="false" className="bg-brand-primary">Inactive</option>
+                                            <option value="true">Active</option>
+                                            <option value="false">Inactive</option>
                                         </select>
                                     </div>
                                     <div className="flex justify-end gap-3 pt-4">
                                         <button
                                             type="button"
                                             onClick={() => { setShowAddModal(false); addForm.reset(); }}
-                                            className="px-4 py-2 rounded-xl border-2 border-yellow-400/60 text-brand-primary font-bold hover:bg-white/10 hover:border-yellow-400 transition-all"
+                                            className="rounded-xl border border-slate-300 px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                         >
                                             Cancel
                                         </button>

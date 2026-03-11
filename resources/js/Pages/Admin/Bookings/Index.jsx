@@ -52,12 +52,12 @@ export default function Index({ bookings }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Bookings</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all transport bookings</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Bookings</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all transport bookings</p>
                             </div>
                             <Link
                                 href="/admin/bookings/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add Booking
                             </Link>
@@ -81,8 +81,8 @@ export default function Index({ bookings }) {
                                                 </div>
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{booking.student?.name || 'N/A'}</h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">{booking.route?.name || 'No route'}</p>
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{booking.student?.name || 'N/A'}</h3>
+                                                <p className="truncate text-sm font-medium text-slate-500">{booking.route?.name || 'No route'}</p>
                                             </div>
                                         </div>
                                         <StatusBadge type="booking" status={booking.status} />
@@ -95,7 +95,7 @@ export default function Index({ bookings }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium truncate">
+                                            <p className="truncate text-sm font-medium text-slate-700">
                                                 {booking.pickupPoint?.name || booking.pickup_address || 'No pickup point'}
                                             </p>
                                         </div>
@@ -103,7 +103,7 @@ export default function Index({ bookings }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50">
+                                            <span className="rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-xs font-semibold text-sky-700">
                                                 {formatPlanType(booking.plan_type)}
                                             </span>
                                         </div>
@@ -111,7 +111,7 @@ export default function Index({ bookings }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium">
+                                            <p className="text-sm font-medium text-slate-700">
                                                 {booking.start_date ? new Date(booking.start_date).toLocaleDateString() : 'No start date'}
                                                 {booking.end_date && ` - ${new Date(booking.end_date).toLocaleDateString()}`}
                                             </p>
@@ -119,17 +119,17 @@ export default function Index({ bookings }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/bookings/${booking.id}`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             View
                                         </Link>
                                         {booking.status === 'awaiting_approval' && (
                                             <button
                                                 onClick={() => handleApprove(booking.id)}
-                                                className="px-3 py-1.5 bg-green-500/20 border border-green-400/50 text-green-200 text-xs font-bold rounded-lg hover:bg-green-500/30 transition-all"
+                                                className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
                                             >
                                                 Approve
                                             </button>
@@ -137,21 +137,21 @@ export default function Index({ bookings }) {
                                         {['pending', 'awaiting_approval', 'active'].includes(booking.status) && (
                                             <button
                                                 onClick={() => handleCancel(booking.id)}
-                                                className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all"
+                                                className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
                                             >
                                                 Cancel
                                             </button>
                                         )}
                                         <Link
                                             href={`/admin/bookings/${booking.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(booking.id)}
                                             disabled={deleting === booking.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === booking.id ? 'Deleting...' : 'Delete'}
                                         </button>

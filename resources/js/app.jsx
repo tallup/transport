@@ -4,6 +4,7 @@ import './bootstrap';
 import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+import { Toaster } from 'sonner';
 import { registerServiceWorker, subscribeToPushNotifications } from './utils/serviceWorkerRegistration';
 import offlineManager from './utils/offlineManager';
 import ErrorBoundary from './Components/ErrorBoundary';
@@ -50,7 +51,19 @@ createInertiaApp({
 
         root.render(
             <ErrorBoundary>
-                <App {...props} />
+                <>
+                    <App {...props} />
+                    <Toaster
+                        position="top-right"
+                        richColors
+                        closeButton
+                        toastOptions={{
+                            style: {
+                                borderRadius: '12px',
+                            },
+                        }}
+                    />
+                </>
             </ErrorBoundary>
         );
     },

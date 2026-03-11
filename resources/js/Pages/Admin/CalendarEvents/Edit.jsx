@@ -25,12 +25,12 @@ export default function Edit({ calendarEvent }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Calendar Event</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Edit Calendar Event</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="date" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="date" className="mb-2 block text-base font-semibold text-slate-700">
                                             Date *
                                         </label>
                                         <input
@@ -38,40 +38,40 @@ export default function Edit({ calendarEvent }) {
                                             type="date"
                                             value={data.date}
                                             onChange={(e) => setData('date', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.date} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="type" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="type" className="mb-2 block text-base font-semibold text-slate-700">
                                             Type *
                                         </label>
                                         <select
                                             id="type"
                                             value={data.type}
                                             onChange={(e) => setData('type', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="school_day" className="bg-indigo-700">School Day</option>
-                                            <option value="holiday" className="bg-indigo-700">Holiday</option>
-                                            <option value="closure" className="bg-indigo-700">Closure</option>
-                                            <option value="event" className="bg-indigo-700">Event</option>
+                                            <option value="school_day">School Day</option>
+                                            <option value="holiday">Holiday</option>
+                                            <option value="closure">Closure</option>
+                                            <option value="event">Event</option>
                                         </select>
                                         <InputError message={errors.type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="description" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="description" className="mb-2 block text-base font-semibold text-slate-700">
                                             Description *
                                         </label>
                                         <textarea
                                             id="description"
                                             value={data.description}
                                             onChange={(e) => setData('description', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             rows="4"
                                             required
                                         />
@@ -82,7 +82,7 @@ export default function Edit({ calendarEvent }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/calendar-events"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

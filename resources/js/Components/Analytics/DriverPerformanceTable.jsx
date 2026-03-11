@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import GlassCard from '@/Components/GlassCard';
-import GlassButton from '@/Components/GlassButton';
-
 export default function DriverPerformanceTable({ data = [] }) {
     const [sortField, setSortField] = useState('driver_name');
     const [sortDirection, setSortDirection] = useState('asc');
@@ -33,95 +31,95 @@ export default function DriverPerformanceTable({ data = [] }) {
     });
 
     const getOnTimeRateColor = (rate) => {
-        if (rate >= 90) return 'text-green-400';
-        if (rate >= 75) return 'text-yellow-400';
-        return 'text-red-400';
+        if (rate >= 90) return 'text-emerald-600';
+        if (rate >= 75) return 'text-amber-600';
+        return 'text-rose-600';
     };
 
     return (
         <GlassCard className="p-6">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-extrabold text-brand-primary">Driver Performance Metrics</h3>
+                <h3 className="text-xl font-bold text-slate-900">Driver Performance Metrics</h3>
                 <div className="flex gap-2">
                     <input
                         type="text"
                         placeholder="Filter by driver name..."
                         value={filterRoute}
                         onChange={(e) => setFilterRoute(e.target.value)}
-                        className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
+                        className="form-control"
                     />
                 </div>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-brand-primary/20">
-                    <thead className="bg-white/10">
+                <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
                         <tr>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('driver_name')}
                             >
                                 Driver {sortField === 'driver_name' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('total_routes')}
                             >
                                 Routes {sortField === 'total_routes' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('total_bookings')}
                             >
                                 Bookings {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('total_completions')}
                             >
                                 Completions {sortField === 'total_completions' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('total_pickups')}
                             >
                                 Pickups {sortField === 'total_pickups' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
                             <th
-                                className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase cursor-pointer hover:bg-white/20"
+                                className="cursor-pointer px-4 py-3 text-left text-sm font-bold uppercase text-slate-500 hover:bg-slate-100"
                                 onClick={() => handleSort('on_time_rate')}
                             >
                                 On-Time Rate {sortField === 'on_time_rate' && (sortDirection === 'asc' ? '↑' : '↓')}
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">
+                            <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">
                                 Avg Completion Time
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                    <tbody className="divide-y divide-slate-200 bg-white">
                         {sortedData
                             .filter((driver) =>
                                 filterRoute === '' || driver.driver_name.toLowerCase().includes(filterRoute.toLowerCase())
                             )
                             .map((driver) => (
-                                <tr key={driver.driver_id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                    <td className="px-4 py-3 text-base font-bold text-white">{driver.driver_name}</td>
-                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                <tr key={driver.driver_id} className="transition hover:bg-slate-50">
+                                    <td className="px-4 py-3 text-base font-bold text-slate-900">{driver.driver_name}</td>
+                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                         {driver.total_routes}
                                     </td>
-                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                         {driver.total_bookings}
                                     </td>
-                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                         {driver.total_completions}
                                     </td>
-                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                         {driver.total_pickups}
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className={`text-base font-bold ${getOnTimeRateColor(driver.on_time_rate)}`}>
                                             {driver.on_time_rate}%
                                         </span>
-                                        <div className="w-24 bg-white/10 rounded-full h-2 mt-1">
+                                        <div className="mt-1 h-2 w-24 rounded-full bg-slate-200">
                                             <div
                                                 className={`h-2 rounded-full ${
                                                     driver.on_time_rate >= 90
@@ -134,7 +132,7 @@ export default function DriverPerformanceTable({ data = [] }) {
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                         {driver.avg_completion_time_minutes
                                             ? `${Math.round(driver.avg_completion_time_minutes)} min`
                                             : 'N/A'}

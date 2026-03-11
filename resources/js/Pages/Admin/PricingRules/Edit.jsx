@@ -30,93 +30,93 @@ export default function Edit({ pricingRule, routes }) {
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Edit Pricing Rule</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Edit Pricing Rule</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="plan_type" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="plan_type" className="mb-2 block text-base font-semibold text-slate-700">
                                             Plan Type *
                                         </label>
                                         <select
                                             id="plan_type"
                                             value={data.plan_type}
                                             onChange={(e) => setData('plan_type', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="weekly" className="bg-indigo-700">Weekly</option>
-                                            <option value="monthly" className="bg-indigo-700">Monthly</option>
-                                            <option value="academic_term" className="bg-indigo-700">Academic Term</option>
-                                            <option value="annual" className="bg-indigo-700">Annual</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="academic_term">Academic Term</option>
+                                            <option value="annual">Annual</option>
                                         </select>
                                         <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="trip_type" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="trip_type" className="mb-2 block text-base font-semibold text-slate-700">
                                             Trip Type *
                                         </label>
                                         <select
                                             id="trip_type"
                                             value={data.trip_type}
                                             onChange={(e) => setData('trip_type', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         >
-                                            <option value="one_way" className="bg-indigo-700">One Way</option>
-                                            <option value="two_way" className="bg-indigo-700">Two Way</option>
+                                            <option value="one_way">One Way</option>
+                                            <option value="two_way">Two Way</option>
                                         </select>
-                                        <p className="mt-1 text-sm font-semibold text-white/80">One way: pick up only or drop off only. Two way: both pick up and drop off</p>
+                                        <p className="mt-1 text-sm font-medium text-slate-500">One way: pick up only or drop off only. Two way: both pick up and drop off</p>
                                         <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="route_id" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="route_id" className="mb-2 block text-base font-semibold text-slate-700">
                                             Route (Optional)
                                         </label>
                                         <select
                                             id="route_id"
                                             value={data.route_id}
                                             onChange={(e) => setData('route_id', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         >
-                                            <option value="" className="bg-indigo-700">Global (All Routes)</option>
+                                            <option value="">Global (All Routes)</option>
                                             {routes.map((route) => (
-                                                <option key={route.id} value={route.id} className="bg-indigo-700">
+                                                <option key={route.id} value={route.id}>
                                                     {route.name}
                                                 </option>
                                             ))}
                                         </select>
-                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave empty for global pricing</p>
+                                        <p className="mt-1 text-sm font-medium text-slate-500">Leave empty for global pricing</p>
                                         <InputError message={errors.route_id} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="vehicle_type" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="vehicle_type" className="mb-2 block text-base font-semibold text-slate-700">
                                             Vehicle Type (Optional)
                                         </label>
                                         <select
                                             id="vehicle_type"
                                             value={data.vehicle_type}
                                             onChange={(e) => setData('vehicle_type', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         >
-                                            <option value="" className="bg-indigo-700">All Vehicles</option>
-                                            <option value="bus" className="bg-indigo-700">Bus</option>
-                                            <option value="van" className="bg-indigo-700">Van</option>
+                                            <option value="">All Vehicles</option>
+                                            <option value="bus">Bus</option>
+                                            <option value="van">Van</option>
                                         </select>
-                                        <p className="mt-1 text-sm font-semibold text-white/80">Leave empty for all vehicles</p>
+                                        <p className="mt-1 text-sm font-medium text-slate-500">Leave empty for all vehicles</p>
                                         <InputError message={errors.vehicle_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="amount" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="amount" className="mb-2 block text-base font-semibold text-slate-700">
                                             Amount *
                                         </label>
                                         <div className="mt-1 relative">
                                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span className="text-white sm:text-sm font-semibold">$</span>
+                                                <span className="text-sm font-semibold text-slate-500">$</span>
                                             </div>
                                             <input
                                                 id="amount"
@@ -125,7 +125,7 @@ export default function Edit({ pricingRule, routes }) {
                                                 min="0"
                                                 value={data.amount}
                                                 onChange={(e) => setData('amount', e.target.value)}
-                                                className="block w-full glass-input text-white placeholder-gray-300 pl-7"
+                                                className="form-control pl-7"
                                                 required
                                             />
                                         </div>
@@ -133,7 +133,7 @@ export default function Edit({ pricingRule, routes }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="currency" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="currency" className="mb-2 block text-base font-semibold text-slate-700">
                                             Currency *
                                         </label>
                                         <input
@@ -141,7 +141,7 @@ export default function Edit({ pricingRule, routes }) {
                                             type="text"
                                             value={data.currency}
                                             onChange={(e) => setData('currency', e.target.value.toUpperCase())}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control"
                                             maxLength="3"
                                             required
                                         />
@@ -155,7 +155,7 @@ export default function Edit({ pricingRule, routes }) {
                                                 checked={data.active}
                                                 onChange={(e) => setData('active', e.target.checked)}
                                             />
-                                            <label htmlFor="active" className="ml-2 text-base font-bold text-white">
+                                            <label htmlFor="active" className="ml-2 text-base font-semibold text-slate-700">
                                                 Active
                                             </label>
                                         </div>
@@ -165,7 +165,7 @@ export default function Edit({ pricingRule, routes }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/admin/pricing-rules"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

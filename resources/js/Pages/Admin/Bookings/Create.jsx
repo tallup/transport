@@ -1,6 +1,5 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import GlassButton from '@/Components/GlassButton';
@@ -88,16 +87,16 @@ export default function Create({ students, routes }) {
                 <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
                     <GlassCard className="overflow-hidden">
                         <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Create Booking</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Create Booking</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <InputLabel htmlFor="student_id" value="Student *" className="text-white font-bold" />
+                                    <label htmlFor="student_id" className="mb-2 block text-base font-semibold text-slate-700">Student *</label>
                                     <Select
                                         id="student_id"
                                         value={data.student_id}
                                         onChange={(e) => setData('student_id', e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="">Select Student</option>
@@ -111,12 +110,12 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="route_id" value="Route *" className="text-white font-bold" />
+                                    <label htmlFor="route_id" className="mb-2 block text-base font-semibold text-slate-700">Route *</label>
                                     <Select
                                         id="route_id"
                                         value={data.route_id}
                                         onChange={(e) => handleRouteChange(e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="">Select Route</option>
@@ -130,12 +129,12 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="pickup_point_id" value="Pickup Point *" className="text-white font-bold" />
+                                    <label htmlFor="pickup_point_id" className="mb-2 block text-base font-semibold text-slate-700">Pickup Point *</label>
                                     <Select
                                         id="pickup_point_id"
                                         value={data.pickup_point_id}
                                         onChange={(e) => setData('pickup_point_id', e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                         disabled={!selectedRouteId}
                                     >
@@ -150,12 +149,12 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="dropoff_point_id" value="Dropoff Point (Optional)" className="text-white font-bold" />
+                                    <label htmlFor="dropoff_point_id" className="mb-2 block text-base font-semibold text-slate-700">Dropoff Point (Optional)</label>
                                     <Select
                                         id="dropoff_point_id"
                                         value={data.dropoff_point_id}
                                         onChange={(e) => setData('dropoff_point_id', e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         disabled={!selectedRouteId}
                                     >
                                         <option value="">Select Dropoff Point (Optional)</option>
@@ -169,12 +168,12 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="plan_type" value="Plan Type *" className="text-white font-bold" />
+                                    <label htmlFor="plan_type" className="mb-2 block text-base font-semibold text-slate-700">Plan Type *</label>
                                     <Select
                                         id="plan_type"
                                         value={data.plan_type}
                                         onChange={(e) => setData('plan_type', e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="weekly" className="text-gray-900">Weekly</option>
@@ -186,7 +185,7 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="trip_type" value="Trip Type *" className="text-white font-bold" />
+                                    <label htmlFor="trip_type" className="mb-2 block text-base font-semibold text-slate-700">Trip Type *</label>
                                     <Select
                                         id="trip_type"
                                         value={data.trip_type}
@@ -196,7 +195,7 @@ export default function Create({ students, routes }) {
                                             if (v === 'two_way') setData('trip_direction', 'both');
                                             else if (data.trip_direction === 'both') setData('trip_direction', 'pickup_only');
                                         }}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="one_way" className="text-gray-900">One Way</option>
@@ -207,12 +206,12 @@ export default function Create({ students, routes }) {
 
                                 {data.trip_type === 'one_way' && (
                                     <div>
-                                        <InputLabel htmlFor="trip_direction" value="Service (one way only)" className="text-white font-bold" />
+                                        <label htmlFor="trip_direction" className="mb-2 block text-base font-semibold text-slate-700">Service (one way only)</label>
                                         <Select
                                             id="trip_direction"
                                             value={data.trip_direction}
                                             onChange={(e) => setData('trip_direction', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                         >
                                             <option value="pickup_only" className="text-gray-900">Pickup only</option>
                                             <option value="dropoff_only" className="text-gray-900">Dropoff only</option>
@@ -222,12 +221,12 @@ export default function Create({ students, routes }) {
                                 )}
 
                                 <div>
-                                    <InputLabel htmlFor="status" value="Status *" className="text-white font-bold" />
+                                    <label htmlFor="status" className="mb-2 block text-base font-semibold text-slate-700">Status *</label>
                                     <Select
                                         id="status"
                                         value={data.status}
                                         onChange={(e) => setData('status', e.target.value)}
-                                        className="mt-1 block w-full glass-input text-white"
+                                        className="form-control"
                                         required
                                     >
                                         <option value="pending" className="text-gray-900">Pending</option>
@@ -242,31 +241,31 @@ export default function Create({ students, routes }) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="start_date" value="Start Date *" className="text-white font-bold" />
+                                        <label htmlFor="start_date" className="mb-2 block text-base font-semibold text-slate-700">Start Date *</label>
                                         <TextInput
                                             id="start_date"
                                             type="date"
                                             value={data.start_date}
                                             onChange={(e) => setData('start_date', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             required
                                         />
                                         <InputError message={errors.start_date} className="mt-2" />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="end_date" value="End Date (Auto-calculated)" className="text-white font-bold" />
+                                        <label htmlFor="end_date" className="mb-2 block text-base font-semibold text-slate-700">End Date (Auto-calculated)</label>
                                         <TextInput
                                             id="end_date"
                                             type="date"
                                             value={data.end_date}
                                             onChange={(e) => setData('end_date', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white"
+                                            className="form-control"
                                             readOnly={!!(data.start_date && data.plan_type)}
                                         />
                                         <InputError message={errors.end_date} className="mt-2" />
                                         {data.start_date && data.plan_type && (
-                                            <p className="mt-1 text-xs text-white/70 font-medium">
+                                            <p className="mt-1 text-xs font-medium text-slate-500">
                                                 Automatically calculated based on plan type
                                             </p>
                                         )}
@@ -275,7 +274,7 @@ export default function Create({ students, routes }) {
 
                                 <div className="flex justify-end gap-4">
                                     <Link href="/admin/bookings">
-                                        <GlassButton variant="secondary" type="button">
+                                        <GlassButton variant="secondary" type="button" className="border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900">
                                             Cancel
                                         </GlassButton>
                                     </Link>

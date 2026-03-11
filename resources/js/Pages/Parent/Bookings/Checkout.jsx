@@ -1,7 +1,8 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { CreditCard, ShieldCheck } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -11,11 +12,11 @@ const axios = window.axios;
 const CARD_ELEMENT_OPTIONS = {
     style: {
         base: {
-            color: '#22304d',
-            fontFamily: 'system-ui, sans-serif',
+            color: '#0f172a',
+            fontFamily: 'Figtree, system-ui, sans-serif',
             fontSmoothing: 'antialiased',
             fontSize: '16px',
-            '::placeholder': { color: '#6b7280' },
+            '::placeholder': { color: '#94a3b8' },
         },
         invalid: {
             color: '#dc2626',
@@ -24,7 +25,7 @@ const CARD_ELEMENT_OPTIONS = {
     },
 };
 
-function StripeCheckoutForm({ booking, price, stripeKey }) {
+function StripeCheckoutForm({ booking, price }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
@@ -71,15 +72,13 @@ function StripeCheckoutForm({ booking, price, stripeKey }) {
                 return;
             }
 
-            // Post to server; server redirects to My Bookings so checkout page closes
             router.post(route('parent.bookings.payment-success'), {
                 booking_id: booking.id,
                 payment_intent_id: paymentIntentId,
             }, {
                 preserveState: false,
                 onSuccess: () => {
-                    alert('Payment approved! Your booking is pending admin approval.');
-                    // If still on checkout (e.g. redirect not followed), close payment page
+                    alert('Payment approved. Your booking is pending admin approval.');
                     if (window.location.pathname.includes('/checkout')) {
                         window.location.href = route('parent.bookings.index');
                     }
@@ -99,101 +98,65 @@ function StripeCheckoutForm({ booking, price, stripeKey }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-                <div className="bg-red-600/20 border-2 border-red-500 text-white px-4 py-3 rounded-xl font-semibold">
+                <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
                     {error}
                 </div>
             )}
 
-            <div className="glass-card p-4 rounded-xl">
-                <div className="flex justify-between items-center mb-4">
-                    <span className="font-bold text-brand-primary text-lg">Total Amount:</span>
-                    <span className="text-2xl font-bold text-emerald-600">{price.formatted}</span>
-                </div>
-                <div className="p-4 rounded-xl bg-white/80 border-2 border-yellow-400/60">
-                    <label className="block text-sm font-bold text-brand-primary mb-2">Card details</label>
-                    <CardElement options={CARD_ELEMENT_OPTIONS} />
-                </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <label className="mb-2 block text-sm font-medium text-slate-700">Card details</label>
+                <CardElement options={CARD_ELEMENT_OPTIONS} />
             </div>
 
-            <GlassButton
-                type="submit"
-                disabled={loading || !stripe}
-                variant="success"
-                className="w-full py-3 text-lg flex items-center justify-center gap-2"
-            >
-                {loading ? (
-                    'Processing...'
-                ) : (
-                    <>
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-                            <line x1="1" y1="10" x2="23" y2="10" />
-                        </svg>
-                        Pay {price.formatted} with Stripe
-                    </>
-                )}
+            <GlassButton type="submit" disabled={loading || !stripe} variant="success" className="w-full gap-2">
+                <CreditCard className="h-4 w-4" />
+                {loading ? 'Processing...' : `Pay ${price.formatted}`}
             </GlassButton>
         </form>
     );
 }
 
 export default function Checkout({ booking, price, stripeKey }) {
+    const { auth } = usePage().props;
     const [stripePromise] = useState(() => (stripeKey ? loadStripe(stripeKey) : null));
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout user={auth?.user}>
             <Head title="Checkout" />
 
-            <div className="py-12">
-                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-                    <GlassCard className="overflow-hidden">
-                        <div className="p-6">
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Complete Your Booking</h2>
+            <div className="py-10">
+                <div className="container">
+                    <GlassCard className="mx-auto max-w-3xl">
+                        <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">Complete Your Booking</h2>
 
-                            {/* Booking Summary */}
-                            <div className="glass-card p-6 rounded-lg mb-6 space-y-3">
-                                <div className="flex justify-between">
-                                    <span className="text-brand-primary font-semibold">Student:</span>
-                                    <span className="font-bold text-brand-primary">{booking.student?.name}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-brand-primary font-semibold">Route:</span>
-                                    <span className="font-bold text-brand-primary">{booking.route?.name}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-brand-primary font-semibold">Pickup Location:</span>
-                                    <span className="font-bold text-brand-primary">
-                                        {booking.pickup_address || booking.pickup_point?.name || 'Not set'}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-brand-primary font-semibold">Plan:</span>
-                                    <span className="font-bold text-brand-primary capitalize">
-                                        {booking.plan_type?.replace('_', '-')}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Payment Method - Stripe */}
-                            <div className="glass-card p-6 rounded-lg mb-6">
-                                <h3 className="text-xl font-bold text-brand-primary mb-4">Payment Method</h3>
-                                <div className="p-4 rounded-xl border-2 border-yellow-400/60 bg-white/10 mb-4">
-                                    <div className="font-bold text-brand-primary">Stripe</div>
-                                    <div className="text-brand-primary/70 text-sm mt-1">Pay securely with your card (credit or debit)</div>
-                                </div>
-                                {stripePromise ? (
-                                    <Elements stripe={stripePromise}>
-                                        <StripeCheckoutForm booking={booking} price={price} stripeKey={stripeKey} />
-                                    </Elements>
-                                ) : (
-                                    <p className="text-red-500 font-semibold">Stripe is not configured. Please set STRIPE_KEY in your .env file.</p>
-                                )}
-                            </div>
-
-                            <p className="text-xs text-gray-300 mt-4 text-center font-medium">
-                                Your payment is secure and encrypted by Stripe.
-                            </p>
+                        <div className="mt-6 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-2">
+                            <p className="text-slate-700"><span className="font-medium text-slate-900">Student:</span> {booking.student?.name}</p>
+                            <p className="text-slate-700"><span className="font-medium text-slate-900">Route:</span> {booking.route?.name}</p>
+                            <p className="text-slate-700"><span className="font-medium text-slate-900">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}</p>
+                            <p className="text-slate-700"><span className="font-medium text-slate-900">Plan:</span> {booking.plan_type?.replace('_', '-')}</p>
                         </div>
+
+                        <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
+                            <div className="mb-3 flex items-center justify-between">
+                                <span className="text-sm font-medium text-slate-700">Total Amount</span>
+                                <span className="text-2xl font-semibold text-emerald-700">{price.formatted}</span>
+                            </div>
+
+                            {stripePromise ? (
+                                <Elements stripe={stripePromise}>
+                                    <StripeCheckoutForm booking={booking} price={price} />
+                                </Elements>
+                            ) : (
+                                <p className="text-sm font-medium text-rose-700">
+                                    Stripe is not configured. Set `STRIPE_KEY` in your environment.
+                                </p>
+                            )}
+                        </div>
+
+                        <p className="mt-4 inline-flex items-center gap-1 text-xs text-slate-500">
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            Payment is encrypted and handled securely by Stripe.
+                        </p>
                     </GlassCard>
                 </div>
             </div>

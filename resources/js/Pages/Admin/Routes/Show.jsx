@@ -49,15 +49,15 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         <div className="flex items-center gap-4">
                             <Link
                                 href="/admin/routes"
-                                className="glass-button text-white p-2 rounded-lg transition hover:bg-white/20"
+                                className="rounded-xl border border-slate-300 bg-white p-2 text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                             >
                                 <ArrowLeftIcon className="h-5 w-5" />
                             </Link>
                             <div>
-                                <h1 className="text-3xl font-extrabold text-white drop-shadow-lg">
+                                <h1 className="text-3xl font-extrabold text-slate-900">
                                     {route.name}
                                 </h1>
-                                <p className="text-gray-300 text-sm mt-1">
+                                <p className="mt-1 text-sm text-slate-500">
                                     Complete route information and statistics
                                 </p>
                             </div>
@@ -65,7 +65,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         <div className="flex gap-2">
                             <Link
                                 href={`/admin/routes/${route.id}/edit`}
-                                className="glass-button text-white font-bold py-2 px-4 rounded-lg transition"
+                                className="rounded-xl bg-brand-primary px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-brand-secondary"
                             >
                                 Edit Route
                             </Link>
@@ -77,33 +77,33 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         <div className="glass-card p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-300 text-sm">Active Students</p>
-                                    <p className="text-3xl font-bold text-white mt-2">
+                                    <p className="text-sm text-slate-500">Active Students</p>
+                                    <p className="mt-2 text-3xl font-bold text-slate-900">
                                         {statistics.total_bookings}
                                     </p>
-                                    <p className="text-gray-400 text-xs mt-1">
+                                    <p className="mt-1 text-xs text-slate-500">
                                         of {route.capacity} capacity
                                     </p>
                                 </div>
-                                <UsersIcon className="h-12 w-12 text-blue-400" />
+                                <UsersIcon className="h-12 w-12 text-sky-500" />
                             </div>
                         </div>
 
                         <div className="glass-card p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-300 text-sm">Capacity</p>
-                                    <p className="text-3xl font-bold text-white mt-2">
+                                    <p className="text-sm text-slate-500">Capacity</p>
+                                    <p className="mt-2 text-3xl font-bold text-slate-900">
                                         {statistics.capacity_utilization}%
                                     </p>
-                                    <p className="text-gray-400 text-xs mt-1">
+                                    <p className="mt-1 text-xs text-slate-500">
                                         {statistics.available_seats} seats available
                                     </p>
                                 </div>
                                 <ChartBarIcon className={`h-12 w-12 ${
-                                    statistics.capacity_utilization >= 90 ? 'text-red-400' :
-                                    statistics.capacity_utilization >= 70 ? 'text-yellow-400' :
-                                    'text-green-400'
+                                    statistics.capacity_utilization >= 90 ? 'text-rose-500' :
+                                    statistics.capacity_utilization >= 70 ? 'text-amber-500' :
+                                    'text-emerald-500'
                                 }`} />
                             </div>
                         </div>
@@ -111,32 +111,32 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         <div className="glass-card p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-300 text-sm">Completions (30d)</p>
-                                    <p className="text-3xl font-bold text-white mt-2">
+                                    <p className="text-sm text-slate-500">Completions (30d)</p>
+                                    <p className="mt-2 text-3xl font-bold text-slate-900">
                                         {statistics.total_completions}
                                     </p>
                                     {statistics.avg_completion_time_minutes && (
-                                        <p className="text-gray-400 text-xs mt-1">
+                                        <p className="mt-1 text-xs text-slate-500">
                                             Avg {statistics.avg_completion_time_minutes} mins
                                         </p>
                                     )}
                                 </div>
-                                <CheckCircleIcon className="h-12 w-12 text-green-400" />
+                                <CheckCircleIcon className="h-12 w-12 text-emerald-500" />
                             </div>
                         </div>
 
                         <div className="glass-card p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-300 text-sm">Upcoming</p>
-                                    <p className="text-3xl font-bold text-white mt-2">
+                                    <p className="text-sm text-slate-500">Upcoming</p>
+                                    <p className="mt-2 text-3xl font-bold text-slate-900">
                                         {statistics.upcoming_bookings_count}
                                     </p>
-                                    <p className="text-gray-400 text-xs mt-1">
+                                    <p className="mt-1 text-xs text-slate-500">
                                         Starting soon
                                     </p>
                                 </div>
-                                <CalendarIcon className="h-12 w-12 text-purple-400" />
+                                <CalendarIcon className="h-12 w-12 text-violet-500" />
                             </div>
                         </div>
                     </div>
@@ -147,40 +147,40 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         <div className="lg:col-span-1 space-y-6">
                             {/* Basic Info Card */}
                             <div className="glass-card p-6">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                     <MapPinIcon className="h-6 w-6" />
                                     Route Information
                                 </h3>
                                 <div className="space-y-4">
                                     <div>
-                                        <p className="text-gray-400 text-sm">Route Name</p>
-                                        <p className="text-white font-semibold">{route.name}</p>
+                                        <p className="text-sm text-slate-500">Route Name</p>
+                                        <p className="font-semibold text-slate-900">{route.name}</p>
                                     </div>
                                     <div>
-                                        <p className="text-gray-400 text-sm">Service Type</p>
+                                        <p className="text-sm text-slate-500">Service Type</p>
                                         <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full border ${
-                                            route.service_type === 'am' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
-                                            route.service_type === 'pm' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
-                                            'bg-green-500/30 text-green-100 border-green-400/50'
+                                            route.service_type === 'am' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                            route.service_type === 'pm' ? 'bg-sky-50 text-sky-700 border-sky-200' :
+                                            'bg-emerald-50 text-emerald-700 border-emerald-200'
                                         }`}>
                                             {route.service_type === 'am' ? 'AM Only' :
                                              route.service_type === 'pm' ? 'PM Only' : 'Both'}
                                         </span>
                                     </div>
                                     <div>
-                                        <p className="text-gray-400 text-sm">Status</p>
+                                        <p className="text-sm text-slate-500">Status</p>
                                         <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full border ${
                                             route.active 
-                                                ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                : 'bg-rose-50 text-rose-700 border-rose-200'
                                         }`}>
                                             {route.active ? 'Active' : 'Inactive'}
                                         </span>
                                     </div>
                                     {route.pickup_time && (
                                         <div>
-                                            <p className="text-gray-400 text-sm">Pickup Time</p>
-                                            <p className="text-white font-semibold flex items-center gap-2">
+                                            <p className="text-sm text-slate-500">Pickup Time</p>
+                                            <p className="flex items-center gap-2 font-semibold text-slate-900">
                                                 <ClockIcon className="h-4 w-4" />
                                                 {formatTime(route.pickup_time)}
                                             </p>
@@ -188,8 +188,8 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                     )}
                                     {route.dropoff_time && (
                                         <div>
-                                            <p className="text-gray-400 text-sm">Dropoff Time</p>
-                                            <p className="text-white font-semibold flex items-center gap-2">
+                                            <p className="text-sm text-slate-500">Dropoff Time</p>
+                                            <p className="flex items-center gap-2 font-semibold text-slate-900">
                                                 <ClockIcon className="h-4 w-4" />
                                                 {formatTime(route.dropoff_time)}
                                             </p>
@@ -200,7 +200,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
 
                             {/* Driver Card */}
                             <div className="glass-card p-6">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                     <UserIcon className="h-6 w-6" />
                                     Driver
                                 </h3>
@@ -210,56 +210,56 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                             <img
                                                 src={route.driver.profile_picture_url}
                                                 alt={route.driver.name}
-                                                className="w-12 h-12 rounded-xl object-cover border-2 border-yellow-400/50 flex-shrink-0"
+                                                className="h-12 w-12 flex-shrink-0 rounded-xl border border-slate-200 object-cover"
                                             />
                                         ) : (
-                                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                                                <UserIcon className="w-6 h-6 text-brand-primary" />
+                                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-50">
+                                                <UserIcon className="h-6 w-6 text-amber-600" />
                                             </div>
                                         )}
                                         <div className="space-y-3 flex-1">
                                             <div>
-                                                <p className="text-gray-400 text-sm">Name</p>
-                                                <p className="text-white font-semibold">{route.driver.name}</p>
+                                                <p className="text-sm text-slate-500">Name</p>
+                                                <p className="font-semibold text-slate-900">{route.driver.name}</p>
                                             </div>
                                             <div>
-                                                <p className="text-gray-400 text-sm">Email</p>
-                                                <p className="text-white">{route.driver.email}</p>
+                                                <p className="text-sm text-slate-500">Email</p>
+                                                <p className="text-slate-700">{route.driver.email}</p>
                                             </div>
                                         </div>
                                     </div>
                                 ) : (
-                                    <p className="text-gray-400 italic">No driver assigned</p>
+                                    <p className="italic text-slate-500">No driver assigned</p>
                                 )}
                             </div>
 
                             {/* Vehicle Card */}
                             <div className="glass-card p-6">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                     <TruckIcon className="h-6 w-6" />
                                     Vehicle
                                 </h3>
                                 {route.vehicle ? (
                                     <div className="space-y-3">
                                         <div>
-                                            <p className="text-gray-400 text-sm">License Plate</p>
-                                            <p className="text-white font-semibold">{route.vehicle.license_plate}</p>
+                                            <p className="text-sm text-slate-500">License Plate</p>
+                                            <p className="font-semibold text-slate-900">{route.vehicle.license_plate}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-400 text-sm">Type</p>
-                                            <p className="text-white">{route.vehicle.type}</p>
+                                            <p className="text-sm text-slate-500">Type</p>
+                                            <p className="text-slate-700">{route.vehicle.type}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-400 text-sm">Capacity</p>
-                                            <p className="text-white font-semibold">{route.vehicle.capacity} passengers</p>
+                                            <p className="text-sm text-slate-500">Capacity</p>
+                                            <p className="font-semibold text-slate-900">{route.vehicle.capacity} passengers</p>
                                         </div>
                                         {route.vehicle.status && (
                                             <div>
-                                                <p className="text-gray-400 text-sm">Status</p>
+                                                <p className="text-sm text-slate-500">Status</p>
                                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                                     route.vehicle.status === 'active' 
-                                                        ? 'bg-green-500/30 text-green-100'
-                                                        : 'bg-gray-500/30 text-gray-100'
+                                                        ? 'bg-emerald-50 text-emerald-700'
+                                                        : 'bg-slate-100 text-slate-600'
                                                 }`}>
                                                     {route.vehicle.status}
                                                 </span>
@@ -267,29 +267,29 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                         )}
                                     </div>
                                 ) : (
-                                    <p className="text-gray-400 italic">No vehicle assigned</p>
+                                    <p className="italic text-slate-500">No vehicle assigned</p>
                                 )}
                             </div>
 
                             {/* Schools Card */}
                             <div className="glass-card p-6">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                     <AcademicCapIcon className="h-6 w-6" />
                                     Schools Served
                                 </h3>
                                 {route.schools && route.schools.length > 0 ? (
                                     <div className="space-y-2">
                                         {route.schools.map((school) => (
-                                            <div key={school.id} className="bg-white/10 rounded-lg p-3">
-                                                <p className="text-white font-semibold">{school.name}</p>
+                                            <div key={school.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                                <p className="font-semibold text-slate-900">{school.name}</p>
                                                 {school.address && (
-                                                    <p className="text-gray-400 text-sm mt-1">{school.address}</p>
+                                                    <p className="mt-1 text-sm text-slate-500">{school.address}</p>
                                                 )}
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="text-gray-400 italic">No schools assigned</p>
+                                    <p className="italic text-slate-500">No schools assigned</p>
                                 )}
                             </div>
                         </div>
@@ -299,30 +299,30 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                             {/* Pickup Points */}
                             {route.pickup_points && route.pickup_points.length > 0 && (
                                 <div className="glass-card p-6">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                         <MapPinIcon className="h-6 w-6" />
                                         Pickup Points ({route.pickup_points.length})
                                     </h3>
                                     <div className="space-y-3">
                                         {route.pickup_points.map((point, index) => (
-                                            <div key={point.id} className="bg-white/10 rounded-lg p-4 hover:bg-white/15 transition">
+                                            <div key={point.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-white">
                                                 <div className="flex items-start gap-3">
-                                                    <div className="flex-shrink-0 w-8 h-8 bg-blue-500/30 rounded-full flex items-center justify-center border border-blue-400/50">
-                                                        <span className="text-white font-bold text-sm">{point.sequence_order || index + 1}</span>
+                                                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-sky-200 bg-sky-50">
+                                                        <span className="text-sm font-bold text-sky-700">{point.sequence_order || index + 1}</span>
                                                     </div>
                                                     <div className="flex-1">
-                                                        <p className="text-white font-semibold">{point.name}</p>
+                                                        <p className="font-semibold text-slate-900">{point.name}</p>
                                                         {point.address && (
-                                                            <p className="text-gray-400 text-sm mt-1">{point.address}</p>
+                                                            <p className="mt-1 text-sm text-slate-500">{point.address}</p>
                                                         )}
                                                         <div className="flex gap-4 mt-2 text-sm">
                                                             {point.pickup_time && (
-                                                                <span className="text-gray-300">
+                                                                <span className="text-slate-600">
                                                                     🚌 {formatTime(point.pickup_time)}
                                                                 </span>
                                                             )}
                                                             {point.dropoff_time && (
-                                                                <span className="text-gray-300">
+                                                                <span className="text-slate-600">
                                                                     🏠 {formatTime(point.dropoff_time)}
                                                                 </span>
                                                             )}
@@ -337,48 +337,48 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
 
                             {/* Active Bookings */}
                             <div className="glass-card p-6">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                     <UsersIcon className="h-6 w-6" />
                                     Active Students ({activeBookings.length})
                                 </h3>
                                 {activeBookings.length > 0 ? (
                                     <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-brand-primary/20">
-                                            <thead className="bg-white/10">
+                                        <table className="min-w-full divide-y divide-slate-200">
+                                            <thead className="bg-slate-50">
                                                 <tr>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Student</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Parent</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Pickup Point</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Plan</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">Status</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold text-white">End Date</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Student</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Parent</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Pickup Point</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Plan</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Status</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">End Date</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                                            <tbody className="divide-y divide-slate-200 bg-white">
                                                 {activeBookings.map((booking) => (
-                                                    <tr key={booking.id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                        <td className="px-4 py-3 text-white font-semibold">
+                                                    <tr key={booking.id} className="transition hover:bg-slate-50">
+                                                        <td className="px-4 py-3 font-semibold text-slate-900">
                                                             {booking.student.name}
                                                         </td>
-                                                        <td className="px-4 py-3 text-gray-300 text-sm">
+                                                        <td className="px-4 py-3 text-sm text-slate-600">
                                                             {booking.student.parent?.name || '-'}
                                                         </td>
-                                                        <td className="px-4 py-3 text-gray-300 text-sm">
+                                                        <td className="px-4 py-3 text-sm text-slate-600">
                                                             {booking.pickup_point?.name || '-'}
                                                         </td>
-                                                        <td className="px-4 py-3 text-gray-300 text-sm">
+                                                        <td className="px-4 py-3 text-sm text-slate-600">
                                                             {booking.plan_type.replace('_', ' ')}
                                                         </td>
                                                         <td className="px-4 py-3">
                                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                                                                 booking.status === 'active' 
-                                                                    ? 'bg-green-500/30 text-green-100'
-                                                                    : 'bg-yellow-500/30 text-yellow-100'
+                                                                    ? 'bg-emerald-50 text-emerald-700'
+                                                                    : 'bg-amber-50 text-amber-700'
                                                             }`}>
                                                                 {booking.status}
                                                             </span>
                                                         </td>
-                                                        <td className="px-4 py-3 text-gray-300 text-sm">
+                                                        <td className="px-4 py-3 text-sm text-slate-600">
                                                             {formatDate(booking.end_date)}
                                                         </td>
                                                     </tr>
@@ -387,28 +387,28 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                         </table>
                                     </div>
                                 ) : (
-                                    <p className="text-gray-400 italic">No active bookings</p>
+                                    <p className="italic text-slate-500">No active bookings</p>
                                 )}
                             </div>
 
                             {/* Upcoming Bookings */}
                             {upcomingBookings.length > 0 && (
                                 <div className="glass-card p-6">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                         <CalendarIcon className="h-6 w-6" />
                                         Upcoming Students ({upcomingBookings.length})
                                     </h3>
                                     <div className="space-y-2">
                                         {upcomingBookings.map((booking) => (
-                                            <div key={booking.id} className="bg-white/10 rounded-lg p-3 hover:bg-white/15 transition">
+                                            <div key={booking.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 transition hover:bg-white">
                                                 <div className="flex justify-between items-start">
                                                     <div>
-                                                        <p className="text-white font-semibold">{booking.student.name}</p>
-                                                        <p className="text-gray-400 text-sm">
+                                                        <p className="font-semibold text-slate-900">{booking.student.name}</p>
+                                                        <p className="text-sm text-slate-500">
                                                             Starts: {formatDate(booking.start_date)}
                                                         </p>
                                                     </div>
-                                                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-500/30 text-purple-100">
+                                                    <span className="rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-700">
                                                         Pending
                                                     </span>
                                                 </div>
@@ -421,28 +421,28 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                             {/* Recent Completions */}
                             {route.completions && route.completions.length > 0 && (
                                 <div className="glass-card p-6">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                         <CheckCircleIcon className="h-6 w-6" />
                                         Recent Completions
                                     </h3>
                                     <div className="space-y-2">
                                         {route.completions.slice(0, 5).map((completion) => (
-                                            <div key={completion.id} className="bg-white/10 rounded-lg p-3">
+                                            <div key={completion.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
                                                 <div className="flex justify-between items-center">
                                                     <div>
-                                                        <p className="text-white font-semibold">
+                                                        <p className="font-semibold text-slate-900">
                                                             {formatDate(completion.completion_date)}
                                                         </p>
                                                         {completion.driver && (
-                                                            <p className="text-gray-400 text-sm">
+                                                            <p className="text-sm text-slate-500">
                                                                 By: {completion.driver.name}
                                                             </p>
                                                         )}
                                                     </div>
-                                                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                                                    <CheckCircleIcon className="h-5 w-5 text-emerald-500" />
                                                 </div>
                                                 {completion.notes && (
-                                                    <p className="text-gray-300 text-sm mt-2">{completion.notes}</p>
+                                                    <p className="mt-2 text-sm text-slate-600">{completion.notes}</p>
                                                 )}
                                             </div>
                                         ))}
@@ -453,20 +453,20 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                             {/* Recently Expired */}
                             {recentExpired.length > 0 && (
                                 <div className="glass-card p-6">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
                                         Recently Expired ({recentExpired.length})
                                     </h3>
                                     <div className="space-y-2">
                                         {recentExpired.map((booking) => (
-                                            <div key={booking.id} className="bg-white/10 rounded-lg p-3 opacity-60">
+                                            <div key={booking.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 opacity-75">
                                                 <div className="flex justify-between items-start">
                                                     <div>
-                                                        <p className="text-white font-semibold">{booking.student.name}</p>
-                                                        <p className="text-gray-400 text-sm">
+                                                        <p className="font-semibold text-slate-900">{booking.student.name}</p>
+                                                        <p className="text-sm text-slate-500">
                                                             Expired: {formatDate(booking.end_date)}
                                                         </p>
                                                     </div>
-                                                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-500/30 text-gray-100">
+                                                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
                                                         Expired
                                                     </span>
                                                 </div>

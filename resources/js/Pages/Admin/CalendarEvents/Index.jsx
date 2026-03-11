@@ -20,13 +20,13 @@ export default function Index({ calendarEvents }) {
     const getTypeColor = (type) => {
         switch (type) {
             case 'school_day':
-                return 'bg-green-500/30 text-brand-primary border border-green-400/50';
+                return 'border border-emerald-200 bg-emerald-50 text-emerald-700';
             case 'holiday':
-                return 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50';
+                return 'border border-amber-200 bg-amber-50 text-amber-700';
             case 'closure':
-                return 'bg-red-500/30 text-brand-primary border border-red-400/50';
+                return 'border border-rose-200 bg-rose-50 text-rose-700';
             default:
-                return 'bg-gray-500/30 text-brand-primary border border-gray-400/50';
+                return 'border border-slate-200 bg-slate-100 text-slate-600';
         }
     };
 
@@ -44,12 +44,12 @@ export default function Index({ calendarEvents }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Calendar Events</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage school calendar and events</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Calendar Events</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage school calendar and events</p>
                             </div>
                             <Link
                                 href="/admin/calendar-events/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add Calendar Event
                             </Link>
@@ -57,7 +57,7 @@ export default function Index({ calendarEvents }) {
                     </div>
 
                     {calendarEvents.data && calendarEvents.data.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             {calendarEvents.data.map((event) => (
                                 <GlassCard key={event.id} className="p-6 hover:scale-[1.02] transition-all">
                                     {/* Card Header */}
@@ -69,7 +69,7 @@ export default function Index({ calendarEvents }) {
                                                 </svg>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">
+                                                <h3 className="truncate text-lg font-bold text-slate-900">
                                                     {new Date(event.date).toLocaleDateString('en-US', { 
                                                         weekday: 'short', 
                                                         year: 'numeric', 
@@ -77,12 +77,12 @@ export default function Index({ calendarEvents }) {
                                                         day: 'numeric' 
                                                     })}
                                                 </h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                <p className="truncate text-sm font-medium text-slate-500">
                                                     {event.description || 'No description'}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getTypeColor(event.type)}`}>
+                                        <span className={`rounded-lg px-3 py-1 text-xs font-semibold ${getTypeColor(event.type)}`}>
                                             {formatType(event.type)}
                                         </span>
                                     </div>
@@ -93,22 +93,22 @@ export default function Index({ calendarEvents }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium line-clamp-3">{event.description || 'No description provided'}</p>
+                                            <p className="line-clamp-3 text-sm font-medium text-slate-700">{event.description || 'No description provided'}</p>
                                         </div>
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/calendar-events/${event.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(event.id)}
                                             disabled={deleting === event.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === event.id ? 'Deleting...' : 'Delete'}
                                         </button>

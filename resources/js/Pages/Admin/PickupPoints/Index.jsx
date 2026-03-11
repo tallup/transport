@@ -27,12 +27,12 @@ export default function Index({ pickupPoints }) {
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Pickup Points</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">Manage all pickup and dropoff locations</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-text-primary">Pickup Points</h1>
+                                <p className="text-lg font-medium text-text-secondary">Manage all pickup and dropoff locations</p>
                             </div>
                             <Link
                                 href="/admin/pickup-points/create"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                             >
                                 Add Pickup Point
                             </Link>
@@ -53,8 +53,8 @@ export default function Index({ pickupPoints }) {
                                                 </svg>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-extrabold text-white truncate">{point.name}</h3>
-                                                <p className="text-sm text-white/70 font-medium truncate">
+                                                <h3 className="truncate text-lg font-bold text-slate-900">{point.name}</h3>
+                                                <p className="truncate text-sm font-medium text-slate-500">
                                                     {point.route?.name || 'No route assigned'}
                                                 </p>
                                             </div>
@@ -68,13 +68,13 @@ export default function Index({ pickupPoints }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <p className="text-sm text-white/90 font-medium line-clamp-2">{point.address}</p>
+                                            <p className="line-clamp-2 text-sm font-medium text-slate-700">{point.address}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                                             </svg>
-                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-blue-500/30 text-brand-primary border border-blue-400/50">
+                                            <span className="rounded-lg border border-sky-200 bg-sky-50 px-2 py-1 text-xs font-semibold text-sky-700">
                                                 Sequence: {point.sequence_order}
                                             </span>
                                         </div>
@@ -83,7 +83,7 @@ export default function Index({ pickupPoints }) {
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
-                                                <p className="text-sm text-white/90 font-medium">
+                                                <p className="text-sm font-medium text-slate-700">
                                                     Pickup: {point.pickup_time}
                                                 </p>
                                             </div>
@@ -93,7 +93,7 @@ export default function Index({ pickupPoints }) {
                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
-                                                <p className="text-sm text-white/90 font-medium">
+                                                <p className="text-sm font-medium text-slate-700">
                                                     Dropoff: {point.dropoff_time}
                                                 </p>
                                             </div>
@@ -101,17 +101,17 @@ export default function Index({ pickupPoints }) {
                                     </div>
 
                                     {/* Card Actions */}
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link
                                             href={`/admin/pickup-points/${point.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(point.id)}
                                             disabled={deleting === point.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
                                         >
                                             {deleting === point.id ? 'Deleting...' : 'Delete'}
                                         </button>

@@ -40,6 +40,39 @@ export default function AnalyticsDashboard({
         { id: 'routes', label: 'Routes' },
     ];
 
+    const axisColor = '#64748b';
+    const gridColor = 'rgba(148, 163, 184, 0.25)';
+    const tooltipStyle = {
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        border: '1px solid rgba(148, 163, 184, 0.35)',
+        borderRadius: '12px',
+        color: '#0f172a',
+        boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
+    };
+    const legendStyle = { color: '#475569', fontSize: 12 };
+
+    const renderPieLabel = ({ cx, cy, midAngle, outerRadius, percent, name }) => {
+        if (!percent) return null;
+        const radius = outerRadius + 22;
+        const radians = Math.PI / 180;
+        const x = cx + radius * Math.cos(-midAngle * radians);
+        const y = cy + radius * Math.sin(-midAngle * radians);
+
+        return (
+            <text
+                x={x}
+                y={y}
+                fill="#475569"
+                fontSize="12"
+                fontWeight="600"
+                textAnchor={x > cx ? 'start' : 'end'}
+                dominantBaseline="central"
+            >
+                {`${name}: ${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
+
     return (
         <AdminLayout>
             <Head title="Analytics Dashboard" />
@@ -49,10 +82,10 @@ export default function AnalyticsDashboard({
                     {/* Header */}
                     <div className="mb-6 sm:mb-8 flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                            <h1 className="mb-2 text-3xl font-extrabold text-text-primary sm:text-4xl md:text-5xl">
                                 Analytics Dashboard
                             </h1>
-                            <p className="text-base sm:text-lg font-semibold text-brand-primary/90">
+                            <p className="text-base font-semibold text-text-secondary sm:text-lg">
                                 Comprehensive insights into your transport operations
                             </p>
                         </div>
@@ -63,27 +96,27 @@ export default function AnalyticsDashboard({
                     <GlassCard className="mb-6 p-6">
                         <div className="flex flex-wrap items-center gap-4">
                             <div>
-                                <label className="block text-sm font-bold text-brand-primary mb-1">Start Date</label>
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">Start Date</label>
                                 <input
                                     type="date"
                                     value={dateRange.start}
                                     onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
+                                    className="form-control"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-brand-primary mb-1">End Date</label>
+                                <label className="mb-1 block text-sm font-semibold text-slate-700">End Date</label>
                                 <input
                                     type="date"
                                     value={dateRange.end}
                                     onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                                    className="px-3 py-2 bg-white/10 border-2 border-white/30 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-500/10"
+                                    className="form-control"
                                 />
                             </div>
                             <div className="flex items-end">
                                 <button
                                     onClick={handleDateRangeChange}
-                                    className="px-4 py-2 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary hover:bg-brand-primary/30 hover:border-brand-primary/70 font-bold rounded-lg transition-all"
+                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
                                 >
                                     Apply Filter
                                 </button>
@@ -93,15 +126,15 @@ export default function AnalyticsDashboard({
 
                     {/* Tabs */}
                     <div className="mb-6">
-                        <div className="flex space-x-2 border-b border-brand-primary/20">
+                        <div className="flex space-x-2 border-b border-slate-200">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`px-4 py-2 font-bold transition ${
                                         activeTab === tab.id
-                                            ? 'text-brand-primary border-b-2 border-yellow-400'
-                                            : 'text-brand-primary/70 hover:text-brand-primary'
+                                            ? 'border-b-2 border-brand-primary text-brand-primary'
+                                            : 'text-slate-500 hover:text-slate-800'
                                     }`}
                                 >
                                     {tab.label}
@@ -118,8 +151,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Revenue</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Total Revenue</p>
+                                            <p className="text-2xl font-extrabold text-amber-600">
                                                 ${revenueTrends.reduce((sum, item) => sum + (item.revenue || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </p>
                                         </div>
@@ -134,8 +167,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Active Routes</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Active Routes</p>
+                                            <p className="text-2xl font-extrabold text-sky-600">
                                                 {capacityUtilization.length}
                                             </p>
                                         </div>
@@ -150,8 +183,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Drivers</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Total Drivers</p>
+                                            <p className="text-2xl font-extrabold text-violet-600">
                                                 {driverMetrics.length}
                                             </p>
                                         </div>
@@ -166,8 +199,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Avg Utilization</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Avg Utilization</p>
+                                            <p className="text-2xl font-extrabold text-emerald-600">
                                                 {capacityUtilization.length > 0
                                                     ? Math.round(capacityUtilization.reduce((sum, r) => sum + r.utilization_percent, 0) / capacityUtilization.length)
                                                     : 0}%
@@ -184,29 +217,23 @@ export default function AnalyticsDashboard({
 
                             {/* Revenue Trends Chart */}
                             <GlassCard className="p-6">
-                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
+                                <h3 className="mb-4 text-xl font-bold text-slate-900">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={revenueTrends}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                                         <XAxis
                                             dataKey="label"
-                                            stroke="#22304d"
-                                            tick={{ fill: '#22304d' }}
+                                            stroke={axisColor}
+                                            tick={{ fill: axisColor }}
                                             style={{ fontSize: '12px' }}
                                         />
                                         <YAxis
-                                            stroke="#22304d"
-                                            tick={{ fill: '#22304d' }}
+                                            stroke={axisColor}
+                                            tick={{ fill: axisColor }}
                                             style={{ fontSize: '12px' }}
                                         />
-                                        <Tooltip
-                                            contentStyle={{
-                                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                color: '#ffffff',
-                                            }}
-                                        />
-                                        <Legend wrapperStyle={{ color: '#ffffff' }} />
+                                        <Tooltip contentStyle={tooltipStyle} />
+                                        <Legend wrapperStyle={legendStyle} />
                                         <Line
                                             type="monotone"
                                             dataKey="revenue"
@@ -231,8 +258,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Revenue</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Total Revenue</p>
+                                            <p className="text-2xl font-extrabold text-amber-600">
                                                 ${(revenueSummary.total_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </p>
                                         </div>
@@ -247,8 +274,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Avg Daily Revenue</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Avg Daily Revenue</p>
+                                            <p className="text-2xl font-extrabold text-sky-600">
                                                 ${(revenueSummary.avg_daily_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </p>
                                         </div>
@@ -263,11 +290,11 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Growth</p>
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Growth</p>
                                             <p className={`text-2xl font-extrabold ${(revenueSummary.growth_percent || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                                 {(revenueSummary.growth_percent || 0) >= 0 ? '+' : ''}{revenueSummary.growth_percent || 0}%
                                             </p>
-                                            <p className="text-xs text-brand-primary/60 mt-1">vs previous period</p>
+                                            <p className="mt-1 text-xs text-slate-500">vs previous period</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
                                             <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,8 +307,8 @@ export default function AnalyticsDashboard({
                                 <GlassCard className="p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <p className="text-xs font-bold text-brand-primary/70 uppercase tracking-wide mb-2">Total Bookings</p>
-                                            <p className="text-2xl font-extrabold text-white">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Total Bookings</p>
+                                            <p className="text-2xl font-extrabold text-violet-600">
                                                 {revenueSummary.total_bookings || 0}
                                             </p>
                                         </div>
@@ -296,27 +323,21 @@ export default function AnalyticsDashboard({
 
                             {/* Revenue Trends Chart */}
                             <GlassCard className="p-6">
-                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Trends</h3>
+                                <h3 className="mb-4 text-xl font-bold text-slate-900">Revenue Trends</h3>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <LineChart data={revenueTrends}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                                         <XAxis
                                             dataKey="label"
-                                            stroke="#22304d"
-                                            tick={{ fill: '#22304d' }}
+                                            stroke={axisColor}
+                                            tick={{ fill: axisColor }}
                                         />
                                         <YAxis
-                                            stroke="#22304d"
-                                            tick={{ fill: '#22304d' }}
+                                            stroke={axisColor}
+                                            tick={{ fill: axisColor }}
                                         />
-                                        <Tooltip
-                                            contentStyle={{
-                                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                color: '#ffffff',
-                                            }}
-                                        />
-                                        <Legend wrapperStyle={{ color: '#ffffff' }} />
+                                        <Tooltip contentStyle={tooltipStyle} />
+                                        <Legend wrapperStyle={legendStyle} />
                                         <Line
                                             type="monotone"
                                             dataKey="revenue"
@@ -341,7 +362,7 @@ export default function AnalyticsDashboard({
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {/* Revenue by Plan Type */}
                                 <GlassCard className="p-6">
-                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue by Plan Type</h3>
+                                    <h3 className="mb-4 text-xl font-bold text-slate-900">Revenue by Plan Type</h3>
                                     {revenueSummary.revenue_by_plan_type && revenueSummary.revenue_by_plan_type.length > 0 ? (
                                         <>
                                             <ResponsiveContainer width="100%" height={300}>
@@ -350,8 +371,8 @@ export default function AnalyticsDashboard({
                                                         data={revenueSummary.revenue_by_plan_type}
                                                         cx="50%"
                                                         cy="50%"
-                                                        labelLine={false}
-                                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                                        labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
+                                                        label={renderPieLabel}
                                                         outerRadius={80}
                                                         fill="#8884d8"
                                                         dataKey="revenue"
@@ -362,13 +383,10 @@ export default function AnalyticsDashboard({
                                                         })}
                                                     </Pie>
                                                     <Tooltip
-                                                        contentStyle={{
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                            color: '#ffffff',
-                                                        }}
+                                                        contentStyle={tooltipStyle}
                                                         formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                                                     />
+                                                    <Legend wrapperStyle={legendStyle} />
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             <div className="mt-4 space-y-2">
@@ -381,11 +399,11 @@ export default function AnalyticsDashboard({
                                                         <div key={plan.plan_type} className="flex items-center justify-between">
                                                             <div className="flex items-center gap-2">
                                                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index % colors.length] }}></div>
-                                                                <span className="text-sm font-semibold text-white">{plan.label}</span>
+                                                                <span className="text-sm font-semibold text-slate-700">{plan.label}</span>
                                                             </div>
                                                             <div className="text-right">
-                                                                <span className="text-sm font-bold text-white">${plan.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                                                <span className="text-xs text-brand-primary/70 ml-2">({percentage}%)</span>
+                                                                <span className="text-sm font-bold text-slate-900">${plan.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                                <span className="ml-2 text-xs text-slate-500">({percentage}%)</span>
                                                             </div>
                                                         </div>
                                                     );
@@ -401,26 +419,22 @@ export default function AnalyticsDashboard({
 
                                 {/* Revenue by Plan Type Bar Chart */}
                                 <GlassCard className="p-6">
-                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Revenue Comparison by Plan</h3>
+                                    <h3 className="mb-4 text-xl font-bold text-slate-900">Revenue Comparison by Plan</h3>
                                     {revenueSummary.revenue_by_plan_type && revenueSummary.revenue_by_plan_type.length > 0 ? (
                                         <ResponsiveContainer width="100%" height={300}>
                                             <BarChart data={revenueSummary.revenue_by_plan_type}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#22304d" strokeOpacity={0.3} />
+                                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                                                 <XAxis
                                                     dataKey="label"
-                                                    stroke="#22304d"
-                                                    tick={{ fill: '#22304d' }}
+                                                    stroke={axisColor}
+                                                    tick={{ fill: axisColor }}
                                                 />
                                                 <YAxis
-                                                    stroke="#22304d"
-                                                    tick={{ fill: '#22304d' }}
+                                                    stroke={axisColor}
+                                                    tick={{ fill: axisColor }}
                                                 />
                                                 <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                                                        color: '#ffffff',
-                                                    }}
+                                                    contentStyle={tooltipStyle}
                                                     formatter={(value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                                                 />
                                                 <Bar dataKey="revenue" fill="#facc15" radius={[8, 8, 0, 0]} />
@@ -437,10 +451,10 @@ export default function AnalyticsDashboard({
                             {/* Top Revenue Generating Routes */}
                             {revenueSummary.revenue_by_route && revenueSummary.revenue_by_route.length > 0 && (
                                 <GlassCard className="p-6">
-                                    <h3 className="text-xl font-extrabold text-brand-primary mb-4">Top Revenue Generating Routes</h3>
+                                    <h3 className="mb-4 text-xl font-bold text-slate-900">Top Revenue Generating Routes</h3>
                                     <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-brand-primary/20">
-                                            <thead className="bg-white/10">
+                                        <table className="min-w-full divide-y divide-slate-200">
+                                            <thead className="bg-slate-50">
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Route</th>
                                                     <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">Revenue</th>
@@ -449,7 +463,7 @@ export default function AnalyticsDashboard({
                                                     <th className="px-4 py-3 text-left text-sm font-bold text-brand-primary uppercase">% of Total</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                                            <tbody className="divide-y divide-slate-200 bg-white">
                                                 {revenueSummary.revenue_by_route.slice(0, 10).map((route) => {
                                                     const avgPerBooking = route.bookings_count > 0 
                                                         ? (route.revenue / route.bookings_count).toFixed(2)
@@ -458,26 +472,26 @@ export default function AnalyticsDashboard({
                                                         ? ((route.revenue / revenueSummary.total_revenue) * 100).toFixed(1)
                                                         : '0.0';
                                                     return (
-                                                        <tr key={route.route_id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                            <td className="px-4 py-3 text-base font-bold text-white">{route.route_name}</td>
-                                                            <td className="px-4 py-3 text-base font-semibold text-white">
+                                                        <tr key={route.route_id} className="transition hover:bg-slate-50">
+                                                            <td className="px-4 py-3 text-base font-bold text-slate-900">{route.route_name}</td>
+                                                            <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                                 ${route.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </td>
-                                                            <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                            <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                                 {route.bookings_count}
                                                             </td>
-                                                            <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                            <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                                 ${avgPerBooking}
                                                             </td>
                                                             <td className="px-4 py-3">
                                                                 <div className="flex items-center">
-                                                                    <div className="w-24 bg-white/10 rounded-full h-2 mr-2">
+                                                                    <div className="mr-2 h-2 w-24 rounded-full bg-slate-200">
                                                                         <div
                                                                             className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500"
                                                                             style={{ width: `${Math.min(parseFloat(percentage), 100)}%` }}
                                                                         />
                                                                     </div>
-                                                                    <span className="text-base font-semibold text-white/90">{percentage}%</span>
+                                                                    <span className="text-base font-semibold text-slate-700">{percentage}%</span>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -509,28 +523,28 @@ export default function AnalyticsDashboard({
                     {activeTab === 'routes' && (
                         <div className="space-y-6">
                             <GlassCard className="p-6">
-                                <h3 className="text-xl font-extrabold text-brand-primary mb-4">Route Efficiency Metrics</h3>
+                                <h3 className="mb-4 text-xl font-bold text-slate-900">Route Efficiency Metrics</h3>
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-brand-primary/20">
-                                        <thead className="bg-white/10">
+                                    <table className="min-w-full divide-y divide-slate-200">
+                                        <thead className="bg-slate-50">
                                             <tr>
-                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Route</th>
-                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Capacity</th>
-                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Utilization</th>
-                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Avg Bookings/Day</th>
-                                                <th className="px-4 py-3 text-left text-sm font-bold text-white uppercase">Driver</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">Route</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">Capacity</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">Utilization</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">Avg Bookings/Day</th>
+                                                <th className="px-4 py-3 text-left text-sm font-bold uppercase text-slate-500">Driver</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                                        <tbody className="divide-y divide-slate-200 bg-white">
                                             {routeMetrics.map((route) => (
-                                                <tr key={route.route_id} className="hover:bg-white/10 transition border-b border-brand-primary/20">
-                                                    <td className="px-4 py-3 text-base font-bold text-white">{route.route_name}</td>
-                                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                <tr key={route.route_id} className="transition hover:bg-slate-50">
+                                                    <td className="px-4 py-3 text-base font-bold text-slate-900">{route.route_name}</td>
+                                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                         {route.active_bookings}/{route.capacity}
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex items-center">
-                                                            <div className="w-24 bg-white/10 rounded-full h-2 mr-2">
+                                                            <div className="mr-2 h-2 w-24 rounded-full bg-slate-200">
                                                                 <div
                                                                     className={`h-2 rounded-full ${
                                                                         route.utilization_percent >= 80
@@ -542,15 +556,15 @@ export default function AnalyticsDashboard({
                                                                     style={{ width: `${Math.min(route.utilization_percent, 100)}%` }}
                                                                 />
                                                             </div>
-                                                            <span className="text-base font-semibold text-white/90">
+                                                            <span className="text-base font-semibold text-slate-700">
                                                                 {route.utilization_percent}%
                                                             </span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                         {route.avg_bookings_per_day}
                                                     </td>
-                                                    <td className="px-4 py-3 text-base font-semibold text-white/90">
+                                                    <td className="px-4 py-3 text-base font-semibold text-slate-700">
                                                         {route.driver_name}
                                                     </td>
                                                 </tr>

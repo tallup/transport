@@ -1,9 +1,8 @@
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import ChartCard from '@/Components/ChartCard';
 import GlassButton from '@/Components/GlassButton';
-import { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function FinanceDashboard({
@@ -16,10 +15,6 @@ export default function FinanceDashboard({
     bookingStats,
     statusSummary,
 }) {
-    const { auth } = usePage().props;
-
-    const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
-
     const statusDistributionData = [
         { name: 'Active', value: statusSummary?.active || 0, color: '#10b981' },
         { name: 'Pending', value: statusSummary?.pending || 0, color: '#f59e0b' },
@@ -27,6 +22,42 @@ export default function FinanceDashboard({
         { name: 'Cancelled', value: statusSummary?.cancelled || 0, color: '#ef4444' },
         { name: 'Completed', value: statusSummary?.completed || 0, color: '#3b82f6' },
     ];
+
+    const axisColor = '#64748b';
+    const gridColor = 'rgba(148, 163, 184, 0.25)';
+    const tooltipStyle = {
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        border: '1px solid rgba(148, 163, 184, 0.35)',
+        borderRadius: '12px',
+        color: '#0f172a',
+        boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
+    };
+    const legendStyle = { color: '#475569', fontSize: 12 };
+
+    const renderPieLabel = ({ cx, cy, midAngle, outerRadius, percent, name }) => {
+        if (!percent) {
+            return null;
+        }
+
+        const radius = outerRadius + 22;
+        const radians = Math.PI / 180;
+        const x = cx + radius * Math.cos(-midAngle * radians);
+        const y = cy + radius * Math.sin(-midAngle * radians);
+
+        return (
+            <text
+                x={x}
+                y={y}
+                fill="#475569"
+                fontSize="12"
+                fontWeight="600"
+                textAnchor={x > cx ? 'start' : 'end'}
+                dominantBaseline="central"
+            >
+                {`${name}: ${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
 
     return (
         <AdminLayout>
@@ -37,10 +68,10 @@ export default function FinanceDashboard({
                     {/* Header */}
                     <div className="mb-6 sm:mb-8 flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                            <h1 className="mb-2 text-3xl font-extrabold text-text-primary sm:text-4xl md:text-5xl">
                                 Finance Dashboard
                             </h1>
-                            <p className="text-base sm:text-lg font-semibold text-brand-primary/90">
+                            <p className="text-base font-semibold text-text-secondary sm:text-lg">
                                 Revenue overview and financial analytics
                             </p>
                         </div>
@@ -99,8 +130,8 @@ export default function FinanceDashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm sm:text-base font-bold text-white">Total Estimated Revenue</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-white mt-2 drop-shadow">
+                                    <p className="text-sm font-semibold text-slate-500 sm:text-base">Total Estimated Revenue</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-amber-600 sm:text-4xl">
                                         ${totalRevenue?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
                                     </p>
                                 </div>
@@ -115,8 +146,8 @@ export default function FinanceDashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm sm:text-base font-bold text-white">Active Bookings</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-blue-200 mt-2 drop-shadow">
+                                    <p className="text-sm font-semibold text-slate-500 sm:text-base">Active Bookings</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-sky-600 sm:text-4xl">
                                         {activeBookings || 0}
                                     </p>
                                 </div>
@@ -131,8 +162,8 @@ export default function FinanceDashboard({
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm sm:text-base font-bold text-white">Cancelled Bookings</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-red-200 mt-2 drop-shadow">
+                                    <p className="text-sm font-semibold text-slate-500 sm:text-base">Cancelled Bookings</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-rose-500 sm:text-4xl">
                                         {cancelledBookings || 0}
                                     </p>
                                 </div>
@@ -150,26 +181,20 @@ export default function FinanceDashboard({
                         <ChartCard title="Revenue Trends (Last 30 Days)">
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={revenueTrends || []}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#22304d40" strokeWidth={1} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} strokeWidth={1} />
                                     <XAxis 
                                         dataKey="label" 
-                                        stroke="#22304d"
-                                        tick={{ fill: '#22304d', fontSize: 12 }}
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
                                     <YAxis 
-                                        stroke="#22304d"
-                                        tick={{ fill: '#22304d', fontSize: 12 }}
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                            color: '#ffffff'
-                                        }}
-                                    />
-                                    <Legend wrapperStyle={{ color: '#ffffff' }} />
+                                    <Tooltip contentStyle={tooltipStyle} />
+                                    <Legend wrapperStyle={legendStyle} />
                                     <Line 
                                         type="monotone" 
                                         dataKey="revenue" 
@@ -188,8 +213,8 @@ export default function FinanceDashboard({
                                         data={statusDistributionData}
                                         cx="50%"
                                         cy="50%"
-                                        labelLine={false}
-                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                        labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
+                                        label={renderPieLabel}
                                         outerRadius={80}
                                         fill="#8884d8"
                                         dataKey="value"
@@ -198,13 +223,8 @@ export default function FinanceDashboard({
                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                         ))}
                                     </Pie>
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                            color: '#ffffff'
-                                        }}
-                                    />
+                                    <Tooltip contentStyle={tooltipStyle} />
+                                    <Legend wrapperStyle={legendStyle} />
                                 </PieChart>
                             </ResponsiveContainer>
                         </ChartCard>
@@ -215,24 +235,20 @@ export default function FinanceDashboard({
                         <ChartCard title="Revenue by Plan Type">
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={revenueByPlanType || []}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                                     <XAxis 
                                         dataKey="label" 
-                                        stroke="#ffffff"
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
                                     <YAxis 
-                                        stroke="#ffffff"
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                            color: '#ffffff'
-                                        }}
-                                    />
-                                    <Legend wrapperStyle={{ color: '#ffffff' }} />
+                                    <Tooltip contentStyle={tooltipStyle} />
+                                    <Legend wrapperStyle={legendStyle} />
                                     <Bar dataKey="revenue" fill="#3b82f6" name="Revenue ($)" />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -241,24 +257,20 @@ export default function FinanceDashboard({
                         <ChartCard title="Monthly Revenue (Last 6 Months)">
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={monthlyRevenue || []}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                                     <XAxis 
                                         dataKey="label" 
-                                        stroke="#ffffff"
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
                                     <YAxis 
-                                        stroke="#ffffff"
+                                        stroke={axisColor}
+                                        tick={{ fill: axisColor, fontSize: 12 }}
                                         style={{ fontSize: '12px' }}
                                     />
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                            color: '#ffffff'
-                                        }}
-                                    />
-                                    <Legend wrapperStyle={{ color: '#ffffff' }} />
+                                    <Tooltip contentStyle={tooltipStyle} />
+                                    <Legend wrapperStyle={legendStyle} />
                                     <Bar dataKey="revenue" fill="#10b981" name="Revenue ($)" />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -268,42 +280,42 @@ export default function FinanceDashboard({
                     {/* Bookings by Plan Type Table */}
                     <GlassCard>
                         <div className="p-6">
-                            <h3 className="text-lg font-semibold text-white mb-4">Bookings by Plan Type</h3>
+                            <h3 className="mb-4 text-lg font-semibold text-slate-900">Bookings by Plan Type</h3>
                             <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-brand-primary/20">
-                                    <thead className="bg-white/10">
+                                <table className="min-w-full divide-y divide-slate-200">
+                                    <thead className="bg-slate-50">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                                            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                                                 Plan Type
                                             </th>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                                            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                                                 Count
                                             </th>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                                            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                                                 Revenue
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white/5 divide-y divide-brand-primary/20">
+                                    <tbody className="divide-y divide-slate-200 bg-white">
                                         {revenueByPlanType && revenueByPlanType.length > 0 ? (
                                             revenueByPlanType.map((item, index) => (
-                                                <tr key={index} className="hover:bg-white/10 transition border-b border-brand-primary/20">
+                                                <tr key={index} className="transition hover:bg-slate-50">
                                                     <td className="px-4 py-4 whitespace-nowrap">
-                                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/50">
+                                                        <span className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-2 py-1 text-xs font-semibold leading-5 text-sky-700">
                                                             {item.label}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-4 whitespace-nowrap text-base font-semibold text-white/90">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-base font-semibold text-slate-700">
                                                         {item.count}
                                                     </td>
-                                                    <td className="px-4 py-4 whitespace-nowrap text-base font-bold text-white">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-base font-bold text-slate-900">
                                                         ${item.revenue?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="3" className="px-4 py-4 text-center text-white/60">
+                                                <td colSpan="3" className="px-4 py-4 text-center text-slate-500">
                                                     No data available
                                                 </td>
                                             </tr>

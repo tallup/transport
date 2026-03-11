@@ -6,21 +6,20 @@ export default function GlassButton({
     ...props
 }) {
     const variants = {
-        primary: '', // Uses glass-button class from CSS with logo colors
-        secondary: 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700',
-        success: 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
-        danger: 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700',
+        primary: 'bg-brand-primary hover:bg-brand-secondary text-white border-transparent',
+        secondary: 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300',
+        success: 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent',
+        danger: 'bg-rose-600 hover:bg-rose-700 text-white border-transparent',
     };
 
     return (
         <button
             {...props}
             className={`
-                glass-button
                 ${variants[variant] || variants.primary}
-                text-white font-semibold py-2 px-4 rounded-lg
-                backdrop-blur-sm border border-white/30
-                shadow-lg transition-all duration-300
+                inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold
+                border shadow-sm transition-all duration-200
+                hover:-translate-y-px hover:shadow-md
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${className}
             `}
