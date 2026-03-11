@@ -97,9 +97,7 @@ export default function BookingsIndex({ bookings }) {
                         </div>
                         <Link href="/parent/bookings/create">
                             <GlassButton className="gap-2">
-                                <span className="flex h-7 w-7 items-center justify-center rounded-md ring-2 ring-amber-400">
-                                    <Plus className="h-4 w-4" />
-                                </span>
+                                <Plus className="h-4 w-4" />
                                 New Booking
                             </GlassButton>
                         </Link>
@@ -118,7 +116,7 @@ export default function BookingsIndex({ bookings }) {
                                                     className="h-12 w-12 rounded-xl border border-slate-200 object-cover"
                                                 />
                                             ) : (
-                                                <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-amber-400 bg-amber-50/80 text-slate-600 ring-2 ring-amber-400">
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-600">
                                                     <Calendar className="h-5 w-5" />
                                                 </div>
                                             )}
@@ -138,9 +136,7 @@ export default function BookingsIndex({ bookings }) {
 
                                     <div className="space-y-2.5 text-sm">
                                         <div className="flex items-start gap-2 text-slate-600">
-                                            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md ring-2 ring-amber-400">
-                                                <MapPin className="h-4 w-4" />
-                                            </span>
+                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
                                             <span className="truncate">
                                                 {booking.pickup_address || booking.pickup_point?.name || 'No pickup point'}
                                             </span>
@@ -149,9 +145,7 @@ export default function BookingsIndex({ bookings }) {
                                             {formatPlanType(booking.plan_type)}
                                         </div>
                                         <div className="flex items-start gap-2 text-slate-600">
-                                            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md ring-2 ring-amber-400">
-                                                <Calendar className="h-4 w-4" />
-                                            </span>
+                                            <Calendar className="mt-0.5 h-4 w-4 shrink-0" />
                                             <span>
                                                 Start: {booking.start_date ? new Date(booking.start_date).toLocaleDateString() : 'N/A'}
                                                 {booking.end_date ? ` - ${new Date(booking.end_date).toLocaleDateString()}` : ''}
