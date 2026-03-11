@@ -199,10 +199,10 @@ export default function FAQ({ auth }) {
                                 </svg>
                                 Back to Home
                             </Link>
-                            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 drop-shadow-lg">
+                            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
                                 Frequently Asked Questions
                             </h1>
-                            <p className="text-white/70 text-lg">
+                            <p className="text-slate-600 text-lg">
                                 Find answers to common questions about our private child transportation services
                             </p>
                         </div>
@@ -210,21 +210,21 @@ export default function FAQ({ auth }) {
                         <div className="space-y-6">
                             {faqs.map((category, catIndex) => (
                                 <GlassCard key={catIndex} className="p-6 md:p-8">
-                                    <h2 className="text-2xl font-bold text-white mb-6">{category.category}</h2>
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-6">{category.category}</h2>
                                     <div className="space-y-4">
                                         {category.questions.map((faq, qIndex) => {
                                             const currentIndex = questionIndex++;
                                             return (
-                                                <div key={qIndex} className="border-b border-white/10 last:border-0 pb-4 last:pb-0">
+                                                <div key={qIndex} className="border-b border-slate-200 last:border-0 pb-4 last:pb-0">
                                                     <button
                                                         onClick={() => toggleQuestion(currentIndex)}
                                                         className="w-full text-left flex items-start justify-between gap-4 group"
                                                     >
-                                                        <h3 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors flex-1">
+                                                        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-brand-primary transition-colors flex-1">
                                                             {faq.q}
                                                         </h3>
                                                         <svg
-                                                            className={`w-6 h-6 text-white/60 flex-shrink-0 transition-transform ${
+                                                            className={`w-6 h-6 text-slate-500 flex-shrink-0 transition-transform ${
                                                                 openIndex === currentIndex ? 'rotate-180' : ''
                                                             }`}
                                                             fill="none"
@@ -236,7 +236,7 @@ export default function FAQ({ auth }) {
                                                     </button>
                                                     {openIndex === currentIndex && (
                                                         <div className="mt-3 pl-0">
-                                                            <p className="text-white/80 leading-relaxed">
+                                                            <p className="text-slate-700 leading-relaxed">
                                                                 {faq.a}
                                                             </p>
                                                         </div>
@@ -251,8 +251,8 @@ export default function FAQ({ auth }) {
 
                         {/* Contact Section */}
                         <GlassCard className="p-6 md:p-8 mt-6">
-                            <h2 className="text-2xl font-bold text-white mb-4">Still Have Questions?</h2>
-                            <p className="text-white/80 leading-relaxed mb-4">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4">Still Have Questions?</h2>
+                            <p className="text-slate-700 leading-relaxed mb-4">
                                 Can't find the answer you're looking for? Our support team is here to help.
                             </p>
                             <div className="flex flex-wrap gap-4">
@@ -264,7 +264,7 @@ export default function FAQ({ auth }) {
                                 </Link>
                                 <Link
                                     href="/parent/register"
-                                    className="bg-transparent border-2 border-white/30 hover:border-white/50 text-white px-6 py-3 rounded-lg font-semibold transition"
+                                    className="bg-transparent border-2 border-slate-300 hover:border-slate-400 text-slate-900 px-6 py-3 rounded-lg font-semibold transition"
                                 >
                                     Get Started
                                 </Link>
@@ -273,7 +273,7 @@ export default function FAQ({ auth }) {
 
                         {/* Disclaimer */}
                         <div className="mt-6 text-center">
-                            <p className="text-xs text-white/60 italic">
+                            <p className="text-xs text-slate-600 italic">
                                 <strong>Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
                             </p>
                         </div>
