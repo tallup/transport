@@ -202,43 +202,55 @@ export default function MobileMenu({
                                 )}
                             </nav>
 
-                            {/* User Section */}
+                            {/* User Section - compact: avatar, name, profile & logout icons */}
                             {user && (
-                                <div className="border-t border-gray-200 px-4 py-4 bg-gray-50 flex-shrink-0">
-                                    <div className="mb-3 flex items-center gap-3">
+                                <div className="border-t border-gray-200 px-4 py-3 bg-gray-50 flex-shrink-0">
+                                    <div className="flex items-center gap-3">
                                         {user.profile_picture_url ? (
                                             <img
                                                 src={user.profile_picture_url}
                                                 alt={user.name || 'User'}
-                                                className="w-12 h-12 rounded-full object-cover border-2 border-yellow-400/50 flex-shrink-0"
+                                                className="w-10 h-10 rounded-full object-cover border-2 border-yellow-400/50 flex-shrink-0"
                                             />
                                         ) : (
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-                                                <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
+                                                <svg className="w-5 h-5 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                 </svg>
                                             </div>
                                         )}
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">{user.name || 'User'}</p>
-                                            <p className="text-xs text-gray-600 truncate mt-0.5">{user.email || ''}</p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        {userMenuItems && userMenuItems.length > 0 ? (
-                                            userMenuItems.map((item, index) => (
-                                                <Link
-                                                    key={index}
-                                                    href={item.href}
-                                                    onClick={closeMenu}
-                                                    method={item.method || 'get'}
-                                                    as={item.as || 'a'}
-                                                    className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900 transition border border-gray-200 hover:border-gray-300"
-                                                >
-                                                    {item.label}
-                                                </Link>
-                                            ))
-                                        ) : null}
+                                        <p className="text-sm font-semibold text-gray-900 truncate flex-1 min-w-0" title={user.name || user.email}>
+                                            {user.name || 'User'}
+                                        </p>
+                                        {userMenuItems && userMenuItems.length > 0 && (
+                                            <div className="flex items-center gap-1 flex-shrink-0">
+                                                {userMenuItems.map((item, index) => {
+                                                    const isLogout = (item.method || '').toLowerCase() === 'post';
+                                                    return (
+                                                        <Link
+                                                            key={index}
+                                                            href={item.href}
+                                                            onClick={closeMenu}
+                                                            method={item.method || 'get'}
+                                                            as={item.as || 'a'}
+                                                            className="p-2 rounded-lg text-gray-600 hover:bg-white hover:text-gray-900 transition border border-transparent hover:border-gray-200"
+                                                            title={item.label}
+                                                            aria-label={item.label}
+                                                        >
+                                                            {isLogout ? (
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                                </svg>
+                                                            ) : (
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                </svg>
+                                                            )}
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}

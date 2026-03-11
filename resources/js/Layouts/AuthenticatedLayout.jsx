@@ -113,41 +113,47 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
 
                     <div className="mt-4 border-t border-slate-200 pt-4">
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-3 shadow-sm">
-                            <div className="flex items-center gap-3 px-2 py-2">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-2.5 shadow-sm">
+                            <div className="flex items-center gap-2">
                                 {auth?.user?.profile_picture_url && !navAvatarError ? (
                                     <img
                                         src={auth.user.profile_picture_url}
                                         alt={auth.user.name || 'Parent'}
-                                        className="h-10 w-10 rounded-full border border-slate-200 object-cover"
+                                        className="h-9 w-9 rounded-full border border-slate-200 object-cover flex-shrink-0"
                                         onError={() => setNavAvatarError(true)}
                                     />
                                 ) : (
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700 flex-shrink-0">
                                         {(auth?.user?.name || 'P').slice(0, 1).toUpperCase()}
                                     </div>
                                 )}
-                                <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-semibold text-slate-900">{auth?.user?.name || 'Parent'}</p>
-                                    <p className="truncate text-xs text-slate-500">{auth?.user?.email || 'Signed in'}</p>
+                                <p className="truncate text-sm font-semibold text-slate-900 min-w-0 flex-1" title={auth?.user?.name || auth?.user?.email}>
+                                    {auth?.user?.name || 'Parent'}
+                                </p>
+                                <div className="flex items-center gap-0.5 flex-shrink-0">
+                                    <Link
+                                        href="/profile"
+                                        className="p-1.5 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition border border-transparent hover:border-slate-200"
+                                        title="Profile"
+                                        aria-label="Profile"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition border border-transparent hover:border-rose-200"
+                                        title="Log Out"
+                                        aria-label="Log Out"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                    </Link>
                                 </div>
-                            </div>
-
-                            <div className="mt-3 grid grid-cols-2 gap-2">
-                                <Link
-                                    href="/profile"
-                                    className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-                                >
-                                    Profile
-                                </Link>
-                                <Link
-                                    href="/logout"
-                                    method="post"
-                                    as="button"
-                                    className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100"
-                                >
-                                    Log Out
-                                </Link>
                             </div>
                         </div>
                     </div>
