@@ -155,7 +155,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
             <div className="py-10">
                 <div className="container max-w-4xl">
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-6">
                             <h2 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">Rebook Transport Service</h2>
                             <p className="mb-6 text-base font-medium text-slate-600">Quickly renew service for {previousBooking.student?.name}</p>

@@ -77,6 +77,67 @@
     .btn-premium {
         @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition;
     }
+
+    .parent-form-shell h1,
+    .parent-form-shell h2,
+    .parent-form-shell h3,
+    .parent-form-shell h4 {
+        @apply text-slate-900;
+    }
+
+    .parent-form-shell label,
+    .parent-form-shell dt {
+        @apply font-semibold text-slate-700;
+    }
+
+    .parent-form-shell dd {
+        @apply text-slate-900;
+    }
+
+    .parent-form-shell p,
+    .parent-form-shell li {
+        @apply text-slate-600;
+    }
+
+    .parent-form-shell strong {
+        @apply text-slate-900;
+    }
+
+    .parent-form-shell input:not([type='checkbox']):not([type='radio']):not([type='file']),
+    .parent-form-shell select,
+    .parent-form-shell textarea {
+        @apply form-control;
+    }
+
+    .parent-form-shell input:disabled,
+    .parent-form-shell select:disabled,
+    .parent-form-shell textarea:disabled {
+        @apply bg-slate-50 text-slate-500;
+    }
+
+    .parent-form-shell input[type='file'] {
+        @apply block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:font-semibold file:text-white;
+    }
+
+    .parent-form-shell .parent-step-chip {
+        @apply rounded-full border border-slate-200 bg-slate-100 text-slate-600;
+    }
+
+    .parent-form-shell .parent-step-chip-active {
+        @apply border-brand-primary bg-brand-primary text-white;
+    }
+
+    .parent-form-shell .parent-option-card {
+        @apply border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50;
+    }
+
+    .parent-form-shell .parent-option-card-active {
+        @apply border-brand-primary bg-brand-primary/5 shadow-sm;
+    }
+
+    .parent-form-shell .parent-soft-panel {
+        @apply rounded-2xl border border-slate-200 bg-slate-50;
+    }
 }
 
 @layer utilities {

@@ -34,7 +34,7 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
     if (!policies || Object.keys(policies).length === 0) {
         return (
             <div className="glass-card p-4">
-                <p className="text-white/70">No policies available.</p>
+                <p className="text-slate-500">No policies available.</p>
             </div>
         );
     }
@@ -53,13 +53,13 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
                     <button
                         type="button"
                         onClick={() => toggleCategory(category)}
-                        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/5 transition"
+                        className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-slate-50"
                     >
-                        <h3 className="text-lg font-bold text-white">
+                        <h3 className="text-lg font-bold text-slate-900">
                             {categoryLabels[category] || category}
                         </h3>
                         <svg
-                            className={`w-5 h-5 text-white transition-transform ${expandedCategories[category] ? 'rotate-180' : ''}`}
+                            className={`h-5 w-5 text-slate-500 transition-transform ${expandedCategories[category] ? 'rotate-180' : ''}`}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -70,9 +70,9 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
                     {expandedCategories[category] && (
                         <div className="px-4 pb-4 space-y-3">
                             {categoryPolicies.map((policy) => (
-                                <div key={policy.id} className="border-t border-white/10 pt-3">
-                                    <h4 className="text-base font-semibold text-white mb-2">{policy.title}</h4>
-                                    <div className="text-white/80 whitespace-pre-line text-sm">
+                                <div key={policy.id} className="border-t border-slate-200 pt-3">
+                                    <h4 className="mb-2 text-base font-semibold text-slate-900">{policy.title}</h4>
+                                    <div className="whitespace-pre-line text-sm text-slate-600">
                                         {policy.content}
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
                             className="mt-1 w-5 h-5 rounded border-2 border-brand-primary bg-white accent-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-0"
                             required
                         />
-                        <span className="text-white font-semibold">
+                        <span className="font-semibold text-slate-700">
                             I have read and agree to all policies and procedures listed above.
                         </span>
                     </label>
@@ -101,8 +101,8 @@ export default function PolicyDisplay({ policies: initialPolicies = null, showCh
             
             {/* Disclaimer Footer */}
             <div className="glass-card p-4 mt-4">
-                <p className="text-xs text-white/70 italic text-center">
-                    <strong className="text-white/90">Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
+                <p className="text-center text-xs italic text-slate-500">
+                    <strong className="text-slate-700">Disclaimer:</strong> On-Time Transportation for Kids is a private transportation company and is not a school bus service. We do not operate under the authority of any school district or government agency.
                 </p>
             </div>
         </div>

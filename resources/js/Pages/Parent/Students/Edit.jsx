@@ -111,7 +111,7 @@ export default function EditStudent({ student, schools = [] }) {
                     <div className="mb-6">
                         <Link
                             href={route('parent.students.index')}
-                            className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:text-yellow-500 transition-colors"
+                            className="inline-flex items-center gap-2 font-semibold text-slate-700 transition-colors hover:text-slate-900"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -120,15 +120,15 @@ export default function EditStudent({ student, schools = [] }) {
                         </Link>
                     </div>
 
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-6 sm:p-8">
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center">
-                                    <PencilIcon className="w-7 h-7 !text-brand-primary" />
+                                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-amber-400">
+                                    <PencilIcon className="h-7 w-7 text-slate-900" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Edit Student</h2>
-                                    <p className="text-white/70 font-medium mt-1">Update your child's information</p>
+                                    <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">Edit Student</h2>
+                                    <p className="mt-1 font-medium text-slate-500">Update your child's information</p>
                                 </div>
                             </div>
 
@@ -157,18 +157,18 @@ export default function EditStudent({ student, schools = [] }) {
                                             />
                                             <label
                                                 htmlFor="profile_picture"
-                                                className="px-4 py-2 bg-white/20 border-2 border-yellow-400/70 rounded-xl text-white font-semibold cursor-pointer hover:bg-white/30 transition"
+                                                className="cursor-pointer rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                             >
                                                 {student.profile_picture_url || profilePreview ? 'Change' : 'Upload'}
                                             </label>
                                             {(profilePreview || data.profile_picture) && (
-                                                <button type="button" onClick={removeProfilePicture} className="px-4 py-2 bg-red-500/20 border border-red-400/50 rounded-xl text-red-200 font-semibold hover:bg-red-500/30">
+                                                <button type="button" onClick={removeProfilePicture} className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:bg-rose-100">
                                                     Remove
                                                 </button>
                                             )}
                                         </div>
                                     </div>
-                                    <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 5MB</p>
+                                    <p className="mt-1 text-xs text-slate-500">JPEG, PNG, GIF. Max 5MB</p>
                                     <InputError message={errors.profile_picture} className="mt-2 text-red-300 font-semibold" />
                                 </div>
 
@@ -195,12 +195,12 @@ export default function EditStudent({ student, schools = [] }) {
                                                 id="school_id"
                                                 value={data.school_id}
                                                 onChange={(e) => setData('school_id', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white focus:border-yellow-400"
+                                                className="w-full"
                                                 required
                                             >
-                                                <option value="" className="bg-brand-primary">Select school</option>
+                                                <option value="">Select school</option>
                                                 {schools.map((s) => (
-                                                    <option key={s.id} value={s.id} className="bg-brand-primary">{s.name}</option>
+                                                    <option key={s.id} value={s.id}>{s.name}</option>
                                                 ))}
                                             </select>
                                             <InputError message={errors.school_id} className="mt-2 text-red-300 font-semibold" />
@@ -302,13 +302,13 @@ export default function EditStudent({ student, schools = [] }) {
                                 <div>
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-lg font-bold text-white border-b border-yellow-400/40 pb-2">Authorized Pickup Persons</h3>
-                                        <button type="button" onClick={addAuthorizedPickupPerson} className="flex items-center gap-1 px-3 py-1.5 text-sm font-bold text-yellow-400 border border-yellow-400/50 rounded-lg hover:bg-yellow-400/20 transition">
+                                        <button type="button" onClick={addAuthorizedPickupPerson} className="flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900">
                                             <PlusIcon className="w-4 h-4" /> Add
                                         </button>
                                     </div>
                                     <div className="space-y-4">
                                         {(data.authorized_pickup_persons || []).map((person, index) => (
-                                            <div key={index} className="p-4 rounded-xl bg-white/5 border border-yellow-400/30 flex flex-col sm:flex-row gap-4">
+                                            <div key={index} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row">
                                                 <input
                                                     type="text"
                                                     value={person.name}
@@ -330,7 +330,7 @@ export default function EditStudent({ student, schools = [] }) {
                                                     placeholder="Phone"
                                                     className="flex-1 px-4 py-2 bg-white/10 border-2 border-yellow-400/50 rounded-lg text-white placeholder-white/50"
                                                 />
-                                                <button type="button" onClick={() => removeAuthorizedPickupPerson(index)} className="p-2 text-red-300 hover:bg-red-500/20 rounded-lg transition">
+                                                <button type="button" onClick={() => removeAuthorizedPickupPerson(index)} className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50">
                                                     <TrashIcon className="w-5 h-5" />
                                                 </button>
                                             </div>
@@ -363,7 +363,7 @@ export default function EditStudent({ student, schools = [] }) {
 
                                 {/* Actions */}
                                 <div className="flex flex-col-reverse sm:flex-row gap-4 pt-4 border-t border-yellow-400/40">
-                                    <Link href={route('parent.students.index')} className="px-6 py-3 border-2 border-yellow-400/60 rounded-xl text-white font-bold hover:bg-white/10 text-center transition">
+                                    <Link href={route('parent.students.index')} className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900">
                                         Cancel
                                     </Link>
                                     <GlassButton type="submit" disabled={processing} className="px-8 py-3">

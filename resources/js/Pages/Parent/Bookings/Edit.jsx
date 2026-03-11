@@ -311,7 +311,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
                 <Head title="Edit Booking" />
                 <div className="py-10">
                     <div className="container">
-                        <GlassCard className="overflow-hidden">
+                        <GlassCard className="parent-form-shell overflow-hidden">
                             <div className="p-6">
                                 <p className="text-center text-slate-600">Loading...</p>
                             </div>
@@ -336,7 +336,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
                         <p className="text-base font-medium text-slate-600">Update your booking in a few simple steps</p>
                     </div>
 
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-8 sm:p-10">
                             <div className="mb-6">
                                 <Link

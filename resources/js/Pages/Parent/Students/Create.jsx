@@ -47,17 +47,17 @@ export default function CreateStudent({ schools = [] }) {
 
             <div className="py-12">
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-6">
-                            <div className="mb-6 p-4 bg-blue-500/20 border border-blue-500/50 rounded-md">
-                                <p className="text-white mb-2">
+                            <div className="mb-6 rounded-xl border border-sky-200 bg-sky-50 p-4">
+                                <p className="mb-2 text-slate-700">
                                     <strong>Complete Enrollment Available:</strong> For full enrollment with all required forms, policies, and signatures, please use the{' '}
-                                    <Link href="/parent/students/enroll" className="text-blue-300 hover:text-blue-100 underline font-bold">
+                                    <Link href="/parent/students/enroll" className="font-bold text-sky-700 underline hover:text-sky-800">
                                         Complete Enrollment Form
                                     </Link>.
                                 </p>
                             </div>
-                            <h2 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">Add Student (Quick Form)</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Add Student (Quick Form)</h2>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -86,12 +86,12 @@ export default function CreateStudent({ schools = [] }) {
                                             id="school_id"
                                             value={data.school_id}
                                             onChange={(e) => setData('school_id', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md px-3 py-2"
+                                            className="mt-1 block w-full"
                                             required
                                         >
                                             <option value="">Select a school</option>
                                             {schools.map((school) => (
-                                                <option key={school.id} value={school.id} className="bg-gray-800 text-white">
+                                                <option key={school.id} value={school.id}>
                                                     {school.name}
                                                 </option>
                                             ))}
@@ -157,7 +157,7 @@ export default function CreateStudent({ schools = [] }) {
                                 <div className="flex justify-end gap-4 mt-6">
                                     <Link
                                         href="/parent/dashboard"
-                                        className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white font-bold hover:bg-white/30 transition"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                     >
                                         Cancel
                                     </Link>

@@ -168,9 +168,9 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
 
             <div className="py-12">
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-6">
-                            <h1 className="text-3xl font-extrabold text-white mb-6 drop-shadow-lg">
+                            <h1 className="mb-6 text-3xl font-extrabold text-slate-900">
                                 Parent Enrollment Packet
                             </h1>
 
@@ -193,14 +193,14 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             {index < steps.length - 1 && (
                                                 <div
                                                     className={`w-8 md:w-12 h-1 mx-1 ${
-                                                        step > s.number ? 'bg-yellow-400/60' : 'bg-white/20'
+                                                        step > s.number ? 'bg-yellow-400/60' : 'bg-slate-200'
                                                     }`}
                                                 />
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-between mt-2 text-xs font-bold text-white overflow-x-auto">
+                                <div className="mt-2 flex justify-between overflow-x-auto text-xs font-bold text-slate-500">
                                     {steps.map((s) => (
                                         <span key={s.number} className="flex-shrink-0 px-1">
                                             {s.label}
@@ -234,7 +234,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                     Profile Picture (optional)
                                                 </label>
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-16 h-16 rounded-xl bg-white/10 border-2 border-yellow-400/50 flex items-center justify-center overflow-hidden">
+                                                    <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
                                                         {data.profile_picture ? (
                                                             <img src={URL.createObjectURL(data.profile_picture)} alt="Preview" className="w-full h-full object-cover" />
                                                         ) : (
@@ -248,10 +248,10 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                             const file = e.target.files?.[0];
                                                             if (file) setData('profile_picture', file);
                                                         }}
-                                                        className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-400/30 file:text-brand-primary file:font-semibold"
+                                                        className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:font-semibold file:text-white"
                                                     />
                                                 </div>
-                                                <p className="text-xs text-white/60 mt-1">JPEG, PNG, GIF. Max 10MB</p>
+                                                <p className="mt-1 text-xs text-slate-500">JPEG, PNG, GIF. Max 10MB</p>
                                                 {errors.profile_picture && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.profile_picture}</p>}
                                             </div>
 
@@ -288,7 +288,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                 <select
                                                     value={data.school_id}
                                                     onChange={(e) => setData('school_id', e.target.value)}
-                                                    className="w-full glass-input text-brand-primary bg-white/20 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg px-4 py-3 focus:border-yellow-400"
+                                                    className="w-full"
                                                     required
                                                 >
                                                     <option value="">Select a school</option>
@@ -509,7 +509,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removeAuthorizedPickupPerson(index)}
-                                                                className="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-md text-white font-bold transition"
+                                                                className="w-full rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 font-semibold text-rose-700 transition hover:bg-rose-100"
                                                             >
                                                                 Remove
                                                             </button>
@@ -520,7 +520,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             <button
                                                 type="button"
                                                 onClick={addAuthorizedPickupPerson}
-                                                className="px-4 py-2 bg-white/20 hover:bg-white/30 border-2 border-yellow-400/60 rounded-md text-white font-bold transition hover:border-yellow-400"
+                                                className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                             >
                                                 + Add Authorized Pickup Person
                                             </button>
@@ -773,8 +773,8 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             </div>
                                         </div>
 
-                                        <p className="text-center text-white/80 text-sm">
-                                            Need to change something? Use <strong className="text-white">Previous</strong> to go back and edit.
+                                        <p className="text-center text-sm text-slate-500">
+                                            Need to change something? Use <strong className="text-slate-900">Previous</strong> to go back and edit.
                                         </p>
                                     </div>
                                 )}
@@ -787,8 +787,8 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                         disabled={step === 0}
                                         className={`px-6 py-3 rounded font-bold transition ${
                                             step === 0
-                                                ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
-                                                : 'bg-white/20 backdrop-blur-sm border-2 border-yellow-400/60 text-white hover:bg-white/30 hover:border-yellow-400'
+                                                ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                                : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                                         }`}
                                     >
                                         Previous

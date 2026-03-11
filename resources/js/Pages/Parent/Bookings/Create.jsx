@@ -316,7 +316,7 @@ export default function CreateBooking({ students, routes }) {
                 <Head title="Book Transport" />
                 <div className="py-10">
                     <div className="container">
-                        <GlassCard className="overflow-hidden">
+                        <GlassCard className="parent-form-shell overflow-hidden">
                             <div className="p-6">
                                 <p className="text-center text-slate-600">Loading...</p>
                             </div>
@@ -339,7 +339,7 @@ export default function CreateBooking({ students, routes }) {
                         <p className="text-base font-medium text-slate-600">Complete your booking in a few simple steps</p>
                     </div>
 
-                    <GlassCard className="overflow-hidden">
+                    <GlassCard className="parent-form-shell overflow-hidden">
                         <div className="p-8 sm:p-10">
                             {/* Step Indicator - Modern Design */}
                             <div className="mb-12">
