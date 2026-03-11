@@ -9,17 +9,17 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
         <DriverLayout>
             <Head title="Route Information" />
             
-            <div className="py-12">
+            <div className="driver-page-shell py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                                <h1 className="mb-2 text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-5xl">
                                     Route Information
                                 </h1>
                                 {route && (
-                                    <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
+                                    <p className="text-base font-medium text-slate-500 sm:text-lg">
                                         Complete details about your assigned route
                                     </p>
                                 )}
@@ -36,8 +36,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                <h3 className="mt-4 text-xl font-bold text-white">No Route Assigned</h3>
-                                <p className="mt-2 text-base font-semibold text-white/90">
+                                <h3 className="mt-4 text-xl font-bold text-slate-900">No Route Assigned</h3>
+                                <p className="mt-2 text-base font-medium text-slate-600">
                                     No active route has been assigned to you yet. Please contact your administrator.
                                 </p>
                             </div>
@@ -49,8 +49,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Route Name</p>
-                                            <p className="text-xl font-bold text-teal-200 mt-2">{route.name}</p>
+                                            <p className="text-base font-semibold text-slate-500">Route Name</p>
+                                            <p className="mt-2 text-xl font-bold text-slate-900">{route.name}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,8 +63,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Service Type</p>
-                                            <p className="text-xl font-bold text-emerald-200 mt-2 capitalize">
+                                            <p className="text-base font-semibold text-slate-500">Service Type</p>
+                                            <p className="mt-2 text-xl font-bold capitalize text-amber-600">
                                                 {route.service_type || 'Standard'}
                                             </p>
                                         </div>
@@ -79,8 +79,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Route Capacity</p>
-                                            <p className="text-xl font-bold text-cyan-200 mt-2">{route.capacity || 'N/A'}</p>
+                                            <p className="text-base font-semibold text-slate-500">Route Capacity</p>
+                                            <p className="mt-2 text-xl font-bold text-sky-600">{route.capacity || 'N/A'}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,8 +93,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Active Bookings</p>
-                                            <p className="text-xl font-bold text-green-200 mt-2">{activeBookingsCount || 0}</p>
+                                            <p className="text-base font-semibold text-slate-500">Active Bookings</p>
+                                            <p className="mt-2 text-xl font-bold text-amber-600">{activeBookingsCount || 0}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
                                             <svg className="w-6 h-6 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                             {/* Vehicle Information - Card style (matches Route Overview) */}
                             {route.vehicle && (
                                 <div className="mb-8">
-                                    <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Vehicle Information</h3>
+                                    <h3 className="mb-6 text-2xl font-extrabold text-slate-900">Vehicle Information</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {/* Primary vehicle card: name, year, type, status */}
                                         <GlassCard className="md:col-span-2">
@@ -129,7 +129,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                         </p>
                                                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 mt-2 text-xs font-bold rounded-lg border-2 ${
                                                             route.vehicle.status === 'active'
-                                                                ? 'bg-green-500/20 text-green-200 border-green-400/50'
+                                                                ? 'bg-amber-50 text-amber-700 border-amber-200'
                                                                 : 'bg-yellow-500/20 text-yellow-200 border-yellow-400/50'
                                                         }`}>
                                                             <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -228,7 +228,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                             {/* Driver Information */}
                             {route.driver && (
                                 <GlassCard className="mb-8">
-                                    <h3 className="text-2xl font-bold text-white mb-6">Driver Information</h3>
+                                    <h3 className="mb-6 text-2xl font-bold text-slate-900">Driver Information</h3>
                                     <div className="flex items-start gap-4">
                                         {route.driver.profile_picture_url ? (
                                             <img
@@ -237,8 +237,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                 className="w-16 h-16 rounded-xl object-cover border-2 border-yellow-400/50 flex-shrink-0"
                                             />
                                         ) : (
-                                            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                                                <UserIcon className="w-8 h-8 text-brand-primary" />
+                                            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-amber-400">
+                                                <UserIcon className="h-8 w-8 text-slate-900" />
                                             </div>
                                         )}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
@@ -257,7 +257,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
 
                             {/* Bookings */}
                             <div className="mb-8">
-                                <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Bookings ({bookings?.length || 0})</h3>
+                                <h3 className="mb-6 text-2xl font-extrabold text-slate-900">Bookings ({bookings?.length || 0})</h3>
                                 
                                 {bookings && bookings.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -284,7 +284,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                     </div>
                                                     <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
                                                         booking.status === 'active' 
-                                                            ? 'bg-green-500/30 text-brand-primary border border-green-400/50' 
+                                                            ? 'bg-amber-50 text-amber-700 border border-amber-200' 
                                                             : booking.status === 'pending'
                                                             ? 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50'
                                                             : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
@@ -316,7 +316,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                                         <p className="text-xs text-white/70 font-medium truncate mt-1">{booking.pickup_point.address}</p>
                                                                     )}
                                                                     {booking.pickup_point.pickup_time && (
-                                                                        <p className="text-xs font-bold text-green-300 mt-1">
+                                                                        <p className="mt-1 text-xs font-bold text-amber-600">
                                                                             Time: {booking.pickup_point.pickup_time}
                                                                         </p>
                                                                     )}
@@ -331,7 +331,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                                    <div className="flex items-center gap-4 border-t border-slate-200 pt-2">
                                                         <div className="flex items-center gap-2">
                                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -374,8 +374,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                                 </svg>
                                             </div>
-                                            <p className="text-brand-primary text-lg font-bold mb-2">No bookings found</p>
-                                            <p className="text-white/70 text-sm">This route has no active or pending bookings.</p>
+                                            <p className="mb-2 text-lg font-bold text-slate-900">No bookings found</p>
+                                            <p className="text-sm text-slate-500">This route has no active or pending bookings.</p>
                                         </div>
                                     </GlassCard>
                                 )}
@@ -383,7 +383,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
 
                             {/* Pickup Points */}
                             <div className="mb-8">
-                                <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Pickup Points ({pickupPoints?.length || 0})</h3>
+                                <h3 className="mb-6 text-2xl font-extrabold text-slate-900">Pickup Points ({pickupPoints?.length || 0})</h3>
                                 
                                 {pickupPoints && pickupPoints.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -419,7 +419,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                             <p className="text-sm text-white/90 font-medium line-clamp-2">{point.address}</p>
                                                         </div>
                                                     )}
-                                                    <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                                    <div className="flex items-center gap-4 border-t border-slate-200 pt-2">
                                                         {point.pickup_time && (
                                                             <div className="flex items-center gap-2">
                                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,7 +427,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                                 </svg>
                                                                 <div>
                                                                     <p className="text-xs text-white/70 font-medium">Pickup</p>
-                                                                    <p className="text-sm font-bold text-green-300">{point.pickup_time}</p>
+                                                                    <p className="text-sm font-bold text-amber-600">{point.pickup_time}</p>
                                                                 </div>
                                                             </div>
                                                         )}
@@ -466,7 +466,7 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
                                             </div>
-                                            <p className="text-brand-primary text-lg font-bold">No pickup points</p>
+                                            <p className="text-lg font-bold text-slate-900">No pickup points</p>
                                         </div>
                                     </GlassCard>
                                 )}

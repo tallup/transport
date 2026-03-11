@@ -114,20 +114,20 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         <DriverLayout>
             <Head title="Daily Roster" />
 
-            <div className="py-12">
+            <div className="driver-page-shell py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                        <h1 className="mb-2 text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-5xl">
                             Daily Roster
                         </h1>
-                        <p className="text-base sm:text-lg font-semibold text-brand-primary/90">View your schedule and student pickups</p>
+                        <p className="text-base font-medium text-slate-500 sm:text-lg">View your schedule and student pickups</p>
                     </div>
 
                     {message && (
                         <GlassCard className="mb-6">
-                            <div className="p-4 bg-yellow-500/20 border border-yellow-400/50 rounded-lg">
-                                <p className="text-yellow-200 font-semibold">{message}</p>
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                                <p className="font-semibold text-amber-700">{message}</p>
                             </div>
                         </GlassCard>
                     )}
@@ -135,12 +135,12 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                     {/* Route Completion Status */}
                     {isRouteCompleted && (
                         <GlassCard className="mb-6">
-                            <div className="p-4 bg-green-500/20 border border-green-400/50 rounded-lg">
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
                                 <div className="flex items-center gap-3">
                                     <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <p className="text-green-200 font-semibold text-lg">
+                                    <p className="text-lg font-semibold text-amber-700">
                                         This route has been completed today.
                                     </p>
                                 </div>
@@ -153,8 +153,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                         <GlassCard className="mb-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <p className="text-base font-bold text-white">All pickups and dropoffs are complete!</p>
-                                    <p className="text-sm font-semibold text-white/80 mt-1">Mark this route as complete to proceed.</p>
+                                    <p className="text-base font-bold text-slate-900">All pickups and dropoffs are complete!</p>
+                                    <p className="mt-1 text-sm font-medium text-slate-500">Mark this route as complete to proceed.</p>
                                 </div>
                                 <GlassButton
                                     variant="success"
@@ -172,8 +172,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                <h3 className="mt-4 text-xl font-bold text-white">No Routes Assigned</h3>
-                                <p className="mt-2 text-base font-semibold text-white/90">
+                                <h3 className="mt-4 text-xl font-bold text-slate-900">No Routes Assigned</h3>
+                                <p className="mt-2 text-base font-medium text-slate-600">
                                     No routes have been assigned to you yet. Please contact your administrator.
                                 </p>
                             </div>
@@ -206,12 +206,12 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
                             {!isSchoolDay ? (
                                 <GlassCard>
-                                    <div className="p-6 bg-blue-500/20 border border-blue-400/50 rounded-lg">
+                                    <div className="rounded-lg border border-sky-200 bg-sky-50 p-6">
                                         <div className="flex items-center gap-3">
                                             <svg className="w-6 h-6 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <p className="text-blue-200 font-semibold text-lg">
+                                            <p className="text-lg font-semibold text-sky-700">
                                                 This is not a school day (holiday or closure).
                                             </p>
                                         </div>
@@ -223,8 +223,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                         </svg>
-                                        <p className="mt-4 text-lg font-semibold text-white">No bookings for this date</p>
-                                        <p className="mt-2 text-base font-medium text-white/70">
+                                        <p className="mt-4 text-lg font-semibold text-slate-900">No bookings for this date</p>
+                                        <p className="mt-2 text-base font-medium text-slate-500">
                                             {route ? `No bookings found for ${route.name} on this date.` : 'No bookings found for the selected date.'}
                                         </p>
                                     </div>
@@ -247,7 +247,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                     {group.pickup_point.name}
                                                                 </h3>
                                                                 {allCompleted && (
-                                                                    <span className="inline-flex px-2 py-1 bg-green-500/30 text-green-100 border border-green-400/50 text-xs font-semibold rounded-full">
+                                                                    <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
                                                                         Completed
                                                                     </span>
                                                                 )}
@@ -266,7 +266,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                 <svg className="w-4 h-4 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                 </svg>
-                                                                <span className="text-sm font-bold text-green-300">Pickup: {group.pickup_point.pickup_time}</span>
+                                                                <span className="text-sm font-bold text-amber-600">Pickup: {group.pickup_point.pickup_time}</span>
                                                             </div>
                                                             {group.pickup_point.dropoff_time && (
                                                                 <p className="text-sm font-semibold text-white/80">Dropoff: {group.pickup_point.dropoff_time}</p>
@@ -297,7 +297,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         </div>
                                                     )}
 
-                                                    <div className="border-t border-white/20 pt-4">
+                                                    <div className="border-t border-slate-200 pt-4">
                                                         <h4 className="text-base font-bold text-white mb-4">
                                                             Students ({group.bookings.length})
                                                         </h4>
@@ -311,7 +311,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                         key={booking.id}
                                                                         className={`p-4 glass-card rounded-lg border ${isCompleted
                                                                                 ? 'border-green-400/50 bg-green-500/10'
-                                                                                : 'border-white/20'
+                                                                                : 'border-slate-200'
                                                                             }`}
                                                                     >
                                                                         <div className="flex justify-between items-start">
@@ -388,13 +388,13 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <GlassCard className="max-w-md w-full">
                         <div className="p-6">
-                            <h3 className="text-2xl font-bold text-white mb-4">Complete Route</h3>
-                            <p className="text-white/90 mb-4">
+                            <h3 className="mb-4 text-2xl font-bold text-slate-900">Complete Route</h3>
+                            <p className="mb-4 text-slate-600">
                                 Are you sure you want to mark this route as complete? All pickups and dropoffs should be finished.
                             </p>
                             <form onSubmit={handleCompleteRoute}>
                                 <div className="mb-4">
-                                    <label htmlFor="notes" className="block text-base font-bold text-white mb-2">
+                                    <label htmlFor="notes" className="mb-2 block text-base font-semibold text-slate-700">
                                         Notes (Optional)
                                     </label>
                                     <textarea
@@ -402,7 +402,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                         value={notes}
                                         onChange={(e) => setNotes(e.target.value)}
                                         rows={4}
-                                        className="w-full glass-input text-white placeholder-gray-300 resize-none"
+                                        className="form-control w-full resize-none"
                                         placeholder="Add any notes about the route completion..."
                                     />
                                 </div>

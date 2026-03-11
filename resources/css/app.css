@@ -138,6 +138,36 @@
     .parent-form-shell .parent-soft-panel {
         @apply rounded-2xl border border-slate-200 bg-slate-50;
     }
+
+    .driver-page-shell h1,
+    .driver-page-shell h2,
+    .driver-page-shell h3,
+    .driver-page-shell h4 {
+        @apply text-slate-900;
+    }
+
+    .driver-page-shell label,
+    .driver-page-shell dt {
+        @apply font-semibold text-slate-700;
+    }
+
+    .driver-page-shell dd,
+    .driver-page-shell strong {
+        @apply text-slate-900;
+    }
+
+    .driver-page-shell p,
+    .driver-page-shell li {
+        @apply text-slate-600;
+    }
+
+    .driver-page-shell .glass-card {
+        @apply border-slate-200 bg-white;
+    }
+
+    .driver-page-shell .driver-soft-panel {
+        @apply rounded-xl border border-slate-200 bg-slate-50;
+    }
 }
 
 @layer utilities {

@@ -8,18 +8,18 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
         <DriverLayout>
             <Head title="Completed Routes" />
             
-            <div className="py-12">
+            <div className="driver-page-shell py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-4xl font-extrabold text-brand-primary mb-2">Completed Routes</h1>
-                                <p className="text-lg text-brand-primary/80 font-medium">View all your completed routes and completion details</p>
+                                <h1 className="mb-2 text-4xl font-extrabold text-slate-900">Completed Routes</h1>
+                                <p className="text-lg font-medium text-slate-500">View all your completed routes and completion details</p>
                             </div>
                             <Link 
                                 href="/driver/dashboard"
-                                className="px-6 py-3 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30 hover:border-brand-primary/70 transition-all"
+                                className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                             >
                                 Back to Dashboard
                             </Link>
@@ -31,8 +31,8 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-base font-bold text-white">Total Completed</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-teal-200 mt-2 drop-shadow">
+                                    <p className="text-base font-semibold text-slate-500">Total Completed</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
                                         {pagination?.total || 0}
                                     </p>
                                 </div>
@@ -47,8 +47,8 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-base font-bold text-white">This Month</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">
+                                    <p className="text-base font-semibold text-slate-500">This Month</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-amber-500 sm:text-4xl">
                                         {completedRoutes?.filter(r => {
                                             const completionDate = new Date(r.completion_date);
                                             const now = new Date();
@@ -68,8 +68,8 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-base font-bold text-white">This Week</p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">
+                                    <p className="text-base font-semibold text-slate-500">This Week</p>
+                                    <p className="mt-2 text-3xl font-extrabold text-sky-600 sm:text-4xl">
                                         {completedRoutes?.filter(r => {
                                             const completionDate = new Date(r.completion_date);
                                             const now = new Date();
@@ -97,7 +97,7 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <h3 className="text-2xl font-bold text-white">
+                                                    <h3 className="text-2xl font-bold text-slate-900">
                                                         {completion.route.name}
                                                     </h3>
                                                     <span className={`px-3 py-1 text-xs font-bold rounded-full ${
@@ -105,26 +105,26 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                                             ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
                                                             : completion.period === 'pm'
                                                             ? 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
-                                                            : 'bg-green-500/30 text-green-100 border border-green-400/50'
+                                                            : 'bg-amber-50 text-amber-700 border border-amber-200'
                                                     }`}>
                                                         {completion.period?.toUpperCase() || 'AM'}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-4 mt-2">
                                                     <div className="flex items-center gap-2">
-                                                        <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                         </svg>
-                                                        <span className="text-sm font-semibold text-white/90">
+                                                        <span className="text-sm font-semibold text-slate-700">
                                                             {completion.completion_date_formatted}
                                                         </span>
                                                     </div>
                                                     {completion.completed_at_formatted && (
                                                         <div className="flex items-center gap-2">
-                                                            <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                             </svg>
-                                                            <span className="text-sm font-semibold text-white/90">
+                                                            <span className="text-sm font-semibold text-slate-700">
                                                                 Completed at {completion.completed_at_formatted}
                                                             </span>
                                                         </div>
@@ -135,48 +135,48 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                                 <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
-                                                <span className="text-sm font-bold text-green-300">Completed</span>
+                                                <span className="text-sm font-bold text-amber-600">Completed</span>
                                             </div>
                                         </div>
 
                                         {/* Route Information Grid */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                                             {completion.route.vehicle && (
-                                                <div className="p-3 glass-card rounded-lg">
-                                                    <p className="text-xs font-semibold text-white/70 mb-1">Vehicle</p>
-                                                    <p className="text-sm font-bold text-white">
+                                                <div className="driver-soft-panel p-3">
+                                                    <p className="mb-1 text-xs font-semibold text-slate-500">Vehicle</p>
+                                                    <p className="text-sm font-bold text-slate-900">
                                                         {completion.route.vehicle.make} {completion.route.vehicle.model}
                                                     </p>
-                                                    <p className="text-xs font-semibold text-white/80">
+                                                    <p className="text-xs font-semibold text-slate-500">
                                                         {completion.route.vehicle.license_plate}
                                                     </p>
                                                 </div>
                                             )}
                                             
                                             {completion.route.pickup_time && (
-                                                <div className="p-3 glass-card rounded-lg">
-                                                    <p className="text-xs font-semibold text-white/70 mb-1">Pickup Time</p>
-                                                    <p className="text-sm font-bold text-green-300">
+                                                <div className="driver-soft-panel p-3">
+                                                    <p className="mb-1 text-xs font-semibold text-slate-500">Pickup Time</p>
+                                                    <p className="text-sm font-bold text-amber-600">
                                                         {completion.route.pickup_time}
                                                     </p>
                                                     {completion.route.dropoff_time && (
-                                                        <p className="text-xs font-semibold text-white/80 mt-1">
+                                                        <p className="mt-1 text-xs font-semibold text-slate-500">
                                                             Dropoff: {completion.route.dropoff_time}
                                                         </p>
                                                     )}
                                                 </div>
                                             )}
 
-                                            <div className="p-3 glass-card rounded-lg">
-                                                <p className="text-xs font-semibold text-white/70 mb-1">Pickup Points</p>
-                                                <p className="text-sm font-bold text-white">
+                                            <div className="driver-soft-panel p-3">
+                                                <p className="mb-1 text-xs font-semibold text-slate-500">Pickup Points</p>
+                                                <p className="text-sm font-bold text-slate-900">
                                                     {completion.route.pickup_points_count}
                                                 </p>
                                             </div>
 
-                                            <div className="p-3 glass-card rounded-lg">
-                                                <p className="text-xs font-semibold text-white/70 mb-1">Pickups Completed</p>
-                                                <p className="text-sm font-bold text-white">
+                                            <div className="driver-soft-panel p-3">
+                                                <p className="mb-1 text-xs font-semibold text-slate-500">Pickups Completed</p>
+                                                <p className="text-sm font-bold text-slate-900">
                                                     {completion.stats.completed_pickups} / {completion.stats.total_bookings}
                                                 </p>
                                             </div>
@@ -186,9 +186,9 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                         {(completion.notes || completion.review) && (
                                             <div className="mt-4 space-y-3">
                                                 {completion.notes && (
-                                                    <div className="p-4 glass-card rounded-lg border border-white/20">
-                                                        <p className="text-xs font-bold text-white/70 mb-2">Completion Notes</p>
-                                                        <p className="text-sm font-semibold text-white/90 whitespace-pre-wrap">
+                                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                                                        <p className="mb-2 text-xs font-bold text-slate-500">Completion Notes</p>
+                                                        <p className="whitespace-pre-wrap text-sm font-medium text-slate-700">
                                                             {completion.notes}
                                                         </p>
                                                     </div>
@@ -196,7 +196,7 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                                 {completion.review && (
                                                     <div className="p-4 glass-card rounded-lg border border-blue-400/30 bg-blue-500/10">
                                                         <p className="text-xs font-bold text-blue-200 mb-2">Driver Review</p>
-                                                        <p className="text-sm font-semibold text-white/90 whitespace-pre-wrap">
+                                                        <p className="whitespace-pre-wrap text-sm font-medium text-slate-700">
                                                             {completion.review}
                                                         </p>
                                                     </div>
@@ -213,8 +213,8 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
-                                <h3 className="mt-4 text-xl font-bold text-white">No Completed Routes</h3>
-                                <p className="mt-2 text-base font-semibold text-white/90">
+                                <h3 className="mt-4 text-xl font-bold text-slate-900">No Completed Routes</h3>
+                                <p className="mt-2 text-base font-medium text-slate-600">
                                     You haven't completed any routes yet. Complete your first route to see it here.
                                 </p>
                             </div>
@@ -225,14 +225,14 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                     {pagination && pagination.last_page > 1 && (
                         <GlassCard className="mt-6">
                             <div className="flex justify-between items-center p-4">
-                                <p className="text-sm font-semibold text-white/90">
+                                <p className="text-sm font-semibold text-slate-700">
                                     Showing page {pagination.current_page} of {pagination.last_page} ({pagination.total} total)
                                 </p>
                                 <div className="flex gap-2">
                                     {pagination.current_page > 1 && (
                                         <button
                                             onClick={() => router.get('/driver/completed-routes', { page: pagination.current_page - 1 })}
-                                            className="px-4 py-2 glass-card rounded-lg text-white font-semibold hover:bg-white/20 transition"
+                                            className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                         >
                                             Previous
                                         </button>
@@ -240,7 +240,7 @@ export default function CompletedRoutes({ completedRoutes, pagination }) {
                                     {pagination.current_page < pagination.last_page && (
                                         <button
                                             onClick={() => router.get('/driver/completed-routes', { page: pagination.current_page + 1 })}
-                                            className="px-4 py-2 glass-card rounded-lg text-white font-semibold hover:bg-white/20 transition"
+                                            className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                                         >
                                             Next
                                         </button>

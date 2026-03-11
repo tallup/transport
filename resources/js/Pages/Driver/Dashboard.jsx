@@ -79,7 +79,7 @@ export default function Dashboard({
         <DriverLayout>
             <Head title="Driver Dashboard" />
 
-            <div className="py-10">
+            <div className="driver-page-shell py-10">
                 <div className="container space-y-8">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
@@ -146,7 +146,7 @@ export default function Dashboard({
 
                             {isRouteCompleted && (
                                 <GlassCard>
-                                    <p className="text-sm font-medium text-emerald-700">
+                                    <p className="text-sm font-medium text-amber-700">
                                         This route has already been completed today.
                                     </p>
                                 </GlassCard>

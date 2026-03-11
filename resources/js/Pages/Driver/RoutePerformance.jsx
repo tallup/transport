@@ -8,17 +8,17 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
         <DriverLayout>
             <Head title="Route Performance" />
             
-            <div className="py-12">
+            <div className="driver-page-shell py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                                <h1 className="mb-2 text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-5xl">
                                     Route Performance
                                 </h1>
                                 {route && (
-                                    <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
+                                    <p className="text-base font-medium text-slate-500 sm:text-lg">
                                         Route: {route.name}
                                     </p>
                                 )}
@@ -35,8 +35,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                <h3 className="mt-4 text-xl font-bold text-white">No Route Assigned</h3>
-                                <p className="mt-2 text-base font-semibold text-white/90">
+                                <h3 className="mt-4 text-xl font-bold text-slate-900">No Route Assigned</h3>
+                                <p className="mt-2 text-base font-medium text-slate-600">
                                     No active route has been assigned to you yet. Please contact your administrator.
                                 </p>
                             </div>
@@ -48,8 +48,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">On-Time Percentage</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-teal-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">On-Time Percentage</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
                                                 {performanceMetrics?.on_time_percentage || 0}%
                                             </p>
                                         </div>
@@ -64,8 +64,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Total Trips</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Total Trips</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-amber-500 sm:text-4xl">
                                                 {performanceMetrics?.total_trips || 0}
                                             </p>
                                         </div>
@@ -80,8 +80,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Active Trips</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Active Trips</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-sky-600 sm:text-4xl">
                                                 {performanceMetrics?.active_trips || 0}
                                             </p>
                                         </div>
@@ -96,8 +96,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Completed Trips</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-green-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Completed Trips</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-amber-500 sm:text-4xl">
                                                 {performanceMetrics?.completed_trips || 0}
                                             </p>
                                         </div>
@@ -115,8 +115,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Total Students</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-purple-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Total Students</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
                                                 {performanceMetrics?.total_students || 0}
                                             </p>
                                         </div>
@@ -131,8 +131,8 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Avg Students/Trip</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-yellow-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Avg Students/Trip</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-amber-500 sm:text-4xl">
                                                 {performanceMetrics?.average_students_per_trip || 0}
                                             </p>
                                         </div>
@@ -149,18 +149,18 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 {/* Weekly Stats */}
                                 <GlassCard>
-                                    <h3 className="text-xl font-bold text-white mb-4">This Week</h3>
+                                    <h3 className="mb-4 text-xl font-bold text-slate-900">This Week</h3>
                                     <div className="space-y-4">
-                                        <div className="p-4 glass-card rounded-lg">
+                                        <div className="driver-soft-panel p-4">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-base font-semibold text-white">Total Bookings</span>
-                                                <span className="text-2xl font-bold text-teal-200">{weeklyStats?.total_bookings || 0}</span>
+                                                <span className="text-base font-semibold text-slate-700">Total Bookings</span>
+                                                <span className="text-2xl font-bold text-slate-900">{weeklyStats?.total_bookings || 0}</span>
                                             </div>
                                         </div>
-                                        <div className="p-4 glass-card rounded-lg">
+                                        <div className="driver-soft-panel p-4">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-base font-semibold text-white">Active Bookings</span>
-                                                <span className="text-2xl font-bold text-cyan-200">{weeklyStats?.active_bookings || 0}</span>
+                                                <span className="text-base font-semibold text-slate-700">Active Bookings</span>
+                                                <span className="text-2xl font-bold text-sky-600">{weeklyStats?.active_bookings || 0}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -168,18 +168,18 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
 
                                 {/* Monthly Stats */}
                                 <GlassCard>
-                                    <h3 className="text-xl font-bold text-white mb-4">This Month</h3>
+                                    <h3 className="mb-4 text-xl font-bold text-slate-900">This Month</h3>
                                     <div className="space-y-4">
-                                        <div className="p-4 glass-card rounded-lg">
+                                        <div className="driver-soft-panel p-4">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-base font-semibold text-white">Total Bookings</span>
-                                                <span className="text-2xl font-bold text-emerald-200">{monthlyStats?.total_bookings || 0}</span>
+                                                <span className="text-base font-semibold text-slate-700">Total Bookings</span>
+                                                <span className="text-2xl font-bold text-slate-900">{monthlyStats?.total_bookings || 0}</span>
                                             </div>
                                         </div>
-                                        <div className="p-4 glass-card rounded-lg">
+                                        <div className="driver-soft-panel p-4">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-base font-semibold text-white">Active Bookings</span>
-                                                <span className="text-2xl font-bold text-green-200">{monthlyStats?.active_bookings || 0}</span>
+                                                <span className="text-base font-semibold text-slate-700">Active Bookings</span>
+                                                <span className="text-2xl font-bold text-amber-500">{monthlyStats?.active_bookings || 0}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -188,30 +188,30 @@ export default function RoutePerformance({ route, performanceMetrics, weeklyStat
 
                             {/* Performance Summary */}
                             <GlassCard>
-                                <h3 className="text-xl font-bold text-white mb-4">Performance Summary</h3>
+                                <h3 className="mb-4 text-xl font-bold text-slate-900">Performance Summary</h3>
                                 <div className="space-y-4">
-                                    <div className="p-4 glass-card rounded-lg">
-                                        <p className="text-base font-semibold text-white/90 mb-2">
+                                    <div className="driver-soft-panel p-4">
+                                        <p className="mb-2 text-base font-medium text-slate-600">
                                             Your route performance metrics provide insights into your service delivery. 
                                             Track your on-time percentage, total trips, and student capacity to maintain 
                                             excellent service quality.
                                         </p>
                                         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <p className="text-sm font-semibold text-white/70">On-Time Rate</p>
-                                                <p className="text-lg font-bold text-teal-200 mt-1">
+                                                <p className="text-sm font-semibold text-slate-500">On-Time Rate</p>
+                                                <p className="mt-1 text-lg font-bold text-slate-900">
                                                     {performanceMetrics?.on_time_percentage || 0}%
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-semibold text-white/70">Service Efficiency</p>
-                                                <p className="text-lg font-bold text-cyan-200 mt-1">
+                                                <p className="text-sm font-semibold text-slate-500">Service Efficiency</p>
+                                                <p className="mt-1 text-lg font-bold text-sky-600">
                                                     {performanceMetrics?.average_students_per_trip || 0} students/trip
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-semibold text-white/70">Active Service</p>
-                                                <p className="text-lg font-bold text-green-200 mt-1">
+                                                <p className="text-sm font-semibold text-slate-500">Active Service</p>
+                                                <p className="mt-1 text-lg font-bold text-amber-500">
                                                     {performanceMetrics?.active_trips || 0} active trips
                                                 </p>
                                             </div>

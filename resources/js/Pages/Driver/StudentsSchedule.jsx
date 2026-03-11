@@ -8,17 +8,17 @@ export default function StudentsSchedule({ route, studentsList }) {
         <DriverLayout>
             <Head title="Students & Pickup Schedule" />
             
-            <div className="py-12">
+            <div className="driver-page-shell py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-primary mb-2 drop-shadow-lg">
+                                <h1 className="mb-2 text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-5xl">
                                     Students & Pickup Schedule
                                 </h1>
                                 {route && (
-                                    <p className="text-base sm:text-lg font-semibold text-brand-primary/70">
+                                    <p className="text-base font-medium text-slate-500 sm:text-lg">
                                         Route: {route.name}
                                     </p>
                                 )}
@@ -35,8 +35,8 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 <svg className="mx-auto h-12 w-12 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                <h3 className="mt-4 text-xl font-bold text-white">No Route Assigned</h3>
-                                <p className="mt-2 text-base font-semibold text-white/90">
+                                <h3 className="mt-4 text-xl font-bold text-slate-900">No Route Assigned</h3>
+                                <p className="mt-2 text-base font-medium text-slate-600">
                                     No active route has been assigned to you yet. Please contact your administrator.
                                 </p>
                             </div>
@@ -48,8 +48,8 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Total Students</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-teal-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Total Students</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
                                                 {studentsList?.length || 0}
                                             </p>
                                         </div>
@@ -64,8 +64,8 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Pickup Points</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-emerald-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Pickup Points</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-amber-500 sm:text-4xl">
                                                 {studentsList ? new Set(studentsList.map(s => s.pickup_point_id)).size : 0}
                                             </p>
                                         </div>
@@ -81,8 +81,8 @@ export default function StudentsSchedule({ route, studentsList }) {
                                 <GlassCard>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-base font-bold text-white">Active Bookings</p>
-                                            <p className="text-3xl sm:text-4xl font-extrabold text-cyan-200 mt-2 drop-shadow">
+                                            <p className="text-base font-semibold text-slate-500">Active Bookings</p>
+                                            <p className="mt-2 text-3xl font-extrabold text-sky-600 sm:text-4xl">
                                                 {studentsList?.length || 0}
                                             </p>
                                         </div>
@@ -97,7 +97,7 @@ export default function StudentsSchedule({ route, studentsList }) {
 
                             {/* Students List */}
                             <div className="mb-6">
-                                <h3 className="text-2xl font-extrabold text-brand-primary mb-6">Complete Student Schedule</h3>
+                                <h3 className="mb-6 text-2xl font-extrabold text-slate-900">Complete Student Schedule</h3>
                                 
                                 {studentsList && studentsList.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -151,7 +151,7 @@ export default function StudentsSchedule({ route, studentsList }) {
                                                             </div>
                                                         </div>
                                                     )}
-                                                    <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+                                                    <div className="flex items-center gap-4 border-t border-slate-200 pt-2">
                                                         {student.pickup_time && (
                                                             <div className="flex items-center gap-2">
                                                                 <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ export default function StudentsSchedule({ route, studentsList }) {
                                                                 </svg>
                                                                 <div>
                                                                     <p className="text-xs text-white/70 font-medium">Pickup</p>
-                                                                    <p className="text-sm font-bold text-green-300">{student.pickup_time}</p>
+                                                                    <p className="text-sm font-bold text-amber-600">{student.pickup_time}</p>
                                                                 </div>
                                                             </div>
                                                         )}
@@ -194,8 +194,8 @@ export default function StudentsSchedule({ route, studentsList }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                                 </svg>
                                             </div>
-                                            <p className="text-brand-primary text-lg font-bold mb-2">No students assigned</p>
-                                            <p className="text-white/70 text-sm">There are no active bookings for this route.</p>
+                                            <p className="mb-2 text-lg font-bold text-slate-900">No students assigned</p>
+                                            <p className="text-sm text-slate-500">There are no active bookings for this route.</p>
                                         </div>
                                     </GlassCard>
                                 )}
