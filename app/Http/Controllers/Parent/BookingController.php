@@ -453,26 +453,23 @@ class BookingController extends Controller
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
 
             if ($paymentIntent->status === 'succeeded') {
-                // Calculate amount from payment intent
-                $amount = $paymentIntent->amount / 100; // Convert from cents
+                $amount = $paymentIntent->amount / 100;
                 
-                // Update booking status and store Stripe payment intent for refunds
+                // Payment confirmed → booking is automatically approved (active)
                 $booking->update([
-                    'status' => 'awaiting_approval',
+                    'status' => 'active',
                     'stripe_customer_id' => $user->stripe_id,
                     'payment_id' => $validated['payment_intent_id'],
                     'payment_method' => 'stripe',
                 ]);
 
-                // Send confirmation notification to parent
                 $user->notifyNow(new BookingConfirmed($booking));
                 
-                // Send push notification
                 $pushHelper = app(\App\Services\PushNotificationHelper::class);
                 $pushHelper->sendIfSubscribed(
                     $user,
-                    'Payment Received',
-                    'Your payment has been processed. Booking is pending approval.',
+                    'Booking Confirmed',
+                    'Your payment has been processed and your booking is now active.',
                     ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
                 );
                 
@@ -509,7 +506,7 @@ class BookingController extends Controller
                 }
 
                 return redirect()->route('parent.bookings.index')
-                    ->with('success', 'Payment received. Your booking is pending admin approval.');
+                    ->with('success', 'Payment received. Your booking is now active!');
             }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Payment verification failed']);
@@ -552,7 +549,7 @@ class BookingController extends Controller
         $pushHelper->sendIfSubscribed(
             $user,
             'Booking Created',
-            'Complete payment to submit your booking for admin approval.',
+            'Complete payment to activate your booking.',
             ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
         );
         
@@ -656,29 +653,26 @@ class BookingController extends Controller
             $capture = $provider->capturePaymentOrder($validated['token']);
 
             if ($capture && isset($capture['status']) && $capture['status'] === 'COMPLETED') {
-                // Extract payment amount
                 $amount = 0;
                 if (isset($capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'])) {
                     $amount = (float) $capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
                 }
                 
-                // Update booking status (awaiting admin approval)
+                // Payment confirmed → booking is automatically approved (active)
                 $booking->update([
-                    'status' => 'awaiting_approval',
+                    'status' => 'active',
                     'payment_method' => 'paypal',
                     'payment_id' => $capture['id'] ?? null,
-                    'paypal_order_id' => null, // Clear after successful payment
+                    'paypal_order_id' => null,
                 ]);
 
-                // Send confirmation notification to parent
                 $user->notify(new BookingConfirmed($booking));
                 
-                // Send push notification
                 $pushHelper = app(\App\Services\PushNotificationHelper::class);
                 $pushHelper->sendIfSubscribed(
                     $user,
-                    'Payment Received',
-                    'Your PayPal payment has been processed. Booking is pending approval.',
+                    'Booking Confirmed',
+                    'Your PayPal payment has been processed and your booking is now active.',
                     ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
                 );
                 
@@ -715,7 +709,7 @@ class BookingController extends Controller
                 }
 
                 return redirect()->route('parent.bookings.index')
-                    ->with('success', 'Payment received. Your booking is pending admin approval.');
+                    ->with('success', 'Payment received. Your booking is now active!');
             }
 
             return redirect()->route('parent.bookings.show', $booking)
