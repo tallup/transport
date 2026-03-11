@@ -4,6 +4,7 @@ use App\Http\Controllers\Parent\BookingController;
 use App\Http\Controllers\Parent\DashboardController;
 use App\Http\Controllers\Parent\StudentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PolicyController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -186,6 +187,9 @@ Route::get('/terms-and-conditions', function (Request $request) {
 Route::get('/faq', function (Request $request) {
     return Inertia::render('FAQ', ['auth' => ['user' => $request->user()]]);
 })->name('faq');
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Keep-alive endpoint to prevent session expiration during active use
 Route::middleware(['auth'])->get('/api/keep-alive', function (Request $request) {

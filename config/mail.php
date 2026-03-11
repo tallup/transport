@@ -158,4 +158,15 @@ return [
     */
     'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Support / contact form mailbox
+    |--------------------------------------------------------------------------
+    |
+    | Contact form submissions are sent to this address. Falls back to
+    | MAIL_FROM_ADDRESS if not set.
+    |
+    */
+    'support_email' => env('SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS')),
+
 ];
