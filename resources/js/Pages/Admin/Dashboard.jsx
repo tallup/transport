@@ -270,22 +270,27 @@ export default function AdminDashboard({
                         </GlassCard>
 
                         <GlassCard>
-                            <div className="mb-4 flex items-center justify-between">
+                            <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
                                 <h3 className="text-base font-semibold text-slate-900">Upcoming Events</h3>
-                                <Link href="/admin/calendar-events/create" className="text-sm font-medium text-brand-primary hover:text-brand-secondary">
-                                    Add Event
-                                </Link>
+                                <div className="flex items-center gap-2">
+                                    <Link href="/admin/calendar-events" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+                                        View all
+                                    </Link>
+                                    <Link href="/admin/calendar-events/create" className="text-sm font-medium text-brand-primary hover:text-brand-secondary">
+                                        Add Event
+                                    </Link>
+                                </div>
                             </div>
                             <div className="space-y-3">
                                 {(upcomingEvents || []).length > 0 ? (
-                                    upcomingEvents.slice(0, 5).map((event) => (
-                                        <div key={event.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                    upcomingEvents.slice(0, 8).map((event) => (
+                                        <Link key={event.id} href="/admin/calendar-events" className="block rounded-xl border border-slate-200 bg-slate-50 p-3 hover:border-slate-300 hover:bg-slate-100 transition">
                                             <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
                                                 <CalendarClock className="h-3.5 w-3.5" />
                                                 {event.date_label}
                                             </div>
                                             <p className="mt-1 text-sm font-medium text-slate-900">{event.description || event.type}</p>
-                                        </div>
+                                        </Link>
                                     ))
                                 ) : (
                                     <p className="py-4 text-center text-sm text-slate-500">No upcoming events</p>

@@ -65,7 +65,6 @@ export default function AdminLayout({ header, children }) {
                 { href: '/admin/users', label: 'Users', active: currentUrl.startsWith('/admin/users') },
                 { href: '/admin/students', label: 'Students', active: currentUrl.startsWith('/admin/students') },
                 { href: '/admin/schools', label: 'Schools', active: currentUrl.startsWith('/admin/schools') },
-                { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl.startsWith('/admin/registration-requests') },
                 { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl.startsWith('/admin/pricing-rules') },
                 { href: '/admin/discounts', label: 'Discounts', active: currentUrl.startsWith('/admin/discounts') },
                 { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl.startsWith('/admin/pricing/manage') },
@@ -86,7 +85,6 @@ export default function AdminLayout({ header, children }) {
     const navigationItems = [
         ...mainNavigationItems,
         { href: '/admin/schools', label: 'Schools', active: currentUrl.startsWith('/admin/schools') },
-        { href: '/admin/registration-requests', label: 'Registration Requests', active: currentUrl.startsWith('/admin/registration-requests') },
         { href: '/admin/users', label: 'Users', active: currentUrl.startsWith('/admin/users') },
         { href: '/admin/students', label: 'Students', active: currentUrl.startsWith('/admin/students') },
         { href: '/admin/pricing-rules', label: 'Pricing Rules', active: currentUrl.startsWith('/admin/pricing-rules') },

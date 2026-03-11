@@ -114,10 +114,10 @@ class DashboardController extends Controller
                 ],
             ];
 
-            // Upcoming calendar events (next 7 days)
+            // Upcoming calendar events (from today through next 90 days, same as Events page)
             $upcomingEvents = CalendarEvent::where('date', '>=', Carbon::today())
-                ->where('date', '<=', Carbon::today()->addDays(7))
                 ->orderBy('date')
+                ->limit(15)
                 ->get()
                 ->map(function ($event) {
                     return [

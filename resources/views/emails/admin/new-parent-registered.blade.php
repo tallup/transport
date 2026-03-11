@@ -81,7 +81,7 @@
                 </div>
             </div>
             
-            <a href="{{ url('/admin/registration-requests') }}" class="button">Review Registration Request</a>
+            <a href="{{ url('/admin/users') }}" class="button">View Users</a>
             
             <p>You can manage this user from the admin dashboard.</p>
         </div>
