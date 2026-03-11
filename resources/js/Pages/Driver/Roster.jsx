@@ -310,7 +310,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                     <div
                                                                         key={booking.id}
                                                                         className={`p-4 glass-card rounded-lg border ${isCompleted
-                                                                                ? 'border-green-400/50 bg-green-500/10'
+                                                                                ? 'border-amber-400/50 bg-amber-500/10'
                                                                                 : 'border-slate-200'
                                                                             }`}
                                                                     >

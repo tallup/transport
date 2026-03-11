@@ -59,7 +59,7 @@
                                                         Vehicle: {{ ucfirst($rule['vehicle_type']) }}
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
                                                         Global
                                                     </span>
                                                 @endif
@@ -72,7 +72,7 @@
                                             </td>
                                             <td class="px-4 py-3 text-center">
                                                 @if($rule['active'])
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
                                                         Active
                                                     </span>
                                                 @else

@@ -12,7 +12,7 @@
         .detail-row:last-child { border-bottom: none; }
         .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
         .button { display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-        .success-badge { background-color: #D1FAE5; color: #065F46; padding: 10px 20px; border-radius: 5px; display: inline-block; margin: 10px 0; font-weight: bold; }
+        .success-badge { background-color: #FEF3C7; color: #92400E; padding: 10px 20px; border-radius: 5px; display: inline-block; margin: 10px 0; font-weight: bold; }
     </style>
 </head>
 <body>

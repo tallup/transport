@@ -67,7 +67,7 @@ export default function MessagesIndex({ threads = [] }) {
                                                     </span>
                                                 )}
                                                 {thread.route && (
-                                                    <span className="px-2 py-1 rounded-lg text-xs font-bold bg-green-500/30 text-brand-primary border border-green-400/50">
+                                                    <span className="px-2 py-1 rounded-lg text-xs font-bold bg-amber-500/30 text-brand-primary border border-amber-400/50">
                                                         Route: {thread.route.name}
                                                     </span>
                                                 )}

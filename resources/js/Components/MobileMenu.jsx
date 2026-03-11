@@ -233,7 +233,7 @@ export default function MobileMenu({
                                                             onClick={closeMenu}
                                                             method={item.method || 'get'}
                                                             as={item.as || 'a'}
-                                                            className="p-2 rounded-lg text-gray-600 hover:bg-white hover:text-gray-900 transition border border-transparent hover:border-gray-200"
+                                                            className="p-2 rounded-lg text-gray-600 hover:bg-white hover:text-gray-900 transition ring-2 ring-amber-400 border border-transparent hover:border-gray-200"
                                                             title={item.label}
                                                             aria-label={item.label}
                                                         >

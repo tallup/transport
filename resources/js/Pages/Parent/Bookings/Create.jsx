@@ -600,9 +600,9 @@ export default function CreateBooking({ students, routes }) {
                                                                         <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
                                                                             {route.pickup_time && (
                                                                                 <span className="flex items-center gap-1.5 text-sm">
-                                                                                    <span className="w-2 h-2 rounded-full bg-green-400" />
+                                                                                    <span className="w-2 h-2 rounded-full bg-amber-500" />
                                                                                     <span className="font-medium text-slate-600">Pickup</span>
-                                                                                    <span className="text-green-200 font-bold">{formatTime(route.pickup_time)}</span>
+                                                                                    <span className="text-amber-200 font-bold">{formatTime(route.pickup_time)}</span>
                                                                                 </span>
                                                                             )}
                                                                             {(route.pickup_time && route.dropoff_time) && (
@@ -624,7 +624,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 <div className="flex-shrink-0 self-start sm:self-center">
                                                                     <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold border ${
                                                                         route.available_seats > 0
-                                                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                                            ? 'border-amber-200 bg-amber-50 text-amber-700'
                                                                             : 'border-rose-200 bg-rose-50 text-rose-700'
                                                                     }`}>
                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -787,8 +787,8 @@ export default function CreateBooking({ students, routes }) {
                                                                             <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
                                                                                 {point.pickup_time && (
                                                                                     <span className="flex items-center gap-1 text-xs">
-                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                                                                                        <span className="text-green-200 font-bold">{formatTime(point.pickup_time)}</span>
+                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                                                                        <span className="text-amber-200 font-bold">{formatTime(point.pickup_time)}</span>
                                                                                     </span>
                                                                                 )}
                                                                                 {point.dropoff_time && (
@@ -842,7 +842,7 @@ export default function CreateBooking({ students, routes }) {
                                                         required={pickupOption === 'custom'}
                                                     />
                                                     <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-                                                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
                                                         This address will be used for daily pickup.
@@ -906,7 +906,7 @@ export default function CreateBooking({ students, routes }) {
                                                                 <p className="mt-0.5 text-xs text-slate-500">{desc}</p>
                                                                 {price && isSelected && (
                                                                     <>
-                                                                        <p className="mt-3 text-lg font-extrabold text-green-200">
+                                                                        <p className="mt-3 text-lg font-extrabold text-amber-200">
                                                                             {price.per_booking_formatted ?? price.formatted}
                                                                             {selectedStudentIds.length > 1 && price.per_booking_formatted && (
                                                                                 <span className="mt-1 block text-sm font-semibold text-slate-500">per child</span>
@@ -1179,10 +1179,10 @@ export default function CreateBooking({ students, routes }) {
                                                         <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-500">
                                                         {selectedRoute.pickup_time && (
                                                                 <span className="flex items-center gap-1.5">
-                                                                    <svg className="w-3.5 h-3.5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                     </svg>
-                                                                    Pickup: <span className="font-bold text-green-200">{formatTime(selectedRoute.pickup_time)}</span>
+                                                                    Pickup: <span className="font-bold text-amber-200">{formatTime(selectedRoute.pickup_time)}</span>
                                                                 </span>
                                                         )}
                                                         {selectedRoute.dropoff_time && (
@@ -1284,9 +1284,9 @@ export default function CreateBooking({ students, routes }) {
                                                     {selectedStudentIds.length > 1 && price.per_booking_formatted && (
                                                         <p className="mb-2 text-sm text-slate-500">{selectedStudentIds.length} children × {price.per_booking_formatted} per child</p>
                                                     )}
-                                                    <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+                                                    <div className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 p-5">
                                                         <span className="text-xl font-extrabold text-slate-900">Total Amount:</span>
-                                                        <span className="text-3xl font-extrabold text-emerald-700">
+                                                        <span className="text-3xl font-extrabold text-amber-700">
                                                             {price.total_formatted ?? price.formatted}
                                                         </span>
                                                     </div>

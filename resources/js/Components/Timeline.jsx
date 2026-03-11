@@ -49,7 +49,7 @@ export default function Timeline({ items = [] }) {
                             {item.status && (
                                 <div className="mt-2">
                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${
-                                        item.status === 'completed' ? 'bg-green-500/30 text-green-100 border-green-400/50' :
+                                        item.status === 'completed' ? 'bg-amber-500/30 text-amber-100 border-amber-400/50' :
                                         item.status === 'pending' ? 'bg-yellow-500/30 text-yellow-100 border-yellow-400/50' :
                                         item.status === 'upcoming' ? 'bg-blue-500/30 text-blue-100 border-blue-400/50' :
                                         'bg-gray-500/30 text-gray-200 border-gray-400/50'

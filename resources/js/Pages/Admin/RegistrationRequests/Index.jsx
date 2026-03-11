@@ -56,7 +56,7 @@ export default function Index({ pendingParents }) {
                     {showFlash && (flash?.success || flash?.error) && (
                         <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
                             flash.success
-                                ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
+                                ? 'bg-amber-600 border-2 border-amber-500 text-white'
                                 : 'bg-amber-600/90 border-2 border-amber-500 text-white'
                         }`}>
                             {flash.success || flash.error}
@@ -99,7 +99,7 @@ export default function Index({ pendingParents }) {
                                                 <button
                                                     onClick={() => handleApprove(user)}
                                                     disabled={approving === user.id || rejecting === user.id}
-                                                    className="px-4 py-2 bg-green-500/20 border border-green-400/50 text-green-200 text-sm font-bold rounded-lg hover:bg-green-500/30 transition-all disabled:opacity-50"
+                                                    className="px-4 py-2 bg-amber-500/20 border border-amber-400/50 text-amber-200 text-sm font-bold rounded-lg hover:bg-amber-500/30 transition-all disabled:opacity-50"
                                                 >
                                                     {approving === user.id ? 'Approving...' : 'Approve'}
                                                 </button>

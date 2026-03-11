@@ -80,7 +80,7 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     {status && (
-                        <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm font-medium animate-fade-in">
+                        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm font-medium animate-fade-in">
                             {status}
                         </div>
                     )}

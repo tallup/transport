@@ -200,7 +200,7 @@ export default function AnalyticsDashboard({
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
                                             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Avg Utilization</p>
-                                            <p className="text-2xl font-extrabold text-emerald-600">
+                                            <p className="text-2xl font-extrabold text-amber-600">
                                                 {capacityUtilization.length > 0
                                                     ? Math.round(capacityUtilization.reduce((sum, r) => sum + r.utilization_percent, 0) / capacityUtilization.length)
                                                     : 0}%
@@ -291,7 +291,7 @@ export default function AnalyticsDashboard({
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
                                             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Growth</p>
-                                            <p className={`text-2xl font-extrabold ${(revenueSummary.growth_percent || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                            <p className={`text-2xl font-extrabold ${(revenueSummary.growth_percent || 0) >= 0 ? 'text-amber-500' : 'text-red-400'}`}>
                                                 {(revenueSummary.growth_percent || 0) >= 0 ? '+' : ''}{revenueSummary.growth_percent || 0}%
                                             </p>
                                             <p className="mt-1 text-xs text-slate-500">vs previous period</p>
@@ -378,7 +378,7 @@ export default function AnalyticsDashboard({
                                                         dataKey="revenue"
                                                     >
                                                         {revenueSummary.revenue_by_plan_type.map((entry, index) => {
-                                                            const colors = ['#facc15', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+                                                            const colors = ['#facc15', '#3b82f6', '#ca8a04', '#f59e0b', '#ef4444'];
                                                             return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
                                                         })}
                                                     </Pie>
@@ -391,7 +391,7 @@ export default function AnalyticsDashboard({
                                             </ResponsiveContainer>
                                             <div className="mt-4 space-y-2">
                                                 {revenueSummary.revenue_by_plan_type.map((plan, index) => {
-                                                    const colors = ['#facc15', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+                                                    const colors = ['#facc15', '#3b82f6', '#ca8a04', '#f59e0b', '#ef4444'];
                                                     const percentage = revenueSummary.total_revenue > 0 
                                                         ? ((plan.revenue / revenueSummary.total_revenue) * 100).toFixed(1)
                                                         : 0;
@@ -551,7 +551,7 @@ export default function AnalyticsDashboard({
                                                                             ? 'bg-red-500'
                                                                             : route.utilization_percent >= 50
                                                                             ? 'bg-yellow-500'
-                                                                            : 'bg-green-500'
+                                                                            : 'bg-amber-500'
                                                                     }`}
                                                                     style={{ width: `${Math.min(route.utilization_percent, 100)}%` }}
                                                                 />

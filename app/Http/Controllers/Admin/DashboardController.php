@@ -95,7 +95,7 @@ class DashboardController extends Controller
                 [
                     'name' => 'Active',
                     'value' => Booking::where('status', 'active')->count(),
-                    'color' => '#10b981',
+                    'color' => '#ca8a04',
                 ],
                 [
                     'name' => 'Pending',

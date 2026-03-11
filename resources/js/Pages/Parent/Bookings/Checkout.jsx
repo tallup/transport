@@ -139,7 +139,7 @@ export default function Checkout({ booking, price, stripeKey }) {
                         <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
                             <div className="mb-3 flex items-center justify-between">
                                 <span className="text-sm font-medium text-slate-700">Total Amount</span>
-                                <span className="text-2xl font-semibold text-emerald-700">{price.formatted}</span>
+                                <span className="text-2xl font-semibold text-amber-700">{price.formatted}</span>
                             </div>
 
                             {stripePromise ? (

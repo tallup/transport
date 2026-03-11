@@ -71,7 +71,7 @@ export default function Index({ discounts }) {
                     {showFlash && (flash?.success || flash?.error) && (
                         <div className={`mb-6 px-4 py-3 rounded-xl font-semibold ${
                             flash?.success
-                                ? 'bg-green-500/20 border border-green-400/50 text-green-200'
+                                ? 'bg-amber-500/20 border border-amber-400/50 text-amber-200'
                                 : 'bg-amber-600/90 border-2 border-amber-500 text-white'
                         }`}>
                             {flash?.success || flash?.error}
@@ -90,7 +90,7 @@ export default function Index({ discounts }) {
                                         <span
                                             className={`px-3 py-1 rounded-lg text-xs font-bold ${
                                                 discount.active
-                                                    ? 'bg-green-500/30 text-brand-primary border border-green-400/50'
+                                                    ? 'bg-amber-500/30 text-brand-primary border border-amber-400/50'
                                                     : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
                                             }`}
                                         >

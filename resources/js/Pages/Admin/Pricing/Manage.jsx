@@ -42,7 +42,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
             );
         }
         return (
-            <span className="rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+            <span className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
                 Global
             </span>
         );
@@ -131,7 +131,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                                     </div>
                                                     <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
                                                         rule.active
-                                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                            ? 'border-amber-200 bg-amber-50 text-amber-700'
                                                             : 'border-slate-200 bg-slate-100 text-slate-600'
                                                     }`}>
                                                         {rule.active ? 'Active' : 'Inactive'}
@@ -167,7 +167,7 @@ export default function ManagePricing({ pricingRules, planTypes }) {
                                                         className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
                                                             rule.active
                                                                 ? 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                                                : 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                                : 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
                                                         }`}
                                                     >
                                                         {toggling === rule.id 

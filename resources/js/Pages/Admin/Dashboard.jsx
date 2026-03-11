@@ -66,7 +66,7 @@ export default function AdminDashboard({
             value: stats?.total_routes || 0,
             href: '/admin/routes',
             icon: Map,
-            tone: 'text-emerald-600',
+            tone: 'text-amber-600',
         },
         {
             title: 'Vehicles',

@@ -104,7 +104,7 @@ export default function StudentsIndex({ students }) {
                                                             </span>
                                                         )}
                                                         {student.active_booking && (
-                                                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
                                                                 <ShieldCheck className="h-3.5 w-3.5" />
                                                                 Active Booking
                                                             </span>
@@ -157,32 +157,32 @@ export default function StudentsIndex({ students }) {
                                         </div>
 
                                         {student.active_booking && (
-                                            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                                                <h4 className="text-sm font-semibold text-emerald-800">Active Transport Booking</h4>
+                                            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                                <h4 className="text-sm font-semibold text-amber-800">Active Transport Booking</h4>
                                                 <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                                     <div>
-                                                        <p className="text-xs text-emerald-700">Route</p>
-                                                        <p className="text-sm font-medium text-emerald-900">
+                                                        <p className="text-xs text-amber-700">Route</p>
+                                                        <p className="text-sm font-medium text-amber-900">
                                                             {student.active_booking.route?.name || 'Not assigned'}
                                                         </p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-emerald-700">Duration</p>
-                                                        <p className="text-sm font-medium text-emerald-900">
+                                                        <p className="text-xs text-amber-700">Duration</p>
+                                                        <p className="text-sm font-medium text-amber-900">
                                                             {formatDate(student.active_booking.start_date) || 'N/A'}
                                                             {student.active_booking.end_date
                                                                 ? ` - ${formatDate(student.active_booking.end_date)}`
                                                                 : ' - Ongoing'}
                                                         </p>
                                                     </div>
-                                                    <div className="rounded-lg border border-emerald-200 bg-white p-3">
-                                                        <p className="text-xs text-emerald-700">Pickup</p>
+                                                    <div className="rounded-lg border border-amber-200 bg-white p-3">
+                                                        <p className="text-xs text-amber-700">Pickup</p>
                                                         {student.active_booking.pickup_point ? (
                                                             <>
                                                                 <p className="text-sm font-medium text-slate-900">{student.active_booking.pickup_point.name}</p>
                                                                 <p className="text-xs text-slate-600">{student.active_booking.pickup_point.address}</p>
                                                                 {student.active_booking.pickup_point.pickup_time && (
-                                                                    <p className="mt-1 text-sm font-medium text-emerald-800">
+                                                                    <p className="mt-1 text-sm font-medium text-amber-800">
                                                                         {formatTime(student.active_booking.pickup_point.pickup_time)}
                                                                     </p>
                                                                 )}
@@ -191,14 +191,14 @@ export default function StudentsIndex({ students }) {
                                                             <p className="text-sm text-slate-600">Not set</p>
                                                         )}
                                                     </div>
-                                                    <div className="rounded-lg border border-emerald-200 bg-white p-3">
-                                                        <p className="text-xs text-emerald-700">Dropoff</p>
+                                                    <div className="rounded-lg border border-amber-200 bg-white p-3">
+                                                        <p className="text-xs text-amber-700">Dropoff</p>
                                                         {student.active_booking.dropoff_point ? (
                                                             <>
                                                                 <p className="text-sm font-medium text-slate-900">{student.active_booking.dropoff_point.name}</p>
                                                                 <p className="text-xs text-slate-600">{student.active_booking.dropoff_point.address}</p>
                                                                 {student.active_booking.dropoff_point.dropoff_time && (
-                                                                    <p className="mt-1 text-sm font-medium text-emerald-800">
+                                                                    <p className="mt-1 text-sm font-medium text-amber-800">
                                                                         {formatTime(student.active_booking.dropoff_point.dropoff_time)}
                                                                     </p>
                                                                 )}

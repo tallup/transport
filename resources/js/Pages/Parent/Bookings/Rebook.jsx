@@ -316,7 +316,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                             </div>
                                                             <div className="text-right">
                                                                 <span className={`text-sm px-2 py-1 rounded border font-semibold ${route.available_seats > 0
-                                                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                                    ? 'border-amber-200 bg-amber-50 text-amber-700'
                                                                     : 'border-rose-200 bg-rose-50 text-rose-700'
                                                                     }`}>
                                                                     {route.available_seats} seats available
@@ -396,7 +396,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                 </div>
                                                                 <div className="text-right">
                                                                     {planPrices[plan] ? (
-                                                                        <span className="text-xl font-black text-emerald-600">
+                                                                        <span className="text-xl font-black text-amber-600">
                                                                             {planPrices[plan].formatted}
                                                                         </span>
                                                                     ) : (
@@ -500,7 +500,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {step === 5 && (
                                     <div className="space-y-6 animate-fade-in">
                                         <div className="flex items-center space-x-3 mb-6">
-                                            <div className="h-8 w-2 rounded-full bg-emerald-500"></div>
+                                            <div className="h-8 w-2 rounded-full bg-amber-500"></div>
                                             <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900">Review Final Summary</h3>
                                         </div>
 
@@ -547,13 +547,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
                                             {price && (
                                                 <div className="mt-4 border-t border-slate-200 pt-8">
-                                                    <div className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+                                                    <div className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 p-6">
                                                         <div>
                                                             <p className="text-sm font-black uppercase tracking-widest text-slate-700">Total Subscription Amount</p>
                                                             <p className="mt-1 text-xs font-bold uppercase text-slate-500">Inclusive of all services & taxes</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <span className="text-4xl font-black text-emerald-700">
+                                                            <span className="text-4xl font-black text-amber-700">
                                                                 {price.formatted}
                                                             </span>
                                                         </div>

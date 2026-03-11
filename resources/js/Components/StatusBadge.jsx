@@ -4,7 +4,7 @@ import { getBookingStatusColor, formatBookingStatus, getVehicleStatusColor, form
  * Renders a status badge for bookings or vehicles using shared styling.
  * @param {string} type - 'booking' | 'vehicle'
  * @param {string} status - status value (e.g. 'active', 'pending')
- * @param {string} [variant='default'] - 'default' (brand-primary text) or 'light' (green-100, etc.)
+ * @param {string} [variant='default'] - 'default' (brand-primary text) or 'light' (amber-100, etc.)
  * @param {string} [label] - override display label; otherwise formatted from status
  * @param {string} [className] - extra classes (e.g. px-3 py-1 rounded-lg text-xs font-bold)
  */

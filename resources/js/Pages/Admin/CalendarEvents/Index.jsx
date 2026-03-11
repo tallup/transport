@@ -20,7 +20,7 @@ export default function Index({ calendarEvents }) {
     const getTypeColor = (type) => {
         switch (type) {
             case 'school_day':
-                return 'border border-emerald-200 bg-emerald-50 text-emerald-700';
+                return 'border border-amber-200 bg-amber-50 text-amber-700';
             case 'holiday':
                 return 'border border-amber-200 bg-amber-50 text-amber-700';
             case 'closure':

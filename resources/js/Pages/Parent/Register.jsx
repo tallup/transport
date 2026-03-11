@@ -93,7 +93,7 @@ export default function Register() {
             { label: 'Weak', color: 'bg-orange-500' },
             { label: 'Fair', color: 'bg-yellow-500' },
             { label: 'Good', color: 'bg-blue-500' },
-            { label: 'Strong', color: 'bg-green-500' },
+            { label: 'Strong', color: 'bg-amber-500' },
         ];
         
         return { strength, ...levels[strength] || levels[0] };
@@ -325,12 +325,12 @@ export default function Register() {
                                     </button>
                                     {passwordsMatch && (
                                         <div className="absolute inset-y-0 right-12 pr-4 flex items-center pointer-events-none">
-                                            <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                                            <CheckCircleIcon className="h-5 w-5 text-amber-600" />
                                         </div>
                                     )}
                                 </div>
                                 {data.password_confirmation && passwordsMatch && (
-                                    <p className="text-xs text-green-500 font-semibold mt-1 flex items-center gap-1">
+                                    <p className="text-xs text-amber-600 font-semibold mt-1 flex items-center gap-1">
                                         <CheckCircleIcon className="h-4 w-4" />
                                         Passwords match
                                     </p>

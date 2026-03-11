@@ -56,8 +56,8 @@
             margin: 20px 0;
         }
         .success-badge {
-            background-color: #D1FAE5;
-            color: #065F46;
+            background-color: #FEF3C7;
+            color: #92400E;
             padding: 10px 20px;
             border-radius: 5px;
             display: inline-block;

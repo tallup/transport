@@ -31,7 +31,7 @@ export default function DriverPerformanceTable({ data = [] }) {
     });
 
     const getOnTimeRateColor = (rate) => {
-        if (rate >= 90) return 'text-emerald-600';
+        if (rate >= 90) return 'text-amber-600';
         if (rate >= 75) return 'text-amber-600';
         return 'text-rose-600';
     };
@@ -123,7 +123,7 @@ export default function DriverPerformanceTable({ data = [] }) {
                                             <div
                                                 className={`h-2 rounded-full ${
                                                     driver.on_time_rate >= 90
-                                                        ? 'bg-green-500'
+                                                        ? 'bg-amber-500'
                                                         : driver.on_time_rate >= 75
                                                         ? 'bg-yellow-500'
                                                         : 'bg-red-500'

@@ -5,7 +5,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Total Estimated Revenue</h3>
-                <p class="text-3xl font-bold text-green-600">${{ number_format($this->revenueData['total_revenue'] ?? 0, 2) }}</p>
+                <p class="text-3xl font-bold text-amber-600">${{ number_format($this->revenueData['total_revenue'] ?? 0, 2) }}</p>
             </div>
 
             <div class="bg-white rounded-lg shadow p-6">

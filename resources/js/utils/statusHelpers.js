@@ -4,28 +4,28 @@
  */
 
 const BOOKING_STATUS_CLASSES = {
-    active: 'bg-green-500/30 text-brand-primary border border-green-400/50',
+    active: 'bg-amber-500/30 text-brand-primary border border-amber-400/50',
     pending: 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50',
     awaiting_approval: 'bg-amber-500/30 text-brand-primary border border-amber-400/50',
     completed: 'bg-blue-500/30 text-brand-primary border border-blue-400/50',
     cancelled: 'bg-red-500/30 text-brand-primary border border-red-400/50',
     expired: 'bg-gray-500/30 text-brand-primary border border-gray-400/50',
-    refunded: 'bg-emerald-600/30 text-emerald-200 border border-emerald-400/50',
+    refunded: 'bg-amber-600/30 text-amber-200 border border-amber-400/50',
 };
 
-/** Variant with light text (e.g. on dark cards): green-100, yellow-100, etc. */
+/** Variant with light text (e.g. on dark cards): amber-100, yellow-100, etc. */
 const BOOKING_STATUS_CLASSES_LIGHT = {
-    active: 'bg-green-500/30 text-green-100 border border-green-400/50',
+    active: 'bg-amber-500/30 text-amber-100 border border-amber-400/50',
     pending: 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50',
     awaiting_approval: 'bg-orange-500/30 text-orange-100 border border-orange-400/50',
     completed: 'bg-blue-500/30 text-blue-100 border border-blue-400/50',
     cancelled: 'bg-red-500/30 text-red-100 border border-red-400/50',
     expired: 'bg-gray-500/30 text-gray-200 border border-gray-400/50',
-    refunded: 'bg-emerald-600/30 text-emerald-100 border border-emerald-400/50',
+    refunded: 'bg-amber-600/30 text-amber-100 border border-amber-400/50',
 };
 
 const VEHICLE_STATUS_CLASSES = {
-    active: 'bg-green-500/30 text-brand-primary border border-green-400/50',
+    active: 'bg-amber-500/30 text-brand-primary border border-amber-400/50',
     maintenance: 'bg-yellow-500/30 text-brand-primary border border-yellow-400/50',
     retired: 'bg-gray-500/30 text-brand-primary border border-gray-400/50',
 };

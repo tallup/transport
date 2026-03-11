@@ -59,7 +59,7 @@ export default function Index({ routes }) {
                                             </div>
                                         </div>
                                         <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
-                                            route.active ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-slate-100 text-slate-600'
+                                            route.active ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-200 bg-slate-100 text-slate-600'
                                         }`}>
                                             {route.active ? 'Active' : 'Inactive'}
                                         </span>
@@ -90,7 +90,7 @@ export default function Index({ routes }) {
                                             <span className={`rounded-lg border px-2 py-1 text-xs font-semibold ${
                                                 route.service_type === 'am' ? 'border-amber-200 bg-amber-50 text-amber-700' :
                                                 route.service_type === 'pm' ? 'border-sky-200 bg-sky-50 text-sky-700' :
-                                                'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                'border-amber-200 bg-amber-50 text-amber-700'
                                             }`}>
                                                 {route.service_type === 'am' ? 'AM Only' :
                                                  route.service_type === 'pm' ? 'PM Only' : 'Both'}

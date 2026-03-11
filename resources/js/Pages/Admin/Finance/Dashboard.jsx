@@ -16,7 +16,7 @@ export default function FinanceDashboard({
     statusSummary,
 }) {
     const statusDistributionData = [
-        { name: 'Active', value: statusSummary?.active || 0, color: '#10b981' },
+        { name: 'Active', value: statusSummary?.active || 0, color: '#ca8a04' },
         { name: 'Pending', value: statusSummary?.pending || 0, color: '#f59e0b' },
         { name: 'Awaiting Approval', value: statusSummary?.awaiting_approval || 0, color: '#f97316' },
         { name: 'Cancelled', value: statusSummary?.cancelled || 0, color: '#ef4444' },
@@ -198,7 +198,7 @@ export default function FinanceDashboard({
                                     <Line 
                                         type="monotone" 
                                         dataKey="revenue" 
-                                        stroke="#10b981" 
+                                        stroke="#ca8a04" 
                                         strokeWidth={2}
                                         name="Revenue ($)"
                                     />
@@ -271,7 +271,7 @@ export default function FinanceDashboard({
                                     />
                                     <Tooltip contentStyle={tooltipStyle} />
                                     <Legend wrapperStyle={legendStyle} />
-                                    <Bar dataKey="revenue" fill="#10b981" name="Revenue ($)" />
+                                    <Bar dataKey="revenue" fill="#ca8a04" name="Revenue ($)" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </ChartCard>

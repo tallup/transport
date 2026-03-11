@@ -98,12 +98,12 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="mb-1 text-sm font-semibold text-slate-500">Completed</p>
-                                    <p className="text-3xl font-extrabold text-emerald-600">
+                                    <p className="text-3xl font-extrabold text-amber-600">
                                         {statistics.completed}
                                     </p>
                                 </div>
-                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50">
-                                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-50">
+                                    <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
@@ -185,7 +185,7 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     {pickups.every(p => p.completed_at) && (
-                                                        <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
+                                                        <span className="flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700">
                                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                             </svg>
@@ -208,7 +208,7 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                                     {pickup.period?.toUpperCase() || 'AM'}
                                                                 </span>
                                                                 {pickup.completed_at && (
-                                                                    <span className="flex items-center gap-1 text-sm font-semibold text-emerald-600">
+                                                                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                                         </svg>

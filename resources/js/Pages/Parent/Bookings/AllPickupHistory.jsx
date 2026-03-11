@@ -76,7 +76,7 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                         <GlassCard>
                             <div className="text-center">
                                 <p className="mb-1 text-sm font-semibold text-slate-500">Completed</p>
-                                <p className="text-3xl font-extrabold text-emerald-600">{statistics.completed}</p>
+                                <p className="text-3xl font-extrabold text-amber-600">{statistics.completed}</p>
                             </div>
                         </GlassCard>
                         <GlassCard>
@@ -126,7 +126,7 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                                     {pickup.period?.toUpperCase() || 'AM'}
                                                                 </span>
                                                                 {pickup.completed_at && (
-                                                                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                                    <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
                                                                         Completed
                                                                     </span>
                                                                 )}
@@ -170,7 +170,7 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                                 <p className="font-bold text-slate-900">{pickup.pickup_point.name}</p>
                                                                 <p className="text-sm text-slate-600">{pickup.pickup_point.address}</p>
                                                                 {pickup.pickup_point.pickup_time && (
-                                                                    <p className="mt-1 text-sm font-semibold text-emerald-600">
+                                                                    <p className="mt-1 text-sm font-semibold text-amber-600">
                                                                         Time: {formatTime(pickup.pickup_point.pickup_time)}
                                                                     </p>
                                                                 )}

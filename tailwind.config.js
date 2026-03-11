@@ -31,6 +31,7 @@ export default {
                     secondary: '#15233f',
                     light: '#ecf3fb',
                     yellow: '#FFEB3B',
+                    darkYellow: '#ca8a04',
                 },
                 surface: {
                     page: '#f8f7f3',
@@ -46,7 +47,7 @@ export default {
                 },
                 accent: {
                     primary: '#3159c9',
-                    success: '#0f766e',
+                    success: '#ca8a04',
                     warning: '#b45309',
                     danger: '#b91c1c',
                 },

@@ -67,7 +67,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                     </Link>
 
                     {showFlash && flash?.success && (
-                        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
                             {flash.success}
                         </div>
                     )}
@@ -170,7 +170,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 {price && (
                                     <div className="border-t border-slate-200 pt-3">
                                         <p className="text-xs uppercase tracking-wide text-slate-500">Total price</p>
-                                        <p className="text-xl font-semibold text-emerald-700">{price.formatted}</p>
+                                        <p className="text-xl font-semibold text-amber-700">{price.formatted}</p>
                                     </div>
                                 )}
                             </div>

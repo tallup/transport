@@ -103,7 +103,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                 <ChartBarIcon className={`h-12 w-12 ${
                                     statistics.capacity_utilization >= 90 ? 'text-rose-500' :
                                     statistics.capacity_utilization >= 70 ? 'text-amber-500' :
-                                    'text-emerald-500'
+                                    'text-amber-500'
                                 }`} />
                             </div>
                         </div>
@@ -121,7 +121,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                         </p>
                                     )}
                                 </div>
-                                <CheckCircleIcon className="h-12 w-12 text-emerald-500" />
+                                <CheckCircleIcon className="h-12 w-12 text-amber-500" />
                             </div>
                         </div>
 
@@ -161,7 +161,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                         <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full border ${
                                             route.service_type === 'am' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                                             route.service_type === 'pm' ? 'bg-sky-50 text-sky-700 border-sky-200' :
-                                            'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                            'bg-amber-50 text-amber-700 border-amber-200'
                                         }`}>
                                             {route.service_type === 'am' ? 'AM Only' :
                                              route.service_type === 'pm' ? 'PM Only' : 'Both'}
@@ -171,7 +171,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                         <p className="text-sm text-slate-500">Status</p>
                                         <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full border ${
                                             route.active 
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                ? 'bg-amber-50 text-amber-700 border-amber-200'
                                                 : 'bg-rose-50 text-rose-700 border-rose-200'
                                         }`}>
                                             {route.active ? 'Active' : 'Inactive'}
@@ -258,7 +258,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                 <p className="text-sm text-slate-500">Status</p>
                                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                                     route.vehicle.status === 'active' 
-                                                        ? 'bg-emerald-50 text-emerald-700'
+                                                        ? 'bg-amber-50 text-amber-700'
                                                         : 'bg-slate-100 text-slate-600'
                                                 }`}>
                                                     {route.vehicle.status}
@@ -372,7 +372,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                         <td className="px-4 py-3">
                                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                                                                 booking.status === 'active' 
-                                                                    ? 'bg-emerald-50 text-emerald-700'
+                                                                    ? 'bg-amber-50 text-amber-700'
                                                                     : 'bg-amber-50 text-amber-700'
                                                             }`}>
                                                                 {booking.status}
@@ -439,7 +439,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                             </p>
                                                         )}
                                                     </div>
-                                                    <CheckCircleIcon className="h-5 w-5 text-emerald-500" />
+                                                    <CheckCircleIcon className="h-5 w-5 text-amber-500" />
                                                 </div>
                                                 {completion.notes && (
                                                     <p className="mt-2 text-sm text-slate-600">{completion.notes}</p>

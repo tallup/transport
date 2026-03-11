@@ -93,7 +93,7 @@ export default function Index({ users, filters }) {
                     {showFlash && (flash?.success || flash?.error) && (
                         <div className={`mb-6 px-6 py-4 rounded-xl font-bold shadow-md ${
                             flash.success
-                                ? 'bg-emerald-600 border-2 border-emerald-500 text-white'
+                                ? 'bg-amber-600 border-2 border-amber-500 text-white'
                                 : 'bg-amber-600/90 border-2 border-amber-500 text-white'
                         }`}>
                             {flash.success || flash.error}
@@ -152,7 +152,7 @@ export default function Index({ users, filters }) {
                                         <div className="flex flex-col items-end gap-2">
                                             <span className={`rounded-lg border px-3 py-1 text-xs font-semibold ${
                                                 user.role === 'driver'
-                                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                    ? 'border-amber-200 bg-amber-50 text-amber-700'
                                                     : user.role === 'parent'
                                                     ? 'border-sky-200 bg-sky-50 text-sky-700'
                                                     : ['super_admin', 'transport_admin', 'admin'].includes(user.role)
@@ -164,7 +164,7 @@ export default function Index({ users, filters }) {
                                             {user.role === 'parent' && (
                                                 <span className={`rounded border px-2 py-0.5 text-xs font-semibold ${
                                                     user.is_active !== false
-                                                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                        ? 'border-amber-200 bg-amber-50 text-amber-700'
                                                         : 'border-rose-200 bg-rose-50 text-rose-700'
                                                 }`}>
                                                     {user.is_active !== false ? 'Active' : 'Disabled'}
@@ -206,7 +206,7 @@ export default function Index({ users, filters }) {
                                                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
                                                     user.is_active !== false
                                                         ? 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                                        : 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                        : 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
                                                 }`}
                                             >
                                                 {toggling === user.id 

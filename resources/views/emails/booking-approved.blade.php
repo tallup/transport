@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #10b981;
+            background-color: #ca8a04;
             color: white;
             padding: 20px;
             text-align: center;
@@ -49,7 +49,7 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #10b981;
+            background-color: #ca8a04;
             color: white;
             text-decoration: none;
             border-radius: 5px;

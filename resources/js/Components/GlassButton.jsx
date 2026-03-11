@@ -8,7 +8,7 @@ export default function GlassButton({
     const variants = {
         primary: 'bg-brand-primary hover:bg-brand-secondary text-white border-transparent',
         secondary: 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300',
-        success: 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent',
+        success: 'bg-amber-600 hover:bg-amber-700 text-white border-transparent',
         danger: 'bg-rose-600 hover:bg-rose-700 text-white border-transparent',
     };
 

@@ -10,7 +10,7 @@ export default function CapacityHeatmap({ data = [] }) {
             case 'medium':
                 return 'bg-yellow-50 border-yellow-200 text-yellow-700';
             case 'low':
-                return 'bg-emerald-50 border-emerald-200 text-emerald-700';
+                return 'bg-amber-50 border-amber-200 text-amber-700';
             default:
                 return 'bg-slate-100 border-slate-200 text-slate-600';
         }
@@ -52,7 +52,7 @@ export default function CapacityHeatmap({ data = [] }) {
                                                 ? 'bg-red-500'
                                                 : route.utilization_percent >= 50
                                                 ? 'bg-yellow-500'
-                                                : 'bg-green-500'
+                                                : 'bg-amber-500'
                                         }`}
                                         style={{ width: `${Math.min(route.utilization_percent, 100)}%` }}
                                     />

@@ -760,7 +760,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                     ].map(({ label, signed }) => (
                                                         <li key={label} className="flex items-center justify-between gap-2">
                                                             <span className="text-sm font-medium text-brand-primary">{label}</span>
-                                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${signed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-brand-primary/60'}`}>
+                                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${signed ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-brand-primary/60'}`}>
                                                                 {signed ? (
                                                                     <><CheckCircleIcon className="w-3.5 h-3.5" strokeWidth={2.5} /> Signed</>
                                                                 ) : (
