@@ -52,7 +52,7 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -112,7 +112,7 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
         ]);
 
         if ($request->hasFile('profile_picture')) {

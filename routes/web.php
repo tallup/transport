@@ -35,6 +35,9 @@ Route::get('/profile-pictures/{path}', function (string $path) {
         'png' => 'image/png',
         'gif' => 'image/gif',
         'webp' => 'image/webp',
+        'heic' => 'image/heic',
+        'bmp' => 'image/bmp',
+        'svg' => 'image/svg+xml',
         default => 'application/octet-stream',
     };
     return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);

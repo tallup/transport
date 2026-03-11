@@ -69,7 +69,7 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:parent,driver,transport_admin,admin',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
         ]);
 
         // Only super_admin can create transport_admin or admin users
@@ -133,7 +133,7 @@ class UserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:parent,driver,transport_admin,admin',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
         ]);
 
         // Only super_admin can assign transport_admin or admin role
