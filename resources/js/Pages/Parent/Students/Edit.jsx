@@ -135,14 +135,14 @@ export default function EditStudent({ student, schools = [] }) {
                             <form onSubmit={handleSubmit} className="space-y-8">
                                 {/* Profile Picture */}
                                 <div>
-                                    <label className="block text-base font-bold text-white mb-2">Profile Picture</label>
+                                    <label className="mb-2 block text-base font-semibold text-slate-700">Profile Picture</label>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-400/50 flex-shrink-0">
+                                        <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
                                             {(profilePreview || student.profile_picture_url) ? (
                                                 <img src={profilePreview || student.profile_picture_url} alt={student.name} className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                                                    <PhotoIcon className="w-10 h-10 text-brand-primary" />
+                                                <div className="flex h-full w-full items-center justify-center bg-slate-100">
+                                                    <PhotoIcon className="h-10 w-10 text-amber-500" />
                                                 </div>
                                             )}
                                         </div>
@@ -174,23 +174,23 @@ export default function EditStudent({ student, schools = [] }) {
 
                                 {/* Basic Info */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-4 border-b border-yellow-400/40 pb-2">Basic Information</h3>
+                                    <h3 className="mb-4 border-b border-slate-200 pb-2 text-lg font-bold text-slate-900">Basic Information</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="md:col-span-2">
-                                            <label htmlFor="name" className="block text-sm font-bold text-white mb-2">Full Name *</label>
+                                            <label htmlFor="name" className="mb-2 block text-sm font-semibold text-slate-700">Full Name *</label>
                                             <input
                                                 id="name"
                                                 type="text"
                                                 value={data.name}
                                                 onChange={(e) => setData('name', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 placeholder="Child's full name"
                                                 required
                                             />
                                             <InputError message={errors.name} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div>
-                                            <label htmlFor="school_id" className="block text-sm font-bold text-white mb-2">School *</label>
+                                            <label htmlFor="school_id" className="mb-2 block text-sm font-semibold text-slate-700">School *</label>
                                             <select
                                                 id="school_id"
                                                 value={data.school_id}
@@ -206,36 +206,36 @@ export default function EditStudent({ student, schools = [] }) {
                                             <InputError message={errors.school_id} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div>
-                                            <label htmlFor="date_of_birth" className="block text-sm font-bold text-white mb-2">Date of Birth</label>
+                                            <label htmlFor="date_of_birth" className="mb-2 block text-sm font-semibold text-slate-700">Date of Birth</label>
                                             <input
                                                 id="date_of_birth"
                                                 type="date"
                                                 value={data.date_of_birth}
                                                 onChange={(e) => setData('date_of_birth', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white focus:border-yellow-400"
+                                                className="form-control w-full"
                                             />
                                             <InputError message={errors.date_of_birth} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div>
-                                            <label htmlFor="grade" className="block text-sm font-bold text-white mb-2">Grade</label>
+                                            <label htmlFor="grade" className="mb-2 block text-sm font-semibold text-slate-700">Grade</label>
                                             <input
                                                 id="grade"
                                                 type="text"
                                                 value={data.grade}
                                                 onChange={(e) => setData('grade', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 placeholder="e.g. 10"
                                             />
                                             <InputError message={errors.grade} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <label htmlFor="home_address" className="block text-sm font-bold text-white mb-2">Home Address</label>
+                                            <label htmlFor="home_address" className="mb-2 block text-sm font-semibold text-slate-700">Home Address</label>
                                             <input
                                                 id="home_address"
                                                 type="text"
                                                 value={data.home_address}
                                                 onChange={(e) => setData('home_address', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 placeholder="Full address"
                                             />
                                             <InputError message={errors.home_address} className="mt-2 text-red-300 font-semibold" />
@@ -245,28 +245,28 @@ export default function EditStudent({ student, schools = [] }) {
 
                                 {/* Emergency Contacts */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-4 border-b border-yellow-400/40 pb-2">Emergency Contacts</h3>
+                                    <h3 className="mb-4 border-b border-slate-200 pb-2 text-lg font-bold text-slate-900">Emergency Contacts</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label htmlFor="emergency_contact_name" className="block text-sm font-bold text-white mb-2">Primary Contact Name *</label>
+                                            <label htmlFor="emergency_contact_name" className="mb-2 block text-sm font-semibold text-slate-700">Primary Contact Name *</label>
                                             <input
                                                 id="emergency_contact_name"
                                                 type="text"
                                                 value={data.emergency_contact_name}
                                                 onChange={(e) => setData('emergency_contact_name', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 required
                                             />
                                             <InputError message={errors.emergency_contact_name} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div>
-                                            <label htmlFor="emergency_phone" className="block text-sm font-bold text-white mb-2">Primary Contact Phone *</label>
+                                            <label htmlFor="emergency_phone" className="mb-2 block text-sm font-semibold text-slate-700">Primary Contact Phone *</label>
                                             <input
                                                 id="emergency_phone"
                                                 type="tel"
                                                 value={data.emergency_phone}
                                                 onChange={(e) => handlePhoneChange('emergency_phone', e)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 placeholder="(123) 456-7890"
                                                 maxLength="14"
                                                 required
@@ -274,23 +274,23 @@ export default function EditStudent({ student, schools = [] }) {
                                             <InputError message={errors.emergency_phone} className="mt-2 text-red-300 font-semibold" />
                                         </div>
                                         <div>
-                                            <label htmlFor="emergency_contact_2_name" className="block text-sm font-bold text-white mb-2">Secondary Contact Name</label>
+                                            <label htmlFor="emergency_contact_2_name" className="mb-2 block text-sm font-semibold text-slate-700">Secondary Contact Name</label>
                                             <input
                                                 id="emergency_contact_2_name"
                                                 type="text"
                                                 value={data.emergency_contact_2_name}
                                                 onChange={(e) => setData('emergency_contact_2_name', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                             />
                                         </div>
                                         <div>
-                                            <label htmlFor="emergency_contact_2_phone" className="block text-sm font-bold text-white mb-2">Secondary Contact Phone</label>
+                                            <label htmlFor="emergency_contact_2_phone" className="mb-2 block text-sm font-semibold text-slate-700">Secondary Contact Phone</label>
                                             <input
                                                 id="emergency_contact_2_phone"
                                                 type="tel"
                                                 value={data.emergency_contact_2_phone}
                                                 onChange={(e) => handlePhoneChange('emergency_contact_2_phone', e)}
-                                                className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400"
+                                                className="form-control w-full"
                                                 placeholder="(123) 456-7890"
                                                 maxLength="14"
                                             />
@@ -301,7 +301,7 @@ export default function EditStudent({ student, schools = [] }) {
                                 {/* Authorized Pickup Persons */}
                                 <div>
                                     <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-bold text-white border-b border-yellow-400/40 pb-2">Authorized Pickup Persons</h3>
+                                        <h3 className="border-b border-slate-200 pb-2 text-lg font-bold text-slate-900">Authorized Pickup Persons</h3>
                                         <button type="button" onClick={addAuthorizedPickupPerson} className="flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900">
                                             <PlusIcon className="w-4 h-4" /> Add
                                         </button>
@@ -314,21 +314,21 @@ export default function EditStudent({ student, schools = [] }) {
                                                     value={person.name}
                                                     onChange={(e) => handleAuthorizedPickupChange(index, 'name', e.target.value)}
                                                     placeholder="Name"
-                                                    className="flex-1 px-4 py-2 bg-white/10 border-2 border-yellow-400/50 rounded-lg text-white placeholder-white/50"
+                                                    className="form-control flex-1"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={person.relationship}
                                                     onChange={(e) => handleAuthorizedPickupChange(index, 'relationship', e.target.value)}
                                                     placeholder="Relationship"
-                                                    className="flex-1 px-4 py-2 bg-white/10 border-2 border-yellow-400/50 rounded-lg text-white placeholder-white/50"
+                                                    className="form-control flex-1"
                                                 />
                                                 <input
                                                     type="tel"
                                                     value={person.phone}
                                                     onChange={(e) => handleAuthorizedPickupChange(index, 'phone', formatPhoneNumber(e.target.value))}
                                                     placeholder="Phone"
-                                                    className="flex-1 px-4 py-2 bg-white/10 border-2 border-yellow-400/50 rounded-lg text-white placeholder-white/50"
+                                                    className="form-control flex-1"
                                                 />
                                                 <button type="button" onClick={() => removeAuthorizedPickupPerson(index)} className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50">
                                                     <TrashIcon className="w-5 h-5" />
@@ -340,29 +340,29 @@ export default function EditStudent({ student, schools = [] }) {
 
                                 {/* Medical & Special */}
                                 <div>
-                                    <h3 className="text-lg font-bold text-white mb-4 border-b border-yellow-400/40 pb-2">Medical & Additional Info</h3>
+                                    <h3 className="mb-4 border-b border-slate-200 pb-2 text-lg font-bold text-slate-900">Medical & Additional Info</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label htmlFor="doctor_name" className="block text-sm font-bold text-white mb-2">Doctor Name</label>
-                                            <input id="doctor_name" type="text" value={data.doctor_name} onChange={(e) => setData('doctor_name', e.target.value)} className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400" />
+                                            <label htmlFor="doctor_name" className="mb-2 block text-sm font-semibold text-slate-700">Doctor Name</label>
+                                            <input id="doctor_name" type="text" value={data.doctor_name} onChange={(e) => setData('doctor_name', e.target.value)} className="form-control w-full" />
                                         </div>
                                         <div>
-                                            <label htmlFor="doctor_phone" className="block text-sm font-bold text-white mb-2">Doctor Phone</label>
-                                            <input id="doctor_phone" type="tel" value={data.doctor_phone} onChange={(e) => handlePhoneChange('doctor_phone', e)} className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400" maxLength="14" />
+                                            <label htmlFor="doctor_phone" className="mb-2 block text-sm font-semibold text-slate-700">Doctor Phone</label>
+                                            <input id="doctor_phone" type="tel" value={data.doctor_phone} onChange={(e) => handlePhoneChange('doctor_phone', e)} className="form-control w-full" maxLength="14" />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <label htmlFor="medical_notes" className="block text-sm font-bold text-white mb-2">Medical Notes</label>
-                                            <textarea id="medical_notes" value={data.medical_notes} onChange={(e) => setData('medical_notes', e.target.value)} rows={3} className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400 resize-none" placeholder="Allergies, medications, etc." />
+                                            <label htmlFor="medical_notes" className="mb-2 block text-sm font-semibold text-slate-700">Medical Notes</label>
+                                            <textarea id="medical_notes" value={data.medical_notes} onChange={(e) => setData('medical_notes', e.target.value)} rows={3} className="form-control w-full resize-none" placeholder="Allergies, medications, etc." />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <label htmlFor="special_instructions" className="block text-sm font-bold text-white mb-2">Special Instructions</label>
-                                            <textarea id="special_instructions" value={data.special_instructions} onChange={(e) => setData('special_instructions', e.target.value)} rows={3} className="w-full px-4 py-3 bg-white/10 border-2 border-yellow-400/50 rounded-xl text-white placeholder-white/50 focus:border-yellow-400 resize-none" placeholder="Any special instructions for transport" />
+                                            <label htmlFor="special_instructions" className="mb-2 block text-sm font-semibold text-slate-700">Special Instructions</label>
+                                            <textarea id="special_instructions" value={data.special_instructions} onChange={(e) => setData('special_instructions', e.target.value)} rows={3} className="form-control w-full resize-none" placeholder="Any special instructions for transport" />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex flex-col-reverse sm:flex-row gap-4 pt-4 border-t border-yellow-400/40">
+                                <div className="flex flex-col-reverse gap-4 border-t border-slate-200 pt-4 sm:flex-row">
                                     <Link href={route('parent.students.index')} className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900">
                                         Cancel
                                     </Link>

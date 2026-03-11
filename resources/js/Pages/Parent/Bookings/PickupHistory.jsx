@@ -48,27 +48,27 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                             <div>
                                 <Link
                                     href={`/parent/bookings/${booking.id}`}
-                                    className="text-white/80 hover:text-white font-semibold mb-4 inline-flex items-center gap-2"
+                                    className="mb-4 inline-flex items-center gap-2 font-semibold text-slate-700 transition hover:text-slate-900"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                     </svg>
                                     Back to Booking Details
                                 </Link>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
+                                <h1 className="mb-2 text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-5xl">
                                     Pickup History
                                 </h1>
                                 <div className="flex items-center gap-3">
                                     {booking.student?.profile_picture_url ? (
-                                        <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50 flex-shrink-0" />
+                                        <img src={booking.student.profile_picture_url} alt={booking.student?.name} className="h-10 w-10 flex-shrink-0 rounded-lg border border-slate-200 object-cover" />
                                     ) : (
-                                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <svg className="w-5 h-5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-400">
+                                            <svg className="h-5 w-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                         </div>
                                     )}
-                                    <p className="text-base sm:text-lg font-semibold text-white/90">
+                                    <p className="text-base font-semibold text-slate-600 sm:text-lg">
                                         {booking.student?.name} - {booking.route?.name || 'Route'}
                                     </p>
                                 </div>
@@ -81,13 +81,13 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-semibold text-white/70 mb-1">Total Pickups</p>
-                                    <p className="text-3xl font-extrabold text-white">
+                                    <p className="mb-1 text-sm font-semibold text-slate-500">Total Pickups</p>
+                                    <p className="text-3xl font-extrabold text-slate-900">
                                         {statistics.total}
                                     </p>
                                 </div>
-                                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sky-50">
+                                    <svg className="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
                                 </div>
@@ -97,13 +97,13 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-semibold text-white/70 mb-1">Completed</p>
-                                    <p className="text-3xl font-extrabold text-green-200">
+                                    <p className="mb-1 text-sm font-semibold text-slate-500">Completed</p>
+                                    <p className="text-3xl font-extrabold text-emerald-600">
                                         {statistics.completed}
                                     </p>
                                 </div>
-                                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50">
+                                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
@@ -113,13 +113,13 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-semibold text-white/70 mb-1">Morning (AM)</p>
-                                    <p className="text-3xl font-extrabold text-yellow-200">
+                                    <p className="mb-1 text-sm font-semibold text-slate-500">Morning (AM)</p>
+                                    <p className="text-3xl font-extrabold text-amber-500">
                                         {statistics.am}
                                     </p>
                                 </div>
-                                <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-50">
+                                    <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                                     </svg>
                                 </div>
@@ -129,13 +129,13 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                         <GlassCard>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-semibold text-white/70 mb-1">Afternoon (PM)</p>
-                                    <p className="text-3xl font-extrabold text-blue-200">
+                                    <p className="mb-1 text-sm font-semibold text-slate-500">Afternoon (PM)</p>
+                                    <p className="text-3xl font-extrabold text-sky-600">
                                         {statistics.pm}
                                     </p>
                                 </div>
-                                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sky-50">
+                                    <svg className="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                     </svg>
                                 </div>
@@ -146,19 +146,19 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                     {/* Booking Information */}
                     <GlassCard className="mb-6">
                         <div className="p-6">
-                            <h2 className="text-xl font-bold text-white mb-4">Booking Information</h2>
+                            <h2 className="mb-4 text-xl font-bold text-slate-900">Booking Information</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <span className="text-white/70 font-semibold text-sm">Student:</span>
-                                    <p className="text-white font-bold">{booking.student?.name}</p>
+                                    <span className="text-sm font-semibold text-slate-500">Student:</span>
+                                    <p className="font-bold text-slate-900">{booking.student?.name}</p>
                                 </div>
                                 <div>
-                                    <span className="text-white/70 font-semibold text-sm">Route:</span>
-                                    <p className="text-white font-bold">{booking.route?.name || 'N/A'}</p>
+                                    <span className="text-sm font-semibold text-slate-500">Route:</span>
+                                    <p className="font-bold text-slate-900">{booking.route?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <span className="text-white/70 font-semibold text-sm">Plan Type:</span>
-                                    <p className="text-white font-bold">
+                                    <span className="text-sm font-semibold text-slate-500">Plan Type:</span>
+                                    <p className="font-bold text-slate-900">
                                         {booking.plan_type === 'academic_term' ? 'Academic Term' : booking.plan_type.replace('_', '-').toUpperCase()}
                                     </p>
                                 </div>
@@ -176,16 +176,16 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                         <div className="p-6">
                                             <div className="flex items-center justify-between mb-4">
                                                 <div>
-                                                    <h3 className="text-2xl font-bold text-white">
+                                                    <h3 className="text-2xl font-bold text-slate-900">
                                                         {pickups[0].pickup_date_formatted}
                                                     </h3>
-                                                    <p className="text-sm font-semibold text-white/70 mt-1">
+                                                    <p className="mt-1 text-sm font-semibold text-slate-500">
                                                         {pickups.length} pickup{pickups.length !== 1 ? 's' : ''} recorded
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     {pickups.every(p => p.completed_at) && (
-                                                        <span className="flex items-center gap-1 px-3 py-1 bg-green-500/30 text-green-100 border border-green-400/50 rounded-full text-sm font-semibold">
+                                                        <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
                                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                             </svg>
@@ -197,18 +197,18 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                             
                                             <div className="space-y-4">
                                                 {pickups.map((pickup) => (
-                                                    <div key={pickup.id} className="glass-card rounded-lg p-4 border border-white/20">
+                                                    <div key={pickup.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                                                         <div className="flex items-start justify-between mb-3">
                                                             <div className="flex items-center gap-3">
-                                                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                                <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${
                                                                     pickup.period === 'am'
-                                                                        ? 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50'
-                                                                        : 'bg-blue-500/30 text-blue-100 border border-blue-400/50'
+                                                                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                                                        : 'border-sky-200 bg-sky-50 text-sky-700'
                                                                 }`}>
                                                                     {pickup.period?.toUpperCase() || 'AM'}
                                                                 </span>
                                                                 {pickup.completed_at && (
-                                                                    <span className="flex items-center gap-1 text-green-300 text-sm font-semibold">
+                                                                    <span className="flex items-center gap-1 text-sm font-semibold text-emerald-600">
                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                                         </svg>
@@ -218,8 +218,8 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                             </div>
                                                             {pickup.completed_at && (
                                                                 <div className="text-right">
-                                                                    <span className="text-white/70 font-semibold text-xs">Completed At:</span>
-                                                                    <p className="text-white font-bold text-sm">
+                                                                    <span className="text-xs font-semibold text-slate-500">Completed At:</span>
+                                                                    <p className="text-sm font-bold text-slate-900">
                                                                         {pickup.completed_at_formatted}
                                                                     </p>
                                                                 </div>
@@ -229,19 +229,19 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                                             {/* Pickup Location */}
                                                             <div>
-                                                                <span className="text-white/70 font-semibold text-sm">Pickup Location:</span>
+                                                                <span className="text-sm font-semibold text-slate-500">Pickup Location:</span>
                                                                 {pickup.pickup_point ? (
                                                                     <>
-                                                                        <p className="text-white font-bold mt-1">{pickup.pickup_point.name}</p>
-                                                                        <p className="text-white/80 text-sm mt-1">{pickup.pickup_point.address}</p>
+                                                                        <p className="mt-1 font-bold text-slate-900">{pickup.pickup_point.name}</p>
+                                                                        <p className="mt-1 text-sm text-slate-600">{pickup.pickup_point.address}</p>
                                                                         {pickup.pickup_point.pickup_time && (
-                                                                            <p className="text-white/70 text-xs mt-2">
+                                                                            <p className="mt-2 text-xs text-slate-500">
                                                                                 Scheduled: {formatTime(pickup.pickup_point.pickup_time)}
                                                                             </p>
                                                                         )}
                                                                     </>
                                                                 ) : (
-                                                                    <p className="text-white/70 text-sm mt-1">Custom address</p>
+                                                                    <p className="mt-1 text-sm text-slate-500">Custom address</p>
                                                                 )}
                                                             </div>
                                                             
@@ -250,13 +250,13 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                                 {pickup.driver && (
                                                                     <div className="flex items-center gap-3">
                                                                         {pickup.driver.profile_picture_url ? (
-                                                                            <img src={pickup.driver.profile_picture_url} alt={pickup.driver.name} className="w-10 h-10 rounded-lg object-cover border border-yellow-400/50" />
+                                                                            <img src={pickup.driver.profile_picture_url} alt={pickup.driver.name} className="h-10 w-10 rounded-lg border border-slate-200 object-cover" />
                                                                         ) : null}
                                                                         <div>
-                                                                            <span className="text-white/70 font-semibold text-sm">Driver:</span>
-                                                                            <p className="text-white font-bold mt-1">{pickup.driver.name}</p>
+                                                                            <span className="text-sm font-semibold text-slate-500">Driver:</span>
+                                                                            <p className="mt-1 font-bold text-slate-900">{pickup.driver.name}</p>
                                                                             {pickup.driver.email && (
-                                                                                <p className="text-white/70 text-xs mt-1">{pickup.driver.email}</p>
+                                                                                <p className="mt-1 text-xs text-slate-500">{pickup.driver.email}</p>
                                                                             )}
                                                                         </div>
                                                                     </div>
@@ -266,9 +266,9 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                         
                                                         {/* Notes */}
                                                         {pickup.notes && (
-                                                            <div className="mt-4 pt-4 border-t border-yellow-400/30">
-                                                                <span className="text-white/70 font-semibold text-sm">Notes:</span>
-                                                                <p className="text-white/90 text-sm mt-1 whitespace-pre-wrap">{pickup.notes}</p>
+                                                            <div className="mt-4 border-t border-slate-200 pt-4">
+                                                                <span className="text-sm font-semibold text-slate-500">Notes:</span>
+                                                                <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{pickup.notes}</p>
                                                             </div>
                                                         )}
                                                     </div>
@@ -284,8 +284,8 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                 <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
-                                <h3 className="text-xl font-bold text-white mb-2">No Pickup History</h3>
-                                <p className="text-base font-semibold text-white/90">
+                                <h3 className="mb-2 text-xl font-bold text-slate-900">No Pickup History</h3>
+                                <p className="text-base font-semibold text-slate-600">
                                     No pickups have been recorded for this booking yet.
                                 </p>
                             </div>

@@ -186,7 +186,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                         <div key={s} className="flex flex-col items-center">
                                             <div
                                                 className={`w-10 h-10 rounded-full flex items-center justify-center font-black transition-all duration-500 shadow-lg ${step >= s
-                                                    ? 'bg-blue-600 text-white scale-110 shadow-blue-500/50'
+                                                    ? 'bg-brand-primary text-white scale-110 shadow-brand-primary/30'
                                                     : 'bg-slate-100 text-slate-400 border-2 border-slate-300'
                                                     }`}
                                             >
@@ -200,12 +200,12 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                     ))}
                                 </div>
                                 <div className="flex justify-between mt-3 px-1 text-[10px] font-black uppercase tracking-tighter text-slate-400">
-                                    <span className={step >= 0 ? 'text-blue-400' : ''}>School</span>
-                                    <span className={step >= 1 ? 'text-blue-400' : ''}>Student</span>
-                                    <span className={step >= 2 ? 'text-blue-400' : ''}>Route</span>
-                                    <span className={step >= 3 ? 'text-blue-400' : ''}>Pickup</span>
-                                    <span className={step >= 4 ? 'text-blue-400' : ''}>Plan</span>
-                                    <span className={step >= 5 ? 'text-blue-400' : ''}>Review</span>
+                                    <span className={step >= 0 ? 'text-slate-700' : ''}>School</span>
+                                    <span className={step >= 1 ? 'text-slate-700' : ''}>Student</span>
+                                    <span className={step >= 2 ? 'text-slate-700' : ''}>Route</span>
+                                    <span className={step >= 3 ? 'text-slate-700' : ''}>Pickup</span>
+                                    <span className={step >= 4 ? 'text-slate-700' : ''}>Plan</span>
+                                    <span className={step >= 5 ? 'text-slate-700' : ''}>Review</span>
                                 </div>
                             </div >
 
@@ -213,14 +213,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {/* Step 0: Select School */}
                                 {step === 0 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select School</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Select School</h3>
                                         <div className="space-y-2">
                                             {schools.map((school) => (
                                                 <label
                                                     key={school.id}
                                                     className={`block p-4 border rounded-lg cursor-pointer transition ${data.school_id == school.id
-                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        ? 'border-brand-primary bg-brand-primary/5'
+                                                        : 'border-slate-200 bg-white hover:bg-slate-50'
                                                         }`}
                                                 >
                                                     <input
@@ -232,9 +232,9 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         className="mr-3"
                                                     />
                                                     <div>
-                                                        <span className="font-bold text-white">{school.name}</span>
+                                                        <span className="font-bold text-slate-900">{school.name}</span>
                                                         {school.address && (
-                                                            <p className="text-sm text-white/90 mt-1 font-semibold">{school.address}</p>
+                                                            <p className="mt-1 text-sm font-medium text-slate-500">{school.address}</p>
                                                         )}
                                                     </div>
                                                 </label>
@@ -246,14 +246,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {/* Step 1: Select Student */}
                                 {step === 1 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Student</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Select Student</h3>
                                         <div className="space-y-2">
                                             {students.map((student) => (
                                                 <label
                                                     key={student.id}
                                                     className={`block p-4 border rounded-lg cursor-pointer transition ${data.student_id == student.id
-                                                        ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                        : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                        ? 'border-brand-primary bg-brand-primary/5'
+                                                        : 'border-slate-200 bg-white hover:bg-slate-50'
                                                         }`}
                                                 >
                                                     <input
@@ -264,9 +264,9 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         onChange={(e) => setData('student_id', e.target.value)}
                                                         className="mr-3"
                                                     />
-                                                    <span className="font-bold text-white">{student.name}</span>
+                                                    <span className="font-bold text-slate-900">{student.name}</span>
                                                     {student.school && (
-                                                        <span className="text-white/90 ml-2 font-semibold">- {student.school.name}</span>
+                                                        <span className="ml-2 font-medium text-slate-500">- {student.school.name}</span>
                                                     )}
                                                 </label>
                                             ))}
@@ -277,14 +277,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {/* Step 2: Select Route */}
                                 {step === 2 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Select Route</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Select Route</h3>
                                         {filteredRoutes.length === 0 ? (
                                             <div className="text-center py-8">
-                                                <p className="text-white text-lg font-semibold mb-4">No routes available for the selected school.</p>
+                                                <p className="mb-4 text-lg font-semibold text-slate-700">No routes available for the selected school.</p>
                                                 <button
                                                     type="button"
                                                     onClick={() => setStep(0)}
-                                                    className="text-blue-300 hover:text-blue-100 font-bold underline"
+                                                    className="font-semibold text-sky-700 underline hover:text-sky-800"
                                                 >
                                                     Select a different school
                                                 </button>
@@ -295,8 +295,8 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     <label
                                                         key={route.id}
                                                         className={`block p-4 border rounded-lg cursor-pointer transition ${data.route_id == route.id
-                                                            ? 'border-blue-400 bg-blue-500/30 backdrop-blur-sm'
-                                                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                                                            ? 'border-brand-primary bg-brand-primary/5'
+                                                            : 'border-slate-200 bg-white hover:bg-slate-50'
                                                             }`}
                                                     >
                                                         <input
@@ -309,15 +309,15 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         />
                                                         <div className="flex justify-between items-start">
                                                             <div>
-                                                                <span className="font-bold text-white">{route.name}</span>
-                                                                <p className="text-sm text-white/90 mt-1 font-semibold">
+                                                                <span className="font-bold text-slate-900">{route.name}</span>
+                                                                <p className="mt-1 text-sm font-medium text-slate-500">
                                                                     Vehicle: {route.vehicle?.make} {route.vehicle?.model} ({route.vehicle?.license_plate})
                                                                 </p>
                                                             </div>
                                                             <div className="text-right">
                                                                 <span className={`text-sm px-2 py-1 rounded border font-semibold ${route.available_seats > 0
-                                                                    ? 'bg-green-500/30 text-green-100 border-green-400/50'
-                                                                    : 'bg-red-500/30 text-red-100 border-red-400/50'
+                                                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                                                                    : 'border-rose-200 bg-rose-50 text-rose-700'
                                                                     }`}>
                                                                     {route.available_seats} seats available
                                                                 </span>
@@ -333,10 +333,10 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {/* Step 3: Enter Pickup Address */}
                                 {step === 3 && (
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-white mb-4">Pickup and Dropoff Location</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Pickup and Dropoff Location</h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Pickup Address <span className="text-red-300">*</span>
                                                 </label>
                                                 <textarea
@@ -344,13 +344,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                     onChange={(e) => setData('pickup_address', e.target.value)}
                                                     placeholder="Enter the full address where the student will be picked up"
                                                     rows={3}
-                                                    className="block w-full glass-input text-white"
+                                                    className="form-control block w-full"
                                                     required
                                                 />
                                                 {errors.pickup_address && (
                                                     <p className="text-red-300 text-sm mt-1 font-semibold">{errors.pickup_address}</p>
                                                 )}
-                                                <p className="text-sm text-white/80 mt-2 font-semibold">
+                                                <p className="mt-2 text-sm font-medium text-slate-500">
                                                     This address will be used for daily pickup. Make sure it's accurate and complete.
                                                 </p>
                                             </div>
@@ -362,13 +362,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {step === 4 && (
                                     <div className="space-y-8 animate-fade-in">
                                         <div className="flex items-center space-x-3 mb-6">
-                                            <div className="h-8 w-2 bg-blue-500 rounded-full"></div>
-                                            <h3 className="text-2xl font-black text-white uppercase tracking-tight">Select Subscription Plan</h3>
+                                            <div className="h-8 w-2 rounded-full bg-brand-primary"></div>
+                                            <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900">Select Subscription Plan</h3>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div className="space-y-4">
-                                                <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                <label className="mb-3 ml-1 block text-sm font-black uppercase tracking-[0.2em] text-slate-500">
                                                     Duration
                                                 </label>
                                                 <div className="space-y-3">
@@ -376,8 +376,8 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         <label
                                                             key={plan}
                                                             className={`block p-5 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.plan_type === plan
-                                                                ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
-                                                                : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                                ? 'border-brand-primary bg-brand-primary/5 shadow-sm'
+                                                                : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                                                                 }`}
                                                         >
                                                             <div className="flex justify-between items-center">
@@ -388,31 +388,31 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                         value={plan}
                                                                         checked={data.plan_type === plan}
                                                                         onChange={(e) => setData('plan_type', e.target.value)}
-                                                                        className="w-5 h-5 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                                        className="h-5 w-5 text-brand-primary focus:ring-brand-primary"
                                                                     />
-                                                                    <span className="ml-4 font-black text-white uppercase tracking-wide">
+                                                                    <span className="ml-4 font-black uppercase tracking-wide text-slate-900">
                                                                         {plan === 'academic_term' ? 'Academic Term' : plan.replace('_', ' ')}
                                                                     </span>
                                                                 </div>
                                                                 <div className="text-right">
                                                                     {planPrices[plan] ? (
-                                                                        <span className="text-xl font-black text-green-400 drop-shadow-sm">
+                                                                        <span className="text-xl font-black text-emerald-600">
                                                                             {planPrices[plan].formatted}
                                                                         </span>
                                                                     ) : (
-                                                                        <div className="h-6 w-20 bg-white/10 animate-pulse rounded"></div>
+                                                                        <div className="h-6 w-20 animate-pulse rounded bg-slate-200"></div>
                                                                     )}
                                                                 </div>
                                                             </div>
                                                         </label>
                                                     ))}
-                                                    {loading && <p className="text-blue-400 text-xs font-black animate-pulse uppercase tracking-[0.2em] ml-1">Refreshing current rates...</p>}
+                                                    {loading && <p className="ml-1 animate-pulse text-xs font-black uppercase tracking-[0.2em] text-slate-500">Refreshing current rates...</p>}
                                                 </div>
                                             </div>
 
                                             <div className="space-y-6">
                                                 <div>
-                                                    <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                    <label className="mb-3 ml-1 block text-sm font-black uppercase tracking-[0.2em] text-slate-500">
                                                         Start Date
                                                     </label>
                                                     <input
@@ -420,19 +420,19 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                         value={data.start_date}
                                                         onChange={(e) => setData('start_date', e.target.value)}
                                                         min={new Date().toISOString().split('T')[0]}
-                                                        className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl text-white focus:bg-white/10 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 outline-none backdrop-blur-md shadow-inner"
+                                                        className="form-control w-full"
                                                         required
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">
+                                                    <label className="mb-3 ml-1 block text-sm font-black uppercase tracking-[0.2em] text-slate-500">
                                                         Trip Type
                                                     </label>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <label className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.trip_type === 'one_way'
-                                                            ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
-                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                            ? 'border-brand-primary bg-brand-primary/5 shadow-sm'
+                                                            : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                                                             }`}>
                                                             <input
                                                                 type="radio"
@@ -440,13 +440,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                 value="one_way"
                                                                 checked={data.trip_type === 'one_way'}
                                                                 onChange={(e) => setData('trip_type', e.target.value)}
-                                                                className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                                className="h-4 w-4 text-brand-primary focus:ring-brand-primary"
                                                             />
-                                                            <span className="ml-3 font-black text-white uppercase tracking-widest text-sm">One Way</span>
+                                                            <span className="ml-3 text-sm font-black uppercase tracking-widest text-slate-900">One Way</span>
                                                         </label>
                                                         <label className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${data.trip_type === 'two_way'
-                                                            ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
-                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                            ? 'border-brand-primary bg-brand-primary/5 shadow-sm'
+                                                            : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                                                             }`}>
                                                             <input
                                                                 type="radio"
@@ -454,9 +454,9 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                 value="two_way"
                                                                 checked={data.trip_type === 'two_way'}
                                                                 onChange={(e) => setData('trip_type', e.target.value)}
-                                                                className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 focus:ring-blue-500"
+                                                                className="h-4 w-4 text-brand-primary focus:ring-brand-primary"
                                                             />
-                                                            <span className="ml-3 font-black text-white uppercase tracking-widest text-sm">Two Way</span>
+                                                            <span className="ml-3 text-sm font-black uppercase tracking-widest text-slate-900">Two Way</span>
                                                         </label>
                                                     </div>
                                                     {errors.trip_type && (
@@ -465,12 +465,12 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                 </div>
                                                 {data.trip_type === 'one_way' && (
                                                     <div>
-                                                        <label className="block text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-1">Service</label>
-                                                        <p className="text-xs text-white/70 mb-2">One way: choose pickup only or dropoff only</p>
+                                                        <label className="mb-3 ml-1 block text-sm font-black uppercase tracking-[0.2em] text-slate-500">Service</label>
+                                                        <p className="mb-2 text-xs text-slate-500">One way: choose pickup only or dropoff only</p>
                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                             {['pickup_only', 'dropoff_only'].map((value) => (
                                                                 <label key={value} className={`flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${
-                                                                    data.trip_direction === value ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
+                                                                    data.trip_direction === value ? 'border-brand-primary bg-brand-primary/5 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                                                                 }`}>
                                                                     <input
                                                                         type="radio"
@@ -480,7 +480,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                         onChange={(e) => setData('trip_direction', e.target.value)}
                                                                         className="mr-2"
                                                                     />
-                                                                    <span className="font-black text-white uppercase text-sm">
+                                                                    <span className="text-sm font-black uppercase text-slate-900">
                                                                         {value === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
                                                                     </span>
                                                                 </label>
@@ -500,60 +500,60 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                 {step === 5 && (
                                     <div className="space-y-6 animate-fade-in">
                                         <div className="flex items-center space-x-3 mb-6">
-                                            <div className="h-8 w-2 bg-green-500 rounded-full"></div>
-                                            <h3 className="text-2xl font-black text-white uppercase tracking-tight">Review Final Summary</h3>
+                                            <div className="h-8 w-2 rounded-full bg-emerald-500"></div>
+                                            <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900">Review Final Summary</h3>
                                         </div>
 
-                                        <div className="bg-white/5 backdrop-blur-xl border-2 border-white/10 p-8 rounded-3xl space-y-6 shadow-2xl">
+                                        <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                                 <div className="space-y-4">
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Student</p>
-                                                        <p className="text-xl font-black text-white">{students.find(s => s.id == data.student_id)?.name}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Student</p>
+                                                        <p className="text-xl font-black text-slate-900">{students.find(s => s.id == data.student_id)?.name}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Assigned Route</p>
-                                                        <p className="text-xl font-black text-white">{selectedRoute?.name}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Assigned Route</p>
+                                                        <p className="text-xl font-black text-slate-900">{selectedRoute?.name}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Billing Plan</p>
-                                                        <p className="text-xl font-black text-white uppercase">{data.plan_type.replace('_', ' ')}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Billing Plan</p>
+                                                        <p className="text-xl font-black uppercase text-slate-900">{data.plan_type.replace('_', ' ')}</p>
                                                     </div>
                                                 </div>
 
                                                 <div className="space-y-4">
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Start Date</p>
-                                                        <p className="text-xl font-black text-white">{new Date(data.start_date).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Start Date</p>
+                                                        <p className="text-xl font-black text-slate-900">{new Date(data.start_date).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Trip Type</p>
-                                                        <p className="text-xl font-black text-white uppercase">{data.trip_type.replace('_', ' ')}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Trip Type</p>
+                                                        <p className="text-xl font-black uppercase text-slate-900">{data.trip_type.replace('_', ' ')}</p>
                                                     </div>
                                                     {data.trip_type === 'one_way' && (
                                                         <div>
-                                                            <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Service</p>
-                                                            <p className="text-xl font-black text-white uppercase">
+                                                            <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Service</p>
+                                                            <p className="text-xl font-black uppercase text-slate-900">
                                                                 {data.trip_direction === 'pickup_only' ? 'Pickup only' : 'Dropoff only'}
                                                             </p>
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Pickup Information</p>
-                                                        <p className="text-sm font-bold text-white leading-relaxed">{data.pickup_address || 'Daily Home Pickup'}</p>
+                                                        <p className="mb-1 text-xs font-black uppercase tracking-widest text-slate-500">Pickup Information</p>
+                                                        <p className="text-sm font-bold leading-relaxed text-slate-700">{data.pickup_address || 'Daily Home Pickup'}</p>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {price && (
-                                                <div className="border-t-2 border-white/10 pt-8 mt-4">
-                                                    <div className="flex justify-between items-center bg-blue-600/20 p-6 rounded-2xl border-2 border-blue-500/30">
+                                                <div className="mt-4 border-t border-slate-200 pt-8">
+                                                    <div className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
                                                         <div>
-                                                            <p className="text-sm font-black text-blue-400 uppercase tracking-widest">Total Subscription Amount</p>
-                                                            <p className="text-white/60 text-xs font-bold mt-1 uppercase">Inclusive of all services & taxes</p>
+                                                            <p className="text-sm font-black uppercase tracking-widest text-slate-700">Total Subscription Amount</p>
+                                                            <p className="mt-1 text-xs font-bold uppercase text-slate-500">Inclusive of all services & taxes</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <span className="text-4xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.4)]">
+                                                            <span className="text-4xl font-black text-emerald-700">
                                                                 {price.formatted}
                                                             </span>
                                                         </div>
@@ -572,7 +572,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                         disabled={step === 0}
                                         className={`px-4 py-2 rounded font-bold transition ${step === 0
                                             ? 'bg-gray-500/30 cursor-not-allowed text-gray-400'
-                                            : 'bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30'
+                                            : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
                                         Previous

@@ -62,7 +62,7 @@ export default function CreateStudent({ schools = [] }) {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="name" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="name" className="mb-2 block text-base font-semibold text-slate-700">
                                             Student Name *
                                         </label>
                                         <input
@@ -70,7 +70,7 @@ export default function CreateStudent({ schools = [] }) {
                                             id="name"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control mt-1 block w-full"
                                             required
                                         />
                                         {errors.name && (
@@ -79,7 +79,7 @@ export default function CreateStudent({ schools = [] }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="school_id" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="school_id" className="mb-2 block text-base font-semibold text-slate-700">
                                             School *
                                         </label>
                                         <select
@@ -102,7 +102,7 @@ export default function CreateStudent({ schools = [] }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="date_of_birth" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="date_of_birth" className="mb-2 block text-base font-semibold text-slate-700">
                                             Date of Birth
                                         </label>
                                         <input
@@ -110,7 +110,7 @@ export default function CreateStudent({ schools = [] }) {
                                             id="date_of_birth"
                                             value={data.date_of_birth}
                                             onChange={(e) => setData('date_of_birth', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control mt-1 block w-full"
                                         />
                                         {errors.date_of_birth && (
                                             <p className="mt-1 text-sm text-red-300 font-semibold">{errors.date_of_birth}</p>
@@ -118,7 +118,7 @@ export default function CreateStudent({ schools = [] }) {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="emergency_contact_name" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="emergency_contact_name" className="mb-2 block text-base font-semibold text-slate-700">
                                             Emergency Contact Name *
                                         </label>
                                         <input
@@ -126,7 +126,7 @@ export default function CreateStudent({ schools = [] }) {
                                             id="emergency_contact_name"
                                             value={data.emergency_contact_name}
                                             onChange={(e) => setData('emergency_contact_name', e.target.value)}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control mt-1 block w-full"
                                             required
                                         />
                                         {errors.emergency_contact_name && (
@@ -135,7 +135,7 @@ export default function CreateStudent({ schools = [] }) {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label htmlFor="emergency_phone" className="block text-base font-bold text-white mb-2">
+                                        <label htmlFor="emergency_phone" className="mb-2 block text-base font-semibold text-slate-700">
                                             Emergency Phone *
                                         </label>
                                         <input
@@ -143,7 +143,7 @@ export default function CreateStudent({ schools = [] }) {
                                             id="emergency_phone"
                                             value={data.emergency_phone}
                                             onChange={handlePhoneChange}
-                                            className="mt-1 block w-full glass-input text-white placeholder-gray-300"
+                                            className="form-control mt-1 block w-full"
                                             placeholder="(123) 456-7890"
                                             maxLength="14"
                                             required

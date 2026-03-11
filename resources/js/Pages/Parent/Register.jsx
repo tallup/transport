@@ -106,16 +106,16 @@ export default function Register() {
         <GuestLayout>
             <Head title="Parent Registration" />
 
-            <div className="w-full max-w-6xl mx-auto">
+            <div className="parent-form-shell mx-auto w-full max-w-6xl">
                 {/* Header */}
                 <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 mb-3 shadow-lg border-2 border-yellow-400/50">
-                        <UserIconSolid className="w-8 h-8 !text-brand-primary" />
+                    <div className="mb-3 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-400 shadow-lg">
+                        <UserIconSolid className="h-8 w-8 text-slate-900" />
                     </div>
-                    <h1 className="text-3xl font-extrabold text-brand-primary mb-2">
+                    <h1 className="mb-2 text-3xl font-extrabold text-slate-900">
                         Create Your Account
                     </h1>
-                    <p className="text-sm font-semibold text-brand-primary/80">
+                    <p className="text-sm font-medium text-slate-500">
                         Start managing your child's transportation needs today
                     </p>
                 </div>
@@ -123,7 +123,7 @@ export default function Register() {
                 <div className="mb-6">
                     <a
                         href={route('auth.google.redirect')}
-                        className="w-full py-3.5 px-6 bg-white/10 border-2 border-yellow-400/30 text-brand-primary font-semibold rounded-xl hover:bg-white/20 hover:border-yellow-400/50 transition-all duration-200 flex items-center justify-center gap-2"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 font-semibold text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:text-slate-900"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -133,7 +133,7 @@ export default function Register() {
                         </svg>
                         Continue with Google
                     </a>
-                    <p className="text-center text-brand-primary/60 text-sm mt-3">or create account with email</p>
+                    <p className="mt-3 text-center text-sm text-slate-500">or create account with email</p>
                 </div>
 
                 <form onSubmit={submit} className="space-y-6" noValidate>
@@ -145,7 +145,7 @@ export default function Register() {
                                     <div className={`w-32 h-32 rounded-full overflow-hidden border-4 transition-all duration-300 ${
                                         profilePicturePreview 
                                             ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' 
-                                            : 'border-brand-primary/30 bg-gradient-to-br from-white/10 to-white/5 hover:border-yellow-400/50'
+                                            : 'border-slate-200 bg-slate-50 hover:border-slate-300'
                                     }`}>
                                         {profilePicturePreview ? (
                                             <img 
@@ -155,7 +155,7 @@ export default function Register() {
                                             />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center">
-                                                <PhotoIcon className="w-14 h-14 text-brand-primary/60 group-hover:text-yellow-400 transition-colors" />
+                                                <PhotoIcon className="h-14 w-14 text-slate-400 transition-colors group-hover:text-amber-500" />
                                             </div>
                                         )}
                                     </div>
@@ -169,8 +169,8 @@ export default function Register() {
                                             <XMarkIcon className="w-4 h-4" />
                                         </button>
                                     ) : (
-                                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white/30 cursor-pointer hover:scale-110 transition-transform">
-                                            <CameraIcon className="w-4 h-4 !text-brand-primary" />
+                                        <div className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-amber-400 shadow-lg transition-transform hover:scale-110">
+                                            <CameraIcon className="h-4 w-4 text-slate-900" />
                                         </div>
                                     )}
                                     
@@ -190,10 +190,10 @@ export default function Register() {
                                 </div>
                                 
                                 <div className="text-center">
-                                    <p className="text-sm font-semibold text-brand-primary mb-1">
+                                    <p className="mb-1 text-sm font-semibold text-slate-900">
                                         {profilePicturePreview ? 'Profile Picture' : 'Add Profile Picture'}
                                     </p>
-                                    <p className="text-xs text-brand-primary/60">
+                                    <p className="text-xs text-slate-500">
                                         {profilePicturePreview ? 'Click to change' : 'Optional • JPG, PNG up to 10MB'}
                                     </p>
                                 </div>
@@ -204,7 +204,7 @@ export default function Register() {
                             <div className="space-y-5">
                             {/* Full Name */}
                             <div>
-                                <InputLabel htmlFor="name" value="Full Name" className="text-brand-primary font-bold mb-2" />
+                                <InputLabel htmlFor="name" value="Full Name" className="mb-2 font-semibold text-slate-700" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <UserIcon className="h-5 w-5 text-yellow-500" />
@@ -213,7 +213,7 @@ export default function Register() {
                                         id="name"
                                         name="name"
                                         value={data.name}
-                                        className={`glass-input pl-12 pr-4 py-3 w-full ${
+                                        className={`form-control w-full pl-12 pr-4 ${
                                             errors.name ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
                                         autoComplete="name"
@@ -228,7 +228,7 @@ export default function Register() {
 
                             {/* Email */}
                             <div>
-                                <InputLabel htmlFor="email" value="Email Address" className="text-brand-primary font-bold mb-2" />
+                                <InputLabel htmlFor="email" value="Email Address" className="mb-2 font-semibold text-slate-700" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <EnvelopeIcon className="h-5 w-5 text-yellow-500" />
@@ -238,7 +238,7 @@ export default function Register() {
                                         type="email"
                                         name="email"
                                         value={data.email}
-                                        className={`glass-input pl-12 pr-4 py-3 w-full ${
+                                        className={`form-control w-full pl-12 pr-4 ${
                                             errors.email ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
                                         autoComplete="username"
@@ -252,7 +252,7 @@ export default function Register() {
 
                             {/* Password */}
                             <div>
-                                <InputLabel htmlFor="password" value="Password" className="text-brand-primary font-bold mb-2" />
+                                <InputLabel htmlFor="password" value="Password" className="mb-2 font-semibold text-slate-700" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <LockClosedIcon className="h-5 w-5 text-yellow-500" />
@@ -262,7 +262,7 @@ export default function Register() {
                                         type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         value={data.password}
-                                        className={`glass-input pl-12 pr-12 py-3 w-full ${
+                                        className={`form-control w-full pl-12 pr-12 ${
                                             errors.password ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
                                         autoComplete="new-password"
@@ -281,7 +281,7 @@ export default function Register() {
                                 {data.password && (
                                     <div className="mt-2">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
                                                 <div
                                                     className={`h-full transition-all duration-300 ${passwordStrength.color}`}
                                                     style={{ width: `${(passwordStrength.strength / 4) * 100}%` }}
@@ -298,7 +298,7 @@ export default function Register() {
 
                             {/* Confirm Password */}
                             <div>
-                                <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="text-brand-primary font-bold mb-2" />
+                                <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="mb-2 font-semibold text-slate-700" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <LockClosedIcon className="h-5 w-5 text-yellow-500" />
@@ -308,7 +308,7 @@ export default function Register() {
                                         type={showPasswordConfirmation ? 'text' : 'password'}
                                         name="password_confirmation"
                                         value={data.password_confirmation}
-                                        className={`glass-input pl-12 pr-12 py-3 w-full ${
+                                        className={`form-control w-full pl-12 pr-12 ${
                                             errors.password_confirmation ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
                                         autoComplete="new-password"
@@ -343,7 +343,7 @@ export default function Register() {
                         {/* Submit Button */}
                         <div className="pt-2">
                             <PrimaryButton
-                                className="w-full bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary hover:bg-brand-primary/30 hover:border-brand-primary/70 font-bold py-3.5 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full rounded-xl bg-brand-primary px-6 py-3.5 font-semibold text-white transition-all duration-300 hover:bg-brand-secondary disabled:cursor-not-allowed disabled:opacity-50"
                                 disabled={processing}
                             >
                                 {processing ? (
@@ -362,11 +362,11 @@ export default function Register() {
 
                         {/* Login Link */}
                         <div className="text-center pt-4">
-                            <p className="text-sm text-brand-primary/80">
+                            <p className="text-sm text-slate-500">
                                 Already have an account?{' '}
                                 <Link
                                     href={route('login')}
-                                    className="font-bold text-brand-primary hover:text-yellow-400 transition-colors underline underline-offset-2"
+                                    className="font-semibold text-sky-700 underline underline-offset-2 transition-colors hover:text-sky-800"
                                 >
                                     Sign in
                                 </Link>
@@ -374,14 +374,14 @@ export default function Register() {
                         </div>
 
                         {/* Terms */}
-                        <div className="pt-4 border-t border-brand-primary/20">
-                            <p className="text-xs text-brand-primary/60 text-center leading-relaxed">
+                        <div className="border-t border-slate-200 pt-4">
+                            <p className="text-center text-xs leading-relaxed text-slate-500">
                                 By registering, you agree to our{' '}
-                                <Link href="/terms" className="text-brand-primary hover:text-yellow-400 hover:underline font-semibold">
+                                <Link href="/terms" className="font-semibold text-sky-700 hover:text-sky-800 hover:underline">
                                     Terms of Service
                                 </Link>
                                 {' '}and{' '}
-                                <Link href="/privacy" className="text-brand-primary hover:text-yellow-400 hover:underline font-semibold">
+                                <Link href="/privacy" className="font-semibold text-sky-700 hover:text-sky-800 hover:underline">
                                     Privacy Policy
                                 </Link>
                             </p>

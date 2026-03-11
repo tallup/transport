@@ -213,24 +213,24 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 0: Child Information */}
                                 {step === 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Child Information</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Child Information</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Child's Full Name <span className="text-red-400">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={data.name}
                                                     onChange={(e) => setData('name', e.target.value)}
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                     required
                                                 />
                                                 {errors.name && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.name}</p>}
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Profile Picture (optional)
                                                 </label>
                                                 <div className="flex items-center gap-4">
@@ -256,33 +256,33 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Date of Birth
                                                 </label>
                                                 <input
                                                     type="date"
                                                     value={data.date_of_birth}
                                                     onChange={(e) => setData('date_of_birth', e.target.value)}
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                 />
                                                 {errors.date_of_birth && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.date_of_birth}</p>}
                                             </div>
 
                                             <div className="md:col-span-2">
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Home Address
                                                 </label>
                                                 <textarea
                                                     value={data.home_address}
                                                     onChange={(e) => setData('home_address', e.target.value)}
                                                     rows="2"
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                 />
                                                 {errors.home_address && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.home_address}</p>}
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     School <span className="text-red-400">*</span>
                                                 </label>
                                                 <select
@@ -302,14 +302,14 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Grade
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={data.grade}
                                                     onChange={(e) => setData('grade', e.target.value)}
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                 />
                                                 {errors.grade && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.grade}</p>}
                                             </div>
@@ -320,34 +320,34 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 1: Parent/Guardian Information */}
                                 {step === 1 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Parent/Guardian Information</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Parent/Guardian Information</h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Primary Parent/Guardian Name
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={auth.user.name}
                                                     disabled
-                                                    className="w-full glass-input text-white/70 bg-white/5"
+                                                    className="form-control w-full bg-slate-50 text-slate-500"
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Email
                                                 </label>
                                                 <input
                                                     type="email"
                                                     value={auth.user.email}
                                                     disabled
-                                                    className="w-full glass-input text-white/70 bg-white/5"
+                                                    className="form-control w-full bg-slate-50 text-slate-500"
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Phone Number(s)
                                                 </label>
                                                 <PhoneNumbersInput
@@ -364,33 +364,33 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 2: Emergency Contacts */}
                                 {step === 2 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Emergency Contacts</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Emergency Contacts</h3>
                                         <div className="space-y-6">
                                             <div>
-                                                <h4 className="text-lg font-bold text-white mb-4">Emergency Contact #1</h4>
+                                                <h4 className="mb-4 text-lg font-bold text-slate-900">Emergency Contact #1</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">
                                                             Name <span className="text-red-400">*</span>
                                                         </label>
                                                         <input
                                                             type="text"
                                                             value={data.emergency_contact_name}
                                                             onChange={(e) => setData('emergency_contact_name', e.target.value)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                             required
                                                         />
                                                         {errors.emergency_contact_name && <p className="mt-1 text-sm text-red-300 font-semibold">{errors.emergency_contact_name}</p>}
                                                     </div>
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">
                                                             Phone <span className="text-red-400">*</span>
                                                         </label>
                                                         <input
                                                             type="tel"
                                                             value={data.emergency_phone}
                                                             onChange={(e) => handlePhoneChange('emergency_phone', e)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                             placeholder="(123) 456-7890"
                                                             maxLength="14"
                                                             required
@@ -401,33 +401,33 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             </div>
 
                                             <div>
-                                                <h4 className="text-lg font-bold text-white mb-4">Emergency Contact #2</h4>
+                                                <h4 className="mb-4 text-lg font-bold text-slate-900">Emergency Contact #2</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">Name</label>
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">Name</label>
                                                         <input
                                                             type="text"
                                                             value={data.emergency_contact_2_name}
                                                             onChange={(e) => setData('emergency_contact_2_name', e.target.value)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">Relationship</label>
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">Relationship</label>
                                                         <input
                                                             type="text"
                                                             value={data.emergency_contact_2_relationship}
                                                             onChange={(e) => setData('emergency_contact_2_relationship', e.target.value)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">Phone</label>
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">Phone</label>
                                                         <input
                                                             type="tel"
                                                             value={data.emergency_contact_2_phone}
                                                             onChange={(e) => handlePhoneChange('emergency_contact_2_phone', e)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                             placeholder="(123) 456-7890"
                                                             maxLength="14"
                                                         />
@@ -436,24 +436,24 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                             </div>
 
                                             <div>
-                                                <h4 className="text-lg font-bold text-white mb-4">Child's Doctor</h4>
+                                                <h4 className="mb-4 text-lg font-bold text-slate-900">Child's Doctor</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">Doctor Name</label>
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">Doctor Name</label>
                                                         <input
                                                             type="text"
                                                             value={data.doctor_name}
                                                             onChange={(e) => setData('doctor_name', e.target.value)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-base font-bold text-white mb-2">Doctor's Phone</label>
+                                                        <label className="mb-2 block text-base font-semibold text-slate-700">Doctor's Phone</label>
                                                         <input
                                                             type="tel"
                                                             value={data.doctor_phone}
                                                             onChange={(e) => handlePhoneChange('doctor_phone', e)}
-                                                            className="w-full glass-input text-white placeholder-gray-300"
+                                                            className="form-control w-full"
                                                             placeholder="(123) 456-7890"
                                                             maxLength="14"
                                                         />
@@ -467,32 +467,32 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 3: Authorized Pickup Persons */}
                                 {step === 3 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Authorized Pick-Up Persons</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Authorized Pick-Up Persons</h3>
                                         <div className="space-y-4">
                                             {(data.authorized_pickup_persons || []).map((person, index) => (
-                                                <div key={index} className="glass-card p-4">
+                                                <div key={index} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                                         <div>
-                                                            <label className="block text-sm font-bold text-white mb-2">Name</label>
+                                                            <label className="mb-2 block text-sm font-semibold text-slate-700">Name</label>
                                                             <input
                                                                 type="text"
                                                                 value={person.name || ''}
                                                                 onChange={(e) => handleAuthorizedPickupChange(index, 'name', e.target.value)}
-                                                                className="w-full glass-input text-white placeholder-gray-300"
+                                                                className="form-control w-full"
                                                                 required
                                                             />
                                                         </div>
                                                         <div>
-                                                            <label className="block text-sm font-bold text-white mb-2">Relationship</label>
+                                                            <label className="mb-2 block text-sm font-semibold text-slate-700">Relationship</label>
                                                             <input
                                                                 type="text"
                                                                 value={person.relationship || ''}
                                                                 onChange={(e) => handleAuthorizedPickupChange(index, 'relationship', e.target.value)}
-                                                                className="w-full glass-input text-white placeholder-gray-300"
+                                                                className="form-control w-full"
                                                             />
                                                         </div>
                                                         <div>
-                                                            <label className="block text-sm font-bold text-white mb-2">Phone</label>
+                                                            <label className="mb-2 block text-sm font-semibold text-slate-700">Phone</label>
                                                             <input
                                                                 type="tel"
                                                                 value={person.phone || ''}
@@ -500,7 +500,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                                                     const formatted = formatPhoneNumber(e.target.value);
                                                                     handleAuthorizedPickupChange(index, 'phone', formatted);
                                                                 }}
-                                                                className="w-full glass-input text-white placeholder-gray-300"
+                                                                className="form-control w-full"
                                                                 placeholder="(123) 456-7890"
                                                                 maxLength="14"
                                                             />
@@ -531,29 +531,29 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 4: Special Instructions & Medical Notes */}
                                 {step === 4 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Special Instructions & Medical Notes</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Special Instructions & Medical Notes</h3>
                                         <div className="space-y-6">
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Special Instructions
                                                 </label>
                                                 <textarea
                                                     value={data.special_instructions}
                                                     onChange={(e) => setData('special_instructions', e.target.value)}
                                                     rows="4"
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                     placeholder="Any special instructions for the driver..."
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-base font-bold text-white mb-2">
+                                                <label className="mb-2 block text-base font-semibold text-slate-700">
                                                     Medical Notes
                                                 </label>
                                                 <textarea
                                                     value={data.medical_notes}
                                                     onChange={(e) => setData('medical_notes', e.target.value)}
                                                     rows="4"
-                                                    className="w-full glass-input text-white placeholder-gray-300"
+                                                    className="form-control w-full"
                                                     placeholder="Any medical conditions or notes..."
                                                 />
                                             </div>
@@ -564,7 +564,7 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 5: Policies & Procedures */}
                                 {step === 5 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Policies & Procedures</h3>
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Policies & Procedures</h3>
                                         <PolicyDisplay
                                             policies={policies}
                                             showCheckbox={true}
@@ -576,32 +576,32 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 6: Authorization to Transport */}
                                 {step === 6 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Authorization to Transport</h3>
-                                        <div className="glass-card p-4">
-                                            <p className="text-white/90 mb-4">
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Authorization to Transport</h3>
+                                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                            <p className="mb-4 text-slate-600">
                                                 I, the undersigned parent/guardian, authorize On-Time Transportation Services to transport my child to and from school, activities, or other approved locations. I understand transportation is pre-arranged only and not an on-demand service.
                                             </p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">
                                                         Parent/Guardian Signature <span className="text-red-400">*</span>
                                                     </label>
                                                     <input
                                                         type="text"
                                                         value={data.authorization_to_transport_signature}
                                                         onChange={(e) => setData('authorization_to_transport_signature', e.target.value)}
-                                                        className="w-full glass-input text-white placeholder-gray-300"
+                                                        className="form-control w-full"
                                                         placeholder="Type your full name"
                                                         required
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">Date</label>
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">Date</label>
                                                     <input
                                                         type="text"
                                                         value={new Date().toLocaleDateString()}
                                                         disabled
-                                                        className="w-full glass-input text-white/70 bg-white/5"
+                                                        className="form-control w-full bg-slate-50 text-slate-500"
                                                     />
                                                 </div>
                                             </div>
@@ -612,32 +612,32 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 7: Payment Agreement */}
                                 {step === 7 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Payment Agreement</h3>
-                                        <div className="glass-card p-4">
-                                            <p className="text-white/90 mb-4">
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Payment Agreement</h3>
+                                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                            <p className="mb-4 text-slate-600">
                                                 I understand and agree to the payment terms and conditions. Payments are due as specified, and late payment fees may apply. I acknowledge that late pick-up fees may apply depending on the schedule.
                                             </p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">
                                                         Parent/Guardian Signature <span className="text-red-400">*</span>
                                                     </label>
                                                     <input
                                                         type="text"
                                                         value={data.payment_agreement_signature}
                                                         onChange={(e) => setData('payment_agreement_signature', e.target.value)}
-                                                        className="w-full glass-input text-white placeholder-gray-300"
+                                                        className="form-control w-full"
                                                         placeholder="Type your full name"
                                                         required
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">Date</label>
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">Date</label>
                                                     <input
                                                         type="text"
                                                         value={new Date().toLocaleDateString()}
                                                         disabled
-                                                        className="w-full glass-input text-white/70 bg-white/5"
+                                                        className="form-control w-full bg-slate-50 text-slate-500"
                                                     />
                                                 </div>
                                             </div>
@@ -648,32 +648,32 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {/* Step 8: Liability Waiver */}
                                 {step === 8 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xl font-bold text-white mb-4">Liability Waiver</h3>
-                                        <div className="glass-card p-4">
-                                            <p className="text-white/90 mb-4">
+                                        <h3 className="mb-4 text-xl font-bold text-slate-900">Liability Waiver</h3>
+                                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                            <p className="mb-4 text-slate-600">
                                                 I understand that On-Time Transportation Services prioritizes safety and follows all state regulations. I agree not to hold the business or driver liable for delays caused by weather, traffic, or events beyond control. I acknowledge transportation involves inherent risks, and I accept responsibility for my child's behavior while being transported.
                                             </p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">
                                                         Parent/Guardian Signature <span className="text-red-400">*</span>
                                                     </label>
                                                     <input
                                                         type="text"
                                                         value={data.liability_waiver_signature}
                                                         onChange={(e) => setData('liability_waiver_signature', e.target.value)}
-                                                        className="w-full glass-input text-white placeholder-gray-300"
+                                                        className="form-control w-full"
                                                         placeholder="Type your full name"
                                                         required
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-base font-bold text-white mb-2">Date</label>
+                                                    <label className="mb-2 block text-base font-semibold text-slate-700">Date</label>
                                                     <input
                                                         type="text"
                                                         value={new Date().toLocaleDateString()}
                                                         disabled
-                                                        className="w-full glass-input text-white/70 bg-white/5"
+                                                        className="form-control w-full bg-slate-50 text-slate-500"
                                                     />
                                                 </div>
                                             </div>
@@ -685,10 +685,10 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
                                 {step === 9 && (
                                     <div className="space-y-8">
                                         <div className="text-center">
-                                            <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-2 drop-shadow-md">
+                                            <h3 className="mb-2 text-2xl font-extrabold text-slate-900 md:text-3xl">
                                                 You're all set
                                             </h3>
-                                            <p className="text-white/90 text-sm md:text-base">
+                                            <p className="text-sm text-slate-500 md:text-base">
                                                 Review the details below, then submit to complete enrollment.
                                             </p>
                                         </div>
