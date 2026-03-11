@@ -68,12 +68,15 @@ class RegisterController extends Controller
 
         $user = User::create($userData);
 
-        // Notify admins of new parent registration (no verification email; user logs in after signup)
+        // Send welcome email to the new user
+        $user->notify(new \App\Notifications\WelcomeNotification());
+
+        // Notify admins of new parent registration
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
 
         return redirect()->route('login')
-            ->with('status', 'Account created successfully. You can now sign in with your email and password.');
+            ->with('status', 'Your account has been created successfully! A confirmation email has been sent to your inbox. You can now log in.');
     }
 }
 

@@ -29,6 +29,7 @@ class GoogleAuthController extends Controller
         $googleUser = Socialite::driver('google')->user();
 
         $user = User::where('google_id', $googleUser->getId())->first();
+        $isNewUser = false;
 
         if (! $user) {
             $user = User::where('email', $googleUser->getEmail())->first();
@@ -39,9 +40,17 @@ class GoogleAuthController extends Controller
 
             if (! $user) {
                 $user = $this->createUserFromGoogle($googleUser);
+                $isNewUser = true;
             }
         }
 
+        // New users: don't auto-login, redirect to login with success message
+        if ($isNewUser) {
+            return redirect()->route('login')
+                ->with('status', 'Your account has been created successfully! A confirmation email has been sent to your inbox. You can now log in.');
+        }
+
+        // Existing users: log in and redirect to dashboard
         Auth::login($user, true);
         request()->session()->regenerate();
 
@@ -64,7 +73,8 @@ class GoogleAuthController extends Controller
 
         $user = User::create($userData);
 
-        event(new \Illuminate\Auth\Events\Registered($user));
+        // Send welcome email to the new user
+        $user->notify(new \App\Notifications\WelcomeNotification());
 
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
