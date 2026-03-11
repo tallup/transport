@@ -220,7 +220,7 @@ export default function DriverLayout({ header, children }) {
                                 <div className="flex items-center gap-0.5 flex-shrink-0">
                                     <Link
                                         href="/profile"
-                                        className="p-1.5 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition ring-2 ring-amber-400 border border-transparent hover:border-slate-200"
+                                        className="p-1.5 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition border border-transparent hover:border-slate-200"
                                         title="Profile"
                                         aria-label="Profile"
                                     >
@@ -232,7 +232,7 @@ export default function DriverLayout({ header, children }) {
                                         href="/logout"
                                         method="post"
                                         as="button"
-                                        className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition ring-2 ring-amber-400 border border-transparent hover:border-rose-200"
+                                        className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition border border-transparent hover:border-rose-200"
                                         title="Log Out"
                                         aria-label="Log Out"
                                     >
