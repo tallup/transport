@@ -38,34 +38,33 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): \Symfony\Component\HttpFoundation\Response
     {
         $request->authenticate();
 
         $request->session()->regenerate();
-        
-        // Force session save to ensure cookie is properly set
         $request->session()->save();
 
-        // Redirect based on user role - ignore intended URL to prevent role mismatch
         $user = $request->user();
         $role = $user->attributes['role'] ?? $user->role ?? null;
-        
-        // Clear any intended URL to prevent redirecting to wrong portal
+
         $request->session()->forget('url.intended');
-        
+
         if (in_array($role, ['super_admin', 'transport_admin', 'admin'])) {
-            return redirect()->route('admin.dashboard');
-        }
-        
-        if ($role === 'driver') {
-            return redirect()->route('driver.dashboard');
+            $target = route('admin.dashboard');
+        } elseif ($role === 'driver') {
+            $target = route('driver.dashboard');
+        } else {
+            $target = route('parent.dashboard');
         }
 
-        // Use same server redirect as admin/driver so session cookie is set reliably.
-        // The previous 409 + X-Inertia-Location could cause "session expired" when the
-        // cookie wasn't applied before the client-side redirect in some environments.
-        return redirect()->route('parent.dashboard');
+        // Force a full-page redirect (not Inertia XHR) so the browser fully
+        // applies the new session cookie before loading the destination page.
+        if ($request->header('X-Inertia')) {
+            return \Inertia\Inertia::location($target);
+        }
+
+        return redirect($target);
     }
 
     /**
