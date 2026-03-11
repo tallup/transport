@@ -278,6 +278,7 @@
     background: var(--ui-page-bg);
     min-height: 100vh;
     overflow-x: hidden;
+    isolation: isolate;
 }
 
 .logo-background::before {
@@ -291,9 +292,36 @@
     z-index: 0;
 }
 
+.logo-background::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('/logo.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: min(56vw, 760px) auto;
+    opacity: 0.14;
+    filter: grayscale(1);
+    pointer-events: none;
+    z-index: 0;
+}
+
 .logo-background > * {
     position: relative;
     z-index: 1;
+}
+
+@media (min-width: 1024px) {
+    .logo-background-content-centered::after {
+        background-position: calc(50% + 9rem) center;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-background::after {
+        background-size: min(72vw, 420px) auto;
+        opacity: 0.11;
+    }
 }
 
 .animate-slide-up {

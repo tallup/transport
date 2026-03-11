@@ -101,7 +101,7 @@ export default function AdminLayout({ header, children }) {
     ];
 
     return (
-        <div className="min-h-screen logo-background">
+        <div className="min-h-screen logo-background logo-background-content-centered">
             <nav className="premium-nav lg:hidden">
                 <div className="container">
                     <div className="flex h-16 items-center justify-between gap-6">

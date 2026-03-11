@@ -249,14 +249,10 @@ class BookingController extends Controller
             );
         }
         
-        // If only one booking was created, keep existing checkout behaviour
+        // Redirect to checkout page for the first booking
         if (count($createdBookings) === 1) {
             $booking = $createdBookings[0];
-            return Inertia::render('Parent/Bookings/Checkout', [
-                'booking' => $booking->load(['student', 'route', 'pickupPoint']),
-                'price' => ['price' => $pricePerBooking, 'formatted' => $this->pricingService->formatPrice($pricePerBooking)],
-                'stripeKey' => config('cashier.key'),
-            ]);
+            return redirect()->route('parent.bookings.checkout', $booking);
         }
         
         // If multiple bookings were created, redirect to bookings list and let parent pay each separately

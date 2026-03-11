@@ -43,8 +43,36 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('admin:daily-summary')->dailyAt('18:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Catch CSRF / token mismatch: silently redirect to login
         $exceptions->renderable(function (TokenMismatchException $e, $request) {
-            $loginUrl = route('login');
+            try {
+                $loginUrl = route('login');
+            } catch (\Throwable $th) {
+                $loginUrl = '/login';
+            }
+
+            if ($request->header('X-Inertia')) {
+                return Inertia::location($loginUrl);
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Page expired. Please try again.'], 419);
+            }
+
+            return redirect($loginUrl);
+        });
+
+        // Catch any 419 HTTP exception that slips past the above
+        $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
+            if ($e->getStatusCode() !== 419) {
+                return null;
+            }
+
+            try {
+                $loginUrl = route('login');
+            } catch (\Throwable $th) {
+                $loginUrl = '/login';
+            }
 
             if ($request->header('X-Inertia')) {
                 return Inertia::location($loginUrl);
