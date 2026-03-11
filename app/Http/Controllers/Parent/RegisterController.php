@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -51,6 +49,7 @@ class RegisterController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'registration_approved_at' => now(),
+            'email_verified_at' => now(),
         ];
 
         // Handle profile picture upload
@@ -69,15 +68,12 @@ class RegisterController extends Controller
 
         $user = User::create($userData);
 
-        event(new Registered($user));
-
-        // Notify admins of new parent registration
+        // Notify admins of new parent registration (no verification email; user logs in after signup)
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\NewParentRegistered($user));
 
-        Auth::login($user);
-
-        return redirect()->route('parent.dashboard');
+        return redirect()->route('login')
+            ->with('status', 'Account created successfully. You can now sign in with your email and password.');
     }
 }
 
