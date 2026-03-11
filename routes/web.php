@@ -57,10 +57,10 @@ Route::get('/', function (Request $request) {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-// Parent Portal Routes (require email verification)
-Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->group(function () {
+// Parent Portal Routes
+Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Students
@@ -155,7 +155,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -185,7 +185,7 @@ Route::get('/faq', function (Request $request) {
 })->name('faq');
 
 // Keep-alive endpoint to prevent session expiration during active use
-Route::middleware(['auth', 'verified'])->get('/api/keep-alive', function (Request $request) {
+Route::middleware(['auth'])->get('/api/keep-alive', function (Request $request) {
     // This endpoint simply touches the session to keep it alive
     // Return minimal response
     return response()->json(['status' => 'ok'], 200);

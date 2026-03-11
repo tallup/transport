@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,10 +9,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
 
-class User extends Authenticatable implements MustVerifyEmailContract
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, MustVerifyEmail, Notifiable, Billable;
+    use HasFactory, Notifiable, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -79,6 +77,25 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $casts;
     }
     
+    /**
+     * Email verification is disabled; all users are treated as verified.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return true;
+    }
+
+    /**
+     * No-op for verification link handling; verification is disabled.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'email_verified_at')) {
+            $this->forceFill(['email_verified_at' => $this->freshTimestamp()])->save();
+        }
+        return true;
+    }
+
     /**
      * Get the user's role, defaulting to 'parent' if column doesn't exist.
      */
