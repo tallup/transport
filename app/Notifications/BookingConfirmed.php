@@ -16,7 +16,11 @@ class BookingConfirmed extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        public $booking
+        public $booking,
+        public ?float $amountPaid = null,
+        public ?string $paymentMethod = null,
+        public ?\DateTimeInterface $paymentDate = null,
+        public ?string $paymentReference = null,
     ) {}
 
     /**
@@ -35,19 +39,30 @@ class BookingConfirmed extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $invoiceService = app(InvoiceService::class);
-        
-        // Generate PDFs
+
+        $paymentDetails = [
+            'amount_paid' => $this->amountPaid,
+            'method' => $this->paymentMethod,
+            'date' => $this->paymentDate,
+            'reference' => $this->paymentReference,
+        ];
+
+        // Generate PDFs (receipt can show payment details when provided)
         $invoicePath = $invoiceService->generateInvoice($this->booking);
-        $receiptPath = $invoiceService->generateReceipt($this->booking);
-        
+        $receiptPath = $invoiceService->generateReceipt($this->booking, $paymentDetails);
+
         $invoiceFullPath = storage_path('app/public/' . $invoicePath);
         $receiptFullPath = storage_path('app/public/' . $receiptPath);
-        
+
         $message = (new MailMessage)
             ->subject('Payment Received - Booking Pending Approval')
             ->view('emails.booking-confirmed', [
                 'booking' => $this->booking,
                 'user' => $notifiable,
+                'amountPaid' => $this->amountPaid,
+                'paymentMethod' => $this->paymentMethod,
+                'paymentDate' => $this->paymentDate,
+                'paymentReference' => $this->paymentReference,
             ]);
 
         // Attach PDFs if they exist

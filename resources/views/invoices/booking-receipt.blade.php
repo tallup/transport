@@ -87,6 +87,7 @@
     </style>
 </head>
 <body>
+    @php $paymentDetails = $paymentDetails ?? []; @endphp
     <div class="header">
         <h1>PAYMENT RECEIPT</h1>
         <div class="receipt-info">
@@ -94,6 +95,18 @@
             <strong>Receipt #:</strong> RCP-{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}<br>
             <strong>Date:</strong> {{ now()->format('F d, Y') }}<br>
             <strong>Booking ID:</strong> #{{ $booking->id }}
+            @if(!empty($paymentDetails['date']) || !empty($paymentDetails['method']) || !empty($paymentDetails['reference']))
+            <br>
+            @if(!empty($paymentDetails['date']))
+            <strong>Paid on:</strong> {{ \Carbon\Carbon::parse($paymentDetails['date'])->format('F d, Y') }}
+            @endif
+            @if(!empty($paymentDetails['method']))
+            &nbsp;|&nbsp;<strong>Via:</strong> {{ ucfirst($paymentDetails['method']) }}
+            @endif
+            @if(!empty($paymentDetails['reference']))
+            &nbsp;|&nbsp;<strong>Ref:</strong> {{ $paymentDetails['reference'] }}
+            @endif
+            @endif
         </div>
     </div>
 
@@ -122,9 +135,13 @@
                 <td>{{ $booking->route->name }}</td>
             </tr>
             <tr>
-                <td>Pickup Point</td>
-                <td>{{ $booking->pickupPoint->name }}<br>
-                    <small>{{ $booking->pickupPoint->address }}</small>
+                <td>Pickup</td>
+                <td>
+                    @if($booking->pickupPoint)
+                        {{ $booking->pickupPoint->name }}@if($booking->pickupPoint->address)<br><small>{{ $booking->pickupPoint->address }}</small>@endif
+                    @else
+                        {{ $booking->pickup_address ?? 'N/A' }}
+                    @endif
                 </td>
             </tr>
             <tr>
@@ -148,20 +165,58 @@
         <h2>Payment Summary</h2>
         @php
             $pricingService = app(\App\Services\PricingService::class);
-            $price = $pricingService->calculatePriceForBooking($booking);
+            $basePrice = null;
+            $finalPrice = null;
+            $hasDiscount = false;
+            $discountLabel = null;
+            if ($booking->route) {
+                try {
+                    $tripType = $booking->trip_type ?? 'two_way';
+                    $basePrice = $pricingService->getBasePrice($booking->plan_type, $tripType, $booking->route);
+                    $finalPrice = $pricingService->calculatePriceForBooking($booking);
+                    $hasDiscount = $finalPrice < $basePrice;
+                    if ($hasDiscount && $booking->manual_discount_type && $booking->manual_discount_value !== null) {
+                        if ($booking->manual_discount_type === 'percentage') {
+                            $discountLabel = 'Discount (' . (int) $booking->manual_discount_value . '% off)';
+                        } else {
+                            $discountLabel = 'Discount ($' . number_format((float) $booking->manual_discount_value, 2) . ' off)';
+                        }
+                    } elseif ($hasDiscount) {
+                        $discountLabel = 'Promotional discount';
+                    }
+                } catch (\Throwable $e) {
+                    $basePrice = null;
+                    $finalPrice = null;
+                    $hasDiscount = false;
+                }
+            }
+            if ($finalPrice === null) {
+                $finalPrice = $pricingService->calculatePriceForBooking($booking);
+            }
         @endphp
         <table>
             <tr>
                 <th>Item</th>
                 <th style="text-align: right;">Amount</th>
             </tr>
+            @if($basePrice !== null && $hasDiscount)
             <tr>
-                <td>Transport Service - {{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }} Plan</td>
-                <td style="text-align: right;">{{ $pricingService->formatPrice($price) }}</td>
+                <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }} Plan</td>
+                <td style="text-align: right;">{{ $pricingService->formatPrice($basePrice) }}</td>
             </tr>
             <tr>
+                <td>{{ $discountLabel ?? 'Discount' }}</td>
+                <td style="text-align: right;">-{{ $pricingService->formatPrice($basePrice - $finalPrice) }}</td>
+            </tr>
+            @else
+            <tr>
+                <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }} Plan</td>
+                <td style="text-align: right;">{{ $pricingService->formatPrice($finalPrice) }}</td>
+            </tr>
+            @endif
+            <tr>
                 <td><strong>Total Paid</strong></td>
-                <td style="text-align: right;"><strong class="total">{{ $pricingService->formatPrice($price) }}</strong></td>
+                <td style="text-align: right;"><strong class="total">{{ $pricingService->formatPrice($finalPrice) }}</strong></td>
             </tr>
         </table>
     </div>

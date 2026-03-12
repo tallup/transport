@@ -40,14 +40,16 @@ class InvoiceService
      * Generate PDF receipt for a booking.
      *
      * @param Booking $booking
+     * @param array{amount_paid?: float|null, method?: string|null, date?: \DateTimeInterface|null, reference?: string|null} $paymentDetails
      * @return string Path to the generated PDF file
      */
-    public function generateReceipt(Booking $booking): string
+    public function generateReceipt(Booking $booking, array $paymentDetails = []): string
     {
         $booking->load(['student', 'route', 'pickupPoint', 'student.school']);
-        
+
         $pdf = Pdf::loadView('invoices.booking-receipt', [
             'booking' => $booking,
+            'paymentDetails' => $paymentDetails,
         ]);
 
         $filename = 'invoices/receipt-' . $booking->id . '-' . now()->format('Y-m-d') . '.pdf';

@@ -496,7 +496,13 @@ class BookingController extends Controller
                     'payment_id' => $validated['payment_intent_id'],
                     'payment_method' => 'stripe',
                 ]);
-                $user->notifyNow(new BookingConfirmed($booking));
+                $user->notifyNow(new BookingConfirmed(
+                    $booking,
+                    $perBookingAmount,
+                    'stripe',
+                    now(),
+                    $validated['payment_intent_id']
+                ));
                 $pushHelper = app(\App\Services\PushNotificationHelper::class);
                 $pushHelper->sendIfSubscribed(
                     $user,
@@ -681,7 +687,7 @@ class BookingController extends Controller
                     'paypal_order_id' => null,
                 ]);
 
-                $user->notify(new BookingConfirmed($booking));
+                $user->notify(new BookingConfirmed($booking, $amount, 'paypal', now(), $capture['id'] ?? null));
                 
                 $pushHelper = app(\App\Services\PushNotificationHelper::class);
                 $pushHelper->sendIfSubscribed(
