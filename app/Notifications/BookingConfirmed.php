@@ -40,20 +40,33 @@ class BookingConfirmed extends Notification implements ShouldQueue
     {
         $this->booking->loadMissing(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint']);
 
-        $invoiceService = app(InvoiceService::class);
+        $invoiceFullPath = null;
+        $receiptFullPath = null;
 
-        $paymentDetails = [
-            'amount_paid' => $this->amountPaid,
-            'method' => $this->paymentMethod,
-            'date' => $this->paymentDate,
-            'reference' => $this->paymentReference,
-        ];
-
-        $invoicePath = $invoiceService->generateInvoice($this->booking);
-        $receiptPath = $invoiceService->generateReceipt($this->booking, $paymentDetails);
-
-        $invoiceFullPath = storage_path('app/public/' . $invoicePath);
-        $receiptFullPath = storage_path('app/public/' . $receiptPath);
+        try {
+            $invoiceService = app(InvoiceService::class);
+            $paymentDetails = [
+                'amount_paid' => $this->amountPaid,
+                'method' => $this->paymentMethod,
+                'date' => $this->paymentDate,
+                'reference' => $this->paymentReference,
+            ];
+            $invoicePath = $invoiceService->generateInvoice($this->booking);
+            $receiptPath = $invoiceService->generateReceipt($this->booking, $paymentDetails);
+            $invPath = storage_path('app/public/' . $invoicePath);
+            $recPath = storage_path('app/public/' . $receiptPath);
+            if (file_exists($invPath)) {
+                $invoiceFullPath = $invPath;
+            }
+            if (file_exists($recPath)) {
+                $receiptFullPath = $recPath;
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('BookingConfirmed: PDF generation failed', [
+                'booking_id' => $this->booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         $message = (new MailMessage)
             ->subject('Payment Received - Booking Confirmed')
@@ -66,15 +79,13 @@ class BookingConfirmed extends Notification implements ShouldQueue
                 'paymentReference' => $this->paymentReference,
             ]);
 
-        // Attach PDFs if they exist
-        if (file_exists($invoiceFullPath)) {
+        if ($invoiceFullPath) {
             $message->attach($invoiceFullPath, [
                 'as' => 'invoice-' . $this->booking->id . '.pdf',
                 'mime' => 'application/pdf',
             ]);
         }
-        
-        if (file_exists($receiptFullPath)) {
+        if ($receiptFullPath) {
             $message->attach($receiptFullPath, [
                 'as' => 'receipt-' . $this->booking->id . '.pdf',
                 'mime' => 'application/pdf',

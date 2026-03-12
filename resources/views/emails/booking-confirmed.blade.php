@@ -102,11 +102,11 @@
                 <h3>Booking Details</h3>
                 <div class="detail-row">
                     <strong>Student:</strong>
-                    <span>{{ $booking->student->name }}</span>
+                    <span>{{ $booking->student?->name ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Route:</strong>
-                    <span>{{ $booking->route->name }}</span>
+                    <span>{{ $booking->route?->name ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
                     <strong>Pickup:</strong>
@@ -197,14 +197,21 @@
                         <td class="amount"><strong>{{ $pricingService->formatPrice($finalPrice) }}</strong></td>
                     </tr>
                     @else
-                    @php $fallbackTotal = $pricingService->calculatePriceForBooking($booking); @endphp
+                    @php
+                        $fallbackTotal = null;
+                        try {
+                            $fallbackTotal = $pricingService->calculatePriceForBooking($booking);
+                        } catch (\Throwable $e) {
+                            $fallbackTotal = 0;
+                        }
+                    @endphp
                     <tr>
-                        <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }} Plan</td>
-                        <td class="amount">{{ $pricingService->formatPrice($fallbackTotal) }}</td>
+                        <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type ?? '')) }} Plan</td>
+                        <td class="amount">{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</td>
                     </tr>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td class="amount"><strong>{{ $pricingService->formatPrice($fallbackTotal) }}</strong></td>
+                        <td class="amount"><strong>{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</strong></td>
                     </tr>
                     @endif
                 </table>
