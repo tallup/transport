@@ -142,7 +142,7 @@ export default function CreateBooking({ students, routes }) {
 
     // Calculate price when route, plan type, trip type, or number of students changes
     useEffect(() => {
-        if (data.route_id && data.plan_type && data.trip_type) {
+        if (data.route_id && data.plan_type) {
             calculatePrice();
         } else {
             setPrice(null);
@@ -159,7 +159,7 @@ export default function CreateBooking({ students, routes }) {
     };
 
     const calculatePrice = async () => {
-        if (!data.route_id || !data.plan_type || !data.trip_type) return;
+        if (!data.route_id || !data.plan_type) return;
         setLoading(true);
         try {
             const studentCount = Math.max(1, selectedStudentIds.length);
@@ -167,7 +167,7 @@ export default function CreateBooking({ students, routes }) {
                 params: {
                     route_id: data.route_id,
                     plan_type: data.plan_type,
-                    trip_type: data.trip_type,
+                    trip_type: data.trip_type || 'two_way',
                     for_date: data.start_date || undefined,
                     student_count: studentCount,
                 },
@@ -907,9 +907,21 @@ export default function CreateBooking({ students, routes }) {
                                                                 {price && isSelected && (
                                                                     <>
                                                                         <p className="mt-3 text-lg font-extrabold text-amber-200">
-                                                                            {price.per_booking_formatted ?? price.formatted}
-                                                                            {selectedStudentIds.length > 1 && price.per_booking_formatted && (
-                                                                                <span className="mt-1 block text-sm font-semibold text-slate-500">per child</span>
+                                                                            {selectedStudentIds.length > 1 && price.total_formatted ? (
+                                                                                <>
+                                                                                    <span className="block">{price.total_formatted}</span>
+                                                                                    <span className="mt-1 block text-sm font-semibold text-slate-500">
+                                                                                        {selectedStudentIds.length} {selectedStudentIds.length === 1 ? 'child' : 'children'}
+                                                                                        {price.per_booking_formatted && ` × ${price.per_booking_formatted} each`}
+                                                                                    </span>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    {price.per_booking_formatted ?? price.formatted}
+                                                                                    {selectedStudentIds.length > 1 && price.per_booking_formatted && (
+                                                                                        <span className="mt-1 block text-sm font-semibold text-slate-500">per child</span>
+                                                                                    )}
+                                                                                </>
                                                                             )}
                                                                         </p>
                                                                         {price.discount_label && (
