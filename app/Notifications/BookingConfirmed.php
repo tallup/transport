@@ -2,47 +2,43 @@
 
 namespace App\Notifications;
 
+use App\Models\Booking;
 use App\Services\InvoiceService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class BookingConfirmed extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /** @var array<Booking> */
+    public array $bookings;
+
     public function __construct(
-        public $booking,
+        Booking|array|Collection $bookingOrBookings,
         public ?float $amountPaid = null,
         public ?string $paymentMethod = null,
         public ?\DateTimeInterface $paymentDate = null,
         public ?string $paymentReference = null,
-    ) {}
+    ) {
+        $this->bookings = collect($bookingOrBookings)->values()->all();
+    }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['mail', 'database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
-        $this->booking->loadMissing(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint']);
+        foreach ($this->bookings as $b) {
+            $b->loadMissing(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint']);
+        }
 
-        $invoiceFullPath = null;
-        $receiptFullPath = null;
-
+        $attachments = [];
         try {
             $invoiceService = app(InvoiceService::class);
             $paymentDetails = [
@@ -51,27 +47,33 @@ class BookingConfirmed extends Notification implements ShouldQueue
                 'date' => $this->paymentDate,
                 'reference' => $this->paymentReference,
             ];
-            $invoicePath = $invoiceService->generateInvoice($this->booking);
-            $receiptPath = $invoiceService->generateReceipt($this->booking, $paymentDetails);
-            $invPath = storage_path('app/public/' . $invoicePath);
-            $recPath = storage_path('app/public/' . $receiptPath);
-            if (file_exists($invPath)) {
-                $invoiceFullPath = $invPath;
-            }
-            if (file_exists($recPath)) {
-                $receiptFullPath = $recPath;
+            foreach ($this->bookings as $booking) {
+                $invoicePath = $invoiceService->generateInvoice($booking);
+                $receiptPath = $invoiceService->generateReceipt($booking, $paymentDetails);
+                $invPath = storage_path('app/public/' . $invoicePath);
+                $recPath = storage_path('app/public/' . $receiptPath);
+                if (file_exists($invPath)) {
+                    $attachments[] = ['path' => $invPath, 'as' => 'invoice-' . $booking->id . '.pdf'];
+                }
+                if (file_exists($recPath)) {
+                    $attachments[] = ['path' => $recPath, 'as' => 'receipt-' . $booking->id . '.pdf'];
+                }
             }
         } catch (\Throwable $e) {
             \Log::warning('BookingConfirmed: PDF generation failed', [
-                'booking_id' => $this->booking->id,
+                'booking_ids' => array_map(fn ($b) => $b->id, $this->bookings),
                 'error' => $e->getMessage(),
             ]);
         }
 
+        $subject = count($this->bookings) > 1
+            ? 'Payment Received - ' . count($this->bookings) . ' Bookings Confirmed'
+            : 'Payment Received - Booking Confirmed';
+
         $message = (new MailMessage)
-            ->subject('Payment Received - Booking Confirmed')
+            ->subject($subject)
             ->view('emails.booking-confirmed', [
-                'booking' => $this->booking,
+                'bookings' => $this->bookings,
                 'user' => $notifiable,
                 'amountPaid' => $this->amountPaid,
                 'paymentMethod' => $this->paymentMethod,
@@ -79,33 +81,23 @@ class BookingConfirmed extends Notification implements ShouldQueue
                 'paymentReference' => $this->paymentReference,
             ]);
 
-        if ($invoiceFullPath) {
-            $message->attach($invoiceFullPath, [
-                'as' => 'invoice-' . $this->booking->id . '.pdf',
-                'mime' => 'application/pdf',
-            ]);
-        }
-        if ($receiptFullPath) {
-            $message->attach($receiptFullPath, [
-                'as' => 'receipt-' . $this->booking->id . '.pdf',
-                'mime' => 'application/pdf',
-            ]);
+        foreach ($attachments as $att) {
+            $message->attach($att['path'], ['as' => $att['as'], 'mime' => 'application/pdf']);
         }
 
         return $message;
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(object $notifiable): array
     {
+        $n = count($this->bookings);
         return [
             'type' => 'success',
-            'message' => 'Payment processed successfully. Your booking is now active.',
-            'booking_id' => $this->booking->id,
+            'message' => $n > 1
+                ? "Payment processed successfully. Your {$n} bookings are now active."
+                : 'Payment processed successfully. Your booking is now active.',
+            'booking_id' => $this->bookings[0]->id ?? null,
+            'booking_ids' => array_map(fn ($b) => $b->id, $this->bookings),
         ];
     }
 }

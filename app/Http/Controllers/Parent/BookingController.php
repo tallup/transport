@@ -505,21 +505,23 @@ class BookingController extends Controller
                 ]);
             }
 
-            // Phase 2: send notifications (each wrapped in try/catch so one failure doesn't block the rest)
-            foreach ($bookings as $booking) {
-                try {
-                    $booking->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
-                    $user->notifyNow(new BookingConfirmed(
-                        $booking,
-                        $perBookingAmount,
-                        'stripe',
-                        now(),
-                        $validated['payment_intent_id']
-                    ));
-                } catch (\Exception $e) {
-                    \Log::error('BookingConfirmed notification failed', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+            // Phase 2: one consolidated email for all bookings; then per-booking push/driver/admin
+            try {
+                foreach ($bookings as $b) {
+                    $b->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
                 }
+                $user->notifyNow(new BookingConfirmed(
+                    $bookings,
+                    $amountTotal,
+                    'stripe',
+                    now(),
+                    $validated['payment_intent_id']
+                ));
+            } catch (\Exception $e) {
+                \Log::error('BookingConfirmed notification failed', ['booking_ids' => $bookings->pluck('id')->toArray(), 'error' => $e->getMessage()]);
+            }
 
+            foreach ($bookings as $booking) {
                 try {
                     $pushHelper = app(\App\Services\PushNotificationHelper::class);
                     $pushHelper->sendIfSubscribed(

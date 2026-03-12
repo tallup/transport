@@ -31,6 +31,8 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .booking-block { margin-bottom: 28px; border: 1px solid #e5e7eb; border-radius: 5px; overflow: hidden; }
+        .booking-block h3 { margin: 0; padding: 12px 20px; background: #e0e7ff; color: #3730a3; font-size: 15px; }
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -61,6 +63,10 @@
     </style>
 </head>
 <body>
+    @php
+        $bookings = $bookings ?? [];
+        $isMulti = count($bookings) > 1;
+    @endphp
     <div class="container">
         <div class="header">
             <h1>Payment Received</h1>
@@ -68,13 +74,13 @@
         <div class="content">
             <p>Hello {{ $user->name }},</p>
 
-            <p>We received your payment. Your booking is now active. Please find your invoice and receipt attached to this email.</p>
+            <p>We received your payment. {{ $isMulti ? 'Your ' . count($bookings) . ' bookings are now active.' : 'Your booking is now active.' }} Please find your invoice(s) and receipt(s) attached to this email.</p>
 
             @if(isset($amountPaid) && $amountPaid !== null)
             <div class="booking-details">
                 <h3>Payment Summary</h3>
                 <div class="detail-row">
-                    <strong>Amount Paid:</strong>
+                    <strong>Total Amount Paid:</strong>
                     <span>{{ app(\App\Services\PricingService::class)->formatPrice($amountPaid) }}</span>
                 </div>
                 @if(!empty($paymentMethod))
@@ -98,126 +104,130 @@
             </div>
             @endif
 
-            <div class="booking-details">
-                <h3>Booking Details</h3>
-                <div class="detail-row">
-                    <strong>Student:</strong>
-                    <span>{{ $booking->student?->name ?? 'N/A' }}</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Route:</strong>
-                    <span>{{ $booking->route?->name ?? 'N/A' }}</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Pickup:</strong>
-                    <span>
-                        @if($booking->pickupPoint)
-                            {{ $booking->pickupPoint->name }}@if($booking->pickupPoint->address)<br><small>{{ $booking->pickupPoint->address }}</small>@endif
-                        @else
-                            {{ $booking->pickup_address ?? 'N/A' }}
-                        @endif
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <strong>Plan Type:</strong>
-                    <span>{{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }}</span>
-                </div>
-                @if($booking->trip_type ?? null)
-                <div class="detail-row">
-                    <strong>Trip Type:</strong>
-                    <span>{{ ucfirst(str_replace('_', ' ', $booking->trip_type)) }}</span>
-                </div>
-                @endif
-                @if($booking->trip_direction ?? null)
-                <div class="detail-row">
-                    <strong>Trip Direction:</strong>
-                    <span>{{ ucfirst(str_replace('_', ' ', $booking->trip_direction)) }}</span>
-                </div>
-                @endif
-                <div class="detail-row">
-                    <strong>Start Date:</strong>
-                    <span>{{ $booking->start_date->format('F d, Y') }}</span>
-                </div>
-                @if($booking->end_date)
-                <div class="detail-row">
-                    <strong>End Date:</strong>
-                    <span>{{ $booking->end_date->format('F d, Y') }}</span>
-                </div>
-                @endif
-            </div>
-
-            @php
-                $pricingService = app(\App\Services\PricingService::class);
-                $basePrice = null;
-                $finalPrice = null;
-                $hasDiscount = false;
-                $discountLabel = null;
-                if ($booking->route) {
-                    try {
-                        $tripType = $booking->trip_type ?? 'two_way';
-                        $basePrice = $pricingService->getBasePrice($booking->plan_type, $tripType, $booking->route);
-                        $finalPrice = $pricingService->calculatePriceForBooking($booking);
-                        $hasDiscount = $finalPrice < $basePrice;
-                        if ($hasDiscount && $booking->manual_discount_type && $booking->manual_discount_value !== null) {
-                            if ($booking->manual_discount_type === 'percentage') {
-                                $discountLabel = 'Discount (' . (int) $booking->manual_discount_value . '% off)';
-                            } else {
-                                $discountLabel = 'Discount ($' . number_format((float) $booking->manual_discount_value, 2) . ' off)';
-                            }
-                        } elseif ($hasDiscount) {
-                            $discountLabel = 'Promotional discount';
-                        }
-                    } catch (\Throwable $e) {
-                        $basePrice = null;
-                        $finalPrice = null;
-                        $hasDiscount = false;
-                    }
-                }
-            @endphp
-            <div class="booking-details">
-                <h3>Receipt</h3>
-                <table class="receipt-table">
-                    <tr>
-                        <th>Item</th>
-                        <th class="amount">Amount</th>
-                    </tr>
-                    @if($basePrice !== null && $finalPrice !== null)
-                    <tr>
-                        <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type)) }} Plan</td>
-                        <td class="amount">{{ $hasDiscount ? $pricingService->formatPrice($basePrice) : $pricingService->formatPrice($finalPrice) }}</td>
-                    </tr>
-                    @if($hasDiscount)
-                    <tr>
-                        <td>{{ $discountLabel ?? 'Discount' }}</td>
-                        <td class="amount">-{{ $pricingService->formatPrice($basePrice - $finalPrice) }}</td>
-                    </tr>
+            @foreach($bookings as $index => $booking)
+            <div class="booking-block">
+                <h3>{{ $isMulti ? 'Booking ' . ($index + 1) . ' – ' . ($booking->student?->name ?? 'Student') : 'Booking Details' }}</h3>
+                <div class="booking-details" style="margin: 0; border-radius: 0;">
+                    <div class="detail-row">
+                        <strong>Student:</strong>
+                        <span>{{ $booking->student?->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Route:</strong>
+                        <span>{{ $booking->route?->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Pickup:</strong>
+                        <span>
+                            @if($booking->pickupPoint)
+                                {{ $booking->pickupPoint->name }}@if($booking->pickupPoint->address)<br><small>{{ $booking->pickupPoint->address }}</small>@endif
+                            @else
+                                {{ $booking->pickup_address ?? 'N/A' }}
+                            @endif
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Plan Type:</strong>
+                        <span>{{ ucfirst(str_replace('_', ' ', $booking->plan_type ?? '')) }}</span>
+                    </div>
+                    @if($booking->trip_type ?? null)
+                    <div class="detail-row">
+                        <strong>Trip Type:</strong>
+                        <span>{{ ucfirst(str_replace('_', ' ', $booking->trip_type)) }}</span>
+                    </div>
                     @endif
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td class="amount"><strong>{{ $pricingService->formatPrice($finalPrice) }}</strong></td>
-                    </tr>
-                    @else
-                    @php
-                        $fallbackTotal = null;
+                    @if($booking->trip_direction ?? null)
+                    <div class="detail-row">
+                        <strong>Trip Direction:</strong>
+                        <span>{{ ucfirst(str_replace('_', ' ', $booking->trip_direction)) }}</span>
+                    </div>
+                    @endif
+                    <div class="detail-row">
+                        <strong>Start Date:</strong>
+                        <span>{{ $booking->start_date ? $booking->start_date->format('F d, Y') : 'N/A' }}</span>
+                    </div>
+                    @if($booking->end_date)
+                    <div class="detail-row">
+                        <strong>End Date:</strong>
+                        <span>{{ $booking->end_date->format('F d, Y') }}</span>
+                    </div>
+                    @endif
+                </div>
+
+                @php
+                    $pricingService = app(\App\Services\PricingService::class);
+                    $basePrice = null;
+                    $finalPrice = null;
+                    $hasDiscount = false;
+                    $discountLabel = null;
+                    if ($booking->route) {
                         try {
-                            $fallbackTotal = $pricingService->calculatePriceForBooking($booking);
+                            $tripType = $booking->trip_type ?? 'two_way';
+                            $basePrice = $pricingService->getBasePrice($booking->plan_type, $tripType, $booking->route);
+                            $finalPrice = $pricingService->calculatePriceForBooking($booking);
+                            $hasDiscount = $finalPrice < $basePrice;
+                            if ($hasDiscount && $booking->manual_discount_type && $booking->manual_discount_value !== null) {
+                                if ($booking->manual_discount_type === 'percentage') {
+                                    $discountLabel = 'Discount (' . (int) $booking->manual_discount_value . '% off)';
+                                } else {
+                                    $discountLabel = 'Discount ($' . number_format((float) $booking->manual_discount_value, 2) . ' off)';
+                                }
+                            } elseif ($hasDiscount) {
+                                $discountLabel = 'Promotional discount';
+                            }
                         } catch (\Throwable $e) {
-                            $fallbackTotal = 0;
+                            $basePrice = null;
+                            $finalPrice = null;
+                            $hasDiscount = false;
                         }
-                    @endphp
-                    <tr>
-                        <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type ?? '')) }} Plan</td>
-                        <td class="amount">{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td class="amount"><strong>{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</strong></td>
-                    </tr>
-                    @endif
-                </table>
+                    }
+                @endphp
+                <div class="booking-details" style="margin: 0; border-radius: 0; border-top: 1px solid #e5e7eb;">
+                    <h3 style="margin-top: 0;">Receipt {{ $isMulti ? '– ' . ($booking->student?->name ?? '') : '' }}</h3>
+                    <table class="receipt-table">
+                        <tr>
+                            <th>Item</th>
+                            <th class="amount">Amount</th>
+                        </tr>
+                        @if($basePrice !== null && $finalPrice !== null)
+                        <tr>
+                            <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type ?? '')) }} Plan</td>
+                            <td class="amount">{{ $hasDiscount ? $pricingService->formatPrice($basePrice) : $pricingService->formatPrice($finalPrice) }}</td>
+                        </tr>
+                        @if($hasDiscount)
+                        <tr>
+                            <td>{{ $discountLabel ?? 'Discount' }}</td>
+                            <td class="amount">-{{ $pricingService->formatPrice($basePrice - $finalPrice) }}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="amount"><strong>{{ $pricingService->formatPrice($finalPrice) }}</strong></td>
+                        </tr>
+                        @else
+                        @php
+                            $fallbackTotal = null;
+                            try {
+                                $fallbackTotal = $pricingService->calculatePriceForBooking($booking);
+                            } catch (\Throwable $e) {
+                                $fallbackTotal = 0;
+                            }
+                        @endphp
+                        <tr>
+                            <td>Transport Service – {{ ucfirst(str_replace('_', ' ', $booking->plan_type ?? '')) }} Plan</td>
+                            <td class="amount">{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="amount"><strong>{{ $pricingService->formatPrice($fallbackTotal ?? 0) }}</strong></td>
+                        </tr>
+                        @endif
+                    </table>
+                </div>
             </div>
+            @endforeach
 
-            <a href="{{ url('/parent/dashboard') }}" class="button">View Booking</a>
+            <a href="{{ url('/parent/dashboard') }}" class="button">View Bookings</a>
 
             <p>Thank you for using our transport service!</p>
         </div>
@@ -227,11 +237,3 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
