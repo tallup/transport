@@ -69,7 +69,7 @@ export default function CreateBooking({ students, routes }) {
         pickup_point_id: '',
         pickup_address: '',
         plan_type: '',
-        trip_type: 'two_way',
+        trip_type: '',
         trip_direction: 'both',
         start_date: new Date().toISOString().split('T')[0],
     });

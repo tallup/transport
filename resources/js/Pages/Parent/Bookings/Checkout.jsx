@@ -25,11 +25,12 @@ const CARD_ELEMENT_OPTIONS = {
     },
 };
 
-function StripeCheckoutForm({ booking, price }) {
+function StripeCheckoutForm({ booking, bookings, price }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const isGroup = Array.isArray(bookings) && bookings.length > 0;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,10 +49,10 @@ function StripeCheckoutForm({ booking, price }) {
         }
 
         try {
-            const { data } = await axios.post('/parent/bookings/create-payment-intent', {
-                booking_id: booking.id,
-                amount: price.price,
-            });
+            const createBody = isGroup
+                ? { booking_ids: bookings.map((b) => b.id) }
+                : { booking_id: booking.id };
+            const { data } = await axios.post('/parent/bookings/create-payment-intent', createBody);
 
             if (data.error) {
                 setError(data.error);
@@ -72,13 +73,17 @@ function StripeCheckoutForm({ booking, price }) {
                 return;
             }
 
-            router.post(route('parent.bookings.payment-success'), {
-                booking_id: booking.id,
-                payment_intent_id: paymentIntentId,
-            }, {
+            const successBody = isGroup
+                ? { booking_ids: bookings.map((b) => b.id), payment_intent_id: paymentIntentId }
+                : { booking_id: booking.id, payment_intent_id: paymentIntentId };
+
+            router.post(route('parent.bookings.payment-success'), successBody, {
                 preserveState: false,
                 onSuccess: () => {
-                    alert('Payment approved. Your booking is pending admin approval.');
+                    const msg = isGroup
+                        ? `Payment approved. Your ${bookings.length} bookings are now active.`
+                        : 'Payment approved. Your booking is pending admin approval.';
+                    alert(msg);
                     if (window.location.pathname.includes('/checkout')) {
                         window.location.href = route('parent.bookings.index');
                     }
@@ -116,9 +121,11 @@ function StripeCheckoutForm({ booking, price }) {
     );
 }
 
-export default function Checkout({ booking, price, stripeKey }) {
+export default function Checkout({ booking, bookings, price, stripeKey }) {
     const { auth } = usePage().props;
     const [stripePromise] = useState(() => (stripeKey ? loadStripe(stripeKey) : null));
+    const isGroup = Array.isArray(bookings) && bookings.length > 0;
+    const displayBooking = isGroup ? bookings[0] : booking;
 
     return (
         <AuthenticatedLayout user={auth?.user}>
@@ -127,14 +134,33 @@ export default function Checkout({ booking, price, stripeKey }) {
             <div className="py-10">
                 <div className="container">
                     <GlassCard className="mx-auto max-w-3xl">
-                        <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">Complete Your Booking</h2>
+                        <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
+                            {isGroup ? `Complete Payment for ${bookings.length} Students` : 'Complete Your Booking'}
+                        </h2>
 
-                        <div className="mt-6 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-2">
-                            <p className="text-slate-700"><span className="font-medium text-slate-900">Student:</span> {booking.student?.name}</p>
-                            <p className="text-slate-700"><span className="font-medium text-slate-900">Route:</span> {booking.route?.name}</p>
-                            <p className="text-slate-700"><span className="font-medium text-slate-900">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}</p>
-                            <p className="text-slate-700"><span className="font-medium text-slate-900">Plan:</span> {booking.plan_type?.replace('_', '-')}</p>
-                        </div>
+                        {isGroup ? (
+                            <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                <p className="mb-3 text-sm font-medium text-slate-900">Students</p>
+                                <ul className="space-y-2 text-sm text-slate-700">
+                                    {bookings.map((b) => (
+                                        <li key={b.id} className="flex items-center justify-between">
+                                            <span>{b.student?.name}</span>
+                                            <span className="text-slate-500">{b.route?.name} · {b.plan_type?.replace('_', '-')}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p className="mt-3 text-xs text-slate-500">
+                                    Route: {displayBooking?.route?.name} · Pickup: {displayBooking?.pickup_address || displayBooking?.pickup_point?.name || '—'}
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="mt-6 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-2">
+                                <p className="text-slate-700"><span className="font-medium text-slate-900">Student:</span> {booking.student?.name}</p>
+                                <p className="text-slate-700"><span className="font-medium text-slate-900">Route:</span> {booking.route?.name}</p>
+                                <p className="text-slate-700"><span className="font-medium text-slate-900">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}</p>
+                                <p className="text-slate-700"><span className="font-medium text-slate-900">Plan:</span> {booking.plan_type?.replace('_', '-')}</p>
+                            </div>
+                        )}
 
                         <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
                             <div className="mb-3 flex items-center justify-between">
@@ -144,7 +170,7 @@ export default function Checkout({ booking, price, stripeKey }) {
 
                             {stripePromise ? (
                                 <Elements stripe={stripePromise}>
-                                    <StripeCheckoutForm booking={booking} price={price} />
+                                    <StripeCheckoutForm booking={booking} bookings={bookings} price={price} />
                                 </Elements>
                             ) : (
                                 <p className="text-sm font-medium text-rose-700">

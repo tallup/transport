@@ -249,17 +249,14 @@ class BookingController extends Controller
             );
         }
         
-        // Redirect to checkout page for the first booking
+        // Redirect to checkout: single booking → checkout for it; multiple → checkout for all in one payment
         if (count($createdBookings) === 1) {
-            $booking = $createdBookings[0];
-            return redirect()->route('parent.bookings.checkout', $booking);
+            return redirect()->route('parent.bookings.checkout', $createdBookings[0]);
         }
-        
-        // If multiple bookings were created, redirect to bookings list and let parent pay each separately
-        return redirect()->route('parent.bookings.index')->with(
-            'success',
-            'Bookings created for ' . count($createdBookings) . ' students. You can complete payment for each booking from your bookings page.'
-        );
+
+        $bookingIds = collect($createdBookings)->pluck('id')->toArray();
+        $request->session()->put('checkout_booking_ids', $bookingIds);
+        return redirect()->route('parent.bookings.checkout', $createdBookings[0]);
     }
 
     public function index(Request $request)
@@ -288,32 +285,62 @@ class BookingController extends Controller
     {
         $user = $request->user();
 
-        // Authorization check
+        // Group checkout: multiple pending bookings from session (created in same flow)
+        $groupIds = $request->session()->get('checkout_booking_ids', []);
+        if (!empty($groupIds)) {
+            $request->session()->forget('checkout_booking_ids');
+            $bookings = Booking::whereIn('id', $groupIds)
+                ->where('status', 'pending')
+                ->with(['student', 'route', 'pickupPoint'])
+                ->orderBy('id')
+                ->get();
+            foreach ($bookings as $b) {
+                if (!$user->students->contains($b->student_id)) {
+                    abort(403, 'Unauthorized');
+                }
+            }
+            if ($bookings->isEmpty()) {
+                return redirect()->route('parent.bookings.index')
+                    ->with('error', 'No pending bookings found for checkout.');
+            }
+            $totalPrice = 0;
+            foreach ($bookings as $b) {
+                try {
+                    $totalPrice += $this->pricingService->calculatePriceForBooking($b);
+                } catch (PricingNotFoundException $e) {
+                    return redirect()->route('parent.bookings.index')
+                        ->with('error', 'Unable to calculate price for a booking.');
+                }
+            }
+            $totalPrice = round($totalPrice, 2);
+            return Inertia::render('Parent/Bookings/Checkout', [
+                'booking' => null,
+                'bookings' => $bookings->toArray(),
+                'price' => ['price' => $totalPrice, 'formatted' => $this->pricingService->formatPrice($totalPrice)],
+                'stripeKey' => config('cashier.key'),
+            ]);
+        }
+
+        // Single booking checkout
         if (!$user->can('view', $booking)) {
             abort(403, 'Unauthorized to view this booking.');
         }
-
-        // Verify booking belongs to user's student
         if (!$user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
-
-        // Only allow checkout for pending bookings
         if ($booking->status !== 'pending') {
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'This booking is not pending payment.');
         }
-
-        // Calculate price (manual or time-based discount applied)
         try {
             $price = $this->pricingService->calculatePriceForBooking($booking);
         } catch (PricingNotFoundException $e) {
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'Unable to calculate price for this booking.');
         }
-
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
+            'bookings' => null,
             'price' => ['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)],
             'stripeKey' => config('cashier.key'),
         ]);
@@ -384,25 +411,31 @@ class BookingController extends Controller
     public function createPaymentIntent(Request $request)
     {
         $validated = $request->validate([
-            'booking_id' => 'required|exists:bookings,id',
-            'amount' => 'nullable|numeric|min:0', // Optional; server recalculates for security
+            'booking_id' => 'nullable|exists:bookings,id',
+            'booking_ids' => 'nullable|array',
+            'booking_ids.*' => 'exists:bookings,id',
+            'amount' => 'nullable|numeric|min:0',
         ]);
 
         $user = $request->user();
-        $booking = Booking::findOrFail($validated['booking_id']);
+        $bookingIds = !empty($validated['booking_ids']) ? $validated['booking_ids'] : [$validated['booking_id']];
+        $bookings = Booking::whereIn('id', $bookingIds)->get();
 
-        // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        foreach ($bookings as $b) {
+            if (!$user->students->contains($b->student_id) || $b->status !== 'pending') {
+                return response()->json(['error' => 'Unauthorized or booking not pending.'], 403);
+            }
         }
 
-        // Use server-calculated price (applies manual and time-based discounts)
+        $amount = 0;
         try {
-            $amount = $this->pricingService->calculatePriceForBooking($booking);
+            foreach ($bookings as $b) {
+                $amount += $this->pricingService->calculatePriceForBooking($b);
+            }
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Unable to calculate price for this booking.'], 400);
+            return response()->json(['error' => 'Unable to calculate price.'], 400);
         }
-        $amount = max(0.5, round($amount, 2)); // Stripe minimum $0.50
+        $amount = max(0.5, round($amount, 2));
         $amountCents = (int) round($amount * 100);
 
         try {
@@ -410,7 +443,7 @@ class BookingController extends Controller
                 'amount' => $amountCents,
                 'currency' => 'usd',
                 'metadata' => [
-                    'booking_id' => $booking->id,
+                    'booking_ids' => implode(',', $bookingIds),
                     'user_id' => $user->id,
                 ],
             ]);
@@ -427,40 +460,43 @@ class BookingController extends Controller
     public function paymentSuccess(Request $request)
     {
         $validated = $request->validate([
-            'booking_id' => 'required|exists:bookings,id',
+            'booking_id' => 'nullable|exists:bookings,id',
+            'booking_ids' => 'nullable|array',
+            'booking_ids.*' => 'exists:bookings,id',
             'payment_intent_id' => 'required|string',
         ]);
 
         $user = $request->user();
-        $booking = Booking::findOrFail($validated['booking_id']);
 
-        // Authorization check using policy
-        if (!$user->can('update', $booking)) {
-            abort(403, 'Unauthorized to update this booking.');
-        }
-
-        // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
-            return back()->withErrors(['error' => 'Unauthorized']);
-        }
-
-        // Verify payment intent
         try {
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
+            if ($paymentIntent->status !== 'succeeded') {
+                return back()->withErrors(['error' => 'Payment was not successful']);
+            }
 
-            if ($paymentIntent->status === 'succeeded') {
-                $amount = $paymentIntent->amount / 100;
-                
-                // Payment confirmed → booking is automatically approved (active)
+            $amountTotal = $paymentIntent->amount / 100;
+            $bookingIds = !empty($validated['booking_ids'])
+                ? $validated['booking_ids']
+                : (isset($paymentIntent->metadata->booking_ids) && $paymentIntent->metadata->booking_ids
+                    ? explode(',', $paymentIntent->metadata->booking_ids)
+                    : [$validated['booking_id']]);
+
+            $bookings = Booking::whereIn('id', $bookingIds)->get();
+            foreach ($bookings as $b) {
+                if (!$user->can('update', $b) || !$user->students->contains($b->student_id)) {
+                    return back()->withErrors(['error' => 'Unauthorized']);
+                }
+            }
+
+            $perBookingAmount = count($bookings) > 0 ? round($amountTotal / count($bookings), 2) : $amountTotal;
+            foreach ($bookings as $booking) {
                 $booking->update([
                     'status' => 'active',
                     'stripe_customer_id' => $user->stripe_id,
                     'payment_id' => $validated['payment_intent_id'],
                     'payment_method' => 'stripe',
                 ]);
-
                 $user->notifyNow(new BookingConfirmed($booking));
-                
                 $pushHelper = app(\App\Services\PushNotificationHelper::class);
                 $pushHelper->sendIfSubscribed(
                     $user,
@@ -468,47 +504,30 @@ class BookingController extends Controller
                     'Your payment has been processed and your booking is now active.',
                     ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
                 );
-                
-                // Notify driver if route has a driver assigned (even though booking is awaiting approval)
                 $booking->loadMissing(['route.driver']);
                 $driver = $booking->route?->driver;
                 if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
                     try {
                         $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
                     } catch (\Exception $e) {
-                        \Log::error('DriverStudentAdded notification failed on payment', [
-                            'booking_id' => $booking->id,
-                            'error' => $e->getMessage(),
-                        ]);
+                        \Log::error('DriverStudentAdded notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                     }
                 }
-                
-                // Notify admins of payment received
                 $adminService = app(\App\Services\AdminNotificationService::class);
-                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
-                    $booking,
-                    $amount,
-                    'stripe'
-                ));
-                // Real-time: notify admins so their portal updates
+                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
                 $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
                 if (!empty($adminIds)) {
-                    event(new \App\Events\PortalUpdate(
-                        $adminIds,
-                        'payment_received',
-                        'New payment received for a booking.',
-                        ['booking_id' => $booking->id]
-                    ));
+                    event(new \App\Events\PortalUpdate($adminIds, 'payment_received', 'New payment received for a booking.', ['booking_id' => $booking->id]));
                 }
-
-                return redirect()->route('parent.bookings.index')
-                    ->with('success', 'Payment received. Your booking is now active!');
             }
+
+            $message = count($bookings) === 1
+                ? 'Payment received. Your booking is now active!'
+                : 'Payment received. Your ' . count($bookings) . ' bookings are now active!';
+            return redirect()->route('parent.bookings.index')->with('success', $message);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Payment verification failed']);
         }
-
-        return back()->withErrors(['error' => 'Payment was not successful']);
     }
 
     public function skipPayment(Request $request)
