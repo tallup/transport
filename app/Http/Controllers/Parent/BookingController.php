@@ -235,11 +235,8 @@ class BookingController extends Controller
             }
             $booking = Booking::create($bookingData);
             $createdBookings[] = $booking;
-            
-            // Send booking created notification to parent
-            $user->notifyNow(new \App\Notifications\BookingCreated($booking->load(['student', 'route'])));
-            
-            // Send push notification
+
+            // Send push notification only (no email until payment is complete)
             $pushHelper = app(\App\Services\PushNotificationHelper::class);
             $pushHelper->sendIfSubscribed(
                 $user,
@@ -475,11 +472,19 @@ class BookingController extends Controller
             }
 
             $amountTotal = $paymentIntent->amount / 100;
-            $bookingIds = !empty($validated['booking_ids'])
-                ? $validated['booking_ids']
-                : (isset($paymentIntent->metadata->booking_ids) && $paymentIntent->metadata->booking_ids
-                    ? explode(',', $paymentIntent->metadata->booking_ids)
-                    : [$validated['booking_id']]);
+
+            // Use payment intent metadata as source of truth for which bookings were paid (fixes multi-student only one marked active)
+            $metaIds = isset($paymentIntent->metadata->booking_ids) && $paymentIntent->metadata->booking_ids
+                ? array_map('intval', array_filter(explode(',', (string) $paymentIntent->metadata->booking_ids)))
+                : [];
+            $requestIds = isset($validated['booking_ids']) && is_array($validated['booking_ids'])
+                ? array_map('intval', $validated['booking_ids'])
+                : [];
+            if (!empty($metaIds)) {
+                $bookingIds = array_values(array_unique(array_merge($metaIds, $requestIds)));
+            } else {
+                $bookingIds = !empty($requestIds) ? $requestIds : (isset($validated['booking_id']) ? [(int) $validated['booking_id']] : []);
+            }
 
             $bookings = Booking::whereIn('id', $bookingIds)->get();
             foreach ($bookings as $b) {

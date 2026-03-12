@@ -73,16 +73,18 @@ function StripeCheckoutForm({ booking, bookings, price }) {
                 return;
             }
 
-            const successBody = isGroup
-                ? { booking_ids: bookings.map((b) => b.id), payment_intent_id: paymentIntentId }
-                : { booking_id: booking.id, payment_intent_id: paymentIntentId };
+            const bookingIds = isGroup ? bookings.map((b) => Number(b.id)) : [Number(booking.id)];
+            const successBody = {
+                booking_ids: bookingIds,
+                payment_intent_id: paymentIntentId,
+            };
 
             router.post(route('parent.bookings.payment-success'), successBody, {
                 preserveState: false,
                 onSuccess: () => {
                     const msg = isGroup
                         ? `Payment approved. Your ${bookings.length} bookings are now active.`
-                        : 'Payment approved. Your booking is pending admin approval.';
+                        : 'Payment approved. Your booking is now active.';
                     alert(msg);
                     if (window.location.pathname.includes('/checkout')) {
                         window.location.href = route('parent.bookings.index');

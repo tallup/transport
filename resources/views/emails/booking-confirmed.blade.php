@@ -68,7 +68,7 @@
         <div class="content">
             <p>Hello {{ $user->name }},</p>
 
-            <p>We received your payment. Your booking is pending admin approval. Please find your invoice and receipt attached to this email.</p>
+            <p>We received your payment. Your booking is now active. Please find your invoice and receipt attached to this email.</p>
 
             @if(isset($amountPaid) && $amountPaid !== null)
             <div class="booking-details">

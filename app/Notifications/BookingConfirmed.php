@@ -55,7 +55,7 @@ class BookingConfirmed extends Notification implements ShouldQueue
         $receiptFullPath = storage_path('app/public/' . $receiptPath);
 
         $message = (new MailMessage)
-            ->subject('Payment Received - Booking Pending Approval')
+            ->subject('Payment Received - Booking Confirmed')
             ->view('emails.booking-confirmed', [
                 'booking' => $this->booking,
                 'user' => $notifiable,
@@ -92,7 +92,7 @@ class BookingConfirmed extends Notification implements ShouldQueue
     {
         return [
             'type' => 'success',
-            'message' => 'Payment processed successfully. Your booking is pending approval.',
+            'message' => 'Payment processed successfully. Your booking is now active.',
             'booking_id' => $this->booking->id,
         ];
     }
