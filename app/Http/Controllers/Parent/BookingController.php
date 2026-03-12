@@ -494,6 +494,8 @@ class BookingController extends Controller
             }
 
             $perBookingAmount = count($bookings) > 0 ? round($amountTotal / count($bookings), 2) : $amountTotal;
+
+            // Phase 1: update ALL bookings to active (must not be interrupted by notification failures)
             foreach ($bookings as $booking) {
                 $booking->update([
                     'status' => 'active',
@@ -501,34 +503,53 @@ class BookingController extends Controller
                     'payment_id' => $validated['payment_intent_id'],
                     'payment_method' => 'stripe',
                 ]);
-                $user->notifyNow(new BookingConfirmed(
-                    $booking,
-                    $perBookingAmount,
-                    'stripe',
-                    now(),
-                    $validated['payment_intent_id']
-                ));
-                $pushHelper = app(\App\Services\PushNotificationHelper::class);
-                $pushHelper->sendIfSubscribed(
-                    $user,
-                    'Booking Confirmed',
-                    'Your payment has been processed and your booking is now active.',
-                    ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
-                );
-                $booking->loadMissing(['route.driver']);
-                $driver = $booking->route?->driver;
-                if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                    try {
-                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
-                    } catch (\Exception $e) {
-                        \Log::error('DriverStudentAdded notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
-                    }
+            }
+
+            // Phase 2: send notifications (each wrapped in try/catch so one failure doesn't block the rest)
+            foreach ($bookings as $booking) {
+                try {
+                    $booking->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
+                    $user->notifyNow(new BookingConfirmed(
+                        $booking,
+                        $perBookingAmount,
+                        'stripe',
+                        now(),
+                        $validated['payment_intent_id']
+                    ));
+                } catch (\Exception $e) {
+                    \Log::error('BookingConfirmed notification failed', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                 }
-                $adminService = app(\App\Services\AdminNotificationService::class);
-                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
-                $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
-                if (!empty($adminIds)) {
-                    event(new \App\Events\PortalUpdate($adminIds, 'payment_received', 'New payment received for a booking.', ['booking_id' => $booking->id]));
+
+                try {
+                    $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                    $pushHelper->sendIfSubscribed(
+                        $user,
+                        'Booking Confirmed',
+                        'Your payment has been processed and your booking is now active.',
+                        ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Push notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                }
+
+                try {
+                    $driver = $booking->route?->driver;
+                    if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('DriverStudentAdded notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                }
+
+                try {
+                    $adminService = app(\App\Services\AdminNotificationService::class);
+                    $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
+                    $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
+                    if (!empty($adminIds)) {
+                        event(new \App\Events\PortalUpdate($adminIds, 'payment_received', 'New payment received for a booking.', ['booking_id' => $booking->id]));
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Admin notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                 }
             }
 
@@ -567,10 +588,7 @@ class BookingController extends Controller
             'status' => 'pending', // Keep as pending so payment can be made later
         ]);
 
-        // Send notification about booking creation (without payment) to parent
-        $user->notifyNow(new BookingConfirmed($booking));
-        
-        // Send push notification
+        // Push notification only; email receipt is sent only after payment is complete
         $pushHelper = app(\App\Services\PushNotificationHelper::class);
         $pushHelper->sendIfSubscribed(
             $user,
@@ -692,46 +710,53 @@ class BookingController extends Controller
                     'paypal_order_id' => null,
                 ]);
 
-                $user->notify(new BookingConfirmed($booking, $amount, 'paypal', now(), $capture['id'] ?? null));
-                
-                $pushHelper = app(\App\Services\PushNotificationHelper::class);
-                $pushHelper->sendIfSubscribed(
-                    $user,
-                    'Booking Confirmed',
-                    'Your PayPal payment has been processed and your booking is now active.',
-                    ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
-                );
-                
-                // Notify driver if route has a driver assigned (even though booking is awaiting approval)
-                $booking->loadMissing(['route.driver']);
-                $driver = $booking->route?->driver;
-                if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                    try {
-                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
-                    } catch (\Exception $e) {
-                        \Log::error('DriverStudentAdded notification failed on PayPal payment', [
-                            'booking_id' => $booking->id,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
+                $booking->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
+
+                try {
+                    $user->notifyNow(new BookingConfirmed($booking, $amount, 'paypal', now(), $capture['id'] ?? null));
+                } catch (\Exception $e) {
+                    \Log::error('BookingConfirmed notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                 }
-                
-                // Notify admins of payment received
-                $adminService = app(\App\Services\AdminNotificationService::class);
-                $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
-                    $booking,
-                    $amount,
-                    'paypal'
-                ));
-                // Real-time: notify admins
-                $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
-                if (!empty($adminIds)) {
-                    event(new \App\Events\PortalUpdate(
-                        $adminIds,
-                        'payment_received',
-                        'New payment received for a booking.',
-                        ['booking_id' => $booking->id]
+
+                try {
+                    $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                    $pushHelper->sendIfSubscribed(
+                        $user,
+                        'Booking Confirmed',
+                        'Your PayPal payment has been processed and your booking is now active.',
+                        ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Push notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                }
+
+                try {
+                    $driver = $booking->route?->driver;
+                    if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('DriverStudentAdded notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                }
+
+                try {
+                    $adminService = app(\App\Services\AdminNotificationService::class);
+                    $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert(
+                        $booking,
+                        $amount,
+                        'paypal'
                     ));
+                    $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
+                    if (!empty($adminIds)) {
+                        event(new \App\Events\PortalUpdate(
+                            $adminIds,
+                            'payment_received',
+                            'New payment received for a booking.',
+                            ['booking_id' => $booking->id]
+                        ));
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Admin notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                 }
 
                 return redirect()->route('parent.bookings.index')

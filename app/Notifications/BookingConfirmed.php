@@ -38,6 +38,8 @@ class BookingConfirmed extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $this->booking->loadMissing(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint']);
+
         $invoiceService = app(InvoiceService::class);
 
         $paymentDetails = [
@@ -47,7 +49,6 @@ class BookingConfirmed extends Notification implements ShouldQueue
             'reference' => $this->paymentReference,
         ];
 
-        // Generate PDFs (receipt can show payment details when provided)
         $invoicePath = $invoiceService->generateInvoice($this->booking);
         $receiptPath = $invoiceService->generateReceipt($this->booking, $paymentDetails);
 
