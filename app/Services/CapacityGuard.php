@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Exceptions\CapacityExceededException;
 use App\Models\Booking;
-use App\Models\Booking;
 use App\Models\Route;
 
 class CapacityGuard
