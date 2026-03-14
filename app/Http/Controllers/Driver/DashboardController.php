@@ -918,7 +918,7 @@ class DashboardController extends Controller
                     'email' => $route->driver->email,
                 ] : null,
             ],
-            'currentPeriod' => $this->getRoutePeriod($route),
+            'currentPeriod' => $this->driverRouteService->getRoutePeriod($route),
             'availablePeriods' => [
                 'am' => $routeData['amRoute'] ? true : false,
                 'pm' => $routeData['pmRoute'] ? true : false,
