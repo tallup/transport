@@ -326,9 +326,10 @@ class RosterController extends Controller
             $dailyPickup = DailyPickup::create($data);
         }
 
+        $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
+
         // Send notification only for actual completions
         if ($status === DailyPickup::STATUS_COMPLETED) {
-            $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
             $parent = $booking->student?->parent;
             if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
                 $parent->notify(new \App\Notifications\PickupCompleted(

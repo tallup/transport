@@ -434,8 +434,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                                         <GlassButton
                                                                                             variant="secondary"
                                                                                             onClick={() => markBookingComplete(booking.id, 'pending', 'arrive')}
-                                                                                            disabled={isBookingCompleting}
-                                                                                            className="text-[10px] py-1.5 px-3 flex-1 border-white/20 hover:bg-white/10 text-white font-bold"
+                                                                                            disabled={isBookingCompleting || !!booking.absenceAcknowledgedAt}
+                                                                                            className={`text-[10px] py-1.5 px-3 flex-1 border-white/20 font-bold ${booking.absenceAcknowledgedAt ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 text-white'}`}
                                                                                         >
                                                                                             {isBookingCompleting ? '...' : 'ARRIVE'}
                                                                                         </GlassButton>
@@ -450,16 +450,16 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                                     <GlassButton
                                                                                         variant="success"
                                                                                         onClick={() => markBookingComplete(booking.id, 'completed', 'complete')}
-                                                                                        disabled={isBookingCompleting}
-                                                                                        className="text-[10px] py-1.5 px-3 flex-1 font-bold"
+                                                                                        disabled={isBookingCompleting || !!booking.absenceAcknowledgedAt}
+                                                                                        className={`text-[10px] py-1.5 px-3 flex-1 font-bold ${booking.absenceAcknowledgedAt ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                                                     >
                                                                                         {isBookingCompleting ? '...' : 'PICK UP'}
                                                                                     </GlassButton>
                                                                                     <GlassButton
                                                                                         variant="secondary"
                                                                                         onClick={() => markBookingComplete(booking.id, 'no_show', 'complete')}
-                                                                                        disabled={isBookingCompleting}
-                                                                                        className="text-[10px] py-1.5 px-3 flex-1 border-rose-500/30 hover:bg-rose-500/10 text-rose-200 font-bold"
+                                                                                        disabled={isBookingCompleting || !!booking.absenceAcknowledgedAt}
+                                                                                        className={`text-[10px] py-1.5 px-3 flex-1 border-rose-500/30 font-bold ${booking.absenceAcknowledgedAt ? 'opacity-50 cursor-not-allowed text-rose-200/50' : 'hover:bg-rose-500/10 text-rose-200'}`}
                                                                                     >
                                                                                         {isBookingCompleting ? '...' : 'NO SHOW'}
                                                                                     </GlassButton>
