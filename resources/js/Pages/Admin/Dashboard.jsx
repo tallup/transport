@@ -99,6 +99,13 @@ export default function AdminDashboard({
             icon: CircleDollarSign,
             tone: 'text-amber-600',
         },
+        {
+            title: 'Absences Today',
+            value: stats?.total_absences_today || 0,
+            href: '/filament-admin/student-absences',
+            icon: Users,
+            tone: 'text-rose-600',
+        },
     ];
 
     const bookingColumns = useMemo(
@@ -304,7 +311,9 @@ export default function AdminDashboard({
                                 {(recentActivity || []).length > 0 ? (
                                     <>
                                         {recentActivity.map((activity) => (
-                                            <div key={activity.id || activity.timestamp} className="rounded-xl border border-slate-200 bg-white p-3">
+                                            <div key={activity.id || activity.timestamp} className={`rounded-xl border p-3 ${
+                                                activity.type === 'absence' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'
+                                            }`}>
                                                 <p className="text-sm font-medium text-slate-900">{activity.message}</p>
                                                 <p className="mt-1 text-xs text-slate-500">{activity.time}</p>
                                             </div>

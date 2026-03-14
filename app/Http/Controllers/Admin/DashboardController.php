@@ -55,6 +55,7 @@ class DashboardController extends Controller
                 'awaiting_approval_bookings' => Booking::where('status', Booking::STATUS_AWAITING_APPROVAL)->count(),
                 'total_drivers' => User::where('role', 'driver')->count(),
                 'total_parents' => User::where('role', 'parent')->count(),
+                'total_absences_today' => \App\Models\StudentAbsence::whereDate('absence_date', Carbon::today())->count(),
                 'total_revenue' => round($totalRevenue, 2),
             ];
 
@@ -180,11 +181,32 @@ class DashboardController extends Controller
                     'type' => 'booking',
                     'message' => "New booking for {$booking->student?->name} ({$statusLabel})",
                     'time' => $booking->created_at->diffForHumans(),
-                    'timestamp' => $booking->created_at,
-                ];
             })->toArray();
             
-            $recentActivityPagination = [
+            // Add Recent Absences to activity
+            $recentAbsences = \App\Models\StudentAbsence::with('student')
+                ->orderBy('created_at', 'desc')
+                ->limit($perPage)
+                ->get()
+                ->map(function ($absence) {
+                    return [
+                        'id' => $absence->id,
+                        'type' => 'absence',
+                        'message' => "Absence reported for {$absence->student?->name} on " . $absence->absence_date->format('M d'),
+                        'time' => $absence->created_at->diffForHumans(),
+                        'timestamp' => $absence->created_at,
+                    ];
+                })->toArray();
+
+            $recentActivity = array_merge($recentActivity, $recentAbsences);
+            
+            // Sort merged activity by timestamp
+            usort($recentActivity, function($a, $b) {
+                return $b['timestamp'] <=> $a['timestamp'];
+            });
+            
+            // Trim back to perPage
+            $recentActivity = array_slice($recentActivity, 0, $perPage);
                 'current_page' => $recentBookingActs->currentPage(),
                 'last_page' => $recentBookingActs->lastPage(),
                 'per_page' => $recentBookingActs->perPage(),

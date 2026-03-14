@@ -150,9 +150,9 @@ class RosterController extends Controller
                                  'arrivedAt' => $dailyPickup->arrived_at ?? null,
                                  'completedAt' => $dailyPickup->completed_at ?? null,
                                  'isAbsent' => $absence !== null,
-                                 'absenceId' => $absence->id ?? null,
-                                 'absenceReason' => $absence->reason ?? null,
-                                 'absenceAcknowledgedAt' => $absence->acknowledged_at ?? null,
+                                 'absenceId' => $absence?->id ?? null,
+                                 'absenceReason' => $absence?->reason ?? null,
+                                 'absenceAcknowledgedAt' => $absence?->acknowledged_at ?? null,
                                  'student' => [
                                      'id' => $booking->student->id,
                                      'name' => $booking->student->name,
@@ -187,12 +187,24 @@ class RosterController extends Controller
                             return null;
                         }
                         // Check if this booking has a daily pickup for today
-                        $hasDailyPickup = $booking->dailyPickups->isNotEmpty();
+                        $dailyPickup = $booking->dailyPickups->first();
+                        $hasDailyPickup = $dailyPickup !== null;
+                        
+                        // Check for reported absence
+                        $absence = $booking->absences->first();
+
                         return [
                             'id' => $booking->id,
                             'status' => $booking->status,
                             'hasDailyPickup' => $hasDailyPickup,
                             'pickup_address' => $booking->pickup_address,
+                            'pickupStatus' => $dailyPickup->status ?? ($absence ? 'absent' : null),
+                            'arrivedAt' => $dailyPickup->arrived_at ?? null,
+                            'completedAt' => $dailyPickup->completed_at ?? null,
+                            'isAbsent' => $absence !== null,
+                            'absenceId' => $absence?->id ?? null,
+                            'absenceReason' => $absence?->reason ?? null,
+                            'absenceAcknowledgedAt' => $absence?->acknowledged_at ?? null,
                             'student' => [
                                 'id' => $booking->student->id,
                                 'name' => $booking->student->name,

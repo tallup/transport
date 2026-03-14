@@ -46,6 +46,7 @@ export default function AdminLayout({ header, children }) {
             items: [
                 { href: '/admin/dashboard', label: 'Dashboard', active: currentUrl === '/admin/dashboard' },
                 { href: '/admin/bookings', label: 'Bookings', active: currentUrl.startsWith('/admin/bookings') },
+                { href: '/admin/absences', label: 'Absences', active: currentUrl.startsWith('/admin/absences') },
                 { href: '/admin/routes', label: 'Routes', active: currentUrl.startsWith('/admin/routes') },
                 { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl.startsWith('/admin/pickup-points') },
                 { href: '/admin/vehicles', label: 'Vehicles', active: currentUrl.startsWith('/admin/vehicles') },
@@ -75,6 +76,7 @@ export default function AdminLayout({ header, children }) {
     const mainNavigationItems = [
         { href: '/admin/dashboard', label: 'Dashboard', active: currentUrl === '/admin/dashboard' },
         { href: '/admin/bookings', label: 'Bookings', active: currentUrl.startsWith('/admin/bookings') },
+        { href: '/admin/absences', label: 'Absences', active: currentUrl.startsWith('/admin/absences') },
         { href: '/admin/routes', label: 'Routes', active: currentUrl.startsWith('/admin/routes') },
         { href: '/admin/pickup-points', label: 'Pickup Points', active: currentUrl.startsWith('/admin/pickup-points') },
         { href: '/admin/finance', label: 'Finance', active: currentUrl.startsWith('/admin/finance') },

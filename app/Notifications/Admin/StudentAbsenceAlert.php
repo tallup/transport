@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class StudentAbsenceAlert extends Notification implements ShouldQueue
+class StudentAbsenceAlert extends Notification
 {
     use Queueable;
 
