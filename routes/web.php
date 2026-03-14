@@ -160,6 +160,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete')->middleware('throttle:60,1');
     Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete')->middleware('throttle:10,1');
     Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip')->middleware('throttle:10,1');
+    Route::post('/absences/{absence}/acknowledge', [\App\Http\Controllers\Driver\RosterController::class, 'acknowledgeAbsence'])->name('absences.acknowledge');
 });
 
 Route::middleware(['auth'])->group(function () {

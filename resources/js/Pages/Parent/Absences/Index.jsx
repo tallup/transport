@@ -59,6 +59,18 @@ export default function Index({ absences }) {
                                         </div>
                                         
                                         <div className="flex items-center gap-4">
+                                            {absence.acknowledged_at && (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full">
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    <span className="text-[11px] font-bold uppercase tracking-tight">Seen by Driver</span>
+                                                    <span className="text-[10px] text-emerald-600/70 border-l border-emerald-200 pl-1.5 ml-0.5">
+                                                        {new Date(absence.acknowledged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                            )}
+
                                             {absence.reason && (
                                                 <div className="hidden md:block max-w-xs transition-all">
                                                     <p className="text-sm italic text-slate-600 truncate" title={absence.reason}>

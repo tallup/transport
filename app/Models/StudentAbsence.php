@@ -28,10 +28,12 @@ class StudentAbsence extends Model
         'period',
         'reason',
         'reported_by',
+        'acknowledged_at',
     ];
 
     protected $casts = [
         'absence_date' => 'date',
+        'acknowledged_at' => 'datetime',
     ];
 
     public function booking(): BelongsTo

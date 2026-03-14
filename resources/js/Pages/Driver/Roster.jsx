@@ -112,6 +112,28 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         }
     };
 
+    const acknowledgeAbsence = async (absenceId) => {
+        if (!absenceId) return;
+        const key = `absence-${absenceId}`;
+        setCompleting({ ...completing, [key]: true });
+
+        try {
+            const response = await axios.post(`/driver/absences/${absenceId}/acknowledge`);
+
+            if (response.data.success) {
+                router.reload();
+            } else {
+                alert(response.data.message || 'Failed to acknowledge absence');
+                setCompleting({ ...completing, [key]: false });
+            }
+        } catch (error) {
+            console.error('Error acknowledging absence:', error);
+            const errorMessage = error.response?.data?.message || 'An error occurred';
+            alert(errorMessage);
+            setCompleting({ ...completing, [key]: false });
+        }
+    };
+
     return (
         <DriverLayout>
             <Head title="Daily Roster" />
@@ -357,14 +379,34 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
                                                                         {booking.isAbsent && !isCompleted && (
                                                                             <div className="mb-3 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-md">
-                                                                                <p className="text-xs font-bold text-amber-200">
-                                                                                    PARENTS REPORTED ABSENT
-                                                                                </p>
-                                                                                {booking.absenceReason && (
-                                                                                    <p className="text-[10px] text-amber-100/70 italic line-clamp-1">
-                                                                                        "{booking.absenceReason}"
-                                                                                    </p>
-                                                                                )}
+                                                                                <div className="flex justify-between items-start">
+                                                                                    <div>
+                                                                                        <p className="text-xs font-bold text-amber-200 uppercase">
+                                                                                            Reported Absent
+                                                                                        </p>
+                                                                                        {booking.absenceReason && (
+                                                                                            <p className="text-[10px] text-amber-100/70 italic line-clamp-1">
+                                                                                                "{booking.absenceReason}"
+                                                                                            </p>
+                                                                                        )}
+                                                                                    </div>
+                                                                                    {booking.absenceAcknowledgedAt ? (
+                                                                                        <div className="text-right">
+                                                                                            <p className="text-[10px] font-bold text-emerald-400 uppercase">Seen</p>
+                                                                                            <p className="text-[8px] text-white/50">
+                                                                                                {new Date(booking.absenceAcknowledgedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    ) : (
+                                                                                        <button
+                                                                                            onClick={() => acknowledgeAbsence(booking.absenceId)}
+                                                                                            disabled={completing[`absence-${booking.absenceId}`]}
+                                                                                            className="px-2 py-0.5 bg-amber-500/30 hover:bg-amber-500/50 text-[9px] font-bold text-white rounded border border-amber-500/50 transition-colors"
+                                                                                        >
+                                                                                            {completing[`absence-${booking.absenceId}`] ? '...' : 'ACKNOWLEDGE'}
+                                                                                        </button>
+                                                                                    )}
+                                                                                </div>
                                                                             </div>
                                                                         )}
 

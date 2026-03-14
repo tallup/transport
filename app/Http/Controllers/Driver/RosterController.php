@@ -8,6 +8,7 @@ use App\Models\CalendarEvent;
 use App\Models\DailyPickup;
 use App\Models\Route;
 use App\Models\RouteCompletion;
+use App\Models\StudentAbsence;
 use App\Services\DriverRouteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -149,7 +150,9 @@ class RosterController extends Controller
                                  'arrivedAt' => $dailyPickup->arrived_at ?? null,
                                  'completedAt' => $dailyPickup->completed_at ?? null,
                                  'isAbsent' => $absence !== null,
+                                 'absenceId' => $absence->id ?? null,
                                  'absenceReason' => $absence->reason ?? null,
+                                 'absenceAcknowledgedAt' => $absence->acknowledged_at ?? null,
                                  'student' => [
                                      'id' => $booking->student->id,
                                      'name' => $booking->student->name,
@@ -371,6 +374,39 @@ class RosterController extends Controller
         ]);
     }
 
+    public function acknowledgeAbsence(Request $request, StudentAbsence $absence)
+    {
+        $driver = $request->user();
+        
+        // Verify authorship/authorization: absence booking route must belong to this driver
+        if ($absence->booking->route->driver_id !== $driver->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized.',
+            ], 403);
+        }
+
+        $absence->update([
+            'acknowledged_at' => now(),
+        ]);
+
+        // Notify parent
+        $parent = $absence->student->parent;
+        if ($parent) {
+            try {
+                $parent->notify(new \App\Notifications\Parent\AbsenceAcknowledged($absence));
+            } catch (\Exception $e) {
+                \Log::error('AbsenceAcknowledged notification failed', ['error' => $e->getMessage()]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Absence acknowledged.',
+            'acknowledged_at' => $absence->acknowledged_at->toIso8601String(),
+        ]);
+    }
+
     public function markPickupPointComplete(Request $request)
     {
         $driver = $request->user();
@@ -495,9 +531,5 @@ class RosterController extends Controller
             'count' => $createdCount,
         ]);
     }
-}
-
-
-
 
 

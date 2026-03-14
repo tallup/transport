@@ -73,10 +73,29 @@ class AbsenceController extends Controller
             return back()->withErrors(['absence_date' => 'An absence report already exists for this date and period.']);
         }
 
-        StudentAbsence::create($validated);
+        $absence = StudentAbsence::create($validated);
+        $absence->load(['student', 'booking.route.driver']);
+
+        // 1. Notify Driver
+        try {
+            $driver = $absence->booking->route?->driver;
+            if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                $driver->notify(new \App\Notifications\DriverStudentAbsence($absence));
+            }
+        } catch (\Exception $e) {
+            \Log::error('DriverStudentAbsence notification failed', ['absence_id' => $absence->id, 'error' => $e->getMessage()]);
+        }
+
+        // 2. Notify Admins
+        try {
+            $adminService = app(\App\Services\AdminNotificationService::class);
+            $adminService->notifyAdmins(new \App\Notifications\Admin\StudentAbsenceAlert($absence));
+        } catch (\Exception $e) {
+            \Log::error('Admin StudentAbsenceAlert notification failed', ['absence_id' => $absence->id, 'error' => $e->getMessage()]);
+        }
 
         return redirect()->route('parent.absences.index')
-            ->with('success', 'Absence reported successfully. The driver will be notified.');
+            ->with('success', 'Absence reported successfully. The driver and administration have been notified.');
     }
 
     public function destroy(StudentAbsence $absence)
