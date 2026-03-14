@@ -22,32 +22,32 @@ class BookingService
         
         // Fix bookings marked as 'completed' - they should be 'active' until plan period ends
         // If end_date has passed, mark as expired; otherwise mark as active
-        Booking::where('status', 'completed')
+        Booking::where('status', Booking::STATUS_COMPLETED)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
                     ->orWhere('end_date', '>=', $today);
             })
-            ->update(['status' => 'active']);
+            ->update(['status' => Booking::STATUS_ACTIVE]);
         
         // Get bookings that are expiring today (before updating status)
         // so we can send notifications to parents
-        $expiringBookings = Booking::whereIn('status', ['active', 'completed'])
+        $expiringBookings = Booking::whereIn('status', [Booking::STATUS_ACTIVE, Booking::STATUS_COMPLETED])
             ->whereNotNull('end_date')
             ->where('end_date', '<', $today)
             ->with(['student.parent', 'route', 'pickupPoint'])
             ->get();
         
         // Auto-expire bookings past end_date (including those that were 'completed')
-        Booking::whereIn('status', ['active', 'completed'])
+        Booking::whereIn('status', [Booking::STATUS_ACTIVE, Booking::STATUS_COMPLETED])
             ->whereNotNull('end_date')
             ->where('end_date', '<', $today)
-            ->update(['status' => 'expired']);
+            ->update(['status' => Booking::STATUS_EXPIRED]);
         
         // Send expiration notifications to parents (send immediately)
         foreach ($expiringBookings as $booking) {
             $parent = $booking->student?->parent;
             if ($parent && filter_var($parent->email ?? '', FILTER_VALIDATE_EMAIL)) {
-                $parent->notifyNow(new \App\Notifications\BookingExpired($booking));
+                $parent->notify(new \App\Notifications\BookingExpired($booking));
             } else {
                 \Log::debug('BookingExpired notification skipped: missing parent email', [
                     'booking_id' => $booking->id,
@@ -68,9 +68,9 @@ class BookingService
     public function syncStripeStatus(Booking $booking, string $stripeStatus): void
     {
         if ($stripeStatus === 'active' || $stripeStatus === 'trialing') {
-            $booking->update(['status' => 'active']);
+            $booking->update(['status' => Booking::STATUS_ACTIVE]);
         } elseif (in_array($stripeStatus, ['canceled', 'unpaid', 'past_due'])) {
-            $booking->update(['status' => 'cancelled']);
+            $booking->update(['status' => Booking::STATUS_CANCELLED]);
         }
     }
 
@@ -115,7 +115,7 @@ class BookingService
     public function hasOverlappingBooking(int $studentId, Carbon $startDate, ?Carbon $endDate = null, ?int $excludeBookingId = null): bool
     {
         $query = Booking::where('student_id', $studentId)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', Booking::activeStatuses())
             ->where(function ($q) use ($startDate, $endDate) {
                 // Check if existing booking overlaps with new booking dates
                 $q->where(function ($subQ) use ($startDate, $endDate) {

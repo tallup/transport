@@ -87,7 +87,7 @@ class BookingController extends Controller
 
         $booking = Booking::create($validated);
 
-        if ($booking->status === 'active') {
+        if ($booking->status === \App\Models\Booking::STATUS_ACTIVE) {
             $this->notifyDriverStudentAdded($booking);
         }
 
@@ -159,7 +159,7 @@ class BookingController extends Controller
         $previousStatus = $booking->status;
         $booking->update($validated);
 
-        if ($previousStatus !== 'active' && $booking->status === 'active') {
+        if ($previousStatus !== \App\Models\Booking::STATUS_ACTIVE && $booking->status === \App\Models\Booking::STATUS_ACTIVE) {
             $this->notifyDriverStudentAdded($booking);
         }
 
@@ -174,16 +174,16 @@ class BookingController extends Controller
         }
 
         // Only allow approving bookings that have been paid (awaiting_approval). Pending = not yet paid.
-        if ($booking->status !== 'awaiting_approval') {
+        if ($booking->status !== \App\Models\Booking::STATUS_AWAITING_APPROVAL) {
             return back()->withErrors(['error' => 'Only bookings with completed payment can be approved. The parent must pay first.']);
         }
 
-        $booking->update(['status' => 'active']);
+        $booking->update(['status' => \App\Models\Booking::STATUS_ACTIVE]);
 
         $parent = $booking->student?->parent;
         if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
             try {
-                $parent->notifyNow(new \App\Notifications\BookingApproved($booking));
+                $parent->notify(new \App\Notifications\BookingApproved($booking));
             } catch (\Exception $e) {
                 \Log::error('BookingApproved notification failed', [
                     'booking_id' => $booking->id,
@@ -219,16 +219,16 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to update this booking.');
         }
 
-        if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
+        if (!in_array($booking->status, \App\Models\Booking::activeStatuses())) {
             return back()->withErrors(['error' => 'Only pending, awaiting approval, or active bookings can be cancelled.']);
         }
 
-        $booking->update(['status' => 'cancelled']);
+        $booking->update(['status' => \App\Models\Booking::STATUS_CANCELLED]);
 
         $parent = $booking->student?->parent;
         if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
             try {
-                $parent->notifyNow(new \App\Notifications\BookingCancelled($booking));
+                $parent->notify(new \App\Notifications\BookingCancelled($booking));
             } catch (\Exception $e) {
                 \Log::error('Admin BookingCancelled notification failed', [
                     'booking_id' => $booking->id,
@@ -256,7 +256,7 @@ class BookingController extends Controller
             abort(403, 'Unauthorized to update this booking.');
         }
 
-        if ($booking->status === 'refunded') {
+        if ($booking->status === \App\Models\Booking::STATUS_REFUNDED) {
             return back()->with('error', 'This booking has already been refunded.');
         }
 
@@ -291,7 +291,7 @@ class BookingController extends Controller
         }
 
         try {
-            $driver->notifyNow(new DriverStudentAdded($booking));
+            $driver->notify(new DriverStudentAdded($booking));
         } catch (\Exception $e) {
             \Log::error('DriverStudentAdded notification failed', [
                 'booking_id' => $booking->id,

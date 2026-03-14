@@ -58,23 +58,11 @@ class User extends Authenticatable
      */
     protected function casts(): array
     {
-        $casts = [
+        return [
             'email_verified_at' => 'datetime',
             'registration_approved_at' => 'datetime',
-            'password' => 'hashed',
             'phone_numbers' => 'array',
         ];
-        
-        // Only cast role if column exists
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
-                // Role will be handled as string, no special casting needed
-            }
-        } catch (\Exception $e) {
-            // If schema check fails, continue without role casting
-        }
-        
-        return $casts;
     }
     
     /**
@@ -90,9 +78,7 @@ class User extends Authenticatable
      */
     public function markEmailAsVerified(): bool
     {
-        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'email_verified_at')) {
-            $this->forceFill(['email_verified_at' => $this->freshTimestamp()])->save();
-        }
+        $this->forceFill(['email_verified_at' => $this->freshTimestamp()])->save();
         return true;
     }
 
@@ -101,19 +87,6 @@ class User extends Authenticatable
      */
     public function getRoleAttribute($value)
     {
-        if ($value !== null) {
-            return $value;
-        }
-        
-        // Check if column exists, if not return default
-        try {
-            if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
-                return 'parent';
-            }
-        } catch (\Exception $e) {
-            return 'parent';
-        }
-        
         return $value ?? 'parent';
     }
 

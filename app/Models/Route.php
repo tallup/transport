@@ -168,10 +168,10 @@ class Route extends Model
     {
         if ($period === 'am') {
             // AM routes have pickup_time before 12:00
-            return $query->whereRaw('TIME(pickup_time) < ?', ['12:00:00']);
+            return $query->whereTime('pickup_time', '<', '12:00:00');
         } elseif ($period === 'pm') {
             // PM routes have pickup_time at or after 12:00
-            return $query->whereRaw('TIME(pickup_time) >= ?', ['12:00:00']);
+            return $query->whereTime('pickup_time', '>=', '12:00:00');
         }
         
         return $query;

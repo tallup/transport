@@ -214,8 +214,8 @@ class UserController extends Controller
                 // Cancel all active bookings for this parent's students
                 $studentIds = $user->students()->pluck('id');
                 Booking::whereIn('student_id', $studentIds)
-                    ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
-                    ->update(['status' => 'cancelled']);
+                    ->whereIn('status', \App\Models\Booking::activeStatuses())
+                    ->update(['status' => \App\Models\Booking::STATUS_CANCELLED]);
             }
         });
 

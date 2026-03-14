@@ -28,18 +28,18 @@ class UpdateBookingStatuses extends Command
     {
         $this->info('Updating booking statuses...');
         
-        $beforePending = \App\Models\Booking::where('status', 'pending')->count();
-        $beforeAwaitingApproval = \App\Models\Booking::where('status', 'awaiting_approval')->count();
-        $beforeActive = \App\Models\Booking::where('status', 'active')->count();
+        $beforePending = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_PENDING)->count();
+        $beforeAwaitingApproval = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_AWAITING_APPROVAL)->count();
+        $beforeActive = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_ACTIVE)->count();
         
         $bookingService->updateBookingStatuses();
         
-        $afterPending = \App\Models\Booking::where('status', 'pending')->count();
-        $afterAwaitingApproval = \App\Models\Booking::where('status', 'awaiting_approval')->count();
-        $afterActive = \App\Models\Booking::where('status', 'active')->count();
-        $afterExpired = \App\Models\Booking::where('status', 'expired')->count();
+        $afterPending = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_PENDING)->count();
+        $afterAwaitingApproval = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_AWAITING_APPROVAL)->count();
+        $afterActive = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_ACTIVE)->count();
+        $afterExpired = \App\Models\Booking::where('status', \App\Models\Booking::STATUS_EXPIRED)->count();
 
-        $expired = $afterExpired - (\App\Models\Booking::where('status', 'expired')->where('created_at', '<', now()->subMinute())->count() - $afterExpired);
+        $expired = $afterExpired - (\App\Models\Booking::where('status', \App\Models\Booking::STATUS_EXPIRED)->where('created_at', '<', now()->subMinute())->count() - $afterExpired);
         
         $this->info("✓ Updated booking statuses");
         $this->info("  - Expired: {$expired} active bookings");

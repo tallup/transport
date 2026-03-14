@@ -44,7 +44,7 @@ class SendDailyActivitySummary extends Command
             'new_bookings' => Booking::whereDate('created_at', $date)->count(),
             
             // Cancelled bookings on this date
-            'cancelled_bookings' => Booking::where('status', 'cancelled')
+            'cancelled_bookings' => Booking::where('status', Booking::STATUS_CANCELLED)
                 ->whereDate('updated_at', $date)
                 ->count(),
             
@@ -52,7 +52,7 @@ class SendDailyActivitySummary extends Command
             'completed_pickups' => DailyPickup::whereDate('pickup_date', $date)->count(),
             
             // Revenue from payments on this date
-            'revenue' => Booking::where('status', 'active')
+            'revenue' => Booking::where('status', Booking::STATUS_ACTIVE)
                 ->whereDate('updated_at', $date)
                 ->whereNotNull('stripe_customer_id')
                 ->count() * 100, // Simplified - you may want to calculate actual amounts
@@ -72,7 +72,7 @@ class SendDailyActivitySummary extends Command
                 ->toArray(),
             
             // System overview
-            'active_bookings_count' => Booking::where('status', 'active')
+            'active_bookings_count' => Booking::where('status', Booking::STATUS_ACTIVE)
                 ->whereDate('start_date', '<=', now())
                 ->where(function ($query) {
                     $query->whereNull('end_date')
@@ -118,13 +118,13 @@ class SendDailyActivitySummary extends Command
         $actions = [];
 
         // Check for pending bookings (awaiting payment)
-        $pendingBookings = Booking::where('status', 'pending')->count();
+        $pendingBookings = Booking::where('status', Booking::STATUS_PENDING)->count();
         if ($pendingBookings > 0) {
             $actions[] = "{$pendingBookings} pending booking(s) awaiting payment";
         }
 
         // Check for bookings awaiting admin approval
-        $awaitingApproval = Booking::where('status', 'awaiting_approval')->count();
+        $awaitingApproval = Booking::where('status', Booking::STATUS_AWAITING_APPROVAL)->count();
         if ($awaitingApproval > 0) {
             $actions[] = "{$awaitingApproval} booking(s) awaiting admin approval";
         }
@@ -138,7 +138,7 @@ class SendDailyActivitySummary extends Command
         }
 
         // Check for bookings expiring in next 3 days
-        $expiringBookings = Booking::where('status', 'active')
+        $expiringBookings = Booking::where('status', Booking::STATUS_ACTIVE)
             ->whereNotNull('end_date')
             ->whereDate('end_date', '>=', now())
             ->whereDate('end_date', '<=', now()->addDays(3))

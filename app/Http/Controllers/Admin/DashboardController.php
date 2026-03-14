@@ -29,7 +29,7 @@ class DashboardController extends Controller
         try {
             // Calculate total revenue from active and pending bookings
             $totalRevenue = 0;
-            $activeBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+            $activeBookings = Booking::whereIn('status', Booking::activeStatuses())
                 ->with(['route.vehicle', 'student.parent'])
                 ->get();
             
@@ -50,9 +50,9 @@ class DashboardController extends Controller
                 'total_students' => Student::count(),
                 'total_vehicles' => Vehicle::count(),
                 'total_routes' => Route::where('active', true)->count(),
-                'active_bookings' => Booking::where('status', 'active')->count(),
-                'pending_bookings' => Booking::where('status', 'pending')->count(),
-                'awaiting_approval_bookings' => Booking::where('status', 'awaiting_approval')->count(),
+                'active_bookings' => Booking::where('status', Booking::STATUS_ACTIVE)->count(),
+                'pending_bookings' => Booking::where('status', Booking::STATUS_PENDING)->count(),
+                'awaiting_approval_bookings' => Booking::where('status', Booking::STATUS_AWAITING_APPROVAL)->count(),
                 'total_drivers' => User::where('role', 'driver')->count(),
                 'total_parents' => User::where('role', 'parent')->count(),
                 'total_revenue' => round($totalRevenue, 2),
@@ -66,7 +66,7 @@ class DashboardController extends Controller
                 $dayEnd = $date->copy()->endOfDay();
                 
                 // Get bookings created on this day
-                $dayBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                $dayBookings = Booking::whereIn('status', Booking::activeStatuses())
                     ->whereBetween('created_at', [$dayStart, $dayEnd])
                     ->with(['route.vehicle', 'student.parent'])
                     ->get();
@@ -94,22 +94,22 @@ class DashboardController extends Controller
             $bookingStatusDistribution = [
                 [
                     'name' => 'Active',
-                    'value' => Booking::where('status', 'active')->count(),
+                    'value' => Booking::where('status', Booking::STATUS_ACTIVE)->count(),
                     'color' => '#ca8a04',
                 ],
                 [
                     'name' => 'Pending',
-                    'value' => Booking::where('status', 'pending')->count(),
+                    'value' => Booking::where('status', Booking::STATUS_PENDING)->count(),
                     'color' => '#f59e0b',
                 ],
                 [
                     'name' => 'Awaiting Approval',
-                    'value' => Booking::where('status', 'awaiting_approval')->count(),
+                    'value' => Booking::where('status', Booking::STATUS_AWAITING_APPROVAL)->count(),
                     'color' => '#f97316',
                 ],
                 [
                     'name' => 'Cancelled',
-                    'value' => Booking::where('status', 'cancelled')->count(),
+                    'value' => Booking::where('status', Booking::STATUS_CANCELLED)->count(),
                     'color' => '#ef4444',
                 ],
             ];

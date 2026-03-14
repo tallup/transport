@@ -5,7 +5,7 @@ import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 const axios = window.axios;
 
-export default function CreateBooking({ students, routes }) {
+export default function CreateBooking({ students, routes, recentPickups = [] }) {
     const { auth } = usePage().props;
     
     // Helper function to format time - extract just the time portion
@@ -661,6 +661,40 @@ export default function CreateBooking({ students, routes }) {
                                             <h3 className="mb-2 text-2xl font-extrabold text-slate-900 md:text-3xl">Where should we pick up?</h3>
                                             <p className="text-sm text-slate-500">Choose a stop from your route or enter a custom address</p>
                                         </div>
+
+                                        {recentPickups && recentPickups.length > 0 && (
+                                            <div className="mb-2">
+                                                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Quick select from recent</p>
+                                                <div className="flex flex-wrap gap-3">
+                                                    {recentPickups.map((pickup) => (
+                                                        <button
+                                                            key={pickup.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setPickupOption('pickup_point');
+                                                                setData({
+                                                                    ...data,
+                                                                    route_id: String(pickup.route_id),
+                                                                    pickup_point_id: String(pickup.pickup_point_id),
+                                                                    pickup_address: pickup.pickup_point?.address || '',
+                                                                });
+                                                            }}
+                                                            className="group relative flex items-center gap-3 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-yellow-400 hover:shadow-md transition-all text-left"
+                                                        >
+                                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-yellow-400 group-hover:text-slate-900 transition-colors">
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                                                </svg>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-bold text-slate-900 leading-none">{pickup.pickup_point?.name || 'Point'}</p>
+                                                                <p className="text-[10px] text-slate-500 mt-1 uppercase font-semibold">{pickup.route?.name || 'Route'}</p>
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 && (
                                             <div>

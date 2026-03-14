@@ -10,207 +10,31 @@ use App\Models\PickupPoint;
 use App\Models\Route;
 use App\Models\RouteCompletion;
 use App\Models\RouteStart;
+use App\Services\DriverRouteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    private function getDriverRouteData($driver)
+    protected DriverRouteService $driverRouteService;
+
+    public function __construct(DriverRouteService $driverRouteService)
     {
-        $today = Carbon::today();
-
-        // Get all active routes for the driver
-        $routes = Route::where('driver_id', $driver->id)
-            ->where('active', true)
-            ->with(['vehicle', 'pickupPoints', 'completions' => function ($query) use ($today) {
-                $query->whereDate('completion_date', $today);
-            }])
-            ->get();
-
-        // Debug logging
-        \Log::info("Driver {$driver->id} ({$driver->name}) - Active routes found: " . $routes->count());
-
-        if ($routes->isEmpty()) {
-            // Check if driver has any routes (even inactive ones) for debugging
-            $allRoutes = Route::where('driver_id', $driver->id)->get(['id', 'name', 'active']);
-            if ($allRoutes->isNotEmpty()) {
-                \Log::info("Driver {$driver->id} has routes but none are active: " . $allRoutes->pluck('name')->join(', '));
-            }
-        }
-
-        // Separate AM and PM routes
-        $amRoute = null;
-        $pmRoute = null;
-        $bothRoute = null; // Route with service_type 'both' or no pickup_time
-
-        foreach ($routes as $route) {
-            $period = $route->servicePeriod();
-            if ($period === 'am') {
-                if (!$amRoute) {
-                    $amRoute = $route;
-                }
-            } elseif ($period === 'pm') {
-                if (!$pmRoute) {
-                    $pmRoute = $route;
-                }
-            } else {
-                // 'both' or undefined - can work for either period
-                if (!$bothRoute) {
-                    $bothRoute = $route;
-                }
-            }
-        }
-
-        $amCompleted = $amRoute
-            ? RouteCompletion::where('route_id', $amRoute->id)
-                ->where('driver_id', $driver->id)
-                ->whereDate('completion_date', $today)
-                ->where('period', 'am')
-                ->exists()
-            : false;
-
-        $pmCompleted = $pmRoute
-            ? RouteCompletion::where('route_id', $pmRoute->id)
-                ->where('driver_id', $driver->id)
-                ->whereDate('completion_date', $today)
-                ->where('period', 'pm')
-                ->exists()
-            : false;
-
-        return [
-            'routes' => $routes,
-            'amRoute' => $amRoute,
-            'pmRoute' => $pmRoute,
-            'bothRoute' => $bothRoute,
-            'amCompleted' => $amCompleted,
-            'pmCompleted' => $pmCompleted,
-        ];
+        $this->driverRouteService = $driverRouteService;
     }
-
-    /**
-     * Get the active route for the driver based on current time and completion status,
-     * with optional manual period selection.
-     */
-    private function getActiveRoute($driver, ?string $requestedPeriod = null, ?array $data = null)
-    {
-        $currentTime = Carbon::now();
-        $isMorning = $currentTime->format('H:i:s') < '12:00:00';
-
-        $data = $data ?? $this->getDriverRouteData($driver);
-        $routes = $data['routes'];
-        $amRoute = $data['amRoute'];
-        $pmRoute = $data['pmRoute'];
-        $bothRoute = $data['bothRoute'];
-        $amCompleted = $data['amCompleted'];
-
-        if ($routes->isEmpty()) {
-            return null;
-        }
-
-        if (in_array($requestedPeriod, ['am', 'pm'], true)) {
-            if ($requestedPeriod === 'am' && $amRoute) {
-                return $amRoute;
-            }
-            if ($requestedPeriod === 'pm' && $pmRoute) {
-                // Block PM switch until AM is completed
-                if ($amRoute && !$amCompleted) {
-                    return $amRoute;
-                }
-                return $pmRoute;
-            }
-        }
-
-        // Default behavior: never auto-switch to PM after AM completion
-        if ($amRoute) {
-            if (!$amCompleted) {
-                return $amRoute;
-            }
-
-            return $amRoute;
-        }
-
-        // No AM route exists - use time-based logic
-        if ($isMorning) {
-            return $bothRoute;
-        }
-
-        return $pmRoute ?: $bothRoute ?: $routes->first();
-    }
-
-    /**
-     * Check if all bookings for a route are completed for today.
-     * 
-     * @param \App\Models\Route $route
-     * @return bool
-     */
-    /**
-     * Get the period (AM/PM) for a route based on current time and route service period.
-     */
-    private function getRoutePeriod($route)
-    {
-        $period = $route->servicePeriod();
-        
-        // If route has explicit period, use it
-        if (in_array($period, ['am', 'pm'])) {
-            return $period;
-        }
-        
-        // If route is 'both' or undefined, determine by current time
-        $currentTime = Carbon::now();
-        return $currentTime->format('H:i:s') < '12:00:00' ? 'am' : 'pm';
-    }
-
-    /**
-     * Check if all bookings for a route are completed for today and period.
-     */
-    private function areAllBookingsCompleted($route, $period = null)
-    {
-        $today = Carbon::today();
-        $period = $period ?? $this->getRoutePeriod($route);
-        
-        // Get all active bookings for this route on this date
-        // Include 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
-        $totalBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'awaiting_approval'])
-            ->whereDate('start_date', '<=', $today)
-            ->where(function ($query) use ($today) {
-                $query->whereNull('end_date')
-                    ->orWhereDate('end_date', '>=', $today);
-            })
-            ->count();
-
-        if ($totalBookings === 0) {
-            return false; // No bookings to complete
-        }
-
-        // Check if all bookings have daily pickup records for today and period
-        // Check 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
-        $bookingsWithPickups = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'awaiting_approval'])
-            ->whereDate('start_date', '<=', $today)
-            ->where(function ($query) use ($today) {
-                $query->whereNull('end_date')
-                    ->orWhereDate('end_date', '>=', $today);
-            })
-            ->whereHas('dailyPickups', function ($query) use ($today, $period) {
-                $query->whereDate('pickup_date', $today)
-                    ->where('period', $period);
-            })
-            ->count();
-
-        return $totalBookings === $bookingsWithPickups;
-    }
+    // All shared driver logic (getDriverRouteData, getActiveRoute, getRoutePeriod,
+    // areAllBookingsCompleted) now lives in App\Services\DriverRouteService.
 
     public function index(Request $request)
     {
         $driver = $request->user();
         
         $requestedPeriod = $request->query('period');
-        $routeData = $this->getDriverRouteData($driver);
+        $routeData = $this->driverRouteService->getDriverRouteData($driver);
 
         // Get the active route based on time, completion status, and optional manual selection
-        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
+        $route = $this->driverRouteService->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         // If no active route, return empty dashboard
         if (!$route) {
@@ -248,7 +72,7 @@ class DashboardController extends Controller
         }
 
         // Determine current period
-        $currentPeriod = $this->getRoutePeriod($route); // 'am' or 'pm'
+        $currentPeriod = $this->driverRouteService->getRoutePeriod($route); // 'am' or 'pm'
         
         // Check if route is already completed today for this period
         $today = Carbon::today();
@@ -259,7 +83,7 @@ class DashboardController extends Controller
             ->exists();
 
         // Check if all bookings are completed for this period
-        $canCompleteRoute = $this->areAllBookingsCompleted($route, $currentPeriod) && !$isRouteCompleted;
+        $canCompleteRoute = $this->driverRouteService->areAllBookingsCompleted($route, $currentPeriod) && !$isRouteCompleted;
 
         // Check if trip has already been started today for this period (for Start Trip button)
         $isTripStarted = RouteStart::where('route_id', $route->id)
@@ -271,7 +95,7 @@ class DashboardController extends Controller
         // Calculate stats for the active route
         // Use Carbon instance for date comparison to ensure proper type handling
         $totalStudents = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -281,7 +105,7 @@ class DashboardController extends Controller
             ->count('student_id');
 
         $todayBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -314,7 +138,7 @@ class DashboardController extends Controller
         // Show 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $todaySchedule = [];
         $todayBookingsList = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'awaiting_approval'])
+            ->whereIn('status', [\App\Models\Booking::STATUS_ACTIVE, \App\Models\Booking::STATUS_AWAITING_APPROVAL])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -364,7 +188,7 @@ class DashboardController extends Controller
                             'booking_id' => $booking->id,
                         ];
                     })->toArray(),
-                    'status' => $allCompleted ? 'completed' : 'upcoming',
+                    'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
                     'pickup_point_id' => $pickupPoint->id,
                     'route_id' => $route->id,
                 ];
@@ -398,7 +222,7 @@ class DashboardController extends Controller
                         'booking_id' => $booking->id,
                     ];
                 })->toArray(),
-                'status' => $allCompleted ? 'completed' : 'upcoming',
+                'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
                 'pickup_point_id' => null,
                 'route_id' => $route->id,
                 'is_custom' => true,
@@ -549,7 +373,7 @@ class DashboardController extends Controller
         }
 
         // Get the period for this route
-        $period = $this->getRoutePeriod($route);
+        $period = $this->driverRouteService->getRoutePeriod($route);
 
         // Check if route is already completed today for this period
         $today = Carbon::today();
@@ -567,7 +391,7 @@ class DashboardController extends Controller
         }
 
         // Verify all bookings are completed for this period
-        if (!$this->areAllBookingsCompleted($route, $period)) {
+        if (!$this->driverRouteService->areAllBookingsCompleted($route, $period)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot complete route. Some pickups are not yet completed.',
@@ -587,7 +411,7 @@ class DashboardController extends Controller
 
         // Send route completed notification to all parents with active bookings on this route
         $activeBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->where('status', \App\Models\Booking::STATUS_ACTIVE)
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -601,7 +425,7 @@ class DashboardController extends Controller
         foreach ($activeBookings as $booking) {
             $parent = $booking->student?->parent;
             if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-                $parent->notifyNow(new \App\Notifications\RouteCompleted(
+                $parent->notify(new \App\Notifications\RouteCompleted(
                     $booking,
                     $route,
                     $period,
@@ -655,7 +479,7 @@ class DashboardController extends Controller
             ], 403);
         }
 
-        $period = $this->getRoutePeriod($route);
+        $period = $this->driverRouteService->getRoutePeriod($route);
         $today = Carbon::today();
 
         $existingStart = RouteStart::where('route_id', $route->id)
@@ -679,7 +503,7 @@ class DashboardController extends Controller
         ]);
 
         $activeBookings = Booking::where('route_id', $route->id)
-            ->where('status', 'active')
+            ->where('status', \App\Models\Booking::STATUS_ACTIVE)
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -696,7 +520,7 @@ class DashboardController extends Controller
         foreach ($activeBookings as $booking) {
             $parent = $booking->student?->parent;
             if ($parent && filter_var($parent->email, FILTER_VALIDATE_EMAIL)) {
-                $parent->notifyNow(new \App\Notifications\TripStarted(
+                $parent->notify(new \App\Notifications\TripStarted(
                     $booking,
                     $route,
                     $period,
@@ -723,10 +547,10 @@ class DashboardController extends Controller
         $driver = $request->user();
         
         $requestedPeriod = $request->query('period');
-        $routeData = $this->getDriverRouteData($driver);
+        $routeData = $this->driverRouteService->getDriverRouteData($driver);
         
         // Get the active route
-        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
+        $route = $this->driverRouteService->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/StudentsSchedule', [
@@ -747,7 +571,7 @@ class DashboardController extends Controller
         $today = Carbon::today();
         // Show 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
         $activeBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'awaiting_approval'])
+            ->whereIn('status', [\App\Models\Booking::STATUS_ACTIVE, \App\Models\Booking::STATUS_AWAITING_APPROVAL])
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -832,7 +656,7 @@ class DashboardController extends Controller
                 'id' => $route->id,
                 'name' => $route->name,
             ],
-            'currentPeriod' => $this->getRoutePeriod($route),
+            'currentPeriod' => $this->driverRouteService->getRoutePeriod($route),
             'availablePeriods' => [
                 'am' => $routeData['amRoute'] ? true : false,
                 'pm' => $routeData['pmRoute'] ? true : false,
@@ -850,10 +674,10 @@ class DashboardController extends Controller
         $driver = $request->user();
         
         $requestedPeriod = $request->query('period');
-        $routeData = $this->getDriverRouteData($driver);
+        $routeData = $this->driverRouteService->getDriverRouteData($driver);
 
         // Get the active route
-        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
+        $route = $this->driverRouteService->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/RoutePerformance', [
@@ -882,7 +706,7 @@ class DashboardController extends Controller
         // Overall performance metrics (aggregated or single route)
         $totalBookings = Booking::whereIn('route_id', $routeIds)->count();
         $activeBookings = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->count();
         // Count daily pickups instead of completed bookings
         $completedPickups = DailyPickup::whereIn('route_id', $routeIds)
@@ -893,7 +717,7 @@ class DashboardController extends Controller
             ->where('created_at', '>=', $thisWeekStart)
             ->count();
         $weeklyActive = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -907,7 +731,7 @@ class DashboardController extends Controller
             ->where('created_at', '>=', $thisMonthStart)
             ->count();
         $monthlyActive = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -918,7 +742,7 @@ class DashboardController extends Controller
 
         // Calculate average students per trip
         $totalStudents = Booking::whereIn('route_id', $routeIds)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->distinct()
             ->count('student_id');
 
@@ -946,7 +770,7 @@ class DashboardController extends Controller
                 'id' => $route->id,
                 'name' => $route->name,
             ],
-            'currentPeriod' => $this->getRoutePeriod($route),
+            'currentPeriod' => $this->driverRouteService->getRoutePeriod($route),
             'availablePeriods' => [
                 'am' => $routeData['amRoute'] ? true : false,
                 'pm' => $routeData['pmRoute'] ? true : false,
@@ -966,10 +790,10 @@ class DashboardController extends Controller
         $driver = $request->user();
         
         $requestedPeriod = $request->query('period');
-        $routeData = $this->getDriverRouteData($driver);
+        $routeData = $this->driverRouteService->getDriverRouteData($driver);
         
         // Get the active route
-        $route = $this->getActiveRoute($driver, $requestedPeriod, $routeData);
+        $route = $this->driverRouteService->getActiveRoute($driver, $requestedPeriod, $routeData);
 
         if (!$route) {
             return Inertia::render('Driver/RouteInformation', [
@@ -1003,7 +827,7 @@ class DashboardController extends Controller
 
         $today = Carbon::today();
         $activeBookingsCount = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', $today)
             ->where(function ($query) use ($today) {
                 $query->whereNull('end_date')
@@ -1013,7 +837,7 @@ class DashboardController extends Controller
 
         // Get all bookings for this route (active and pending)
         $bookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
             ->orderBy('start_date', 'desc')
             ->get()

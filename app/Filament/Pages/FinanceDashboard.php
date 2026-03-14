@@ -36,8 +36,8 @@ class FinanceDashboard extends Page
     protected function loadStats(): void
     {
         // Revenue summary
-        $activeBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])->count();
-        $cancelledBookings = Booking::where('status', 'cancelled')->count();
+        $activeBookings = Booking::whereIn('status', Booking::activeStatuses())->count();
+        $cancelledBookings = Booking::where('status', Booking::STATUS_CANCELLED)->count();
         
         // Booking statistics by plan type
         $this->bookingStats = Booking::select('plan_type', DB::raw('count(*) as count'))

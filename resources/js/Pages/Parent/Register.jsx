@@ -23,6 +23,8 @@ import {
     LockClosedIcon as LockClosedIconSolid,
 } from '@heroicons/react/24/solid';
 
+import { toast } from 'sonner';
+
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
@@ -77,6 +79,16 @@ export default function Register() {
         post(route('parent.register'), {
             forceFormData: true,
             onFinish: () => reset('password', 'password_confirmation'),
+            onError: (errors) => {
+                if (errors.email) {
+                    toast.error(errors.email);
+                } else if (Object.keys(errors).length > 0) {
+                    toast.error('Registration failed. Please check the form for errors.');
+                }
+            },
+            onSuccess: () => {
+                toast.success('Account created successfully!');
+            }
         });
     };
 

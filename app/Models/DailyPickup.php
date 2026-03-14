@@ -10,6 +10,10 @@ class DailyPickup extends Model
 {
     use HasFactory;
 
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_NO_SHOW = 'no_show';
+    const STATUS_ABSENT = 'absent';
+
     protected $fillable = [
         'booking_id',
         'route_id',
@@ -17,13 +21,20 @@ class DailyPickup extends Model
         'pickup_date',
         'pickup_point_id',
         'period',
+        'status',
         'completed_at',
+        'arrived_at',
+        'departed_at',
+        'checkpoints',
         'notes',
     ];
 
     protected $casts = [
         'pickup_date' => 'date',
         'completed_at' => 'datetime',
+        'arrived_at' => 'datetime',
+        'departed_at' => 'datetime',
+        'checkpoints' => 'array',
     ];
 
     /**

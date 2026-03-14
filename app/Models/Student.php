@@ -87,6 +87,11 @@ class Student extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function absences(): HasMany
+    {
+        return $this->hasMany(StudentAbsence::class);
+    }
+
     /**
      * Get the school that the student attends.
      */

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CapacityExceededException;
 use App\Models\Booking;
+use App\Models\Booking;
 use App\Models\Route;
 
 class CapacityGuard
@@ -30,7 +31,7 @@ class CapacityGuard
     public function getAvailableSeats(Route $route, ?int $excludeBookingId = null): int
     {
         $activeBookings = Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', Booking::activeStatuses())
             ->when($excludeBookingId, fn($query) => $query->where('id', '!=', $excludeBookingId))
             ->count();
 

@@ -3,6 +3,7 @@ import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { toast } from 'sonner';
 
 export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +26,18 @@ export default function Login({ status, canResetPassword }) {
         post(route('login'), {
             onFinish: () => reset('password'),
             onSuccess: () => {
+                toast.success('Signed in successfully!');
                 window.location.reload();
             },
+            onError: (errors) => {
+                if (errors.email) {
+                    toast.error(errors.email);
+                } else if (errors.password) {
+                    toast.error(errors.password);
+                } else {
+                    toast.error('Invalid credentials. Please try again.');
+                }
+            }
         });
     };
 

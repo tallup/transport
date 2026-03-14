@@ -87,14 +87,20 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     Route::get('/bookings/{booking}/pickup-history', [BookingController::class, 'pickupHistory'])->name('bookings.pickup-history');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
-    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
-    Route::post('/bookings/create-payment-intent', [BookingController::class, 'createPaymentIntent'])->name('bookings.create-payment-intent');
-    Route::post('/bookings/payment-success', [BookingController::class, 'paymentSuccess'])->name('bookings.payment-success');
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store')->middleware('throttle:10,1');
+    Route::post('/bookings/create-payment-intent', [BookingController::class, 'createPaymentIntent'])->name('bookings.create-payment-intent')->middleware('throttle:10,1');
+    Route::post('/bookings/payment-success', [BookingController::class, 'paymentSuccess'])->name('bookings.payment-success')->middleware('throttle:10,1');
     Route::post('/bookings/skip-payment', [BookingController::class, 'skipPayment'])->name('bookings.skip-payment');
     Route::get('/schools/{school}/routes', [BookingController::class, 'getRoutesBySchool'])->name('schools.routes');
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');
     Route::get('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
+    
+    // Absences
+    Route::get('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'index'])->name('absences.index');
+    Route::get('/absences/create', [\App\Http\Controllers\Parent\AbsenceController::class, 'create'])->name('absences.create');
+    Route::post('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'store'])->name('absences.store');
+    Route::delete('/absences/{absence}', [\App\Http\Controllers\Parent\AbsenceController::class, 'destroy'])->name('absences.destroy');
 });
 
 // Admin Routes (admin accounts are created by the system; no email verification required)
@@ -150,10 +156,10 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::get('/route-performance', [\App\Http\Controllers\Driver\DashboardController::class, 'routePerformance'])->name('route-performance');
     Route::get('/route-information', [\App\Http\Controllers\Driver\DashboardController::class, 'routeInformation'])->name('route-information');
     Route::get('/completed-routes', [\App\Http\Controllers\Driver\DashboardController::class, 'completedRoutes'])->name('completed-routes');
-    Route::post('/bookings/{booking}/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markComplete'])->name('bookings.mark-complete');
-    Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete');
-    Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete');
-    Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip');
+    Route::post('/bookings/{booking}/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markComplete'])->name('bookings.mark-complete')->middleware('throttle:60,1');
+    Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete')->middleware('throttle:60,1');
+    Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete')->middleware('throttle:10,1');
+    Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip')->middleware('throttle:10,1');
 });
 
 Route::middleware(['auth'])->group(function () {

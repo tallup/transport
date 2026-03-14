@@ -81,22 +81,24 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         }
     };
 
-    const markBookingComplete = async (bookingId) => {
+    const markBookingComplete = async (bookingId, status = 'completed', action = 'complete') => {
         setCompleting({ ...completing, [bookingId]: true });
 
-
         try {
-            const response = await axios.post(`/driver/bookings/${bookingId}/mark-complete`);
+            const response = await axios.post(`/driver/bookings/${bookingId}/mark-complete`, { 
+                status,
+                action
+            });
 
             if (response.data.success) {
                 // Reload the page to show updated status
                 router.reload();
             } else {
-                alert(response.data.message || 'Failed to mark trip as complete');
+                alert(response.data.message || 'Failed to update pickup status');
                 setCompleting({ ...completing, [bookingId]: false });
             }
         } catch (error) {
-            console.error('Error marking trip as complete:', error);
+            console.error('Error updating pickup status:', error);
 
             // Handle CSRF token mismatch
             if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
@@ -104,7 +106,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                 return;
             }
 
-            const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
+            const errorMessage = error.response?.data?.message || error.message || 'An error occurred while updating the pickup status';
             alert(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });
         }
@@ -309,12 +311,14 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                 return (
                                                                     <div
                                                                         key={booking.id}
-                                                                        className={`p-4 glass-card rounded-lg border ${isCompleted
-                                                                                ? 'border-amber-400/50 bg-amber-500/10'
-                                                                                : 'border-slate-200'
-                                                                            }`}
+                                                                        className={`p-4 glass-card rounded-lg border flex flex-col justify-between ${
+                                                                            booking.pickupStatus === 'completed' ? 'border-emerald-400/50 bg-emerald-500/10' :
+                                                                            booking.pickupStatus === 'no_show' ? 'border-rose-400/50 bg-rose-500/10' :
+                                                                            booking.isAbsent ? 'border-amber-400/50 bg-amber-500/10' :
+                                                                            'border-slate-200'
+                                                                        }`}
                                                                     >
-                                                                        <div className="flex justify-between items-start">
+                                                                        <div className="flex justify-between items-start mb-3">
                                                                             <div className="flex items-center gap-3 flex-1">
                                                                                 {booking.student.profile_picture_url ? (
                                                                                     <img src={booking.student.profile_picture_url} alt={booking.student.name} className="w-10 h-10 rounded-lg object-cover border-2 border-yellow-400/50 flex-shrink-0" />
@@ -326,46 +330,99 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                                     </div>
                                                                                 )}
                                                                                 <div>
-                                                                                <div className="flex items-center gap-2 mb-1">
-                                                                                    <p className="font-bold text-white text-base">
-                                                                                        {booking.student.name}
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <p className="font-bold text-white text-base">
+                                                                                            {booking.student.name}
+                                                                                        </p>
+                                                                                        {booking.pickupStatus === 'completed' && (
+                                                                                            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                                            </svg>
+                                                                                        )}
+                                                                                    </div>
+                                                                                    <p className="text-xs font-semibold text-white/70">
+                                                                                        {booking.student.school}
                                                                                     </p>
-                                                                                    {isCompleted && (
-                                                                                        <svg className="w-5 h-5 !text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                                        </svg>
+                                                                                </div>
+                                                                            </div>
+                                                                            {booking.student.emergency_phone && (
+                                                                                <div className="text-right">
+                                                                                    <p className="text-[10px] font-semibold text-white/50 uppercase">Emergency</p>
+                                                                                    <p className="text-xs font-bold text-white">
+                                                                                        {booking.student.emergency_phone}
+                                                                                    </p>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+
+                                                                        {booking.isAbsent && !isCompleted && (
+                                                                            <div className="mb-3 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-md">
+                                                                                <p className="text-xs font-bold text-amber-200">
+                                                                                    PARENTS REPORTED ABSENT
+                                                                                </p>
+                                                                                {booking.absenceReason && (
+                                                                                    <p className="text-[10px] text-amber-100/70 italic line-clamp-1">
+                                                                                        "{booking.absenceReason}"
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+
+                                                                        <div className="flex items-center justify-between gap-2 mt-auto">
+                                                                            {isCompleted ? (
+                                                                                <div className="flex flex-col gap-1 w-full">
+                                                                                    <span className={`text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider text-center ${
+                                                                                        booking.pickupStatus === 'no_show' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                                                                                        booking.pickupStatus === 'absent' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                                                                        'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                                                                    }`}>
+                                                                                        {booking.pickupStatus === 'no_show' ? 'No Show' :
+                                                                                         booking.pickupStatus === 'absent' ? 'Reported Absent' :
+                                                                                         'Picked Up'}
+                                                                                    </span>
+                                                                                    {booking.completedAt && (
+                                                                                        <p className="text-[10px] text-white/40 text-center">
+                                                                                            {new Date(booking.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                                        </p>
                                                                                     )}
                                                                                 </div>
-                                                                                <p className="text-sm font-semibold text-white/90 mt-1">
-                                                                                    {booking.student.school}
-                                                                                </p>
-                                                                                {booking.student.grade && (
-                                                                                    <p className="text-xs font-medium text-white/70 mt-1">
-                                                                                        Grade: {booking.student.grade}
-                                                                                    </p>
-                                                                                )}
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="text-right ml-4">
-                                                                                {booking.student.emergency_phone && (
-                                                                                    <div className="mb-2">
-                                                                                        <p className="text-xs font-semibold text-white/70">Emergency</p>
-                                                                                        <p className="text-sm font-bold text-white">
-                                                                                            {booking.student.emergency_phone}
-                                                                                        </p>
-                                                                                    </div>
-                                                                                )}
-                                                                                {!isCompleted && (
+                                                                            ) : (
+                                                                                <>
+                                                                                    {!booking.arrivedAt ? (
+                                                                                        <GlassButton
+                                                                                            variant="secondary"
+                                                                                            onClick={() => markBookingComplete(booking.id, 'pending', 'arrive')}
+                                                                                            disabled={isBookingCompleting}
+                                                                                            className="text-[10px] py-1.5 px-3 flex-1 border-white/20 hover:bg-white/10 text-white font-bold"
+                                                                                        >
+                                                                                            {isBookingCompleting ? '...' : 'ARRIVE'}
+                                                                                        </GlassButton>
+                                                                                    ) : (
+                                                                                        <div className="flex flex-col gap-0.5 items-center flex-1 bg-white/5 rounded-lg py-1 border border-white/10">
+                                                                                            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-tighter">ARRIVED</span>
+                                                                                            <p className="text-[9px] text-white/60 font-medium">
+                                                                                                {new Date(booking.arrivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    )}
                                                                                     <GlassButton
                                                                                         variant="success"
-                                                                                        onClick={() => markBookingComplete(booking.id)}
+                                                                                        onClick={() => markBookingComplete(booking.id, 'completed', 'complete')}
                                                                                         disabled={isBookingCompleting}
-                                                                                        className="text-xs py-1 px-2 mt-2"
+                                                                                        className="text-[10px] py-1.5 px-3 flex-1 font-bold"
                                                                                     >
-                                                                                        {isBookingCompleting ? '...' : 'Complete'}
+                                                                                        {isBookingCompleting ? '...' : 'PICK UP'}
                                                                                     </GlassButton>
-                                                                                )}
-                                                                            </div>
+                                                                                    <GlassButton
+                                                                                        variant="secondary"
+                                                                                        onClick={() => markBookingComplete(booking.id, 'no_show', 'complete')}
+                                                                                        disabled={isBookingCompleting}
+                                                                                        className="text-[10px] py-1.5 px-3 flex-1 border-rose-500/30 hover:bg-rose-500/10 text-rose-200 font-bold"
+                                                                                    >
+                                                                                        {isBookingCompleting ? '...' : 'NO SHOW'}
+                                                                                    </GlassButton>
+                                                                                </>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                 );

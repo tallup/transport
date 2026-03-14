@@ -5,7 +5,7 @@ import GlassCard from '@/Components/GlassCard';
 export default function Home({ auth }) {
     return (
         <>
-            <Head title="">
+            <Head title="Safe School Transport">
                 <meta name="description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible Plans. Choose from weekly and monthly options. Safe, reliable school transport in Marysville, Everett & Lynnwood." />
                 <meta property="og:title" content="On-Time Transportation | Safe School Transport" />
                 <meta property="og:description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible Plans. Choose from weekly and monthly options." />

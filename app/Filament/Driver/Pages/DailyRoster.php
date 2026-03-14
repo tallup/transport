@@ -54,7 +54,7 @@ class DailyRoster extends Page
 
         // Get active bookings for the date
         $this->bookings = Booking::where('route_id', $this->route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+            ->whereIn('status', Booking::activeStatuses())
             ->where('start_date', '<=', $date)
             ->where(function ($query) use ($date) {
                 $query->whereNull('end_date')

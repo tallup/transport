@@ -34,18 +34,18 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $activeBookings = $bookings->filter(function ($booking) use ($today) {
             // Must be pending or active status
-            if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
+            if (!in_array($booking->status, \App\Models\Booking::activeStatuses())) {
                 return false;
             }
             
             // For pending bookings: include all pending bookings (they're waiting for payment or to start)
             // Don't filter by date - parent wants to see all pending bookings
-            if (in_array($booking->status, ['pending', 'awaiting_approval'])) {
+            if (in_array($booking->status, [\App\Models\Booking::STATUS_PENDING, \App\Models\Booking::STATUS_AWAITING_APPROVAL])) {
                 return true;
             }
             
             // For active bookings: include if not ended yet
-            if ($booking->status === 'active') {
+            if ($booking->status === \App\Models\Booking::STATUS_ACTIVE) {
                 $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : null;
                 // Only exclude if booking has a definite end date and it has passed
                 if ($endDate && $today->gt($endDate)) {

@@ -32,7 +32,7 @@ class FixCompletedBookings extends Command
         $today = Carbon::today();
         
         // Find all bookings with status 'completed'
-        $completedBookings = Booking::where('status', 'completed')->get();
+        $completedBookings = Booking::where('status', Booking::STATUS_COMPLETED)->get();
         
         $this->info("Found {$completedBookings->count()} bookings with 'completed' status");
         

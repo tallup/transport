@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Route;
 use App\Models\School;
 use App\Models\User;
@@ -67,9 +68,26 @@ class RouteController extends Controller
 
     public function index()
     {
+        $today = now()->toDateString();
         $routes = Route::with(['driver', 'vehicle', 'schools'])
+            ->withCount(['bookings as active_bookings_count' => function ($query) use ($today) {
+                $query->whereIn('status', Booking::activeStatuses())
+                    ->whereDate('start_date', '<=', $today)
+                    ->where(function ($q) use ($today) {
+                        $q->whereNull('end_date')
+                            ->orWhereDate('end_date', '>=', $today);
+                    });
+            }])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
+
+        // Add calculated occupancy for frontend
+        $routes->getCollection()->transform(function ($route) {
+            $route->occupancy_percentage = $route->capacity > 0 
+                ? round(($route->active_bookings_count / $route->capacity) * 100, 1) 
+                : 0;
+            return $route;
+        });
 
         return Inertia::render('Admin/Routes/Index', [
             'routes' => $routes,
@@ -134,7 +152,7 @@ class RouteController extends Controller
         if (!empty($validated['driver_id'])) {
             $driver = User::find($validated['driver_id']);
             if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
+                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
             }
         }
 
@@ -159,7 +177,7 @@ class RouteController extends Controller
 
         // Get active bookings with student details
         $activeBookings = \App\Models\Booking::where('route_id', $route->id)
-            ->whereIn('status', ['active', 'pending', 'awaiting_approval'])
+            ->whereIn('status', \App\Models\Booking::activeStatuses())
             ->whereDate('start_date', '<=', now())
             ->where(function ($query) {
                 $query->whereNull('end_date')
@@ -174,18 +192,28 @@ class RouteController extends Controller
             ? round(($totalBookings / $route->capacity) * 100, 1) 
             : 0;
 
-        // Get completion statistics (last 30 days)
-        $completionStats = \App\Models\RouteCompletion::where('route_id', $route->id)
+        // Get completion statistics (last 30 days) - calculated in PHP for portability
+        $completions = \App\Models\RouteCompletion::where('route_id', $route->id)
             ->where('completion_date', '>=', now()->subDays(30))
-            ->selectRaw('
-                COUNT(*) as total_completions,
-                AVG(TIME_TO_SEC(TIMEDIFF(completed_at, completion_date))) as avg_completion_time
-            ')
-            ->first();
+            ->get(['completed_at', 'completion_date']);
+
+        $totalCompletions = $completions->count();
+        $avgCompletionTimeMinutes = null;
+
+        if ($totalCompletions > 0) {
+            $totalSeconds = 0;
+            foreach ($completions as $completion) {
+                // completed_at is a timestamp, completion_date is a date
+                $completedAt = \Carbon\Carbon::parse($completion->completed_at);
+                $completionDate = \Carbon\Carbon::parse($completion->completion_date);
+                $totalSeconds += $completedAt->diffInSeconds($completionDate->startOfDay());
+            }
+            $avgCompletionTimeMinutes = round(($totalSeconds / $totalCompletions) / 60, 1);
+        }
 
         // Get upcoming bookings (starting soon)
         $upcomingBookings = \App\Models\Booking::where('route_id', $route->id)
-            ->whereIn('status', ['pending', 'awaiting_approval'])
+            ->whereIn('status', [\App\Models\Booking::STATUS_PENDING, \App\Models\Booking::STATUS_AWAITING_APPROVAL])
             ->whereDate('start_date', '>', now())
             ->whereDate('start_date', '<=', now()->addDays(7))
             ->with(['student.parent'])
@@ -193,7 +221,7 @@ class RouteController extends Controller
 
         // Get expired bookings (for reference)
         $recentExpired = \App\Models\Booking::where('route_id', $route->id)
-            ->where('status', 'expired')
+            ->where('status', \App\Models\Booking::STATUS_EXPIRED)
             ->whereDate('end_date', '>=', now()->subDays(7))
             ->with(['student'])
             ->get();
@@ -202,10 +230,8 @@ class RouteController extends Controller
             'total_bookings' => $totalBookings,
             'capacity_utilization' => $capacityUtilization,
             'available_seats' => max(0, $route->capacity - $totalBookings),
-            'total_completions' => $completionStats->total_completions ?? 0,
-            'avg_completion_time_minutes' => $completionStats->avg_completion_time 
-                ? round($completionStats->avg_completion_time / 60, 1) 
-                : null,
+            'total_completions' => $totalCompletions,
+            'avg_completion_time_minutes' => $avgCompletionTimeMinutes,
             'upcoming_bookings_count' => $upcomingBookings->count(),
             'recent_expired_count' => $recentExpired->count(),
         ];
@@ -288,11 +314,11 @@ class RouteController extends Controller
         if ($driverChanged) {
             $driver = User::find($newDriverId);
             if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                $driver->notifyNow(new \App\Notifications\DriverAssigned(null, $driver, $route));
+                $driver->notify(new \App\Notifications\DriverAssigned(null, $driver, $route));
                 
                 // Notify all parents with active bookings on this route
                 $activeBookings = \App\Models\Booking::where('route_id', $route->id)
-                    ->where('status', 'active')
+                    ->where('status', \App\Models\Booking::STATUS_ACTIVE)
                     ->whereDate('start_date', '<=', now())
                     ->where(function ($query) {
                         $query->whereNull('end_date')
@@ -303,7 +329,7 @@ class RouteController extends Controller
 
                 foreach ($activeBookings as $booking) {
                     if ($booking->student && $booking->student->parent) {
-                        $booking->student->parent->notifyNow(new \App\Notifications\DriverAssigned(
+                        $booking->student->parent->notify(new \App\Notifications\DriverAssigned(
                             $booking,
                             $driver,
                             $route
@@ -317,7 +343,7 @@ class RouteController extends Controller
         if ($vehicleChanged && $route->driver_id) {
             $driver = $route->driver;
             if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                $driver->notifyNow(new \App\Notifications\DriverVehicleAssigned($route));
+                $driver->notify(new \App\Notifications\DriverVehicleAssigned($route));
             }
         }
 

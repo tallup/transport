@@ -29,7 +29,7 @@ export default function BookingsIndex({ bookings }) {
             case 'active':
                 return 'bg-amber-50 text-amber-700 border-amber-200';
             case 'pending':
-                return 'bg-amber-50 text-amber-700 border-amber-200';
+                return 'bg-rose-50 text-rose-700 border-rose-200 font-bold'; // More urgent
             case 'awaiting_approval':
                 return 'bg-orange-50 text-orange-700 border-orange-200';
             case 'cancelled':
@@ -151,7 +151,19 @@ export default function BookingsIndex({ bookings }) {
                                                 {booking.end_date ? ` - ${new Date(booking.end_date).toLocaleDateString()}` : ''}
                                             </span>
                                         </div>
-                                    </div>
+                                        </div>
+
+                                    {booking.status === 'pending' && (
+                                        <div className="mt-4 rounded-lg bg-rose-50 p-3 border border-rose-100 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                                                <span className="text-xs font-bold text-rose-700 uppercase tracking-wider">Payment Required</span>
+                                            </div>
+                                            <Link href={`/parent/bookings/${booking.id}/checkout`} className="text-xs font-extrabold text-rose-700 hover:underline">
+                                                Pay Now →
+                                            </Link>
+                                        </div>
+                                    )}
 
                                     <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-200 pt-4">
                                         <Link href={`/parent/bookings/${booking.id}`}>

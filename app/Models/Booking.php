@@ -14,6 +14,22 @@ class Booking extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_AWAITING_APPROVAL = 'awaiting_approval';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_REFUNDED = 'refunded';
+
+    /**
+     * Statuses that count as "active" for capacity and roster (not yet ended or cancelled).
+     */
+    public static function activeStatuses(): array
+    {
+        return [self::STATUS_PENDING, self::STATUS_AWAITING_APPROVAL, self::STATUS_ACTIVE];
+    }
+
     protected $fillable = [
         'student_id',
         'route_id',
@@ -83,6 +99,11 @@ class Booking extends Model
     public function dailyPickups(): HasMany
     {
         return $this->hasMany(DailyPickup::class);
+    }
+
+    public function absences(): HasMany
+    {
+        return $this->hasMany(StudentAbsence::class);
     }
 
     /**

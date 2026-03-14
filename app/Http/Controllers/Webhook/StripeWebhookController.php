@@ -67,21 +67,34 @@ class StripeWebhookController extends Controller
 
     /**
      * Handle successful payment intent.
+     * Supports metadata.booking_ids (comma-separated) or metadata.booking_id (single).
      */
     protected function handlePaymentIntentSucceeded($paymentIntent)
     {
-        $bookingId = $paymentIntent->metadata->booking_id ?? null;
+        $bookingIdsRaw = $paymentIntent->metadata->booking_ids ?? $paymentIntent->metadata->booking_id ?? null;
+        if (!$bookingIdsRaw) {
+            return;
+        }
+        $bookingIds = array_filter(array_map('intval', explode(',', (string) $bookingIdsRaw)));
+        if (empty($bookingIds)) {
+            return;
+        }
 
-        if ($bookingId) {
+        $updated = 0;
+        foreach ($bookingIds as $bookingId) {
             $booking = Booking::find($bookingId);
-            if ($booking && $booking->status === 'pending') {
+            if ($booking && $booking->status === \App\Models\Booking::STATUS_PENDING) {
                 $booking->update([
-                    'status' => 'awaiting_approval',
-                    'stripe_customer_id' => $paymentIntent->customer,
+                    'status' => \App\Models\Booking::STATUS_ACTIVE,
+                    'stripe_customer_id' => $paymentIntent->customer ?? null,
+                    'payment_id' => $paymentIntent->id,
+                    'payment_method' => 'stripe',
                 ]);
-
-                Log::info("Booking {$bookingId} marked awaiting approval via webhook");
+                $updated++;
             }
+        }
+        if ($updated > 0) {
+            Log::info("Stripe webhook: {$updated} booking(s) marked awaiting approval", ['booking_ids' => $bookingIds]);
         }
     }
 
@@ -99,7 +112,7 @@ class StripeWebhookController extends Controller
                 
                 // Notify parent
                 if ($booking->student && $booking->student->parent) {
-                    $booking->student->parent->notifyNow(new PaymentFailed($booking));
+                    $booking->student->parent->notify(new PaymentFailed($booking));
                 }
 
                 Log::info("Booking {$bookingId} payment failed via webhook");

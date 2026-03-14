@@ -6,6 +6,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import GlassCard from '@/Components/GlassCard';
+import { toast } from 'sonner';
 
 const EyeIcon = () => (
     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +38,18 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('register'));
+        post(route('register'), {
+            onError: (errors) => {
+                if (errors.email) {
+                    toast.error(errors.email);
+                } else if (Object.keys(errors).length > 0) {
+                    toast.error('Registration failed. Please check the form for errors.');
+                }
+            },
+            onSuccess: () => {
+                toast.success('Account created successfully!');
+            }
+        });
     };
 
     return (

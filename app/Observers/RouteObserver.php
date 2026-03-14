@@ -38,7 +38,7 @@ class RouteObserver
                     
                     // Notify all parents with active bookings on this route
                     $activeBookings = Booking::where('route_id', $route->id)
-                        ->where('status', 'active')
+                        ->where('status', \App\Models\Booking::STATUS_ACTIVE)
                         ->whereDate('start_date', '<=', now())
                         ->where(function ($query) {
                             $query->whereNull('end_date')

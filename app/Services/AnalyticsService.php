@@ -29,7 +29,7 @@ class AnalyticsService
      */
     public function getRevenueTrends(Carbon $startDate, Carbon $endDate, string $groupBy = 'day'): array
     {
-        $bookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+        $bookings = Booking::whereIn('status', Booking::activeStatuses())
             ->whereBetween('created_at', [$startDate, $endDate])
             ->with(['route.vehicle'])
             ->get();
@@ -108,7 +108,7 @@ class AnalyticsService
 
         foreach ($routes as $route) {
             $activeBookings = Booking::where('route_id', $route->id)
-                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+                ->whereIn('status', Booking::activeStatuses())
                 ->count();
 
             $utilizationPercent = $route->capacity > 0 
@@ -161,7 +161,7 @@ class AnalyticsService
 
             $totalRoutes = $routes->count();
             $totalBookings = Booking::whereIn('route_id', $routes->pluck('id'))
-                ->whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                ->whereIn('status', Booking::activeStatuses())
                 ->count();
 
             // Route completions
@@ -245,7 +245,7 @@ class AnalyticsService
 
         foreach ($routes as $route) {
             $bookings = Booking::where('route_id', $route->id)
-                ->whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                ->whereIn('status', Booking::activeStatuses())
                 ->count();
 
             $utilization = $route->capacity > 0 
@@ -352,7 +352,7 @@ class AnalyticsService
      */
     public function getRevenueSummary(Carbon $startDate, Carbon $endDate): array
     {
-        $bookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+        $bookings = Booking::whereIn('status', Booking::activeStatuses())
             ->whereBetween('created_at', [$startDate, $endDate])
             ->with(['route.vehicle'])
             ->get();
@@ -413,7 +413,7 @@ class AnalyticsService
         $periodLength = $startDate->diffInDays($endDate);
         $prevStartDate = $startDate->copy()->subDays($periodLength + 1);
         $prevEndDate = $startDate->copy()->subDay();
-        $prevBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+        $prevBookings = Booking::whereIn('status', Booking::activeStatuses())
             ->whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->with(['route.vehicle'])
             ->get();

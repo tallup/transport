@@ -5,6 +5,7 @@ import GlassButton from '@/Components/GlassButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
+import { toast } from 'sonner';
 
 export default function Contact({ auth }) {
     const { flash } = usePage().props;
@@ -19,7 +20,13 @@ export default function Contact({ auth }) {
         e.preventDefault();
         post(route('contact.store'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                toast.success('Your message has been sent successfully!');
+                reset();
+            },
+            onError: () => {
+                toast.error('Failed to send message. Please check the form for errors.');
+            }
         });
     };
 

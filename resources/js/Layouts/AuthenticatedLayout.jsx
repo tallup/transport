@@ -29,6 +29,7 @@ export default function AuthenticatedLayout({ header, children }) {
             active: currentUrl.startsWith('/parent/bookings') && currentUrl !== '/parent/bookings/create' && currentUrl !== '/parent/pickup-history',
         },
         { href: '/parent/pickup-history', label: 'Pickup History', active: currentUrl === '/parent/pickup-history' },
+        { href: '/parent/absences', label: 'Student Absence', active: currentUrl.startsWith('/parent/absences') },
     ];
 
     const userMenuItems = [

@@ -30,7 +30,7 @@ class FinanceController extends Controller
         try {
             // Calculate total revenue from active and pending bookings
             $totalRevenue = 0;
-            $activeBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+            $activeBookings = Booking::whereIn('status', Booking::activeStatuses())
                 ->with(['route.vehicle', 'student.parent'])
                 ->get();
             
@@ -50,7 +50,7 @@ class FinanceController extends Controller
             $planTypes = ['weekly', 'monthly', 'academic_term', 'annual'];
             
             foreach ($planTypes as $planType) {
-                $bookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                $bookings = Booking::whereIn('status', Booking::activeStatuses())
                     ->where('plan_type', $planType)
                     ->with(['route.vehicle', 'student.parent'])
                     ->get();
@@ -82,7 +82,7 @@ class FinanceController extends Controller
                 $dayStart = $date->copy()->startOfDay();
                 $dayEnd = $date->copy()->endOfDay();
                 
-                $dayBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                $dayBookings = Booking::whereIn('status', Booking::activeStatuses())
                     ->whereBetween('created_at', [$dayStart, $dayEnd])
                     ->with(['route.vehicle', 'student.parent'])
                     ->get();
@@ -120,10 +120,10 @@ class FinanceController extends Controller
 
             // Status summary
             $statusSummary = [
-                'active' => Booking::where('status', 'active')->count(),
-                'pending' => Booking::where('status', 'pending')->count(),
-                'awaiting_approval' => Booking::where('status', 'awaiting_approval')->count(),
-                'cancelled' => Booking::where('status', 'cancelled')->count(),
+                'active' => Booking::where('status', Booking::STATUS_ACTIVE)->count(),
+                'pending' => Booking::where('status', Booking::STATUS_PENDING)->count(),
+                'awaiting_approval' => Booking::where('status', Booking::STATUS_AWAITING_APPROVAL)->count(),
+                'cancelled' => Booking::where('status', Booking::STATUS_CANCELLED)->count(),
                 'completed' => DailyPickup::count(),
             ];
 
@@ -134,7 +134,7 @@ class FinanceController extends Controller
                 $monthStart = $month->copy()->startOfMonth();
                 $monthEnd = $month->copy()->endOfMonth();
                 
-                $monthBookings = Booking::whereIn('status', ['active', 'pending', 'awaiting_approval'])
+                $monthBookings = Booking::whereIn('status', Booking::activeStatuses())
                     ->whereBetween('created_at', [$monthStart, $monthEnd])
                     ->with(['route.vehicle', 'student.parent'])
                     ->get();
@@ -161,7 +161,7 @@ class FinanceController extends Controller
             return Inertia::render('Admin/Finance/Dashboard', [
                 'totalRevenue' => round($totalRevenue, 2),
                 'activeBookings' => $activeBookings->count(),
-                'cancelledBookings' => Booking::where('status', 'cancelled')->count(),
+                'cancelledBookings' => Booking::where('status', Booking::STATUS_CANCELLED)->count(),
                 'revenueByPlanType' => $revenueByPlanType,
                 'revenueTrends' => $revenueTrends,
                 'monthlyRevenue' => $monthlyRevenue,

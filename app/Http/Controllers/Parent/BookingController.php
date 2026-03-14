@@ -65,10 +65,23 @@ class BookingController extends Controller
                 return $route;
             });
 
+        // Get recent pickup points for quick selection
+        $recentPickups = Booking::whereHas('student', function ($query) use ($user) {
+                $query->where('parent_id', $user->id);
+            })
+            ->with(['pickupPoint', 'route'])
+            ->whereNotNull('pickup_point_id')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('pickup_point_id')
+            ->take(3)
+            ->values();
+
         return Inertia::render('Parent/Bookings/Create', [
             'students' => $students,
             'schools' => $schools,
             'routes' => $routes,
+            'recentPickups' => $recentPickups,
         ]);
     }
     
@@ -141,7 +154,7 @@ class BookingController extends Controller
         // Check for overlapping bookings for each selected student
         foreach ($studentIds as $sid) {
             $overlappingBooking = Booking::where('student_id', $sid)
-                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+                ->whereIn('status', Booking::activeStatuses())
                 ->where(function ($q) use ($startDate, $endDate) {
                     $q->where(function ($subQ) use ($startDate, $endDate) {
                         $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
@@ -466,101 +479,108 @@ class BookingController extends Controller
         $user = $request->user();
 
         try {
-            $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
-            if ($paymentIntent->status !== 'succeeded') {
-                return back()->withErrors(['error' => 'Payment was not successful']);
-            }
-
-            $amountTotal = $paymentIntent->amount / 100;
-
-            // Use payment intent metadata as source of truth for which bookings were paid (fixes multi-student only one marked active)
-            $metaIds = isset($paymentIntent->metadata->booking_ids) && $paymentIntent->metadata->booking_ids
-                ? array_map('intval', array_filter(explode(',', (string) $paymentIntent->metadata->booking_ids)))
-                : [];
-            $requestIds = isset($validated['booking_ids']) && is_array($validated['booking_ids'])
-                ? array_map('intval', $validated['booking_ids'])
-                : [];
-            if (!empty($metaIds)) {
-                $bookingIds = array_values(array_unique(array_merge($metaIds, $requestIds)));
-            } else {
-                $bookingIds = !empty($requestIds) ? $requestIds : (isset($validated['booking_id']) ? [(int) $validated['booking_id']] : []);
-            }
-
-            $bookings = Booking::whereIn('id', $bookingIds)->get();
-            foreach ($bookings as $b) {
-                if (!$user->can('update', $b) || !$user->students->contains($b->student_id)) {
-                    return back()->withErrors(['error' => 'Unauthorized']);
+            return \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $user) {
+                $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
+                if ($paymentIntent->status !== 'succeeded') {
+                    return back()->withErrors(['error' => 'Payment was not successful']);
                 }
-            }
 
-            $perBookingAmount = count($bookings) > 0 ? round($amountTotal / count($bookings), 2) : $amountTotal;
+                // --- Idempotency check: skip if this payment intent was already applied ---
+                $alreadyApplied = Booking::where('payment_id', $validated['payment_intent_id'])
+                    ->where('status', Booking::STATUS_ACTIVE)
+                    ->exists();
+                if ($alreadyApplied) {
+                    \Log::info('Payment already applied (idempotent skip)', ['payment_intent_id' => $validated['payment_intent_id']]);
+                    return redirect()->route('parent.bookings.index')->with('success', 'Payment already processed.');
+                }
 
-            // Phase 1: update ALL bookings to active (must not be interrupted by notification failures)
-            foreach ($bookings as $booking) {
-                $booking->update([
-                    'status' => 'active',
-                    'stripe_customer_id' => $user->stripe_id,
-                    'payment_id' => $validated['payment_intent_id'],
-                    'payment_method' => 'stripe',
-                ]);
-            }
+                $amountTotal = $paymentIntent->amount / 100;
 
-            // Phase 2: one consolidated email for all bookings; then per-booking push/driver/admin
-            try {
+                // Use payment intent metadata as source of truth for which bookings were paid
+                $metaIds = isset($paymentIntent->metadata->booking_ids) && $paymentIntent->metadata->booking_ids
+                    ? array_map('intval', array_filter(explode(',', (string) $paymentIntent->metadata->booking_ids)))
+                    : [];
+                $requestIds = isset($validated['booking_ids']) && is_array($validated['booking_ids'])
+                    ? array_map('intval', $validated['booking_ids'])
+                    : [];
+                
+                $bookingIds = !empty($metaIds) 
+                    ? array_values(array_unique(array_merge($metaIds, $requestIds)))
+                    : (!empty($requestIds) ? $requestIds : (isset($validated['booking_id']) ? [(int) $validated['booking_id']] : []));
+
+                $bookings = Booking::whereIn('id', $bookingIds)->get();
                 foreach ($bookings as $b) {
-                    $b->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
-                }
-                $user->notifyNow(new BookingConfirmed(
-                    $bookings,
-                    $amountTotal,
-                    'stripe',
-                    now(),
-                    $validated['payment_intent_id']
-                ));
-            } catch (\Exception $e) {
-                \Log::error('BookingConfirmed notification failed', ['booking_ids' => $bookings->pluck('id')->toArray(), 'error' => $e->getMessage()]);
-            }
-
-            foreach ($bookings as $booking) {
-                try {
-                    $pushHelper = app(\App\Services\PushNotificationHelper::class);
-                    $pushHelper->sendIfSubscribed(
-                        $user,
-                        'Booking Confirmed',
-                        'Your payment has been processed and your booking is now active.',
-                        ['type' => 'payment_received', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
-                    );
-                } catch (\Exception $e) {
-                    \Log::error('Push notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                    if (!$user->can('update', $b) || !$user->students->contains($b->student_id)) {
+                        return back()->withErrors(['error' => 'Unauthorized']);
+                    }
                 }
 
+                $perBookingAmount = count($bookings) > 0 ? round($amountTotal / count($bookings), 2) : $amountTotal;
+
+                // --- Server-side amount verification (7.1) ---
+                $expectedAmount = 0;
                 try {
-                    $driver = $booking->route?->driver;
-                    if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                    foreach ($bookings as $b) {
+                        $expectedAmount += $this->pricingService->calculatePriceForBooking($b);
+                    }
+                    $expectedAmount = max(0.5, round($expectedAmount, 2));
+                    if (abs($amountTotal - $expectedAmount) > 0.01) {
+                        \Log::warning('Payment amount mismatch', [
+                            'payment_intent_id' => $validated['payment_intent_id'],
+                            'paid' => $amountTotal,
+                            'expected' => $expectedAmount,
+                            'booking_ids' => $bookings->pluck('id')->toArray(),
+                        ]);
+                        return back()->withErrors(['error' => 'Payment amount does not match expected price. Please contact support.']);
                     }
                 } catch (\Exception $e) {
-                    \Log::error('DriverStudentAdded notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                    \Log::warning('Could not verify payment amount', ['error' => $e->getMessage()]);
                 }
 
+                foreach ($bookings as $booking) {
+                    $booking->update([
+                        'status' => 'active',
+                        'stripe_customer_id' => $user->stripe_id,
+                        'payment_id' => $validated['payment_intent_id'],
+                        'payment_method' => 'stripe',
+                    ]);
+                }
+
+                // Phase 2: Notifications
                 try {
-                    $adminService = app(\App\Services\AdminNotificationService::class);
-                    $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
-                    $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
-                    if (!empty($adminIds)) {
-                        event(new \App\Events\PortalUpdate($adminIds, 'payment_received', 'New payment received for a booking.', ['booking_id' => $booking->id]));
+                    foreach ($bookings as $b) {
+                        $b->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
                     }
+                    $user->notify(new BookingConfirmed($bookings, $amountTotal, 'stripe', now(), $validated['payment_intent_id']));
                 } catch (\Exception $e) {
-                    \Log::error('Admin notification failed on payment', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                    \Log::error('BookingConfirmed notification failed', ['error' => $e->getMessage()]);
                 }
-            }
 
-            $message = count($bookings) === 1
-                ? 'Payment received. Your booking is now active!'
-                : 'Payment received. Your ' . count($bookings) . ' bookings are now active!';
-            return redirect()->route('parent.bookings.index')->with('success', $message);
+                foreach ($bookings as $booking) {
+                    try {
+                        $pushHelper = app(\App\Services\PushNotificationHelper::class);
+                        $pushHelper->sendIfSubscribed($user, 'Booking Confirmed', 'Your payment has been processed.', ['type' => 'payment_received', 'booking_id' => $booking->id]);
+                    } catch (\Exception $e) {}
+
+                    try {
+                        $driver = $booking->route?->driver;
+                        if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
+                            $driver->notify(new \App\Notifications\DriverStudentAdded($booking));
+                        }
+                    } catch (\Exception $e) {}
+
+                    try {
+                        $adminService = app(\App\Services\AdminNotificationService::class);
+                        $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
+                    } catch (\Exception $e) {}
+                }
+
+                $message = count($bookings) === 1 ? 'Payment received. Your booking is now active!' : 'Payment received. Your ' . count($bookings) . ' bookings are now active!';
+                return redirect()->route('parent.bookings.index')->with('success', $message);
+            });
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Payment verification failed']);
+            \Log::error('Payment verification failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return back()->withErrors(['error' => 'Payment verification failed: ' . $e->getMessage()]);
         }
     }
 
@@ -586,9 +606,17 @@ class BookingController extends Controller
         // Update booking status to active (or keep as pending - depends on business logic)
         // Keeping as 'pending' so it can be paid later
         // You can change this to 'active' if you want bookings to work without payment
+        // Keep as pending so payment can be made later
         $booking->update([
-            'status' => 'pending', // Keep as pending so payment can be made later
+            'status' => 'pending',
         ]);
+
+        // Log skip payment for audit trail (7.2)
+        activity()
+            ->performedOn($booking)
+            ->causedBy($user)
+            ->withProperties(['booking_id' => $booking->id])
+            ->log('Parent skipped payment for booking');
 
         // Push notification only; email receipt is sent only after payment is complete
         $pushHelper = app(\App\Services\PushNotificationHelper::class);
@@ -715,7 +743,7 @@ class BookingController extends Controller
                 $booking->loadMissing(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'student.school']);
 
                 try {
-                    $user->notifyNow(new BookingConfirmed($booking, $amount, 'paypal', now(), $capture['id'] ?? null));
+                    $user->notify(new BookingConfirmed($booking, $amount, 'paypal', now(), $capture['id'] ?? null));
                 } catch (\Exception $e) {
                     \Log::error('BookingConfirmed notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
                 }
@@ -735,7 +763,7 @@ class BookingController extends Controller
                 try {
                     $driver = $booking->route?->driver;
                     if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
-                        $driver->notifyNow(new \App\Notifications\DriverStudentAdded($booking));
+                        $driver->notify(new \App\Notifications\DriverStudentAdded($booking));
                     }
                 } catch (\Exception $e) {
                     \Log::error('DriverStudentAdded notification failed (PayPal)', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
@@ -1288,8 +1316,7 @@ class BookingController extends Controller
             
             $overlappingBooking = Booking::where('student_id', $booking->student_id)
                 ->where('id', '!=', $booking->id)
-            ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
-                ->whereIn('status', ['pending', 'awaiting_approval', 'active'])
+                ->whereIn('status', Booking::activeStatuses())
                 ->where(function ($q) use ($startDate, $endDate) {
                     $q->where(function ($subQ) use ($startDate, $endDate) {
                         $subQ->where('start_date', '<=', $endDate ?? $startDate->copy()->addYear())
@@ -1364,7 +1391,7 @@ class BookingController extends Controller
 
         // Send cancellation notification to parent (send immediately)
         if (filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
-            $user->notifyNow(new \App\Notifications\BookingCancelled($booking));
+            $user->notify(new \App\Notifications\BookingCancelled($booking));
         } else {
             \Log::warning('BookingCancelled notification skipped: missing parent email', [
                 'booking_id' => $booking->id,
