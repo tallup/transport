@@ -147,6 +147,12 @@ class DashboardController extends Controller
             ->with(['student', 'pickupPoint', 'dailyPickups' => function ($query) use ($today, $currentPeriod) {
                 $query->whereDate('pickup_date', $today)
                     ->where('period', $currentPeriod);
+            }, 'absences' => function ($query) use ($today, $currentPeriod) {
+                $query->whereDate('absence_date', $today)
+                    ->where(function ($q) use ($currentPeriod) {
+                        $q->where('period', $currentPeriod)
+                          ->orWhere('period', 'both');
+                    });
             }])
             ->get()
             ->filter(fn ($b) => $b->student !== null); // Skip orphaned bookings (e.g. soft-deleted students)
@@ -182,10 +188,13 @@ class DashboardController extends Controller
                     'title' => $pickupPoint->name,
                     'description' => "Pickup {$pointBookings->count()} student(s)",
                     'students' => $pointBookings->map(function ($booking) {
+                        $absence = $booking->absences->first();
                         return [
                             'name' => $booking->student?->name ?? 'Unknown',
                             'address' => $booking->pickup_address ?? ($booking->pickupPoint?->address ?? 'Address not set'),
                             'booking_id' => $booking->id,
+                            'isAbsent' => !is_null($absence),
+                            'absenceReason' => $absence?->reason,
                         ];
                     })->toArray(),
                     'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
@@ -216,10 +225,13 @@ class DashboardController extends Controller
                 'title' => 'Other Pickup Locations',
                 'description' => "Pickup {$customAddressBookings->count()} student(s)",
                 'students' => $customAddressBookings->map(function ($booking) {
+                    $absence = $booking->absences->first();
                     return [
                         'name' => $booking->student?->name ?? 'Unknown',
                         'address' => $booking->pickup_address ?? ($booking->pickupPoint?->address ?? 'Address not set'),
                         'booking_id' => $booking->id,
+                        'isAbsent' => !is_null($absence),
+                        'absenceReason' => $absence?->reason,
                     ];
                 })->toArray(),
                 'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
@@ -269,6 +281,8 @@ class DashboardController extends Controller
                         'sequence_order' => $pickupPoint->sequence_order,
                         'booking_id' => $booking->id,
                         'status' => $booking->status,
+                        'isAbsent' => $booking->absences->isNotEmpty(),
+                        'absenceReason' => $booking->absences->first()?->reason,
                     ];
                 }
             }
@@ -309,6 +323,8 @@ class DashboardController extends Controller
                 'booking_id' => $booking->id,
                 'status' => $booking->status,
                 'is_custom' => empty($booking->pickup_point_id),
+                'isAbsent' => $booking->absences->isNotEmpty(),
+                'absenceReason' => $booking->absences->first()?->reason,
             ];
         }
 
@@ -577,7 +593,9 @@ class DashboardController extends Controller
                 $query->whereNull('end_date')
                     ->orWhereDate('end_date', '>=', $today);
             })
-            ->with(['student.school', 'pickupPoint', 'dropoffPoint'])
+            ->with(['student.school', 'pickupPoint', 'dropoffPoint', 'absences' => function ($query) use ($today) {
+                $query->whereDate('absence_date', $today);
+            }])
             ->get()
             ->filter(fn ($b) => $b->student !== null);
 
@@ -609,6 +627,8 @@ class DashboardController extends Controller
                         'plan_type' => $booking->plan_type,
                         'start_date' => $booking->start_date->format('Y-m-d'),
                         'end_date' => $booking->end_date ? $booking->end_date->format('Y-m-d') : null,
+                        'isAbsent' => $booking->absences->isNotEmpty(),
+                        'absenceReason' => $booking->absences->first()?->reason,
                     ];
                 }
             }
@@ -640,6 +660,8 @@ class DashboardController extends Controller
                 'start_date' => $booking->start_date->format('Y-m-d'),
                 'end_date' => $booking->end_date ? $booking->end_date->format('Y-m-d') : null,
                 'is_custom' => true,
+                'isAbsent' => $booking->absences->isNotEmpty(),
+                'absenceReason' => $booking->absences->first()?->reason,
             ];
         }
 

@@ -181,6 +181,8 @@ class DashboardController extends Controller
                     'type' => 'booking',
                     'message' => "New booking for {$booking->student?->name} ({$statusLabel})",
                     'time' => $booking->created_at->diffForHumans(),
+                    'timestamp' => $booking->created_at,
+                ];
             })->toArray();
             
             // Add Recent Absences to activity
@@ -207,6 +209,8 @@ class DashboardController extends Controller
             
             // Trim back to perPage
             $recentActivity = array_slice($recentActivity, 0, $perPage);
+
+            $recentActivityPagination = [
                 'current_page' => $recentBookingActs->currentPage(),
                 'last_page' => $recentBookingActs->lastPage(),
                 'per_page' => $recentBookingActs->perPage(),

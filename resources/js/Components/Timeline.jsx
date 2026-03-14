@@ -31,8 +31,13 @@ export default function Timeline({ items = [] }) {
                                                     const studentName = typeof student === 'string' ? student : (student?.name || 'Unknown');
                                                     const studentKey = typeof student === 'object' && student?.booking_id ? student.booking_id : idx;
                                                     return (
-                                                        <span key={studentKey} className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
+                                                        <span key={studentKey} className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border transition-all ${
+                                                            student?.isAbsent 
+                                                            ? 'bg-rose-500 text-white border-rose-400 line-through' 
+                                                            : 'bg-white/20 text-white border-white/30'
+                                                        }`}>
                                                             {studentName}
+                                                            {student?.isAbsent && <span className="ml-1 text-[8px] uppercase no-underline font-bold">(Absent)</span>}
                                                         </span>
                                                     );
                                                 })}

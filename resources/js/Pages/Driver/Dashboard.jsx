@@ -206,6 +206,11 @@ export default function Dashboard({
                                                     <div className="flex items-start justify-between gap-3">
                                                         <div>
                                                             <p className="text-sm font-semibold text-slate-900">{student.name}</p>
+                                                            {student.isAbsent && (
+                                                                <span className="mt-1 inline-block rounded-lg bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-600 border border-rose-200">
+                                                                    Reported Absent
+                                                                </span>
+                                                            )}
                                                             <p className="mt-1 text-sm text-slate-600">{student.pickup_point_name}</p>
                                                             {student.pickup_point_address && (
                                                                 <p className="mt-1 text-xs text-slate-500">{student.pickup_point_address}</p>

@@ -116,7 +116,14 @@ export default function StudentsSchedule({ route, studentsList }) {
                                                             </div>
                                                         )}
                                                         <div className="flex-1 min-w-0">
-                                                            <h3 className="text-lg font-extrabold text-white truncate">{student.name}</h3>
+                                                            <div className="flex items-center gap-2">
+                                                                <h3 className="text-lg font-extrabold text-white truncate">{student.name}</h3>
+                                                                {student.isAbsent && (
+                                                                    <span className="px-2 py-0.5 bg-rose-500 text-white text-[10px] font-bold rounded-lg uppercase tracking-tight">
+                                                                        Absent
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                             {student.grade && (
                                                                 <p className="text-sm text-white/70 font-medium">Grade {student.grade}</p>
                                                             )}
