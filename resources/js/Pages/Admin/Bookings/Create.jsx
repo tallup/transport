@@ -16,6 +16,7 @@ export default function Create({ students, routes }) {
         student_id: '',
         route_id: '',
         pickup_point_id: '',
+        pickup_address: '',
         dropoff_point_id: '',
         plan_type: 'weekly',
         trip_type: 'two_way',
@@ -129,13 +130,12 @@ export default function Create({ students, routes }) {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="pickup_point_id" className="mb-2 block text-base font-semibold text-slate-700">Pickup Point *</label>
+                                    <label htmlFor="pickup_point_id" className="mb-2 block text-base font-semibold text-slate-700">Pickup Point (Optional)</label>
                                     <Select
                                         id="pickup_point_id"
                                         value={data.pickup_point_id}
                                         onChange={(e) => setData('pickup_point_id', e.target.value)}
                                         className="form-control"
-                                        required
                                         disabled={!selectedRouteId}
                                     >
                                         <option value="">Select Pickup Point</option>
@@ -165,6 +165,21 @@ export default function Create({ students, routes }) {
                                         ))}
                                     </Select>
                                     <InputError message={errors.dropoff_point_id} className="mt-2" />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label htmlFor="pickup_address" className="mb-2 block text-base font-semibold text-slate-700">
+                                        Pickup Address (Optional - if no point selected)
+                                    </label>
+                                    <TextInput
+                                        id="pickup_address"
+                                        type="text"
+                                        value={data.pickup_address}
+                                        onChange={(e) => setData('pickup_address', e.target.value)}
+                                        className="form-control"
+                                        placeholder="Enter precise custom pickup address"
+                                    />
+                                    <InputError message={errors.pickup_address} className="mt-2" />
                                 </div>
 
                                 <div>

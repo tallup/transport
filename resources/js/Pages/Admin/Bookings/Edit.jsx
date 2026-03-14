@@ -14,6 +14,7 @@ export default function Edit({ booking, students, routes }) {
         student_id: booking.student_id || '',
         route_id: booking.route_id || '',
         pickup_point_id: booking.pickup_point_id || '',
+        pickup_address: booking.pickup_address || '',
         dropoff_point_id: booking.dropoff_point_id || '',
         plan_type: booking.plan_type || 'weekly',
         trip_type: booking.trip_type || 'two_way',
@@ -102,14 +103,13 @@ export default function Edit({ booking, students, routes }) {
 
                                     <div>
                                         <label htmlFor="pickup_point_id" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Pickup Point *
+                                            Pickup Point (Optional)
                                         </label>
                                         <select
                                             id="pickup_point_id"
                                             value={data.pickup_point_id}
                                             onChange={(e) => setData('pickup_point_id', e.target.value)}
                                             className="form-control"
-                                            required
                                             disabled={!selectedRouteId}
                                         >
                                             <option value="">Select Pickup Point</option>
@@ -141,6 +141,21 @@ export default function Edit({ booking, students, routes }) {
                                             ))}
                                         </select>
                                         <InputError message={errors.dropoff_point_id} className="mt-2 text-red-300 font-semibold" />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="pickup_address" className="mb-2 block text-base font-semibold text-slate-700">
+                                            Pickup Address (Optional - if no point selected)
+                                        </label>
+                                        <input
+                                            id="pickup_address"
+                                            type="text"
+                                            value={data.pickup_address}
+                                            onChange={(e) => setData('pickup_address', e.target.value)}
+                                            className="form-control"
+                                            placeholder="Enter precise custom pickup address"
+                                        />
+                                        <InputError message={errors.pickup_address} className="mt-2 text-red-300 font-semibold" />
                                     </div>
 
                                     <div>

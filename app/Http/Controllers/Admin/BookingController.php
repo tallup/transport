@@ -63,8 +63,9 @@ class BookingController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'required|exists:pickup_points,id',
+            'pickup_point_id' => 'nullable|exists:pickup_points,id',
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
+            'pickup_address' => 'nullable|string|max:255',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
             'trip_direction' => 'nullable|in:pickup_only,dropoff_only,both',
@@ -134,8 +135,9 @@ class BookingController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'required|exists:pickup_points,id',
+            'pickup_point_id' => 'nullable|exists:pickup_points,id',
             'dropoff_point_id' => 'nullable|exists:pickup_points,id',
+            'pickup_address' => 'nullable|string|max:255',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
             'trip_direction' => 'nullable|in:pickup_only,dropoff_only,both',
