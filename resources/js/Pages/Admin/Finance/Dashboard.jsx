@@ -4,6 +4,7 @@ import GlassCard from '@/Components/GlassCard';
 import ChartCard from '@/Components/ChartCard';
 import GlassButton from '@/Components/GlassButton';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { toast } from 'sonner';
 
 export default function FinanceDashboard({
     totalRevenue,
@@ -93,7 +94,7 @@ export default function FinanceDashboard({
                                             window.open(data.url, '_blank');
                                         }
                                     } catch (error) {
-                                        alert('Export failed');
+                                        toast.error('Export failed');
                                     }
                                 }}
                             >
@@ -116,7 +117,7 @@ export default function FinanceDashboard({
                                             window.open(data.url, '_blank');
                                         }
                                     } catch (error) {
-                                        alert('Export failed');
+                                        toast.error('Export failed');
                                     }
                                 }}
                             >

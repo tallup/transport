@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 const axios = window.axios;
 
 export default function EditBooking({ booking, students, routes, price: initialPrice }) {
@@ -208,7 +209,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
             : data.pickup_address;
         
         if (!data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
-            alert('Please complete all required fields.');
+            toast.error('Please complete all required fields.');
             return;
         }
         
@@ -230,23 +231,23 @@ export default function EditBooking({ booking, students, routes, price: initialP
     const nextStep = () => {
         // Step 1: Route
         if (step === 1 && !data.route_id) {
-            alert('Please select a route.');
+            toast.error('Please select a route.');
             return;
         }
         // Step 2: Pickup
         if (step === 2) {
             if (pickupOption === 'pickup_point' && !data.pickup_point_id) {
-                alert('Please select a pickup point.');
+                toast.error('Please select a pickup point.');
                 return;
             }
             if (pickupOption === 'custom' && !data.pickup_address) {
-                alert('Please enter a pickup address.');
+                toast.error('Please enter a pickup address.');
                 return;
             }
         }
         // Step 3: Plan
         if (step === 3 && !data.plan_type) {
-            alert('Please select a plan.');
+            toast.error('Please select a plan.');
             return;
         }
         if (step < 4) {

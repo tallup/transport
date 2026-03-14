@@ -4,9 +4,9 @@ namespace App\Filament\Resources\StudentAbsenceResource\Pages;
 
 use App\Filament\Resources\StudentAbsenceResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\ListRecords;
 
-class ManageStudentAbsences extends ManageRecords
+class ListStudentAbsences extends ListRecords
 {
     protected static string $resource = StudentAbsenceResource::class;
 

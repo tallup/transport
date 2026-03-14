@@ -6,6 +6,7 @@ import { CreditCard, ShieldCheck } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 
 const axios = window.axios;
 
@@ -85,7 +86,7 @@ function StripeCheckoutForm({ booking, bookings, price }) {
                     const msg = isGroup
                         ? `Payment approved. Your ${bookings.length} bookings are now active.`
                         : 'Payment approved. Your booking is now active.';
-                    alert(msg);
+                    toast.success(msg);
                     if (window.location.pathname.includes('/checkout')) {
                         window.location.href = route('parent.bookings.index');
                     }

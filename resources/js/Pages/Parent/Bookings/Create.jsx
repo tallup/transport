@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 const axios = window.axios;
 
 export default function CreateBooking({ students, routes, recentPickups = [] }) {
@@ -186,7 +187,7 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
         
         // Validate required fields before submitting
         if (selectedStudentIds.length === 0) {
-            alert('Please select at least one student.');
+            toast.error('Please select at least one student.');
             setStudentStepError(true);
             return;
         }
@@ -196,7 +197,7 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
             : data.pickup_address;
         
         if (!data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
-            alert('Please complete all required fields before proceeding to payment.');
+            toast.error('Please complete all required fields before proceeding to payment.');
             return;
         }
         
@@ -223,14 +224,14 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
         // Step 0: Student (only if not pre-selected)
         if (step === 0 && selectedStudentIds.length === 0) {
             setStudentStepError(true);
-            alert('Please select at least one student first.');
+            toast.error('Please select at least one student first.');
             return;
         }
         setStudentStepError(false);
         // Step 1: Route
         if (step === 1) {
             if (!data.route_id) {
-                alert('Please select a route.');
+                toast.error('Please select a route.');
                 return;
             }
             
@@ -240,29 +241,29 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
                 : (selectedRoute?.available_seats);
                 
             if (available !== undefined && available !== null && available < selectedStudentIds.length) {
-                alert(`Not enough available seats on this route for all selected students. (Available: ${available}, Needed: ${selectedStudentIds.length})`);
+                toast.error(`Not enough available seats on this route for all selected students. (Available: ${available}, Needed: ${selectedStudentIds.length})`);
                 return;
             }
         }
         // Step 2: Pickup
         if (step === 2) {
             if (pickupOption === 'pickup_point' && !data.pickup_point_id) {
-                alert('Please select a pickup point.');
+                toast.error('Please select a pickup point.');
                 return;
             }
             if (pickupOption === 'custom' && !data.pickup_address) {
-                alert('Please enter a pickup address.');
+                toast.error('Please enter a pickup address.');
                 return;
             }
         }
         // Step 3: Plan, trip type, and (if one way) service
         if (step === 3) {
             if (!data.plan_type) {
-                alert('Please select a plan.');
+                toast.error('Please select a plan.');
                 return;
             }
             if (data.trip_type === 'one_way' && !['pickup_only', 'dropoff_only'].includes(data.trip_direction)) {
-                alert('Please select pickup only or dropoff only for one way trip.');
+                toast.error('Please select pickup only or dropoff only for one way trip.');
                 return;
             }
         }

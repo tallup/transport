@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 import PhoneNumbersInput from '@/Components/PhoneNumbersInput';
 import PolicyDisplay from '@/Components/PolicyDisplay';
 import { formatPhoneNumber, unformatPhoneNumber } from '@/utils/phoneFormatter';
@@ -96,30 +97,30 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     const nextStep = () => {
         // Validation for each step
         if (step === 0 && (!data.name || !data.school_id)) {
-            alert('Please fill in all required fields: Child\'s Full Name and School');
+            toast.error('Please fill in all required fields: Child\'s Full Name and School');
             return;
         }
         // Step 1 (Parent Info) is optional/pre-filled, so no validation needed - allow to proceed
         if (step === 2 && (!data.emergency_contact_name || !data.emergency_phone)) {
-            alert('Please fill in Emergency Contact Name and Phone');
+            toast.error('Please fill in Emergency Contact Name and Phone');
             return;
         }
         // Step 3 (Pickup) is optional, no validation needed
         // Step 4 (Medical) is optional, no validation needed
         if (step === 5 && !policiesAcknowledged) {
-            alert('Please acknowledge that you have read and agree to all policies');
+            toast.error('Please acknowledge that you have read and agree to all policies');
             return;
         }
         if (step === 6 && !data.authorization_to_transport_signature) {
-            alert('Please provide your signature for Authorization to Transport');
+            toast.error('Please provide your signature for Authorization to Transport');
             return;
         }
         if (step === 7 && !data.payment_agreement_signature) {
-            alert('Please provide your signature for Payment Agreement');
+            toast.error('Please provide your signature for Payment Agreement');
             return;
         }
         if (step === 8 && !data.liability_waiver_signature) {
-            alert('Please provide your signature for Liability Waiver');
+            toast.error('Please provide your signature for Liability Waiver');
             return;
         }
         // Step 9 (Review) is the last step, handled by submit button

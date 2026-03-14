@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 
 export default function ReportExporter() {
     const [isOpen, setIsOpen] = useState(false);
@@ -35,10 +36,10 @@ export default function ReportExporter() {
                 window.open(data.url, '_blank');
                 setIsOpen(false);
             } else {
-                alert('Export failed: ' + (data.message || 'Unknown error'));
+                toast.error('Export failed: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
-            alert('Export failed: ' + error.message);
+            toast.error('Export failed: ' + error.message);
         } finally {
             setIsExporting(false);
         }

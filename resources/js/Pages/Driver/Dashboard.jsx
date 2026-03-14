@@ -11,6 +11,7 @@ import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import Timeline from '@/Components/Timeline';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 
 export default function Dashboard({
     route,
@@ -43,11 +44,11 @@ export default function Dashboard({
                 setNotes('');
                 router.reload();
             } else {
-                alert(data.message || 'Failed to mark route as complete');
+                toast.error(data.message || 'Failed to mark route as complete');
             }
         } catch (error) {
             console.error('Error marking route as complete:', error);
-            alert('An error occurred while marking the route as complete');
+            toast.error('An error occurred while marking the route as complete');
         } finally {
             setSubmitting(false);
         }
@@ -65,11 +66,11 @@ export default function Dashboard({
             if (data.success) {
                 router.reload();
             } else {
-                alert(data.message || 'Failed to start trip');
+                toast.error(data.message || 'Failed to start trip');
             }
         } catch (error) {
             const message = error.response?.data?.message || 'An error occurred while starting the trip';
-            alert(message);
+            toast.error(message);
         } finally {
             setStartTripSubmitting(false);
         }

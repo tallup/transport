@@ -3,6 +3,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 
 // Use the configured axios instance from bootstrap.js which has CSRF token
 const axios = window.axios;
@@ -30,16 +31,17 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             if (data.success) {
                 setShowCompletionModal(false);
                 setNotes('');
+                toast.success('Route marked as complete gracefully');
                 router.reload();
             } else {
-                alert(data.message || 'Failed to mark route as complete');
+                toast.error(data.message || 'Failed to mark route as complete');
             }
         } catch (error) {
             console.error('Error marking route as complete:', error);
             if (error.message?.includes('419') || error.message?.includes('CSRF')) {
                 window.location.href = '/login';
             } else {
-                alert('An error occurred while marking the route as complete');
+                toast.error('An error occurred while marking the route as complete');
             }
         } finally {
             setSubmitting(false);
@@ -61,9 +63,10 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
             if (response.data.success) {
                 // Reload the page to show updated status
+                toast.success('Pickup point marked as complete');
                 router.reload();
             } else {
-                alert(response.data.message || 'Failed to mark trip as complete');
+                toast.error(response.data.message || 'Failed to mark trip as complete');
                 setCompleting({ ...completing, [key]: false });
             }
         } catch (error) {
@@ -76,7 +79,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
 
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
-            alert(errorMessage);
+            toast.error(errorMessage);
             setCompleting({ ...completing, [key]: false });
         }
     };
@@ -92,9 +95,10 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
 
             if (response.data.success) {
                 // Reload the page to show updated status
+                toast.success(response.data.message || 'Pickup status updated');
                 router.reload();
             } else {
-                alert(response.data.message || 'Failed to update pickup status');
+                toast.error(response.data.message || 'Failed to update pickup status');
                 setCompleting({ ...completing, [bookingId]: false });
             }
         } catch (error) {
@@ -107,7 +111,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
 
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while updating the pickup status';
-            alert(errorMessage);
+            toast.error(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });
         }
     };
@@ -121,15 +125,16 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             const response = await axios.post(`/driver/absences/${absenceId}/acknowledge`);
 
             if (response.data.success) {
+                toast.success('Absence acknowledged');
                 router.reload();
             } else {
-                alert(response.data.message || 'Failed to acknowledge absence');
+                toast.error(response.data.message || 'Failed to acknowledge absence');
                 setCompleting({ ...completing, [key]: false });
             }
         } catch (error) {
             console.error('Error acknowledging absence:', error);
             const errorMessage = error.response?.data?.message || 'An error occurred';
-            alert(errorMessage);
+            toast.error(errorMessage);
             setCompleting({ ...completing, [key]: false });
         }
     };

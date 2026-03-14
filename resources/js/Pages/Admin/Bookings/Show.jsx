@@ -4,6 +4,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import StatusBadge from '@/Components/StatusBadge';
+import { toast } from 'sonner';
 
 export default function Show({ booking }) {
     const { auth, flash } = usePage().props;
@@ -47,7 +48,7 @@ export default function Show({ booking }) {
     const handlePartialRefund = () => {
         const amount = parseFloat(partialAmount);
         if (!partialAmount || isNaN(amount) || amount <= 0) {
-            alert('Please enter a valid refund amount.');
+            toast.error('Please enter a valid refund amount.');
             return;
         }
         if (!confirm(`Process a partial refund of $${amount.toFixed(2)}?`)) return;

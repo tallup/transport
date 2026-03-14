@@ -57,166 +57,235 @@ export default function Edit({ booking, students, routes }) {
                         <div className="p-6">
                             <h2 className="mb-6 text-3xl font-extrabold text-slate-900">Edit Booking</h2>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="md:col-span-2">
-                                        <label htmlFor="student_id" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Student *
-                                        </label>
-                                        <select
-                                            id="student_id"
-                                            value={data.student_id}
-                                            onChange={(e) => setData('student_id', e.target.value)}
-                                            className="form-control"
-                                            required
-                                        >
-                                            <option value="">Select Student</option>
-                                            {students.map((student) => (
-                                                <option key={student.id} value={student.id}>
-                                                    {student.name} ({student.parent?.name})
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.student_id} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div className="md:col-span-2">
-                                        <label htmlFor="route_id" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Route *
-                                        </label>
-                                        <select
-                                            id="route_id"
-                                            value={data.route_id}
-                                            onChange={(e) => handleRouteChange(e.target.value)}
-                                            className="form-control"
-                                            required
-                                        >
-                                            <option value="">Select Route</option>
-                                            {routes.map((route) => (
-                                                <option key={route.id} value={route.id}>
-                                                    {route.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.route_id} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="pickup_point_id" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Pickup Point (Optional)
-                                        </label>
-                                        <select
-                                            id="pickup_point_id"
-                                            value={data.pickup_point_id}
-                                            onChange={(e) => setData('pickup_point_id', e.target.value)}
-                                            className="form-control"
-                                            disabled={!selectedRouteId}
-                                        >
-                                            <option value="">Select Pickup Point</option>
-                                            {availablePickupPoints.map((point) => (
-                                                <option key={point.id} value={point.id}>
-                                                    {point.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.pickup_point_id} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="dropoff_point_id" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Dropoff Point (Optional)
-                                        </label>
-                                        <select
-                                            id="dropoff_point_id"
-                                            value={data.dropoff_point_id}
-                                            onChange={(e) => setData('dropoff_point_id', e.target.value)}
-                                            className="form-control"
-                                            disabled={!selectedRouteId}
-                                        >
-                                            <option value="">Select Dropoff Point (Optional)</option>
-                                            {availablePickupPoints.map((point) => (
-                                                <option key={point.id} value={point.id}>
-                                                    {point.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.dropoff_point_id} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div className="md:col-span-2">
-                                        <label htmlFor="pickup_address" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Pickup Address (Optional - if no point selected)
-                                        </label>
-                                        <input
-                                            id="pickup_address"
-                                            type="text"
-                                            value={data.pickup_address}
-                                            onChange={(e) => setData('pickup_address', e.target.value)}
-                                            className="form-control"
-                                            placeholder="Enter precise custom pickup address"
-                                        />
-                                        <InputError message={errors.pickup_address} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="plan_type" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Plan Type *
-                                        </label>
-                                        <select
-                                            id="plan_type"
-                                            value={data.plan_type}
-                                            onChange={(e) => setData('plan_type', e.target.value)}
-                                            className="form-control"
-                                            required
-                                        >
-                                            <option value="weekly">Weekly</option>
-                                            <option value="monthly">Monthly</option>
-                                            <option value="academic_term">Academic Term</option>
-                                            <option value="annual">Annual</option>
-                                        </select>
-                                        <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="trip_type" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Trip Type *
-                                        </label>
-                                        <select
-                                            id="trip_type"
-                                            value={data.trip_type}
-                                            onChange={(e) => {
-                                                const v = e.target.value;
-                                                setData('trip_type', v);
-                                                if (v === 'two_way') setData('trip_direction', 'both');
-                                                else if (data.trip_direction === 'both') setData('trip_direction', 'pickup_only');
-                                            }}
-                                            className="form-control"
-                                            required
-                                        >
-                                            <option value="one_way">One Way</option>
-                                            <option value="two_way">Two Way</option>
-                                        </select>
-                                        <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    {data.trip_type === 'one_way' && (
-                                        <div>
-                                            <label htmlFor="trip_direction" className="mb-2 block text-base font-semibold text-slate-700">Service (one way only)</label>
-                                            <select
-                                                id="trip_direction"
-                                                value={data.trip_direction}
-                                                onChange={(e) => setData('trip_direction', e.target.value)}
-                                                className="form-control"
-                                            >
-                                                <option value="pickup_only">Pickup only</option>
-                                                <option value="dropoff_only">Dropoff only</option>
-                                            </select>
-                                            <InputError message={errors.trip_direction} className="mt-2 text-red-300 font-semibold" />
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                
+                                {/* Section 1: Student & Route Info */}
+                                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div className="mb-5 border-b border-slate-200 pb-4 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                         </div>
-                                    )}
+                                        <h3 className="text-lg font-bold text-slate-800">Student & Route Information</h3>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="student_id" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Student *
+                                            </label>
+                                            <select
+                                                id="student_id"
+                                                value={data.student_id}
+                                                onChange={(e) => setData('student_id', e.target.value)}
+                                                className="form-control"
+                                                required
+                                            >
+                                                <option value="">Select Student</option>
+                                                {students.map((student) => (
+                                                    <option key={student.id} value={student.id}>
+                                                        {student.name} ({student.parent?.name})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors.student_id} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
 
-                                    <div>
-                                        <label htmlFor="status" className="mb-2 block text-base font-semibold text-slate-700">
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="route_id" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Route *
+                                            </label>
+                                            <select
+                                                id="route_id"
+                                                value={data.route_id}
+                                                onChange={(e) => handleRouteChange(e.target.value)}
+                                                className="form-control"
+                                                required
+                                            >
+                                                <option value="">Select Route</option>
+                                                {routes.map((route) => (
+                                                    <option key={route.id} value={route.id}>
+                                                        {route.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors.route_id} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="pickup_point_id" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Pickup Point (Optional)
+                                            </label>
+                                            <select
+                                                id="pickup_point_id"
+                                                value={data.pickup_point_id}
+                                                onChange={(e) => setData('pickup_point_id', e.target.value)}
+                                                className="form-control"
+                                                disabled={!selectedRouteId}
+                                            >
+                                                <option value="">Select Pickup Point</option>
+                                                {availablePickupPoints.map((point) => (
+                                                    <option key={point.id} value={point.id}>
+                                                        {point.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors.pickup_point_id} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="dropoff_point_id" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Dropoff Point (Optional)
+                                            </label>
+                                            <select
+                                                id="dropoff_point_id"
+                                                value={data.dropoff_point_id}
+                                                onChange={(e) => setData('dropoff_point_id', e.target.value)}
+                                                className="form-control"
+                                                disabled={!selectedRouteId}
+                                            >
+                                                <option value="">Select Dropoff Point (Optional)</option>
+                                                {availablePickupPoints.map((point) => (
+                                                    <option key={point.id} value={point.id}>
+                                                        {point.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors.dropoff_point_id} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="pickup_address" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Pickup Address (Optional - if no point selected)
+                                            </label>
+                                            <input
+                                                id="pickup_address"
+                                                type="text"
+                                                value={data.pickup_address}
+                                                onChange={(e) => setData('pickup_address', e.target.value)}
+                                                className="form-control"
+                                                placeholder="Enter precise custom pickup address"
+                                            />
+                                            <InputError message={errors.pickup_address} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Plan & Trip Details */}
+                                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div className="mb-5 border-b border-slate-200 pb-4 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-800">Plan Details</h3>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label htmlFor="plan_type" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Plan Type *
+                                            </label>
+                                            <select
+                                                id="plan_type"
+                                                value={data.plan_type}
+                                                onChange={(e) => setData('plan_type', e.target.value)}
+                                                className="form-control"
+                                                required
+                                            >
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                                <option value="academic_term">Academic Term</option>
+                                                <option value="annual">Annual</option>
+                                            </select>
+                                            <InputError message={errors.plan_type} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="trip_type" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Trip Type *
+                                            </label>
+                                            <div className="grid grid-cols-2 gap-3 mt-1">
+                                                <label className={`cursor-pointer rounded-lg border p-3 flex items-center gap-2 ${data.trip_type === 'two_way' ? 'bg-amber-50 border-amber-300' : 'bg-white border-slate-200'}`}>
+                                                    <input 
+                                                        type="radio" 
+                                                        name="trip_type" 
+                                                        value="two_way" 
+                                                        checked={data.trip_type === 'two_way'} 
+                                                        onChange={() => { setData('trip_type', 'two_way'); setData('trip_direction', 'both'); }} 
+                                                        className="text-amber-500" 
+                                                    />
+                                                    <span className="text-sm font-medium">Two Way</span>
+                                                </label>
+                                                <label className={`cursor-pointer rounded-lg border p-3 flex items-center gap-2 ${data.trip_type === 'one_way' ? 'bg-amber-50 border-amber-300' : 'bg-white border-slate-200'}`}>
+                                                    <input 
+                                                        type="radio" 
+                                                        name="trip_type" 
+                                                        value="one_way" 
+                                                        checked={data.trip_type === 'one_way'} 
+                                                        onChange={() => { setData('trip_type', 'one_way'); if (data.trip_direction === 'both') setData('trip_direction', 'pickup_only'); }} 
+                                                        className="text-amber-500" 
+                                                    />
+                                                    <span className="text-sm font-medium">One Way</span>
+                                                </label>
+                                            </div>
+                                            <InputError message={errors.trip_type} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        {data.trip_type === 'one_way' && (
+                                            <div>
+                                                <label htmlFor="trip_direction" className="mb-2 block text-sm font-semibold text-slate-700">Service (one way only)</label>
+                                                <select
+                                                    id="trip_direction"
+                                                    value={data.trip_direction}
+                                                    onChange={(e) => setData('trip_direction', e.target.value)}
+                                                    className="form-control"
+                                                >
+                                                    <option value="pickup_only">Pickup only</option>
+                                                    <option value="dropoff_only">Dropoff only</option>
+                                                </select>
+                                                <InputError message={errors.trip_direction} className="mt-2 text-red-300 font-semibold" />
+                                            </div>
+                                        )}
+
+                                        <div>
+                                            <label htmlFor="start_date" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                Start Date *
+                                            </label>
+                                            <input
+                                                id="start_date"
+                                                type="date"
+                                                value={data.start_date}
+                                                onChange={(e) => setData('start_date', e.target.value)}
+                                                className="form-control"
+                                                required
+                                            />
+                                            <InputError message={errors.start_date} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="end_date" className="mb-2 block text-sm font-semibold text-slate-700">
+                                                End Date
+                                            </label>
+                                            <input
+                                                id="end_date"
+                                                type="date"
+                                                value={data.end_date}
+                                                onChange={(e) => setData('end_date', e.target.value)}
+                                                className="form-control"
+                                            />
+                                            <InputError message={errors.end_date} className="mt-2 text-red-300 font-semibold" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 3: Status & Management */}
+                                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <div className="mb-4 border-b border-slate-200 pb-3 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-800">Status & Management</h3>
+                                    </div>
+                                    <div className="max-w-md">
+                                        <label htmlFor="status" className="mb-2 block text-sm font-semibold text-slate-700">
                                             Status *
                                         </label>
                                         <select
@@ -226,43 +295,14 @@ export default function Edit({ booking, students, routes }) {
                                             className="form-control"
                                             required
                                         >
-                                            <option value="pending">Pending</option>
-                                            <option value="awaiting_approval">Awaiting Approval</option>
-                                            <option value="active">Active</option>
-                                            <option value="completed">Completed</option>
-                                            <option value="expired">Expired</option>
-                                            <option value="cancelled">Cancelled</option>
+                                            <option value="pending" className="text-amber-800">Pending</option>
+                                            <option value="awaiting_approval" className="text-amber-600">Awaiting Approval</option>
+                                            <option value="active" className="text-emerald-700">Active</option>
+                                            <option value="completed" className="text-blue-700">Completed</option>
+                                            <option value="expired" className="text-slate-700">Expired</option>
+                                            <option value="cancelled" className="text-rose-700">Cancelled</option>
                                         </select>
                                         <InputError message={errors.status} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="start_date" className="mb-2 block text-base font-semibold text-slate-700">
-                                            Start Date *
-                                        </label>
-                                        <input
-                                            id="start_date"
-                                            type="date"
-                                            value={data.start_date}
-                                            onChange={(e) => setData('start_date', e.target.value)}
-                                            className="form-control"
-                                            required
-                                        />
-                                        <InputError message={errors.start_date} className="mt-2 text-red-300 font-semibold" />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="end_date" className="mb-2 block text-base font-semibold text-slate-700">
-                                            End Date
-                                        </label>
-                                        <input
-                                            id="end_date"
-                                            type="date"
-                                            value={data.end_date}
-                                            onChange={(e) => setData('end_date', e.target.value)}
-                                            className="form-control"
-                                        />
-                                        <InputError message={errors.end_date} className="mt-2 text-red-300 font-semibold" />
                                     </div>
                                 </div>
 

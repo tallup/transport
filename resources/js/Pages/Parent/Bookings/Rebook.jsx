@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { toast } from 'sonner';
 const axios = window.axios;
 
 export default function Rebook({ previousBooking, students, schools = [], routes }) {
@@ -112,11 +113,11 @@ export default function Rebook({ previousBooking, students, schools = [], routes
 
         // Validate required fields before submitting
         if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
-            alert('Please complete all required fields before proceeding to payment.');
+            toast.error('Please complete all required fields before proceeding to payment.');
             return;
         }
         if (data.trip_type === 'one_way' && !['pickup_only', 'dropoff_only'].includes(data.trip_direction)) {
-            alert('Please select pickup only or dropoff only for one way trip.');
+            toast.error('Please select pickup only or dropoff only for one way trip.');
             return;
         }
 
@@ -137,7 +138,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         if (step === 1 && !data.student_id) return;
         if (step === 2 && !data.route_id) return;
         if (step === 3 && !data.pickup_address && !data.pickup_point_id) {
-            alert('Please enter a pickup address.');
+            toast.error('Please enter a pickup address.');
             return;
         }
         if (step === 4 && !data.plan_type) return;
