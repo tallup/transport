@@ -94,6 +94,13 @@ class AbsenceController extends Controller
             \Log::error('Admin StudentAbsenceAlert notification failed', ['absence_id' => $absence->id, 'error' => $e->getMessage()]);
         }
 
+        // 3. Notify Parent (Confirmation)
+        try {
+            auth()->user()->notify(new \App\Notifications\Parent\AbsenceReportedConfirmation($absence));
+        } catch (\Exception $e) {
+            \Log::error('Parent AbsenceReportedConfirmation notification failed', ['absence_id' => $absence->id, 'error' => $e->getMessage()]);
+        }
+
         return redirect()->route('parent.absences.index')
             ->with('success', 'Absence reported successfully. The driver and administration have been notified.');
     }
