@@ -247,7 +247,20 @@ class RouteController extends Controller
 
     public function edit(Route $route)
     {
-        $route->load(['driver', 'vehicle', 'schools']);
+        $today = now()->toDateString();
+        $route->load(['driver', 'vehicle', 'schools'])
+            ->loadCount(['bookings as active_bookings_count' => function ($query) use ($today) {
+                $query->whereIn('status', Booking::activeStatuses())
+                    ->whereDate('start_date', '<=', $today)
+                    ->where(function ($q) use ($today) {
+                        $q->whereNull('end_date')
+                            ->orWhereDate('end_date', '>=', $today);
+                    });
+            }]);
+
+        $route->occupancy_percentage = $route->capacity > 0 
+            ? round(($route->active_bookings_count / $route->capacity) * 100, 1) 
+            : 0;
         
         $drivers = User::where('role', 'driver')
             ->orderBy('name')

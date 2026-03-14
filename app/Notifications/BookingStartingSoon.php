@@ -35,7 +35,7 @@ class BookingStartingSoon extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function outreach(object $notifiable): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
         $studentName = $this->booking->student->name;
         $startDate = $this->booking->start_date->format('l, F j, Y');
