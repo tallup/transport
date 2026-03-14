@@ -531,5 +531,6 @@ class RosterController extends Controller
             'count' => $createdCount,
         ]);
     }
+}
 
 
