@@ -228,9 +228,21 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
         }
         setStudentStepError(false);
         // Step 1: Route
-        if (step === 1 && !data.route_id) {
-            alert('Please select a route.');
-            return;
+        if (step === 1) {
+            if (!data.route_id) {
+                alert('Please select a route.');
+                return;
+            }
+            
+            // Immediate Capacity Check
+            const available = (availableSeats && typeof availableSeats === 'object') 
+                ? availableSeats.available 
+                : (selectedRoute?.available_seats);
+                
+            if (available !== undefined && available !== null && available < selectedStudentIds.length) {
+                alert(`Not enough available seats on this route for all selected students. (Available: ${available}, Needed: ${selectedStudentIds.length})`);
+                return;
+            }
         }
         // Step 2: Pickup
         if (step === 2) {
@@ -646,9 +658,16 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
                                                 })}
                                             </div>
                                         )}
-                                        {errors.route_id && (
-                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
-                                                <p className="text-red-200 text-sm font-bold">{errors.route_id}</p>
+                                        {((data.route_id && ((availableSeats && typeof availableSeats === 'object' ? availableSeats.available : selectedRoute?.available_seats) < selectedStudentIds.length)) || errors.route_id) && (
+                                            <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl animate-pulse">
+                                                <div className="flex items-center gap-3">
+                                                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                    </svg>
+                                                    <p className="text-red-200 text-sm font-bold">
+                                                        {errors.route_id || 'Not enough available seats on this route for all selected students.'}
+                                                    </p>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
