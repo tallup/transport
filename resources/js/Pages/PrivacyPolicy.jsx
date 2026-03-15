@@ -204,8 +204,7 @@ export default function PrivacyPolicy({ auth }) {
                                 <div className="bg-slate-100 rounded-lg p-4 text-slate-700">
                                     <p className="font-semibold mb-2">On-Time Transportation for Kids</p>
                                     <p>Email: support@ontimetransportwa.com</p>
-                                    <p>Phone: [Your Contact Number]</p>
-                                    <p>Address: [Your Business Address]</p>
+                                    <p>Phone: (940) 465-9280</p>
                                 </div>
                             </section>
 

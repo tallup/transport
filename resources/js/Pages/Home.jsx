@@ -6,7 +6,7 @@ export default function Home({ auth }) {
     return (
         <>
             <Head title="Safe School Transport">
-                <meta name="description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible Plans. Choose from weekly and monthly options. Safe, reliable school transport in Marysville, Everett & Lynnwood." />
+                <meta name="description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible Plans. Choose from weekly and monthly options. Safe, reliable school transport." />
                 <meta property="og:title" content="On-Time Transportation | Safe School Transport" />
                 <meta property="og:description" content="Punctual pickups and drop-offs with real-time GPS tracking. You'll always know exactly where your child is. Flexible Plans. Choose from weekly and monthly options." />
             </Head>
@@ -45,7 +45,7 @@ export default function Home({ auth }) {
                                         Safe & Reliable
                                     </span>
                                         <span className="block mt-0.5 text-lg md:text-xl font-semibold text-brand-primary">
-                                            Kids Transportation • Marysville • Everett • Lynnwood
+                                            Kids Transportation
                                     </span>
                                 </h1>
                                 
@@ -538,7 +538,7 @@ export default function Home({ auth }) {
                                         </div>
                                         <div>
                                             <p className="text-white/60 text-xs font-medium mb-1">Phone</p>
-                                            <p className="text-white/90 font-medium text-sm">24/7 Support Available</p>
+                                            <p className="text-white/90 font-medium text-sm">(940) 465-9280</p>
                                         </div>
                                     </div>
 
