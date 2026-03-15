@@ -16,9 +16,14 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         
-        // Auto-update booking statuses (activate pending bookings that have started)
-        $bookingService = app(BookingService::class);
-        $bookingService->updateBookingStatuses();
+        // Auto-update booking statuses; wrapped so a notification failure never
+        // crashes the dashboard request and inadvertently logs the user out.
+        try {
+            $bookingService = app(BookingService::class);
+            $bookingService->updateBookingStatuses();
+        } catch (\Throwable $e) {
+            \Log::error('updateBookingStatuses failed on dashboard: ' . $e->getMessage());
+        }
         
         $students = Student::where('parent_id', $user->id)->get(['id', 'name', 'parent_id', 'school_id']);
         $studentIds = $students->pluck('id');

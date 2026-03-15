@@ -272,19 +272,25 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
-        // Auto-update booking statuses (activate pending bookings that have started)
-        $bookingService = app(BookingService::class);
-        $bookingService->updateBookingStatuses();
-        
+
+        // Auto-update booking statuses; wrapped in try-catch so a notification
+        // failure never crashes this request and inadvertently logs the user out.
+        try {
+            $bookingService = app(BookingService::class);
+            $bookingService->updateBookingStatuses();
+        } catch (\Throwable $e) {
+            \Log::error('updateBookingStatuses failed on bookings index: ' . $e->getMessage());
+        }
+
         $students = $user->students;
-        
-        // Get all bookings for parent's students, including all statuses and dates
-        // Don't filter by date - show all bookings regardless of start/end date
+
+        // Load only the relationships the index view actually uses.
+        // Avoid loading student.parent (full User model) – it is not needed here
+        // and its serialisation can fail or hit memory limits.
         $bookings = Booking::whereIn('student_id', $students->pluck('id'))
-            ->with(['student.parent', 'route.vehicle', 'pickupPoint'])
+            ->with(['student', 'route', 'pickupPoint'])
             ->orderBy('created_at', 'desc')
-            ->get(); // Use get() to ensure all bookings are shown, including those that might be blocking
+            ->get();
 
         return Inertia::render('Parent/Bookings/Index', [
             'bookings' => $bookings,

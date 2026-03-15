@@ -43,15 +43,20 @@ class BookingService
             ->where('end_date', '<', $today)
             ->update(['status' => Booking::STATUS_EXPIRED]);
         
-        // Send expiration notifications to parents (send immediately)
+        // Send expiration notifications to parents; each is wrapped individually
+        // so one failed notification never aborts the loop or the HTTP request.
         foreach ($expiringBookings as $booking) {
-            $parent = $booking->student?->parent;
-            if ($parent && filter_var($parent->email ?? '', FILTER_VALIDATE_EMAIL)) {
-                $parent->notify(new \App\Notifications\BookingExpired($booking));
-            } else {
-                \Log::debug('BookingExpired notification skipped: missing parent email', [
-                    'booking_id' => $booking->id,
-                ]);
+            try {
+                $parent = $booking->student?->parent;
+                if ($parent && filter_var($parent->email ?? '', FILTER_VALIDATE_EMAIL)) {
+                    $parent->notify(new \App\Notifications\BookingExpired($booking));
+                } else {
+                    \Log::debug('BookingExpired notification skipped: missing parent email', [
+                        'booking_id' => $booking->id,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                \Log::error('BookingExpired notification failed for booking #' . $booking->id . ': ' . $e->getMessage());
             }
         }
 

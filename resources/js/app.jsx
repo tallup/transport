@@ -11,21 +11,15 @@ import ErrorBoundary from './Components/ErrorBoundary';
 
 const appName = import.meta.env.VITE_APP_NAME || 'On-Time Transportation';
 
-// Refresh CSRF token before every non-GET request
+// Track authenticated GET requests so we can retry with a full page load
+// if an XHR GET gets redirected to /login (cookie not sent on some proxies).
+// NOTE: We deliberately do NOT inject X-CSRF-TOKEN from the meta tag for
+// non-GET requests. The meta tag becomes stale after session regeneration
+// (e.g. after login) and would cause 419 CSRF mismatches. Axios automatically
+// sends the always-fresh XSRF-TOKEN cookie as X-XSRF-TOKEN, which is the
+// correct and reliable mechanism.
 router.on('before', (event) => {
-    // Only refresh for POST, PUT, PATCH, DELETE requests
-    if (event.detail.visit.method !== 'get') {
-        const token = document.head.querySelector('meta[name="csrf-token"]');
-        if (token) {
-            // Update axios defaults
-            if (window.axios) {
-                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-            }
-            // Update Inertia defaults
-            event.detail.visit.headers = event.detail.visit.headers || {};
-            event.detail.visit.headers['X-CSRF-TOKEN'] = token.content;
-        }
-    } else {
+    if (event.detail.visit.method === 'get') {
         // Remember the URL we're requesting for GET (so we can retry with full page load if we get redirected to login)
         const url = event.detail.visit.url;
         if (url && !url.includes('/login') && (url.startsWith('/parent/') || url.startsWith('/admin/') || url.startsWith('/driver/'))) {

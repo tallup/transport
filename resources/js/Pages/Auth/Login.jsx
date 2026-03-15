@@ -25,17 +25,13 @@ export default function Login({ status, canResetPassword }) {
 
         post(route('login'), {
             onFinish: () => reset('password'),
-            onSuccess: () => {
-                toast.success('Signed in successfully!');
-                window.location.reload();
-            },
             onError: (errors) => {
                 if (errors.email) {
                     toast.error(errors.email);
                 } else if (errors.password) {
                     toast.error(errors.password);
                 } else {
-                    toast.error('Invalid credentials. Please try again.');
+                    toast.error('Login failed. Please try again.');
                 }
             }
         });
