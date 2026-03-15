@@ -136,7 +136,7 @@
         <div class="footer">
             <p><strong>On-Time Transportation for Kids</strong></p>
             <p>Private child transportation services</p>
-            <p>Driver Support: support@ontimetransport.awsapps.com</p>
+            <p>Driver Support: {{ config('mail.support_email', 'support@ontimetransportwa.com') }}</p>
         </div>
     </div>
 </body>
