@@ -225,9 +225,10 @@ export default function Register() {
                                         id="name"
                                         name="name"
                                         value={data.name}
-                                        className={`form-control w-full pl-12 pr-4 ${
+                                        className={`form-control w-full pr-4 ${
                                             errors.name ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
+                                        style={{ paddingLeft: '3rem' }}
                                         autoComplete="name"
                                         isFocused={true}
                                         onChange={(e) => setData('name', e.target.value)}
@@ -250,9 +251,10 @@ export default function Register() {
                                         type="email"
                                         name="email"
                                         value={data.email}
-                                        className={`form-control w-full pl-12 pr-4 ${
+                                        className={`form-control w-full pr-4 ${
                                             errors.email ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
+                                        style={{ paddingLeft: '3rem' }}
                                         autoComplete="username"
                                         onChange={(e) => setData('email', e.target.value)}
                                         required
@@ -274,9 +276,10 @@ export default function Register() {
                                         type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         value={data.password}
-                                        className={`form-control w-full pl-12 pr-12 ${
+                                        className={`form-control w-full pr-12 ${
                                             errors.password ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
+                                        style={{ paddingLeft: '3rem' }}
                                         autoComplete="new-password"
                                         onChange={(e) => setData('password', e.target.value)}
                                         required
@@ -320,9 +323,10 @@ export default function Register() {
                                         type={showPasswordConfirmation ? 'text' : 'password'}
                                         name="password_confirmation"
                                         value={data.password_confirmation}
-                                        className={`form-control w-full pl-12 pr-12 ${
+                                        className={`form-control w-full pr-12 ${
                                             errors.password_confirmation ? 'border-red-500 focus:border-red-500' : ''
                                         }`}
+                                        style={{ paddingLeft: '3rem' }}
                                         autoComplete="new-password"
                                         onChange={(e) => setData('password_confirmation', e.target.value)}
                                         required
