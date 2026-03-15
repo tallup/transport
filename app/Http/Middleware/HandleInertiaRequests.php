@@ -49,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                 'name' => $user->name,
                 'email' => $user->email,
                 'profile_picture_url' => $user->profile_picture_url,
+                'primary_phone' => $user->getPrimaryPhone(),
             ];
             
             // Safely get role - try multiple methods

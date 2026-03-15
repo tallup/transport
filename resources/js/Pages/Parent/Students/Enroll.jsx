@@ -20,7 +20,12 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
     const [step, setStep] = useState(0);
     const [policiesAcknowledged, setPoliciesAcknowledged] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
+    // Pre-fill Emergency Contact #1 with parent name and phone (user can keep or change)
+    const parentName = auth?.user?.name ?? '';
+    const parentPhoneRaw = auth?.user?.primary_phone ?? '';
+    const parentPhoneFormatted = parentPhoneRaw ? formatPhoneNumber(parentPhoneRaw) : '';
+
     const { data, setData, post, processing, errors } = useForm({
         // Basic Information
         name: '',
@@ -29,10 +34,10 @@ export default function EnrollStudent({ schools = [], policies = {} }) {
         date_of_birth: '',
         home_address: '',
         grade: '',
-        
-        // Emergency Contacts
-        emergency_phone: '',
-        emergency_contact_name: '',
+
+        // Emergency Contacts (pre-filled with parent info; user can keep or remove)
+        emergency_phone: parentPhoneFormatted,
+        emergency_contact_name: parentName,
         emergency_contact_2_name: '',
         emergency_contact_2_phone: '',
         emergency_contact_2_relationship: '',
