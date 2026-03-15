@@ -85,7 +85,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         const newPrices = {};
 
         try {
-            // Fetch all 4 prices in parallel for maximum speed
+            // Fetch all 4 prices in parallel; use allSettled so one failure doesn't block the rest
             const pricePromises = plans.map(plan =>
                 axios.get('/parent/calculate-price', {
                     params: {
@@ -96,9 +96,14 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                 })
             );
 
-            const results = await Promise.all(pricePromises);
-            results.forEach((res, index) => {
-                newPrices[plans[index]] = res.data;
+            const results = await Promise.allSettled(pricePromises);
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    newPrices[plans[index]] = result.value.data;
+                } else {
+                    // Mark unavailable plans so the UI can show an appropriate message
+                    newPrices[plans[index]] = { unavailable: true, formatted: 'N/A' };
+                }
             });
             setPlanPrices(newPrices);
         } catch (error) {
@@ -397,9 +402,13 @@ export default function Rebook({ previousBooking, students, schools = [], routes
                                                                 </div>
                                                                 <div className="text-right">
                                                                     {planPrices[plan] ? (
-                                                                        <span className="text-xl font-black text-amber-600">
-                                                                            {planPrices[plan].formatted}
-                                                                        </span>
+                                                                        planPrices[plan].unavailable ? (
+                                                                            <span className="text-sm font-semibold text-slate-400">N/A</span>
+                                                                        ) : (
+                                                                            <span className="text-xl font-black text-amber-600">
+                                                                                {planPrices[plan].formatted}
+                                                                            </span>
+                                                                        )
                                                                     ) : (
                                                                         <div className="h-6 w-20 animate-pulse rounded bg-slate-200"></div>
                                                                     )}
