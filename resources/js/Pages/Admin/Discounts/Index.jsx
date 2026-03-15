@@ -84,14 +84,14 @@ export default function Index({ discounts }) {
                                 <GlassCard key={discount.id} className="p-6 hover:scale-[1.02] transition-all">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-lg font-extrabold text-white truncate">{discount.name}</h3>
-                                            <p className="text-sm text-white/70 font-medium mt-0.5">{formatScope(discount)}</p>
+                                            <h3 className="text-lg font-extrabold text-slate-900 truncate">{discount.name}</h3>
+                                            <p className="text-sm text-slate-600 font-medium mt-0.5">{formatScope(discount)}</p>
                                         </div>
                                         <span
-                                            className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                                            className={`px-3 py-1 rounded-lg text-xs font-bold shrink-0 ${
                                                 discount.active
-                                                    ? 'bg-amber-500/30 text-brand-primary border border-amber-400/50'
-                                                    : 'bg-gray-500/30 text-brand-primary border border-gray-400/50'
+                                                    ? 'bg-amber-500/30 text-amber-800 border border-amber-400/50'
+                                                    : 'bg-slate-200 text-slate-700 border border-slate-300'
                                             }`}
                                         >
                                             {discount.active ? 'Active' : 'Inactive'}
@@ -100,28 +100,28 @@ export default function Index({ discounts }) {
 
                                     <div className="space-y-2 mb-4">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-amber-500/30 text-brand-primary border border-amber-400/50">
+                                            <span className="px-2 py-1 rounded-lg text-xs font-bold bg-amber-500/30 text-amber-800 border border-amber-400/50">
                                                 {discount.type === 'percentage' ? 'Percentage' : 'Fixed'}
                                             </span>
-                                            <span className="text-white font-bold">{formatValue(discount)}</span>
+                                            <span className="text-slate-900 font-bold">{formatValue(discount)}</span>
                                         </div>
-                                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/80">
+                                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600">
                                             <span>Start: {formatDate(discount.start_date)}</span>
                                             <span>End: {formatDate(discount.end_date)}</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+                                    <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
                                         <Link
                                             href={`/admin/discounts/${discount.id}/edit`}
-                                            className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/50 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/30 transition-all"
+                                            className="px-3 py-1.5 bg-brand-primary/15 border border-brand-primary/40 text-brand-primary text-xs font-bold rounded-lg hover:bg-brand-primary/25 transition-all"
                                         >
                                             Edit
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(discount.id)}
                                             disabled={deleting === discount.id}
-                                            className="px-3 py-1.5 bg-red-500/20 border border-red-400/50 text-red-200 text-xs font-bold rounded-lg hover:bg-red-500/30 transition-all disabled:opacity-50"
+                                            className="px-3 py-1.5 bg-red-500/15 border border-red-400/50 text-red-700 text-xs font-bold rounded-lg hover:bg-red-500/25 transition-all disabled:opacity-50"
                                         >
                                             {deleting === discount.id ? 'Deleting...' : 'Delete'}
                                         </button>
@@ -133,12 +133,12 @@ export default function Index({ discounts }) {
                         <GlassCard className="p-12">
                             <div className="text-center">
                                 <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/30 to-yellow-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-yellow-400/50">
-                                    <svg className="w-10 h-10 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                                     </svg>
                                 </div>
-                                <p className="text-brand-primary text-lg font-bold">No discounts yet.</p>
-                                <p className="text-white/80 mt-1">Create a time-based promotion to apply to bookings.</p>
+                                <p className="text-slate-900 text-lg font-bold">No discounts yet.</p>
+                                <p className="text-slate-600 mt-1">Create a time-based promotion to apply to bookings.</p>
                                 <Link
                                     href="/admin/discounts/create"
                                     className="inline-block mt-4 px-5 py-2.5 bg-brand-primary/20 border-2 border-brand-primary/50 text-brand-primary font-bold rounded-xl hover:bg-brand-primary/30"
