@@ -262,6 +262,10 @@ export default function CreateBooking({ students, routes, recentPickups = [] }) 
                 toast.error('Please select a plan.');
                 return;
             }
+            if (!data.trip_type || !['one_way', 'two_way'].includes(data.trip_type)) {
+                toast.error('Please select a trip type (One Way or Two Way).');
+                return;
+            }
             if (data.trip_type === 'one_way' && !['pickup_only', 'dropoff_only'].includes(data.trip_direction)) {
                 toast.error('Please select pickup only or dropoff only for one way trip.');
                 return;
