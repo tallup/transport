@@ -94,7 +94,7 @@ export default function AnalyticsDashboard({
 
                     {/* Date Range Filter */}
                     <GlassCard className="mb-6 p-6">
-                        <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex flex-wrap items-end gap-4">
                             <div>
                                 <label className="mb-1 block text-sm font-semibold text-slate-700">Start Date</label>
                                 <input
@@ -113,14 +113,12 @@ export default function AnalyticsDashboard({
                                     className="form-control"
                                 />
                             </div>
-                            <div className="flex items-end">
-                                <button
-                                    onClick={handleDateRangeChange}
-                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-                                >
-                                    Apply Filter
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleDateRangeChange}
+                                className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+                            >
+                                Apply Filter
+                            </button>
                         </div>
                     </GlassCard>
 
