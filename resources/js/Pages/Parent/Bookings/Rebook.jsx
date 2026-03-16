@@ -20,7 +20,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         school_id: previousBooking.student?.school_id || '',
         student_id: previousBooking.student_id || '',
         route_id: previousBooking.route_id || '',
-        pickup_point_id: previousBooking.pickup_point_id || '',
+
         pickup_address: previousBooking.pickup_address || previousBooking.student?.home_address || '',
         plan_type: previousBooking.plan_type || '',
         trip_type: previousBooking.trip_type || 'two_way',
@@ -117,7 +117,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         e.preventDefault();
 
         // Validate required fields before submitting
-        if (!data.student_id || !data.route_id || (!data.pickup_point_id && !data.pickup_address) || !data.plan_type || !data.start_date) {
+        if (!data.student_id || !data.route_id || !data.pickup_address || !data.plan_type || !data.start_date) {
             toast.error('Please complete all required fields before proceeding to payment.');
             return;
         }
@@ -142,7 +142,7 @@ export default function Rebook({ previousBooking, students, schools = [], routes
         if (step === 0 && !data.school_id) return;
         if (step === 1 && !data.student_id) return;
         if (step === 2 && !data.route_id) return;
-        if (step === 3 && !data.pickup_address && !data.pickup_point_id) {
+        if (step === 3 && !data.pickup_address) {
             toast.error('Please enter a pickup address.');
             return;
         }

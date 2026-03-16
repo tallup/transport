@@ -98,101 +98,33 @@ class RosterController extends Controller
                 }])
                 ->get();
 
-            // Separate bookings with pickup points and custom addresses
-            $bookingsWithPickupPoints = $bookings->filter(function ($booking) {
-                return $booking->pickupPoint !== null && $booking->student !== null;
-            });
-            
-            $bookingsWithCustomAddresses = $bookings->filter(function ($booking) {
-                return $booking->pickupPoint === null && 
-                       !empty($booking->pickup_address) && 
-                       $booking->student !== null;
-            });
-
-            // Group by pickup point
-            $groupedBookings = $bookingsWithPickupPoints
-                ->groupBy('pickup_point_id')
-                ->map(function ($bookings) {
-                    $firstBooking = $bookings->first();
-                    $pickupPoint = $firstBooking->pickupPoint;
-                    
-                    if (!$pickupPoint) {
-                        return null;
-                    }
-                    
-                    return [
-                        'pickup_point' => [
-                            'id' => $pickupPoint->id,
-                            'name' => $pickupPoint->name,
-                            'address' => $pickupPoint->address ?? null,
-                            'pickup_time' => $pickupPoint->pickup_time,
-                            'dropoff_time' => $pickupPoint->dropoff_time ?? null,
-                            'sequence_order' => $pickupPoint->sequence_order ?? 999,
-                        ],
-                        'bookings' => $bookings->sortBy(function ($booking) {
-                            return $booking->student ? $booking->student->name : '';
-                        })->map(function ($booking) {
-                            if (!$booking->student) {
-                                return null;
-                            }
-                             // Check if this booking has a daily pickup for today
-                             $dailyPickup = $booking->dailyPickups->first();
-                             $hasDailyPickup = $dailyPickup !== null;
-                             
-                             // Check for reported absence
-                             $absence = $booking->absences->first();
-                             
-                             return [
-                                 'id' => $booking->id,
-                                 'status' => $booking->status,
-                                 'hasDailyPickup' => $hasDailyPickup,
-                                 'pickupStatus' => $dailyPickup->status ?? ($absence ? 'absent' : null),
-                                 'arrivedAt' => $dailyPickup->arrived_at ?? null,
-                                 'completedAt' => $dailyPickup->completed_at ?? null,
-                                 'isAbsent' => $absence !== null,
-                                 'absenceId' => $absence?->id ?? null,
-                                 'absenceReason' => $absence?->reason ?? null,
-                                 'absenceAcknowledgedAt' => $absence?->acknowledged_at ?? null,
-                                 'student' => [
-                                     'id' => $booking->student->id,
-                                     'name' => $booking->student->name,
-                                     'school' => $booking->student->school->name ?? 'N/A',
-                                     'emergency_phone' => $booking->student->emergency_phone ?? null,
-                                     'grade' => $booking->student->grade ?? null,
-                                 ],
-                             ];
-                        })->filter()->values(),
-                    ];
-                })
-                ->filter() // Remove null entries
-                ->sortBy('pickup_point.sequence_order')
-                ->values()
-                ->toArray();
-
-            // Add custom address bookings as a separate group
-            if ($bookingsWithCustomAddresses->count() > 0) {
-                $customGroup = [
+            // Group all active bookings by pickup address (custom address or legacy pickup point address)
+            $groupedBookings = $bookings->filter(function ($booking) {
+                return $booking->student !== null;
+            })
+            ->groupBy(function ($booking) {
+                return trim($booking->pickup_address ?? $booking->pickupPoint?->address ?? '') ?: 'Address not set';
+            })
+            ->map(function ($bookings, $address) use ($selectedRoute, $today, $routePeriod) {
+                return [
                     'pickup_point' => [
                         'id' => null,
-                        'name' => 'Custom Pickup Locations',
-                        'address' => 'Various addresses',
+                        'name' => 'Pickup Location',
+                        'address' => $address,
                         'pickup_time' => $selectedRoute->pickup_time ? (is_string($selectedRoute->pickup_time) ? substr($selectedRoute->pickup_time, 0, 5) : $selectedRoute->pickup_time->format('H:i')) : 'TBD',
                         'dropoff_time' => $selectedRoute->dropoff_time ? (is_string($selectedRoute->dropoff_time) ? substr($selectedRoute->dropoff_time, 0, 5) : $selectedRoute->dropoff_time->format('H:i')) : null,
-                        'sequence_order' => 9999,
+                        'sequence_order' => 999,
                     ],
-                    'bookings' => $bookingsWithCustomAddresses->sortBy(function ($booking) {
+                    'bookings' => $bookings->sortBy(function ($booking) {
                         return $booking->student ? $booking->student->name : '';
-                    })->map(function ($booking) {
-                        if (!$booking->student) {
-                            return null;
-                        }
+                    })->map(function ($booking) use ($today, $routePeriod) {
                         // Check if this booking has a daily pickup for today
                         $dailyPickup = $booking->dailyPickups->first();
                         $hasDailyPickup = $dailyPickup !== null;
                         
                         // Check for reported absence
                         $absence = $booking->absences->first();
-
+                        
                         return [
                             'id' => $booking->id,
                             'status' => $booking->status,
@@ -211,12 +143,14 @@ class RosterController extends Controller
                                 'school' => $booking->student->school->name ?? 'N/A',
                                 'emergency_phone' => $booking->student->emergency_phone ?? null,
                                 'grade' => $booking->student->grade ?? null,
+                                'profile_picture_url' => $booking->student->profile_picture_url ?? null,
                             ],
                         ];
-                    })->filter()->values()->toArray(),
+                    })->filter()->values(),
                 ];
-                $groupedBookings[] = $customGroup;
-            }
+            })
+            ->values()
+            ->toArray();
         }
 
         return Inertia::render('Driver/Roster', [
@@ -425,7 +359,7 @@ class RosterController extends Controller
         $driver = $request->user();
         
         $validated = $request->validate([
-            'pickup_point_id' => 'nullable|exists:pickup_points,id',
+            'pickup_address' => 'required|string',
             'route_id' => 'required|exists:routes,id',
             'date' => 'required|date',
         ]);
@@ -446,36 +380,33 @@ class RosterController extends Controller
         // Get the period for this route
         $period = $this->driverRouteService->getRoutePeriod($route);
 
-        // Get all active bookings for this pickup point on this date
-        // Only show 'active' bookings (not 'pending' - those haven't been paid yet)
+        // Get all active bookings for this pickup address on this date
+        // Match either custom pickup_address or legacy pickupPoint->address
         $date = Carbon::parse($validated['date']);
+        $address = $validated['pickup_address'];
         $bookings = Booking::where('route_id', $validated['route_id'])
-            ->where(function ($query) use ($validated) {
-                // Match bookings with this pickup_point_id, or bookings with custom addresses if pickup_point_id is null
-                if ($validated['pickup_point_id']) {
-                    $query->where('pickup_point_id', $validated['pickup_point_id']);
-                } else {
-                    // If pickup_point_id is null, we're trying to complete custom address bookings
-                    $query->whereNull('pickup_point_id')
-                        ->whereNotNull('pickup_address');
-                }
-            })
             ->where('status', \App\Models\Booking::STATUS_ACTIVE)
             ->whereDate('start_date', '<=', $date)
             ->where(function ($query) use ($date) {
                 $query->whereNull('end_date')
                     ->orWhereDate('end_date', '>=', $date);
             })
+            ->where(function ($query) use ($address) {
+                $query->where('pickup_address', $address)
+                    ->orWhereHas('pickupPoint', function ($q) use ($address) {
+                        $q->where('address', $address);
+                    });
+            })
             ->get();
 
         if ($bookings->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'No active bookings found for this pickup point.',
+                'message' => 'No active bookings found for this pickup location.',
             ], 404);
         }
 
-        // Create daily pickup records for all bookings instead of updating booking status
+        // Create daily pickup records for all bookings
         $createdCount = 0;
         $notifyUserIds = [];
         $adminService = app(\App\Services\AdminNotificationService::class);
@@ -492,14 +423,14 @@ class RosterController extends Controller
                     'route_id' => $booking->route_id,
                     'driver_id' => $driver->id,
                     'pickup_date' => $date,
-                    'pickup_point_id' => $booking->pickup_point_id,
+                    'pickup_point_id' => $booking->pickup_point_id, // Still save this if it exists, though it likely won't
                     'period' => $period,
                     'completed_at' => Carbon::now(),
                 ]);
                 $createdCount++;
 
                 // Send pickup completed notification to parent
-                $pickupLocation = $booking->pickupPoint ? $booking->pickupPoint->name : ($booking->pickup_address ?? 'Custom Location');
+                $pickupLocation = $booking->pickup_address ?? 'Custom Location';
                 $parent = $booking->student?->parent;
                 if ($parent) {
                     $notifyUserIds[] = $parent->id;
@@ -511,10 +442,6 @@ class RosterController extends Controller
                             $dailyPickup->completed_at
                         ));
                     }
-                } else {
-                    \Log::warning('PickupCompleted notification skipped: missing parent email', [
-                        'booking_id' => $booking->id,
-                    ]);
                 }
 
                 // Notify admins of pickup/drop-off completion

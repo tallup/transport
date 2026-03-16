@@ -163,13 +163,12 @@ export default function AllPickupHistory({ bookings, dailyPickups, pickupsByBook
                                                         )}
                                                     </div>
 
-                                                    {pickup.pickup_point && (
+                                                    {(pickup.pickup_address || pickup.pickup_point?.address) && (
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                                                             <div>
                                                                 <p className="mb-1 text-xs font-semibold text-slate-500">Pickup Location</p>
-                                                                <p className="font-bold text-slate-900">{pickup.pickup_point.name}</p>
-                                                                <p className="text-sm text-slate-600">{pickup.pickup_point.address}</p>
-                                                                {pickup.pickup_point.pickup_time && (
+                                                                <p className="font-bold text-slate-900">{pickup.pickup_address || pickup.pickup_point?.address}</p>
+                                                                {pickup.pickup_point?.pickup_time && (
                                                                     <p className="mt-1 text-sm font-semibold text-amber-600">
                                                                         Time: {formatTime(pickup.pickup_point.pickup_time)}
                                                                     </p>

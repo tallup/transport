@@ -122,17 +122,6 @@ class DashboardController extends Controller
             ? (is_string($route->dropoff_time) ? substr($route->dropoff_time, 0, 5) : $route->dropoff_time->format('H:i'))
             : null;
 
-        $stats = [
-            'route_name' => $route->name,
-            'vehicle' => $route->vehicle 
-                ? "{$route->vehicle->make} {$route->vehicle->model} ({$route->vehicle->license_plate})"
-                : 'No vehicle assigned',
-            'total_students' => $totalStudents,
-            'pickup_points' => $route->pickupPoints->count(),
-            'pickup_time' => $pickupTimeFormatted,
-            'dropoff_time' => $dropoffTimeFormatted,
-        ];
-
         // Today's schedule timeline
         // Fetch bookings that are active today (within their booking period)
         // Show 'active' and 'awaiting_approval' bookings (awaiting_approval means approved and ready to service)
@@ -174,57 +163,36 @@ class DashboardController extends Controller
         ]);
 
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
+        $routePickupTime = $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD';
 
-        // Group bookings by pickup points
-        foreach ($pickupPoints as $pickupPoint) {
-            $pointBookings = $todayBookingsList->where('pickup_point_id', $pickupPoint->id);
-            if ($pointBookings->count() > 0) {
-                $allCompleted = $pointBookings->every(function ($booking) {
-                    return $booking->dailyPickups->isNotEmpty();
-                });
-                
-                $todaySchedule[] = [
-                    'time' => $pickupPoint->pickup_time,
-                    'title' => $pickupPoint->name,
-                    'description' => "Pickup {$pointBookings->count()} student(s)",
-                    'students' => $pointBookings->map(function ($booking) {
-                        $absence = $booking->absences->first();
-                        return [
-                            'name' => $booking->student?->name ?? 'Unknown',
-                            'address' => $booking->pickup_address ?? ($booking->pickupPoint?->address ?? 'Address not set'),
-                            'booking_id' => $booking->id,
-                            'isAbsent' => !is_null($absence),
-                            'absenceReason' => $absence?->reason,
-                        ];
-                    })->toArray(),
-                    'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
-                    'pickup_point_id' => $pickupPoint->id,
-                    'route_id' => $route->id,
-                ];
+        // Build todaySchedule from bookings grouped by address (pickup_address ?? pickupPoint?->address)
+        // so there is one stop per unique address and no empty pickup-point rows when using only custom addresses.
+        $addressKey = function ($booking) {
+            $addr = trim($booking->pickup_address ?? $booking->pickupPoint?->address ?? '');
+            return $addr !== '' ? $addr : 'Address not set';
+        };
+        $groupedByAddress = $todayBookingsList->groupBy($addressKey);
+
+        foreach ($groupedByAddress as $address => $bookings) {
+            $allCompleted = $bookings->every(fn ($b) => $b->dailyPickups->isNotEmpty());
+            $first = $bookings->first();
+            $pickupTime = $first->pickupPoint?->pickup_time
+                ? (is_string($first->pickupPoint->pickup_time) ? substr($first->pickupPoint->pickup_time, 0, 5) : $first->pickupPoint->pickup_time->format('H:i'))
+                : $routePickupTime;
+            $pickupPointId = $first->pickup_point_id;
+            $sequenceOrder = 9999;
+            if ($pickupPointId) {
+                $pp = $pickupPoints->firstWhere('id', $pickupPointId);
+                if ($pp) {
+                    $sequenceOrder = $pp->sequence_order;
+                }
             }
-        }
 
-        // Also show bookings with custom pickup addresses (no pickup_point_id) or bookings that don't match any pickup point
-        $customAddressBookings = $todayBookingsList->filter(function ($booking) use ($pickupPoints) {
-            // Include bookings without pickup_point_id OR bookings with pickup_point_id that doesn't match any pickup point
-            if (empty($booking->pickup_point_id)) {
-                return true; // No pickup point assigned
-            }
-            // Check if pickup_point_id exists in route's pickup points
-            $pickupPointExists = $pickupPoints->contains('id', $booking->pickup_point_id);
-            return !$pickupPointExists; // Pickup point doesn't exist in route
-        });
-
-        if ($customAddressBookings->count() > 0) {
-            $allCompleted = $customAddressBookings->every(function ($booking) {
-                return $booking->dailyPickups->isNotEmpty();
-            });
-            
             $todaySchedule[] = [
-                'time' => $route->pickup_time ? (is_string($route->pickup_time) ? substr($route->pickup_time, 0, 5) : $route->pickup_time->format('H:i')) : 'TBD',
-                'title' => 'Other Pickup Locations',
-                'description' => "Pickup {$customAddressBookings->count()} student(s)",
-                'students' => $customAddressBookings->map(function ($booking) {
+                'time' => $pickupTime,
+                'title' => $address,
+                'description' => 'Pickup ' . $bookings->count() . ' student(s)',
+                'students' => $bookings->map(function ($booking) {
                     $absence = $booking->absences->first();
                     return [
                         'name' => $booking->student?->name ?? 'Unknown',
@@ -234,12 +202,33 @@ class DashboardController extends Controller
                         'absenceReason' => $absence?->reason,
                     ];
                 })->toArray(),
-                'status' => $allCompleted ? 'completed' : 'upcoming', // schedule item status, not booking status
-                'pickup_point_id' => null,
+                'status' => $allCompleted ? 'completed' : 'upcoming',
+                'pickup_point_id' => $pickupPointId,
                 'route_id' => $route->id,
-                'is_custom' => true,
+                'sequence_order' => $sequenceOrder,
+                'is_custom' => empty($pickupPointId),
             ];
         }
+
+        // Sort schedule by sequence_order then time so legacy route order is preserved when applicable
+        usort($todaySchedule, function ($a, $b) {
+            $seq = ($a['sequence_order'] ?? 9999) <=> ($b['sequence_order'] ?? 9999);
+            if ($seq !== 0) {
+                return $seq;
+            }
+            return strcmp($a['time'] ?? '', $b['time'] ?? '');
+        });
+
+        $stats = [
+            'route_name' => $route->name,
+            'vehicle' => $route->vehicle 
+                ? "{$route->vehicle->make} {$route->vehicle->model} ({$route->vehicle->license_plate})"
+                : 'No vehicle assigned',
+            'total_students' => $totalStudents,
+            'pickup_points' => count($todaySchedule),
+            'pickup_time' => $pickupTimeFormatted,
+            'dropoff_time' => $dropoffTimeFormatted,
+        ];
 
         // Route performance metrics
         // Count daily pickups for today and current period

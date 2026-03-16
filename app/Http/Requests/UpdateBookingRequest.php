@@ -35,7 +35,7 @@ class UpdateBookingRequest extends FormRequest
             'student_id' => 'sometimes|required|exists:students,id',
             'route_id' => 'sometimes|required|exists:routes,id',
             'pickup_point_id' => 'nullable|exists:pickup_points,id',
-            'pickup_address' => 'nullable|string|max:500',
+            'pickup_address' => 'required_without:pickup_point_id|nullable|string|max:500',
             'pickup_latitude' => 'nullable|numeric|between:-90,90',
             'pickup_longitude' => 'nullable|numeric|between:-180,180',
             'plan_type' => 'sometimes|required|in:weekly,monthly,academic_term,annual',

@@ -8,14 +8,11 @@ import { useState, useEffect } from 'react';
 export default function Edit({ booking, students, routes }) {
     const { auth } = usePage().props;
     const [selectedRouteId, setSelectedRouteId] = useState(booking.route_id || '');
-    const [availablePickupPoints, setAvailablePickupPoints] = useState(booking.route?.pickup_points || []);
 
     const { data, setData, put, processing, errors } = useForm({
         student_id: booking.student_id || '',
         route_id: booking.route_id || '',
-        pickup_point_id: booking.pickup_point_id || '',
         pickup_address: booking.pickup_address || '',
-        dropoff_point_id: booking.dropoff_point_id || '',
         plan_type: booking.plan_type || 'weekly',
         trip_type: booking.trip_type || 'two_way',
         trip_direction: booking.trip_direction || 'both',
@@ -24,22 +21,9 @@ export default function Edit({ booking, students, routes }) {
         end_date: booking.end_date ? (typeof booking.end_date === 'string' ? booking.end_date.split('T')[0] : booking.end_date) : '',
     });
 
-    useEffect(() => {
-        if (selectedRouteId) {
-            const selectedRoute = routes.find(r => r.id == selectedRouteId);
-            if (selectedRoute && selectedRoute.pickup_points) {
-                setAvailablePickupPoints(selectedRoute.pickup_points);
-            } else {
-                setAvailablePickupPoints([]);
-            }
-        }
-    }, [selectedRouteId]);
-
     const handleRouteChange = (routeId) => {
         setSelectedRouteId(routeId);
         setData('route_id', routeId);
-        setData('pickup_point_id', '');
-        setData('dropoff_point_id', '');
     };
 
     const handleSubmit = (e) => {
@@ -110,51 +94,9 @@ export default function Edit({ booking, students, routes }) {
                                             <InputError message={errors.route_id} className="mt-2 text-red-300 font-semibold" />
                                         </div>
 
-                                        <div>
-                                            <label htmlFor="pickup_point_id" className="mb-2 block text-sm font-semibold text-slate-700">
-                                                Pickup Point (Optional)
-                                            </label>
-                                            <select
-                                                id="pickup_point_id"
-                                                value={data.pickup_point_id}
-                                                onChange={(e) => setData('pickup_point_id', e.target.value)}
-                                                className="form-control"
-                                                disabled={!selectedRouteId}
-                                            >
-                                                <option value="">Select Pickup Point</option>
-                                                {availablePickupPoints.map((point) => (
-                                                    <option key={point.id} value={point.id}>
-                                                        {point.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <InputError message={errors.pickup_point_id} className="mt-2 text-red-300 font-semibold" />
-                                        </div>
-
-                                        <div>
-                                            <label htmlFor="dropoff_point_id" className="mb-2 block text-sm font-semibold text-slate-700">
-                                                Dropoff Point (Optional)
-                                            </label>
-                                            <select
-                                                id="dropoff_point_id"
-                                                value={data.dropoff_point_id}
-                                                onChange={(e) => setData('dropoff_point_id', e.target.value)}
-                                                className="form-control"
-                                                disabled={!selectedRouteId}
-                                            >
-                                                <option value="">Select Dropoff Point (Optional)</option>
-                                                {availablePickupPoints.map((point) => (
-                                                    <option key={point.id} value={point.id}>
-                                                        {point.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <InputError message={errors.dropoff_point_id} className="mt-2 text-red-300 font-semibold" />
-                                        </div>
-
                                         <div className="md:col-span-2">
                                             <label htmlFor="pickup_address" className="mb-2 block text-sm font-semibold text-slate-700">
-                                                Pickup Address (Optional - if no point selected)
+                                                Pickup Address *
                                             </label>
                                             <input
                                                 id="pickup_address"
@@ -162,7 +104,8 @@ export default function Edit({ booking, students, routes }) {
                                                 value={data.pickup_address}
                                                 onChange={(e) => setData('pickup_address', e.target.value)}
                                                 className="form-control"
-                                                placeholder="Enter precise custom pickup address"
+                                                placeholder="Enter the student's home address for daily pickup"
+                                                required
                                             />
                                             <InputError message={errors.pickup_address} className="mt-2 text-red-300 font-semibold" />
                                         </div>

@@ -230,18 +230,19 @@ export default function PickupHistory({ booking, dailyPickups, statistics }) {
                                                             {/* Pickup Location */}
                                                             <div>
                                                                 <span className="text-sm font-semibold text-slate-500">Pickup Location:</span>
-                                                                {pickup.pickup_point ? (
+                                                                {(pickup.pickup_address || pickup.pickup_point?.address) ? (
                                                                     <>
-                                                                        <p className="mt-1 font-bold text-slate-900">{pickup.pickup_point.name}</p>
-                                                                        <p className="mt-1 text-sm text-slate-600">{pickup.pickup_point.address}</p>
-                                                                        {pickup.pickup_point.pickup_time && (
+                                                                        <p className="mt-1 font-bold text-slate-900">
+                                                                            {pickup.pickup_address || pickup.pickup_point?.address}
+                                                                        </p>
+                                                                        {pickup.pickup_point?.pickup_time && (
                                                                             <p className="mt-2 text-xs text-slate-500">
                                                                                 Scheduled: {formatTime(pickup.pickup_point.pickup_time)}
                                                                             </p>
                                                                         )}
                                                                     </>
                                                                 ) : (
-                                                                    <p className="mt-1 text-sm text-slate-500">Custom address</p>
+                                                                    <p className="mt-1 text-sm text-slate-500">Address not set</p>
                                                                 )}
                                                             </div>
                                                             

@@ -177,11 +177,12 @@ export default function StudentsIndex({ students }) {
                                                     </div>
                                                     <div className="rounded-lg border border-amber-200 bg-white p-3">
                                                         <p className="text-xs text-amber-700">Pickup</p>
-                                                        {student.active_booking.pickup_point ? (
+                                                        {(student.active_booking.pickup_address || student.active_booking.pickup_point?.address) ? (
                                                             <>
-                                                                <p className="text-sm font-medium text-slate-900">{student.active_booking.pickup_point.name}</p>
-                                                                <p className="text-xs text-slate-600">{student.active_booking.pickup_point.address}</p>
-                                                                {student.active_booking.pickup_point.pickup_time && (
+                                                                <p className="text-sm font-medium text-slate-900">
+                                                                    {student.active_booking.pickup_address || student.active_booking.pickup_point?.address}
+                                                                </p>
+                                                                {student.active_booking.pickup_point?.pickup_time && (
                                                                     <p className="mt-1 text-sm font-medium text-amber-800">
                                                                         {formatTime(student.active_booking.pickup_point.pickup_time)}
                                                                     </p>

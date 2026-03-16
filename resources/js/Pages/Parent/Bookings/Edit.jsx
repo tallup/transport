@@ -58,13 +58,12 @@ export default function EditBooking({ booking, students, routes, price: initialP
     const [price, setPrice] = useState(initialPrice || null);
     const [loading, setLoading] = useState(false);
     const [filteredRoutes, setFilteredRoutes] = useState(routes);
-    const [pickupOption, setPickupOption] = useState(booking?.pickup_point_id ? 'pickup_point' : 'custom');
+    const [pickupOption, setPickupOption] = useState('custom');
 
     // Pre-fill form data from booking
     const { data, setData, put, errors, processing } = useForm({
         student_id: booking?.student_id || '',
         route_id: booking?.route_id || '',
-        pickup_point_id: booking?.pickup_point_id || '',
         pickup_address: booking?.pickup_address || '',
         plan_type: booking?.plan_type || '',
         trip_type: booking?.trip_type || 'two_way',
@@ -99,12 +98,8 @@ export default function EditBooking({ booking, students, routes, price: initialP
                 checkCapacity(booking.route_id);
             }
             
-            // Set pickup option based on booking
-            if (booking.pickup_point_id) {
-                setPickupOption('pickup_point');
-            } else {
-                setPickupOption('custom');
-            }
+            // Set pickup option - always custom now
+            setPickupOption('custom');
             
             // Set price if provided
             if (initialPrice) {
@@ -122,16 +117,6 @@ export default function EditBooking({ booking, students, routes, price: initialP
             const route = filteredRoutes.find(r => r.id === parseInt(data.route_id));
             setSelectedRoute(route);
             checkCapacity(data.route_id);
-            // Only reset pickup option if route actually changed (not on initial load)
-            // Preserve existing pickup_point_id if it belongs to the new route
-            if (route && data.pickup_point_id) {
-                const hasPickupPoint = route.pickup_points?.some(p => p.id === parseInt(data.pickup_point_id));
-                if (!hasPickupPoint) {
-                    // Pickup point doesn't belong to new route, reset
-                    setPickupOption('custom');
-                    setData('pickup_point_id', '');
-                }
-            }
         } else {
             setSelectedRoute(null);
         }
@@ -204,11 +189,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
         e.preventDefault();
         
         // Validate required fields before submitting
-        const hasPickupLocation = pickupOption === 'pickup_point' 
-            ? data.pickup_point_id 
-            : data.pickup_address;
-        
-        if (!data.route_id || !hasPickupLocation || !data.plan_type || !data.start_date) {
+        if (!data.route_id || !data.pickup_address || !data.plan_type || !data.start_date) {
             toast.error('Please complete all required fields.');
             return;
         }
@@ -236,11 +217,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
         }
         // Step 2: Pickup
         if (step === 2) {
-            if (pickupOption === 'pickup_point' && !data.pickup_point_id) {
-                toast.error('Please select a pickup point.');
-                return;
-            }
-            if (pickupOption === 'custom' && !data.pickup_address) {
+            if (!data.pickup_address) {
                 toast.error('Please enter a pickup address.');
                 return;
             }
@@ -553,167 +530,10 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                     <div className="space-y-8">
                                         <div>
                                             <h3 className="text-2xl md:text-3xl font-extrabold text-brand-primary mb-2">Where should we pick up?</h3>
-                                            <p className="text-sm text-brand-primary/70">Choose a stop from your route or enter a custom address</p>
+                                            <p className="text-sm text-brand-primary/70">Enter your home address for daily pickup</p>
                                         </div>
 
-                                        {selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 && (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Pickup type</p>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                    <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
-                                                        pickupOption === 'pickup_point'
-                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
-                                                    }`}>
-                                                        <input
-                                                            type="radio"
-                                                            name="pickup_option"
-                                                            value="pickup_point"
-                                                            checked={pickupOption === 'pickup_point'}
-                                                            onChange={(e) => {
-                                                                setPickupOption(e.target.value);
-                                                                setData('pickup_point_id', '');
-                                                                setData('pickup_address', '');
-                                                            }}
-                                                            className="sr-only"
-                                                        />
-                                                        {pickupOption === 'pickup_point' && (
-                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
-                                                        )}
-                                                        <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${pickupOption === 'pickup_point' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-slate-100 group-hover:bg-slate-200'}`}>
-                                                            <svg className={`w-6 h-6 ${pickupOption === 'pickup_point' ? 'text-slate-900' : 'text-slate-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <p className="text-base font-extrabold text-slate-900">From route stop</p>
-                                                            <p className="mt-0.5 text-xs text-slate-500">Choose a scheduled pickup point</p>
-                                                        </div>
-                                                        {pickupOption === 'pickup_point' && (
-                                                            <div className="ml-auto w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow">
-                                                                <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
-                                                        )}
-                                                    </label>
-                                                    <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
-                                                        pickupOption === 'custom'
-                                                            ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-lg ring-2 ring-yellow-400/40'
-                                                            : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
-                                                    }`}>
-                                                        <input
-                                                            type="radio"
-                                                            name="pickup_option"
-                                                            value="custom"
-                                                            checked={pickupOption === 'custom'}
-                                                            onChange={(e) => {
-                                                                setPickupOption(e.target.value);
-                                                                setData('pickup_point_id', '');
-                                                            }}
-                                                            className="sr-only"
-                                                        />
-                                                        {pickupOption === 'custom' && (
-                                                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
-                                                        )}
-                                                        <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${pickupOption === 'custom' ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md' : 'bg-slate-100 group-hover:bg-slate-200'}`}>
-                                                            <svg className={`w-6 h-6 ${pickupOption === 'custom' ? 'text-slate-900' : 'text-slate-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <p className="text-base font-extrabold text-slate-900">Custom address</p>
-                                                            <p className="mt-0.5 text-xs text-slate-500">Enter your own pickup location</p>
-                                                        </div>
-                                                        {pickupOption === 'custom' && (
-                                                            <div className="ml-auto w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow">
-                                                                <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
-                                                        )}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {pickupOption === 'pickup_point' && selectedRoute && selectedRoute.pickup_points && selectedRoute.pickup_points.length > 0 ? (
-                                            <div>
-                                                <p className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider mb-3">Select a stop</p>
-                                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                                    {selectedRoute.pickup_points.map((point) => {
-                                                        const isSelected = data.pickup_point_id == point.id;
-                                                        return (
-                                                            <label
-                                                                key={point.id}
-                                                                className={`group relative flex cursor-pointer transition-all duration-300 overflow-hidden rounded-2xl border-2 ${
-                                                                    isSelected
-                                                                        ? 'border-yellow-400 bg-gradient-to-br from-yellow-400/25 via-yellow-500/15 to-transparent shadow-xl ring-2 ring-yellow-400/40 scale-[1.01]'
-                                                                        : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 hover:shadow-lg'
-                                                                }`}
-                                                            >
-                                                                <input
-                                                                    type="radio"
-                                                                    name="pickup_point_id"
-                                                                    value={point.id}
-                                                                    checked={isSelected}
-                                                                    onChange={(e) => {
-                                                                        setData('pickup_point_id', e.target.value);
-                                                                        setData('pickup_address', point.address);
-                                                                    }}
-                                                                    className="sr-only"
-                                                                />
-                                                                {isSelected && (
-                                                                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-yellow-400 to-yellow-500" />
-                                                                )}
-                                                                <div className="flex-1 flex gap-4 p-5 pl-6 min-w-0">
-                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${isSelected ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg' : 'bg-slate-100 group-hover:bg-slate-200'}`}>
-                                                                        <svg className={`w-6 h-6 ${isSelected ? 'text-slate-900' : 'text-slate-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                        </svg>
-                                                                    </div>
-                                                                    <div className="flex-1 min-w-0 pr-8">
-                                                                        <p className="mb-1 text-base font-extrabold text-slate-900">{point.name}</p>
-                                                                        <p className="text-sm text-slate-500">{point.address}</p>
-                                                                        {(point.pickup_time || point.dropoff_time) && (
-                                                                            <div className="flex flex-wrap items-center gap-2 mt-2 p-2 rounded-lg bg-black/10 border border-yellow-400/20">
-                                                                                {point.pickup_time && (
-                                                                                    <span className="flex items-center gap-1 text-xs">
-                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                                                                        <span className="text-amber-200 font-bold">{formatTime(point.pickup_time)}</span>
-                                                                                    </span>
-                                                                                )}
-                                                                                {point.dropoff_time && (
-                                                                                    <span className="flex items-center gap-1 text-xs">
-                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                                                                                        <span className="text-blue-200 font-bold">{formatTime(point.dropoff_time)}</span>
-                                                                                    </span>
-                                                                                )}
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                {isSelected && (
-                                                                    <div className="absolute top-4 right-4 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
-                                                                        <svg className="w-3.5 h-3.5 !text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                        </svg>
-                                                                    </div>
-                                                                )}
-                                                            </label>
-                                                        );
-                                                    })}
-                                                </div>
-                                                {errors.pickup_point_id && (
-                                                    <div className="mt-4 p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
-                                                        <p className="text-red-200 text-sm font-bold">{errors.pickup_point_id}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                                        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                                 <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 p-4">
                                                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
                                                         <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -733,7 +553,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                         placeholder="e.g. 123 Main St, City, State ZIP"
                                                         rows={4}
                                                         className="form-control min-h-28"
-                                                        required={pickupOption === 'custom'}
+                                                        required
                                                     />
                                                     <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
                                                         <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -748,7 +568,6 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                     )}
                                                 </div>
                                             </div>
-                                        )}
                                     </div>
                                 )}
 
@@ -1090,12 +909,7 @@ export default function EditBooking({ booking, students, routes, price: initialP
                                                 <div className="flex-1">
                                                     <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-500">Pickup Location</p>
                                                     <p className="text-lg font-extrabold text-slate-900">
-                                                        {data.pickup_point_id
-                                                            ? (() => {
-                                                                const selectedPoint = selectedRoute?.pickup_points?.find(p => p.id == data.pickup_point_id);
-                                                                return selectedPoint ? `${selectedPoint.name} - ${selectedPoint.address}` : data.pickup_address;
-                                                              })()
-                                                            : data.pickup_address || 'Not set'}
+                                                        {data.pickup_address || 'Not set'}
                                                     </p>
                                                 </div>
                                             </div>

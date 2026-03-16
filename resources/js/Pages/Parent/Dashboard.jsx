@@ -151,7 +151,7 @@ export default function Dashboard({
                                                 <div>
                                                     <p className="text-sm font-semibold text-slate-900">{pickup.student}</p>
                                                     <p className="mt-1 text-sm text-slate-600">{pickup.route}</p>
-                                                    <p className="mt-2 text-xs text-slate-500">{pickup.pickup_point} - {pickup.pickup_time}</p>
+                                                    <p className="mt-2 text-xs text-slate-500">{pickup.pickup_address || 'No address'} - {pickup.pickup_time}</p>
                                                 </div>
                                                 <span className="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-slate-600">
                                                     {pickup.date_label}

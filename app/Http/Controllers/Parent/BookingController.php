@@ -65,15 +65,18 @@ class BookingController extends Controller
                 return $route;
             });
 
-        // Get recent pickup points for quick selection
+        // Get recent custom pickup addresses for quick selection (address-only flow)
         $recentPickups = Booking::whereHas('student', function ($query) use ($user) {
                 $query->where('parent_id', $user->id);
             })
-            ->with(['pickupPoint', 'route'])
-            ->whereNotNull('pickup_point_id')
+            ->with(['route'])
+            ->whereNotNull('pickup_address')
+            ->where('pickup_address', '!=', '')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->unique('pickup_point_id')
+            ->unique(function ($b) {
+                return $b->route_id . '|' . trim($b->pickup_address ?? '');
+            })
             ->take(3)
             ->values();
 
@@ -991,6 +994,7 @@ class BookingController extends Controller
                                 'email' => $pickup->driver->email ?? null,
                                 'profile_picture_url' => $pickup->driver->profile_picture_url,
                             ] : null,
+                            'pickup_address' => $booking->pickup_address ?? null,
                             'pickup_point' => $pickup->pickupPoint ? [
                                 'id' => $pickup->pickupPoint->id,
                                 'name' => $pickup->pickupPoint->name ?? 'Unknown',
@@ -1121,6 +1125,7 @@ class BookingController extends Controller
                             'email' => $pickup->driver->email,
                             'profile_picture_url' => $pickup->driver->profile_picture_url,
                         ] : null,
+                        'pickup_address' => $booking->pickup_address ?? null,
                         'pickup_point' => $pickup->pickupPoint ? [
                             'id' => $pickup->pickupPoint->id,
                             'name' => $pickup->pickupPoint->name,

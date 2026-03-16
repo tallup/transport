@@ -306,12 +306,8 @@ export default function Show({ booking }) {
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Pickup Point</p>
-                                    <p className="text-lg font-bold text-slate-900">{booking.pickup_point?.name || booking.pickupPoint?.name || 'N/A'}</p>
-                                </div>
-                                <div>
                                     <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Pickup Address</p>
-                                    <p className="break-words text-base font-medium text-slate-700">{booking.pickup_address || 'N/A'}</p>
+                                    <p className="text-lg font-bold text-slate-900">{booking.pickup_address || 'N/A'}</p>
                                 </div>
                             </div>
                         </GlassCard>

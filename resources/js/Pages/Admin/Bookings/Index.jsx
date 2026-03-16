@@ -96,7 +96,7 @@ export default function Index({ bookings }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
                                             <p className="truncate text-sm font-medium text-slate-700">
-                                                {booking.pickupPoint?.name || booking.pickup_address || 'No pickup point'}
+                                                {booking.pickup_address || 'No pickup address'}
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2">

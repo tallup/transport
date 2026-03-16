@@ -48,15 +48,15 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         }
     };
 
-    const markPickupPointComplete = async (pickupPointId) => {
+    const markPickupPointComplete = async (address) => {
         if (!route) return;
-        const key = `${pickupPointId}-${route.id}`;
+        const key = `${address}-${route.id}`;
         setCompleting({ ...completing, [key]: true });
 
 
         try {
             const response = await axios.post('/driver/pickup-points/mark-complete', {
-                pickup_point_id: pickupPointId,
+                pickup_address: address,
                 route_id: route.id,
                 date: date || new Date().toISOString().split('T')[0],
             });
@@ -263,7 +263,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                     {groupedBookings.map((group, index) => {
                                         const allCompleted = group.bookings.every(b => b.hasDailyPickup);
                                         const someCompleted = group.bookings.some(b => b.hasDailyPickup);
-                                        const key = `${group.pickup_point.id}-${route?.id}`;
+                                        const addressKey = group.pickup_point.address || 'Custom';
+                                        const key = `${addressKey}-${route?.id}`;
                                         const isCompleting = completing[key];
 
                                         return (
@@ -273,7 +274,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         <div className="flex-1">
                                                             <div className="flex items-center gap-3 mb-2">
                                                                 <h3 className="text-xl font-bold text-white">
-                                                                    {group.pickup_point.name}
+                                                                    {group.pickup_point.address}
                                                                 </h3>
                                                                 {allCompleted && (
                                                                     <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
@@ -287,7 +288,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                                 )}
                                                             </div>
                                                             <p className="text-sm font-semibold text-white/90">
-                                                                {group.pickup_point.address}
+                                                                Stop #{index + 1}
                                                             </p>
                                                         </div>
                                                         <div className="text-right ml-4">
@@ -306,23 +307,16 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
                                                         </div>
                                                     </div>
 
-                                                    {!allCompleted && route && group.pickup_point.id && (
+                                                    {!allCompleted && route && (
                                                         <div className="mb-4">
                                                             <GlassButton
                                                                 variant="success"
-                                                                onClick={() => markPickupPointComplete(group.pickup_point.id)}
+                                                                onClick={() => markPickupPointComplete(group.pickup_point.address)}
                                                                 disabled={isCompleting}
                                                                 className="text-sm py-2 px-4"
                                                             >
                                                                 {isCompleting ? 'Marking...' : 'Mark All as Complete'}
                                                             </GlassButton>
-                                                        </div>
-                                                    )}
-                                                    {!group.pickup_point.id && (
-                                                        <div className="mb-4">
-                                                            <p className="text-sm text-yellow-300 font-semibold">
-                                                                Custom addresses must be marked individually
-                                                            </p>
                                                         </div>
                                                     )}
 

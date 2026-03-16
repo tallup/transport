@@ -184,15 +184,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 <h3 className="text-base font-semibold text-slate-900">Morning Pickup</h3>
                             </div>
                             <div className="space-y-3 text-sm text-slate-700">
-                                {booking.pickup_point ? (
-                                    <>
-                                        <p className="text-slate-900 font-medium">{booking.pickup_point.name}</p>
-                                        <p>{booking.pickup_point.address}</p>
-                                        {booking.pickup_point.pickup_time && (
-                                            <p><span className="font-medium">Time:</span> {formatTime(booking.pickup_point.pickup_time)}</p>
-                                        )}
-                                    </>
-                                ) : booking.pickup_address ? (
+                                {booking.pickup_address ? (
                                     <>
                                         <p className="text-slate-900 font-medium">{booking.pickup_address}</p>
                                         {booking.route?.pickup_time && (
@@ -200,7 +192,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                         )}
                                     </>
                                 ) : (
-                                    <p>Pickup location not specified.</p>
+                                    <p>Pickup address not specified.</p>
                                 )}
                             </div>
                         </GlassCard>
@@ -211,20 +203,11 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
                                 <h3 className="text-base font-semibold text-slate-900">Afternoon Dropoff</h3>
                             </div>
                             <div className="space-y-3 text-sm text-slate-700">
-                                {booking.dropoff_point ? (
+                                {booking.pickup_address ? (
                                     <>
-                                        <p className="text-slate-900 font-medium">{booking.dropoff_point.name}</p>
-                                        <p>{booking.dropoff_point.address}</p>
-                                        {booking.dropoff_point.dropoff_time && (
-                                            <p><span className="font-medium">Time:</span> {formatTime(booking.dropoff_point.dropoff_time)}</p>
-                                        )}
-                                    </>
-                                ) : booking.pickup_point ? (
-                                    <>
-                                        <p className="text-slate-900 font-medium">{booking.pickup_point.name}</p>
-                                        <p>{booking.pickup_point.address}</p>
-                                        {booking.pickup_point.dropoff_time && (
-                                            <p><span className="font-medium">Time:</span> {formatTime(booking.pickup_point.dropoff_time)}</p>
+                                        <p className="text-slate-900 font-medium">{booking.pickup_address}</p>
+                                        {booking.route?.dropoff_time && (
+                                            <p><span className="font-medium">Time:</span> {formatTime(booking.route.dropoff_time)}</p>
                                         )}
                                     </>
                                 ) : booking.student?.school ? (

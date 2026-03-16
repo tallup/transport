@@ -40,7 +40,7 @@ class BookingStartingSoon extends Notification implements ShouldQueue
         $studentName = $this->booking->student->name;
         $startDate = $this->booking->start_date->format('l, F j, Y');
         $routeName = $this->booking->route->name ?? 'N/A';
-        $pickupTime = $this->booking->pickupPoint->pickup_time ?? $this->booking->route->pickup_time ?? 'TBD';
+        $pickupTime = $this->booking->pickupPoint?->pickup_time ?? $this->booking->route?->pickup_time ?? 'TBD';
 
         return (new MailMessage)
             ->subject('Reminder: School Transport Booking Starting Soon')

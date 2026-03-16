@@ -153,14 +153,14 @@ export default function Checkout({ booking, bookings, price, stripeKey }) {
                                     ))}
                                 </ul>
                                 <p className="mt-3 text-xs text-slate-500">
-                                    Route: {displayBooking?.route?.name} · Pickup: {displayBooking?.pickup_address || displayBooking?.pickup_point?.name || '—'}
+                                    Route: {displayBooking?.route?.name} · Pickup: {displayBooking?.pickup_address || '—'}
                                 </p>
                             </div>
                         ) : (
                             <div className="mt-6 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-2">
                                 <p className="text-slate-700"><span className="font-medium text-slate-900">Student:</span> {booking.student?.name}</p>
                                 <p className="text-slate-700"><span className="font-medium text-slate-900">Route:</span> {booking.route?.name}</p>
-                                <p className="text-slate-700"><span className="font-medium text-slate-900">Pickup:</span> {booking.pickup_address || booking.pickup_point?.name || 'Not set'}</p>
+                                <p className="text-slate-700"><span className="font-medium text-slate-900">Pickup:</span> {booking.pickup_address || 'Not set'}</p>
                                 <p className="text-slate-700"><span className="font-medium text-slate-900">Plan:</span> {booking.plan_type?.replace('_', '-')}</p>
                             </div>
                         )}

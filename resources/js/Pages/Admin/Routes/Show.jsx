@@ -297,43 +297,6 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                         {/* Right Column - Pickup Points & Bookings */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* Pickup Points */}
-                            {route.pickup_points && route.pickup_points.length > 0 && (
-                                <div className="glass-card p-6">
-                                    <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
-                                        <MapPinIcon className="h-6 w-6" />
-                                        Pickup Points ({route.pickup_points.length})
-                                    </h3>
-                                    <div className="space-y-3">
-                                        {route.pickup_points.map((point, index) => (
-                                            <div key={point.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-white">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-sky-200 bg-sky-50">
-                                                        <span className="text-sm font-bold text-sky-700">{point.sequence_order || index + 1}</span>
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <p className="font-semibold text-slate-900">{point.name}</p>
-                                                        {point.address && (
-                                                            <p className="mt-1 text-sm text-slate-500">{point.address}</p>
-                                                        )}
-                                                        <div className="flex gap-4 mt-2 text-sm">
-                                                            {point.pickup_time && (
-                                                                <span className="text-slate-600">
-                                                                    🚌 {formatTime(point.pickup_time)}
-                                                                </span>
-                                                            )}
-                                                            {point.dropoff_time && (
-                                                                <span className="text-slate-600">
-                                                                    🏠 {formatTime(point.dropoff_time)}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Active Bookings */}
                             <div className="glass-card p-6">
@@ -348,7 +311,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Student</th>
                                                     <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Parent</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Pickup Point</th>
+                                                    <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Pickup Address</th>
                                                     <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Plan</th>
                                                     <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">Status</th>
                                                     <th className="px-4 py-3 text-left text-sm font-bold uppercase tracking-wide text-slate-500">End Date</th>
@@ -364,7 +327,7 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                                             {booking.student.parent?.name || '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-slate-600">
-                                                            {booking.pickup_point?.name || '-'}
+                                                            {booking.pickup_address || '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-slate-600">
                                                             {booking.plan_type.replace('_', ' ')}

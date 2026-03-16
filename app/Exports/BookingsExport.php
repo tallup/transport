@@ -83,7 +83,7 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping
             $booking->student->name ?? 'N/A',
             $booking->student->school->name ?? 'N/A',
             $booking->route->name ?? 'N/A',
-            $booking->pickupPoint->name ?? 'Custom Address',
+            $booking->pickup_address ?? $booking->pickupPoint?->name ?? 'Custom Address',
             ucfirst(str_replace('_', ' ', $booking->plan_type)),
             ucfirst(str_replace('_', ' ', $booking->trip_type ?? 'N/A')),
             ucfirst($booking->status),

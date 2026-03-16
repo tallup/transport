@@ -138,7 +138,7 @@ export default function BookingsIndex({ bookings }) {
                                         <div className="flex items-start gap-2 text-slate-600">
                                             <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
                                             <span className="truncate">
-                                                {booking.pickup_address || booking.pickup_point?.name || 'No pickup point'}
+                                                {booking.pickup_address || 'No pickup address'}
                                             </span>
                                         </div>
                                         <div className="inline-flex rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700">

@@ -20,7 +20,7 @@ class BookingController extends Controller
             'status' => 'nullable|in:active,pending,awaiting_approval,completed,expired,cancelled',
         ]);
 
-        $query = Booking::with(['student.parent', 'route', 'pickupPoint', 'dropoffPoint']);
+        $query = Booking::with(['student.parent', 'route']);
 
         if (!empty($validated['status'])) {
             $query->where('status', $validated['status']);
@@ -43,7 +43,6 @@ class BookingController extends Controller
             ->get(['id', 'name', 'parent_id']);
         
         $routes = Route::where('active', true)
-            ->with('pickupPoints')
             ->orderBy('name')
             ->get();
 
@@ -63,8 +62,6 @@ class BookingController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'nullable|exists:pickup_points,id',
-            'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'pickup_address' => 'nullable|string|max:255',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
@@ -98,14 +95,13 @@ class BookingController extends Controller
 
     public function edit(Booking $booking)
     {
-        $booking->load(['student.parent', 'route.pickupPoints', 'pickupPoint', 'dropoffPoint']);
+        $booking->load(['student.parent', 'route']);
         
         $students = Student::with('parent')
             ->orderBy('name')
             ->get(['id', 'name', 'parent_id']);
         
         $routes = Route::where('active', true)
-            ->with('pickupPoints')
             ->orderBy('name')
             ->get();
 
@@ -118,7 +114,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['student.parent', 'route.driver', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
+        $booking->load(['student.parent', 'route.driver', 'route.vehicle']);
 
         return Inertia::render('Admin/Bookings/Show', [
             'booking' => $booking,
@@ -135,8 +131,6 @@ class BookingController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'route_id' => 'required|exists:routes,id',
-            'pickup_point_id' => 'nullable|exists:pickup_points,id',
-            'dropoff_point_id' => 'nullable|exists:pickup_points,id',
             'pickup_address' => 'nullable|string|max:255',
             'plan_type' => 'required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'required|in:one_way,two_way',
