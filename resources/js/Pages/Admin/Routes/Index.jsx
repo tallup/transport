@@ -69,6 +69,14 @@ export default function Index({ routes }) {
                                     <div className="space-y-3 mb-4">
                                         <div className="flex items-center gap-2">
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            <p className="text-sm font-medium text-slate-700">
+                                                Driver: {route.driver?.name || <span className="text-slate-400 italic">No driver assigned</span>}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                             </svg>
                                             <p className="text-sm font-medium text-slate-700">
