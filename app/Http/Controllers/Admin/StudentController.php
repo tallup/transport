@@ -7,7 +7,10 @@ use App\Models\Policy;
 use App\Models\Student;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -87,12 +90,9 @@ class StudentController extends Controller
             'absences.booking',
         ]);
 
-        $policies = Policy::active()
-            ->ordered()
-            ->get()
-            ->groupBy('category')
-            ->map(fn ($items) => $items->values()->all())
-            ->all();
+        $this->scrubLoadedModelGraphForJson($student);
+
+        $policies = $this->loadPoliciesForStudentPage();
 
         return Inertia::render('Admin/Students/Show', [
             'student' => $student,
@@ -196,5 +196,113 @@ class StudentController extends Controller
 
         return redirect()->route('admin.students.index')
             ->with('success', 'Student deleted successfully.');
+    }
+
+    /**
+     * Policy rows may be missing on some environments; invalid UTF-8 in DB can break json_encode for Inertia.
+     *
+     * @return array<string, array<int, array{id: int, title: string, content: string, category: string|null}>>
+     */
+    private function loadPoliciesForStudentPage(): array
+    {
+        try {
+            if (! Schema::hasTable('policies')) {
+                return [];
+            }
+
+            return Policy::active()
+                ->ordered()
+                ->get()
+                ->groupBy('category')
+                ->map(fn ($items) => $items->map(fn (Policy $p) => [
+                    'id' => $p->id,
+                    'title' => $this->scrubUtf8String((string) $p->title),
+                    'content' => $this->scrubUtf8String((string) $p->content),
+                    'category' => $p->category,
+                ])->values()->all())
+                ->all();
+        } catch (\Throwable $e) {
+            Log::warning('Admin student show: could not load policies', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+    }
+
+    private function scrubLoadedModelGraphForJson(Student $student): void
+    {
+        $this->scrubLoadedModelStrings($student);
+
+        foreach (['parent', 'school', 'route', 'pickupPoint'] as $relation) {
+            if ($student->relationLoaded($relation) && $student->{$relation} instanceof Model) {
+                $this->scrubLoadedModelStrings($student->{$relation});
+            }
+        }
+
+        if ($student->relationLoaded('bookings')) {
+            foreach ($student->bookings as $booking) {
+                $this->scrubLoadedModelStrings($booking);
+                if ($booking->relationLoaded('route') && $booking->route) {
+                    $this->scrubLoadedModelStrings($booking->route);
+                }
+                if ($booking->relationLoaded('pickupPoint') && $booking->pickupPoint) {
+                    $this->scrubLoadedModelStrings($booking->pickupPoint);
+                }
+            }
+        }
+
+        if ($student->relationLoaded('absences')) {
+            foreach ($student->absences as $absence) {
+                $this->scrubLoadedModelStrings($absence);
+                if ($absence->relationLoaded('booking') && $absence->booking) {
+                    $this->scrubLoadedModelStrings($absence->booking);
+                }
+            }
+        }
+    }
+
+    private function scrubLoadedModelStrings(Model $model): void
+    {
+        foreach (array_keys($model->getAttributes()) as $key) {
+            $val = $model->getAttribute($key);
+            if (is_string($val) && $val !== '') {
+                $model->setAttribute($key, $this->scrubUtf8String($val));
+            }
+            if (is_array($val)) {
+                $model->setAttribute($key, $this->scrubUtf8DeepArray($val));
+            }
+        }
+    }
+
+    /**
+     * @param  array<mixed>  $arr
+     * @return array<mixed>
+     */
+    private function scrubUtf8DeepArray(array $arr): array
+    {
+        $out = [];
+        foreach ($arr as $k => $v) {
+            if (is_string($v)) {
+                $out[$k] = $this->scrubUtf8String($v);
+            } elseif (is_array($v)) {
+                $out[$k] = $this->scrubUtf8DeepArray($v);
+            } else {
+                $out[$k] = $v;
+            }
+        }
+
+        return $out;
+    }
+
+    private function scrubUtf8String(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        $clean = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+
+        return $clean !== false ? $clean : $value;
     }
 }

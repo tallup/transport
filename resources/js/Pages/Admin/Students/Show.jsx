@@ -272,7 +272,7 @@ export default function Show({ student, policies = {} }) {
                                                 <tr key={b.id}>
                                                     <td className="px-4 py-3 font-mono text-xs">#{b.id}</td>
                                                     <td className="px-4 py-3">
-                                                        <StatusBadge type="booking" status={b.status} variant="light" />
+                                                        <StatusBadge type="booking" status={b.status != null ? String(b.status) : ''} variant="light" />
                                                     </td>
                                                     <td className="px-4 py-3">{b.route?.name ?? '—'}</td>
                                                     <td className="px-4 py-3">{formatDate(b.start_date)}</td>

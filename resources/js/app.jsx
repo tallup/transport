@@ -11,6 +11,17 @@ import ErrorBoundary from './Components/ErrorBoundary';
 
 const appName = import.meta.env.VITE_APP_NAME || 'On-Time Transportation';
 
+/** Inertia v2 may pass visit.url as a string or URL object; .includes() only exists on strings. */
+function visitUrlToString(url) {
+    if (url == null) return '';
+    if (typeof url === 'string') return url;
+    if (typeof url === 'object' && url !== null) {
+        if (typeof url.href === 'string') return url.href;
+        if (typeof url.url === 'string') return url.url;
+    }
+    return String(url);
+}
+
 // Track authenticated GET requests so we can retry with a full page load
 // if an XHR GET gets redirected to /login (cookie not sent on some proxies).
 // NOTE: We deliberately do NOT inject X-CSRF-TOKEN from the meta tag for
@@ -21,7 +32,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'On-Time Transportation';
 router.on('before', (event) => {
     if (event.detail.visit.method === 'get') {
         // Remember the URL we're requesting for GET (so we can retry with full page load if we get redirected to login)
-        const url = event.detail.visit.url;
+        const url = visitUrlToString(event.detail.visit.url);
         if (url && !url.includes('/login') && (url.startsWith('/parent/') || url.startsWith('/admin/') || url.startsWith('/driver/'))) {
             try {
                 sessionStorage.setItem('inertia_last_get_url', url);
@@ -40,7 +51,7 @@ router.on('finish', (event) => {
             return;
         }
         if (event.detail.visit.method !== 'get') return;
-        const lastGetUrl = sessionStorage.getItem('inertia_last_get_url');
+        const lastGetUrl = visitUrlToString(sessionStorage.getItem('inertia_last_get_url'));
         const alreadyRetried = sessionStorage.getItem('inertia_get_retried');
         if (lastGetUrl && !alreadyRetried && !lastGetUrl.includes('/login')) {
             sessionStorage.setItem('inertia_get_retried', '1');
