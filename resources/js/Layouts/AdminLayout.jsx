@@ -70,6 +70,12 @@ export default function AdminLayout({ header, children }) {
                 { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl.startsWith('/admin/pricing/manage') },
             ],
         },
+        {
+            label: 'Help',
+            items: [
+                { href: '/help/admin', label: 'User guide', active: currentUrl === '/help/admin' },
+            ],
+        },
     ];
 
     const mainNavigationItems = [
@@ -91,6 +97,7 @@ export default function AdminLayout({ header, children }) {
         { href: '/admin/discounts', label: 'Discounts', active: currentUrl.startsWith('/admin/discounts') },
         { href: '/admin/pricing/manage', label: 'Manage Pricing', active: currentUrl.startsWith('/admin/pricing/manage') },
         { href: '/admin/calendar-events', label: 'Calendar Events', active: currentUrl.startsWith('/admin/calendar-events') },
+        { href: '/help/admin', label: 'User guide', active: currentUrl === '/help/admin' },
     ];
 
     const userMenuItems = [

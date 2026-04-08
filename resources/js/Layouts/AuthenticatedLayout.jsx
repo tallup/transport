@@ -30,6 +30,7 @@ export default function AuthenticatedLayout({ header, children }) {
         },
         { href: '/parent/pickup-history', label: 'Pickup History', active: currentUrl === '/parent/pickup-history' },
         { href: '/parent/absences', label: 'Student Absence', active: currentUrl.startsWith('/parent/absences') },
+        { href: '/help/parent', label: 'User guide', active: currentUrl === '/help/parent' },
     ];
 
     const userMenuItems = [

@@ -46,7 +46,7 @@ export default function DriverLayout({ header, children }) {
         );
     };
 
-    const navigationItems = [
+    const mainNavItems = [
         { href: withPeriod('/driver/dashboard'), label: 'Dashboard', active: currentUrl === '/driver/dashboard' },
         { href: withPeriod('/driver/roster'), label: 'Daily Roster', active: currentUrl.startsWith('/driver/roster') },
         { href: withPeriod('/driver/students-schedule'), label: 'Students', active: currentUrl.startsWith('/driver/students-schedule') },
@@ -54,6 +54,14 @@ export default function DriverLayout({ header, children }) {
         { href: withPeriod('/driver/route-information'), label: 'Route Info', active: currentUrl.startsWith('/driver/route-information') },
         { href: withPeriod('/driver/completed-routes'), label: 'Completed', active: currentUrl.startsWith('/driver/completed-routes') },
     ];
+
+    const helpNavItem = {
+        href: '/help/driver',
+        label: 'User guide',
+        active: currentUrl === '/help/driver',
+    };
+
+    const navigationItems = [...mainNavItems, helpNavItem];
 
     const userMenuItems = [
         { href: '/profile', label: 'Profile' },
@@ -176,7 +184,7 @@ export default function DriverLayout({ header, children }) {
                                     Route Operations
                                 </p>
                                 <div className="mt-3 space-y-1">
-                                    {navigationItems.slice(0, 3).map((item) => (
+                                    {mainNavItems.slice(0, 3).map((item) => (
                                         <Link key={item.href} href={item.href} className={sidebarLinkClasses(item.active)}>
                                             {item.label}
                                         </Link>
@@ -189,11 +197,20 @@ export default function DriverLayout({ header, children }) {
                                     History & Insights
                                 </p>
                                 <div className="mt-3 space-y-1">
-                                    {navigationItems.slice(3).map((item) => (
+                                    {mainNavItems.slice(3).map((item) => (
                                         <Link key={item.href} href={item.href} className={sidebarLinkClasses(item.active)}>
                                             {item.label}
                                         </Link>
                                     ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Help</p>
+                                <div className="mt-3 space-y-1">
+                                    <Link href={helpNavItem.href} className={sidebarLinkClasses(helpNavItem.active)}>
+                                        {helpNavItem.label}
+                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\Parent\BookingController;
 use App\Http\Controllers\Parent\DashboardController;
 use App\Http\Controllers\Parent\StudentController;
@@ -182,7 +183,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages/{thread}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');
     Route::post('/messages', [\App\Http\Controllers\MessageController::class, 'store'])->name('messages.store');
     Route::post('/messages/{thread}/read', [\App\Http\Controllers\MessageController::class, 'markAsRead'])->name('messages.read');
+
+    Route::get('/help/parent', [HelpController::class, 'parentPortal'])->name('help.parent');
 });
+
+Route::middleware(['auth', 'admin'])->get('/help/admin', [HelpController::class, 'adminPortal'])->name('help.admin');
+
+Route::middleware(['auth', 'driver'])->get('/help/driver', [HelpController::class, 'driverPortal'])->name('help.driver');
 
 // Public static pages
 Route::get('/privacy-policy', function (Request $request) {
