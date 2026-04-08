@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
+use App\Casts\SafeArrayCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-use App\Models\Route;
-use App\Models\PickupPoint;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Student extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'parent_id',
@@ -47,7 +46,7 @@ class Student extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
-        'authorized_pickup_persons' => 'array',
+        'authorized_pickup_persons' => SafeArrayCast::class,
         'authorization_to_transport_signed_at' => 'datetime',
         'payment_agreement_signed_at' => 'datetime',
         'liability_waiver_signed_at' => 'datetime',
@@ -105,12 +104,12 @@ class Student extends Model
      */
     public function getProfilePictureUrlAttribute(): ?string
     {
-        if (!$this->profile_picture) {
+        if (! $this->profile_picture) {
             return null;
         }
 
         // Served by Laravel route (works when public/storage symlink is missing on Forge)
-        return '/profile-pictures/' . ltrim($this->profile_picture, '/');
+        return '/profile-pictures/'.ltrim($this->profile_picture, '/');
     }
 
     /**
@@ -118,7 +117,7 @@ class Student extends Model
      */
     public function hasAuthorizationToTransport(): bool
     {
-        return !is_null($this->authorization_to_transport_signed_at) && !is_null($this->authorization_to_transport_signature);
+        return ! is_null($this->authorization_to_transport_signed_at) && ! is_null($this->authorization_to_transport_signature);
     }
 
     /**
@@ -126,7 +125,7 @@ class Student extends Model
      */
     public function hasPaymentAgreement(): bool
     {
-        return !is_null($this->payment_agreement_signed_at) && !is_null($this->payment_agreement_signature);
+        return ! is_null($this->payment_agreement_signed_at) && ! is_null($this->payment_agreement_signature);
     }
 
     /**
@@ -134,7 +133,7 @@ class Student extends Model
      */
     public function hasLiabilityWaiver(): bool
     {
-        return !is_null($this->liability_waiver_signed_at) && !is_null($this->liability_waiver_signature);
+        return ! is_null($this->liability_waiver_signed_at) && ! is_null($this->liability_waiver_signature);
     }
 
     /**
@@ -142,8 +141,8 @@ class Student extends Model
      */
     public function hasAllSignatures(): bool
     {
-        return $this->hasAuthorizationToTransport() 
-            && $this->hasPaymentAgreement() 
+        return $this->hasAuthorizationToTransport()
+            && $this->hasPaymentAgreement()
             && $this->hasLiabilityWaiver();
     }
 

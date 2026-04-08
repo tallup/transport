@@ -35,7 +35,7 @@ function Field({ label, children }) {
     );
 }
 
-function SignatureBlock({ title, signedAt, signature }) {
+function SignatureBlock({ title, signedAt, signature, omitted }) {
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-4">
             <h4 className="text-sm font-bold text-slate-900">{title}</h4>
@@ -46,6 +46,10 @@ function SignatureBlock({ title, signedAt, signature }) {
                         <div className="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-2">
                             <img src={signature} alt={`${title} signature`} className="max-h-28 max-w-full object-contain" />
                         </div>
+                    ) : omitted ? (
+                        <p className="mt-2 text-sm text-amber-900">
+                            Signature is on file but too large to preview here. Use <strong>Download PDF</strong> to view the full image.
+                        </p>
                     ) : null}
                 </>
             ) : (
@@ -55,7 +59,7 @@ function SignatureBlock({ title, signedAt, signature }) {
     );
 }
 
-export default function Show({ student, policies = {} }) {
+export default function Show({ student, policies = {}, signatureOmittedFields = [] }) {
     const [tab, setTab] = useState('overview');
 
     const parentPhones = useMemo(() => {
@@ -70,6 +74,8 @@ export default function Show({ student, policies = {} }) {
         const db = b.absence_date ? new Date(b.absence_date).getTime() : 0;
         return db - da;
     });
+
+    const omitted = new Set(Array.isArray(signatureOmittedFields) ? signatureOmittedFields : []);
 
     return (
         <AdminLayout>
@@ -234,16 +240,19 @@ export default function Show({ student, policies = {} }) {
                                         title="Authorization to transport"
                                         signedAt={student.authorization_to_transport_signed_at}
                                         signature={student.authorization_to_transport_signature}
+                                        omitted={omitted.has('authorization_to_transport_signature')}
                                     />
                                     <SignatureBlock
                                         title="Payment agreement"
                                         signedAt={student.payment_agreement_signed_at}
                                         signature={student.payment_agreement_signature}
+                                        omitted={omitted.has('payment_agreement_signature')}
                                     />
                                     <SignatureBlock
                                         title="Liability waiver"
                                         signedAt={student.liability_waiver_signed_at}
                                         signature={student.liability_waiver_signature}
+                                        omitted={omitted.has('liability_waiver_signature')}
                                     />
                                 </div>
                             </div>

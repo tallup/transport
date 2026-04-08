@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\SafeArrayCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +13,7 @@ use Laravel\Cashier\Billable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Billable;
+    use Billable, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -61,10 +62,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'registration_approved_at' => 'datetime',
-            'phone_numbers' => 'array',
+            'phone_numbers' => SafeArrayCast::class,
         ];
     }
-    
+
     /**
      * Email verification is disabled; all users are treated as verified.
      */
@@ -79,6 +80,7 @@ class User extends Authenticatable
     public function markEmailAsVerified(): bool
     {
         $this->forceFill(['email_verified_at' => $this->freshTimestamp()])->save();
+
         return true;
     }
 
@@ -107,8 +109,9 @@ class User extends Authenticatable
                 'user_id' => $this->id,
                 'user_email' => $this->email,
                 'fallback_email' => $fallbackAddress,
-                'notification' => get_class($notification)
+                'notification' => get_class($notification),
             ]);
+
             return $fallbackAddress;
         }
 
@@ -119,8 +122,9 @@ class User extends Authenticatable
                 'user_id' => $this->id,
                 'user_email' => $this->email,
                 'from_email' => $fromAddress,
-                'notification' => get_class($notification)
+                'notification' => get_class($notification),
             ]);
+
             return $fromAddress;
         }
 
@@ -128,9 +132,9 @@ class User extends Authenticatable
         \Log::error('No valid email address found for notification', [
             'user_id' => $this->id,
             'user_email' => $this->email,
-            'notification' => get_class($notification)
+            'notification' => get_class($notification),
         ]);
-        
+
         return null;
     }
 
@@ -163,12 +167,12 @@ class User extends Authenticatable
      */
     public function getProfilePictureUrlAttribute(): ?string
     {
-        if (!$this->profile_picture) {
+        if (! $this->profile_picture) {
             return null;
         }
 
         // Served by Laravel route (works when public/storage symlink is missing on Forge)
-        return '/profile-pictures/' . ltrim($this->profile_picture, '/');
+        return '/profile-pictures/'.ltrim($this->profile_picture, '/');
     }
 
     /**
@@ -180,7 +184,7 @@ class User extends Authenticatable
         $role = \Illuminate\Support\Facades\DB::table('users')
             ->where('id', $this->id)
             ->value('role');
-        
+
         if ($panel->getId() === 'admin') {
             // Allow all admin roles to access admin panel
             return in_array($role, ['super_admin', 'transport_admin', 'admin']);
@@ -200,7 +204,8 @@ class User extends Authenticatable
     public function getPrimaryPhone(): ?string
     {
         $phones = $this->phone_numbers ?? [];
-        return !empty($phones) ? $phones[0] : null;
+
+        return ! empty($phones) ? $phones[0] : null;
     }
 
     /**

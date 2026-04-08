@@ -17,6 +17,9 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
+    /** Inline signature previews larger than this are omitted from Inertia JSON (use PDF). */
+    private const MAX_SIGNATURE_BYTES_INERTIA = 262144;
+
     public function index()
     {
         $students = Student::with(['parent', 'school'])
@@ -85,10 +88,11 @@ class StudentController extends Controller
             'school',
             'route',
             'pickupPoint',
-            'bookings.route',
-            'bookings.pickupPoint',
-            'absences.booking',
+            'bookings' => fn ($q) => $q->with(['route', 'pickupPoint'])->orderByDesc('id')->limit(150),
+            'absences' => fn ($q) => $q->with('booking')->orderByDesc('absence_date')->limit(250),
         ]);
+
+        $signatureOmittedFields = $this->stripLargeSignatureFieldsForInertia($student);
 
         $this->scrubLoadedModelGraphForJson($student);
 
@@ -97,6 +101,7 @@ class StudentController extends Controller
         return Inertia::render('Admin/Students/Show', [
             'student' => $student,
             'policies' => $policies,
+            'signatureOmittedFields' => $signatureOmittedFields,
         ]);
     }
 
@@ -203,6 +208,27 @@ class StudentController extends Controller
      *
      * @return array<string, array<int, array{id: int, title: string, content: string, category: string|null}>>
      */
+    /**
+     * @return list<string>
+     */
+    private function stripLargeSignatureFieldsForInertia(Student $student): array
+    {
+        $omitted = [];
+        foreach ([
+            'authorization_to_transport_signature',
+            'payment_agreement_signature',
+            'liability_waiver_signature',
+        ] as $field) {
+            $v = $student->getAttribute($field);
+            if (is_string($v) && strlen($v) > self::MAX_SIGNATURE_BYTES_INERTIA) {
+                $student->setAttribute($field, null);
+                $omitted[] = $field;
+            }
+        }
+
+        return $omitted;
+    }
+
     private function loadPoliciesForStudentPage(): array
     {
         try {
@@ -264,14 +290,22 @@ class StudentController extends Controller
 
     private function scrubLoadedModelStrings(Model $model): void
     {
-        foreach (array_keys($model->getAttributes()) as $key) {
-            $val = $model->getAttribute($key);
-            if (is_string($val) && $val !== '') {
-                $model->setAttribute($key, $this->scrubUtf8String($val));
+        try {
+            foreach (array_keys($model->getAttributes()) as $key) {
+                $val = $model->getAttribute($key);
+                if (is_string($val) && $val !== '') {
+                    $model->setAttribute($key, $this->scrubUtf8String($val));
+                }
+                if (is_array($val)) {
+                    $model->setAttribute($key, $this->scrubUtf8DeepArray($val));
+                }
             }
-            if (is_array($val)) {
-                $model->setAttribute($key, $this->scrubUtf8DeepArray($val));
-            }
+        } catch (\Throwable $e) {
+            Log::warning('Admin student show: scrubLoadedModelStrings skipped for a model', [
+                'model' => $model::class,
+                'id' => $model->getKey(),
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
