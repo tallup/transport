@@ -9,17 +9,19 @@ export default function GuideScreenshot({ path, caption }) {
     const src = `/images/user-guides/${path}`;
 
     return (
-        <figure className="my-4">
+        <figure className="my-5 w-full">
             <figcaption className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{caption}</figcaption>
             {!missing ? (
-                <img
-                    src={src}
-                    alt={caption}
-                    className="max-h-72 w-full rounded-xl border border-slate-200 object-contain object-left shadow-sm"
-                    onError={() => setMissing(true)}
-                />
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50/50 shadow-sm">
+                    <img
+                        src={src}
+                        alt={caption}
+                        className="h-auto w-full max-h-[min(32rem,80vh)] object-contain object-left md:max-h-[min(40rem,85vh)]"
+                        onError={() => setMissing(true)}
+                    />
+                </div>
             ) : (
-                <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+                <div className="min-h-[12rem] rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center">
                     <p className="text-sm font-medium text-slate-700">Screenshot placeholder</p>
                     <p className="mt-2 text-xs text-slate-500">
                         Add your image at{' '}

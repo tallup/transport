@@ -3,84 +3,135 @@ import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GuideScreenshot from '@/Components/GuideScreenshot';
+import GuideSteps, { parseGuideBold } from '@/Components/GuideSteps';
 
 export default function ParentGuide() {
     const [openIndex, setOpenIndex] = useState(0);
 
     const sections = [
         {
-            title: 'Account and registration',
+            title: '1. Dashboard',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        Sign in from the home page, or complete parent registration if you are new. Use <strong>Profile</strong> to update your name,
-                        contact details, and notification preferences.
-                    </p>
-                    <GuideScreenshot path="parent/01-account-profile.png" caption="Profile and account settings" />
+                    <GuideSteps
+                        steps={[
+                            'After sign-in, open **Dashboard** from the sidebar to see your family overview.',
+                            'Review **active bookings**, upcoming pickups, and recent activity in one place.',
+                            'Use shortcuts or buttons on the dashboard to jump to **Book Transport** or a student when you need to act quickly.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/01-dashboard.png" caption="Parent dashboard" />
                 </>
             ),
         },
         {
-            title: 'Add and enroll a student',
+            title: '2. My Students',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        Open <strong>Add Student</strong> to register each child. You will choose the school and route details required for bookings.
-                        Review student information under <strong>My Students</strong> before creating transport bookings.
-                    </p>
-                    <GuideScreenshot path="parent/02-students-enroll.png" caption="Student enrollment" />
+                    <GuideSteps
+                        steps={[
+                            'Go to **My Students** to see every child on your account.',
+                            'Open a student to review details, school, and anything your team requires before booking.',
+                            'Update information when schedules or schools change so routes and pricing stay accurate.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/02-my-students.png" caption="My Students" />
                 </>
             ),
         },
         {
-            title: 'Create a booking and pay',
+            title: '3. Add Student (enrollment)',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        Use <strong>Book Transport</strong> to pick route, schedule, and plan. Complete checkout with the secure payment step. Your booking
-                        appears under <strong>My Bookings</strong> once confirmed.
-                    </p>
-                    <GuideScreenshot path="parent/03-booking-checkout.png" caption="Booking and payment" />
+                    <GuideSteps
+                        steps={[
+                            'Choose **Add Student** when you need to enroll a new child.',
+                            'Complete each step: student info, school, and any route or eligibility questions the form asks.',
+                            'Submit and wait for any required approval if your process includes it—then return to **My Students** to confirm the student appears.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/03-add-student.png" caption="Add Student / enrollment" />
                 </>
             ),
         },
         {
-            title: 'Manage bookings',
+            title: '4. Book Transport (route, plan, and payment)',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        From <strong>My Bookings</strong> you can view status, dates, and options your plan allows (such as changes or cancellation,
-                        subject to policy). The <strong>Dashboard</strong> highlights active bookings and upcoming pickups.
-                    </p>
-                    <GuideScreenshot path="parent/04-my-bookings.png" caption="Bookings list" />
+                    <GuideSteps
+                        steps={[
+                            'Click **Book Transport** and select the student and route or service options your account allows.',
+                            'Pick dates, plan (weekly, monthly, term, etc.), and pickup/dropoff details as prompted.',
+                            'Review the price breakdown, then complete **secure checkout** with your card.',
+                            'After payment succeeds, you should see a confirmation and the booking under **My Bookings**.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/04-book-transport.png" caption="Book transport and checkout" />
                 </>
             ),
         },
         {
-            title: 'Report an absence',
+            title: '5. My Bookings',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        Use <strong>Student Absence</strong> to notify the team when your child will not ride on scheduled days. Submitting early helps
-                        drivers and operations plan the roster.
-                    </p>
-                    <GuideScreenshot path="parent/05-absences.png" caption="Student absence" />
+                    <GuideSteps
+                        steps={[
+                            'Open **My Bookings** for all current and past transport bookings.',
+                            'Select a booking to view status, schedule, and any actions allowed (for example change or cancel, per policy).',
+                            'Download or save confirmations your team provides, and contact support from **Contact** or **Messages** if something looks wrong.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/05-my-bookings.png" caption="My Bookings" />
                 </>
             ),
         },
         {
-            title: 'Pickup history and messages',
+            title: '6. Student Absence',
             body: (
                 <>
-                    <p className="text-slate-700 leading-relaxed">
-                        <strong>Pickup History</strong> shows completed trips. Use <strong>Messages</strong> (from the top bar when available) for
-                        threads with support or staff. For general questions, see also the public{' '}
+                    <GuideSteps
+                        steps={[
+                            'Use **Student Absence** when your child will not ride on scheduled days.',
+                            'Enter the student, date range, and reason fields your form includes.',
+                            'Submit as early as possible so drivers and dispatch can adjust the roster.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/06-absences.png" caption="Student absence" />
+                </>
+            ),
+        },
+        {
+            title: '7. Pickup History',
+            body: (
+                <>
+                    <GuideSteps
+                        steps={[
+                            'Open **Pickup History** to review completed trips and pickup records.',
+                            'Filter or scroll by date if the page offers filters.',
+                            'Use this view when you need to verify that a day was served or to share details with the school or support.',
+                        ].map(parseGuideBold)}
+                    />
+                    <GuideScreenshot path="parent/07-pickup-history.png" caption="Pickup history" />
+                </>
+            ),
+        },
+        {
+            title: '8. Profile and Messages',
+            body: (
+                <>
+                    <GuideSteps
+                        steps={[
+                            'Open **Profile** from the sidebar user area to update your name, phone, password, and notification settings.',
+                            'Use **Messages** (top bar or linked from the app) for threads with staff when messaging is enabled.',
+                            'For general questions, also see the public **FAQ** link below.',
+                        ].map(parseGuideBold)}
+                    />
+                    <p className="mt-3 text-sm text-slate-600">
                         <Link href="/faq" className="font-semibold text-brand-primary hover:underline">
-                            FAQ
+                            Open FAQ
                         </Link>
-                        .
                     </p>
-                    <GuideScreenshot path="parent/06-pickup-history.png" caption="Pickup history" />
+                    <GuideScreenshot path="parent/08-profile-messages.png" caption="Profile and messages" />
                 </>
             ),
         },
@@ -95,18 +146,22 @@ export default function ParentGuide() {
             <Head title="Parent user guide" />
 
             <div className="py-10">
-                <div className="container max-w-4xl space-y-8">
+                <div className="container max-w-7xl space-y-8">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Parent user guide</h1>
-                        <p className="mt-2 text-sm text-slate-600 md:text-base">
-                            Step-by-step overview of the parent portal. Screenshots are optional—add files under{' '}
+                        <p className="mt-2 max-w-3xl text-sm text-slate-600 md:text-base">
+                            Step-by-step instructions for each parent portal module. Screenshots are optional—add files under{' '}
                             <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs">public/images/user-guides/parent/</code>.
                         </p>
                     </div>
 
-                    <GlassCard className="p-6 md:p-8">
-                        <h2 className="text-lg font-semibold text-slate-900">Topics</h2>
-                        <div className="mt-4 space-y-2">
+                    <GlassCard className="p-6 md:p-10">
+                        <h2 className="text-lg font-semibold text-slate-900">Modules</h2>
+                        <p className="mt-1 text-sm text-slate-600">
+                            Expand a section and follow the numbered steps. Sidebar order matches: Dashboard → My Students → Add Student → Book Transport →
+                            My Bookings → Pickup History → Student Absence, plus Profile/Messages from the account area.
+                        </p>
+                        <div className="mt-6 space-y-2">
                             {sections.map((s, i) => (
                                 <div key={s.title} className="border-b border-slate-200 last:border-0 pb-4 last:pb-0">
                                     <button
@@ -114,7 +169,9 @@ export default function ParentGuide() {
                                         onClick={() => toggle(i)}
                                         className="group flex w-full items-start justify-between gap-4 text-left"
                                     >
-                                        <h3 className="flex-1 text-base font-semibold text-slate-900 group-hover:text-brand-primary">{s.title}</h3>
+                                        <h3 className="flex-1 text-base font-semibold text-slate-900 group-hover:text-brand-primary md:text-lg">
+                                            {s.title}
+                                        </h3>
                                         <svg
                                             className={`h-5 w-5 flex-shrink-0 text-slate-500 transition-transform ${
                                                 openIndex === i ? 'rotate-180' : ''
@@ -126,7 +183,7 @@ export default function ParentGuide() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </button>
-                                    {openIndex === i && <div className="mt-3 space-y-3">{s.body}</div>}
+                                    {openIndex === i && <div className="mt-3 space-y-3 border-l-2 border-brand-primary/20 pl-4">{s.body}</div>}
                                 </div>
                             ))}
                         </div>
