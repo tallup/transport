@@ -21,6 +21,7 @@
         .sig-block img { max-width: 220px; max-height: 80px; border: 1px solid #e2e8f0; }
         .muted { color: #64748b; font-size: 10px; }
         .footer { margin-top: 28px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 9px; color: #94a3b8; text-align: center; }
+        .agreement-body { margin: 8px 0 12px 0; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 10px; line-height: 1.5; text-align: justify; color: #334155; }
     </style>
 </head>
 <body>
@@ -163,35 +164,42 @@
     </table>
 
     <h2>Agreements &amp; signatures</h2>
+    @php
+        $agreements = config('student_enrollment_agreements', []);
+    @endphp
+
     <div class="sig-block">
         <strong>Authorization to transport</strong>
+        @if(!empty($agreements['authorization_to_transport']))
+            <div class="agreement-body">{{ $agreements['authorization_to_transport'] }}</div>
+        @endif
         @if($student->authorization_to_transport_signed_at)
             <p class="muted">Signed {{ $student->authorization_to_transport_signed_at->format('M j, Y g:i A') }}</p>
-            @if($student->authorization_to_transport_signature)
-                <img src="{{ $student->authorization_to_transport_signature }}" alt="Signature" />
-            @endif
+            @include('admin.students.partials.signature-display', ['signature' => $student->authorization_to_transport_signature])
         @else
             <p class="muted">Not signed</p>
         @endif
     </div>
     <div class="sig-block">
         <strong>Payment agreement</strong>
+        @if(!empty($agreements['payment_agreement']))
+            <div class="agreement-body">{{ $agreements['payment_agreement'] }}</div>
+        @endif
         @if($student->payment_agreement_signed_at)
             <p class="muted">Signed {{ $student->payment_agreement_signed_at->format('M j, Y g:i A') }}</p>
-            @if($student->payment_agreement_signature)
-                <img src="{{ $student->payment_agreement_signature }}" alt="Signature" />
-            @endif
+            @include('admin.students.partials.signature-display', ['signature' => $student->payment_agreement_signature])
         @else
             <p class="muted">Not signed</p>
         @endif
     </div>
     <div class="sig-block">
         <strong>Liability waiver</strong>
+        @if(!empty($agreements['liability_waiver']))
+            <div class="agreement-body">{{ $agreements['liability_waiver'] }}</div>
+        @endif
         @if($student->liability_waiver_signed_at)
             <p class="muted">Signed {{ $student->liability_waiver_signed_at->format('M j, Y g:i A') }}</p>
-            @if($student->liability_waiver_signature)
-                <img src="{{ $student->liability_waiver_signature }}" alt="Signature" />
-            @endif
+            @include('admin.students.partials.signature-display', ['signature' => $student->liability_waiver_signature])
         @else
             <p class="muted">Not signed</p>
         @endif

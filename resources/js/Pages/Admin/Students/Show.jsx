@@ -26,6 +26,13 @@ function formatDateTime(value) {
     return new Date(value).toLocaleString();
 }
 
+/** Typed names vs canvas data URIs. Short/truncated data: URLs render as broken images — require a plausible full payload. */
+function isSignatureImageSrc(src) {
+    if (!src || typeof src !== 'string') return false;
+    const s = src.trimStart();
+    return s.startsWith('data:image/') && s.length >= 2000;
+}
+
 function Field({ label, children }) {
     return (
         <div className="border-b border-slate-100 py-3 last:border-0 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -43,9 +50,16 @@ function SignatureBlock({ title, signedAt, signature, omitted }) {
                 <>
                     <p className="mt-1 text-xs text-slate-500">Signed {formatDateTime(signedAt)}</p>
                     {signature ? (
-                        <div className="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-2">
-                            <img src={signature} alt={`${title} signature`} className="max-h-28 max-w-full object-contain" />
-                        </div>
+                        isSignatureImageSrc(signature) ? (
+                            <div className="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-2">
+                                <img src={signature} alt={`${title} signature`} className="max-h-28 max-w-full object-contain" />
+                            </div>
+                        ) : (
+                            <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Signed name</p>
+                                <p className="mt-1 font-serif text-lg italic text-slate-900">{signature}</p>
+                            </div>
+                        )
                     ) : omitted ? (
                         <p className="mt-2 text-sm text-amber-900">
                             Signature is on file but too large to preview here. Use <strong>Download PDF</strong> to view the full image.
