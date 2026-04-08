@@ -136,7 +136,7 @@
             <p><strong>On-Time Transportation for Kids</strong></p>
             <p>Private child transportation services</p>
             <p>This is a private transportation company and is not a school bus service.</p>
-            <p>If you have any questions, please contact us at {{ config('mail.support_email', 'support@ontimetransportwa.com') }}</p>
+            <p>If you have any questions, please contact us at {{ config('mail.support_email', 'amienjie@ontimetransportwa.com') }}</p>
         </div>
     </div>
 </body>

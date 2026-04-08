@@ -1,12 +1,11 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Parent\BookingController;
 use App\Http\Controllers\Parent\DashboardController;
 use App\Http\Controllers\Parent\StudentController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PolicyController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -19,12 +18,13 @@ Route::get('/profile-pictures/{path}', function (string $path) {
         abort(404);
     }
     // Stored paths are "profile-pictures/filename.jpg"; support both that and bare "filename.jpg"
-    if (!Storage::disk('public')->exists($path) && !str_starts_with($path, 'profile-pictures/')) {
-        $path = 'profile-pictures/' . $path;
+    if (! Storage::disk('public')->exists($path) && ! str_starts_with($path, 'profile-pictures/')) {
+        $path = 'profile-pictures/'.$path;
     }
-    if (!Storage::disk('public')->exists($path)) {
+    if (! Storage::disk('public')->exists($path)) {
         // File missing (e.g. DB has path but file wasn't synced to server) – serve placeholder so no broken image
         $placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
+
         return response()->make($placeholderSvg, 200, [
             'Content-Type' => 'image/svg+xml',
             'Cache-Control' => 'public, max-age=3600',
@@ -41,6 +41,7 @@ Route::get('/profile-pictures/{path}', function (string $path) {
         'svg' => 'image/svg+xml',
         default => 'application/octet-stream',
     };
+
     return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
 })->where('path', '.*')->name('profile-pictures.serve');
 
@@ -54,8 +55,10 @@ Route::get('/', function (Request $request) {
         if ($role === 'driver') {
             return redirect()->route('driver.dashboard');
         }
+
         return redirect()->route('parent.dashboard');
     }
+
     return Inertia::render('Home');
 })->name('home');
 
@@ -66,7 +69,7 @@ Route::get('/dashboard', function () {
 // Parent Portal Routes
 Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Students
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
@@ -74,7 +77,7 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
-    
+
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
@@ -95,7 +98,7 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');
     Route::get('/calculate-price', [BookingController::class, 'calculatePrice'])->name('calculate-price');
-    
+
     // Absences
     Route::get('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'index'])->name('absences.index');
     Route::get('/absences/create', [\App\Http\Controllers\Parent\AbsenceController::class, 'create'])->name('absences.create');
@@ -109,12 +112,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');
     });
-    
+
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::post('/users/{user}/toggle-parent-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleParentStatus'])->name('users.toggle-parent-status');
     Route::resource('schools', \App\Http\Controllers\Admin\SchoolController::class);
+    Route::get('/students/{student}/pdf', [\App\Http\Controllers\Admin\StudentController::class, 'pdf'])->name('students.pdf');
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
     Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class);
@@ -126,7 +130,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
     Route::get('/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('finance.dashboard');
     Route::post('/finance/export', [\App\Http\Controllers\Admin\FinanceController::class, 'exportReport'])->name('finance.export');
-    
+
     // Analytics routes
     Route::prefix('analytics')->name('analytics.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('dashboard');
@@ -136,7 +140,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/routes/{route?}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'routeMetrics'])->name('route');
         Route::post('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportReport'])->name('export');
     });
-    
+
     Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
     Route::resource('absences', \App\Http\Controllers\Admin\AbsenceController::class)->only(['index', 'destroy']);
     Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve');
@@ -150,7 +154,7 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::get('/', function () {
         return redirect()->route('driver.dashboard');
     });
-    
+
     Route::get('/dashboard', [\App\Http\Controllers\Driver\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/roster', [\App\Http\Controllers\Driver\RosterController::class, 'index'])->name('roster');
     Route::get('/students-schedule', [\App\Http\Controllers\Driver\DashboardController::class, 'studentsSchedule'])->name('students-schedule');
@@ -168,11 +172,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Push subscriptions
     Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
     Route::delete('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
-    
+
     // Messages
     Route::get('/messages', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{thread}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');

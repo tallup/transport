@@ -526,7 +526,7 @@ export default function Home({ auth }) {
                                         </div>
                                         <div>
                                             <p className="text-white/60 text-xs font-medium mb-1">Email</p>
-                                            <p className="text-white/90 font-medium text-sm">support@ontimetransportwa.com</p>
+                                            <p className="text-white/90 font-medium text-sm">amienjie@ontimetransportwa.com</p>
                                         </div>
                                     </div>
                                     

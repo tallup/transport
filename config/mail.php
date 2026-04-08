@@ -153,7 +153,7 @@ return [
     |
     | When set, this address always receives a copy of every admin notification
     | (new booking, payment received, pickup completed, etc.) even if no user
-    | in the database has an admin role. Example: support@ontimetransportwa.com
+    | in the database has an admin role. Example: amienjie@ontimetransportwa.com
     |
     */
     'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL'),

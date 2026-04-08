@@ -75,7 +75,7 @@ export default function Index({ students }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                             </svg>
                                             <p className="truncate text-sm font-medium text-slate-700">
-                                                {student.school || 'No school assigned'}
+                                                {student.school?.name || 'No school assigned'}
                                             </p>
                                         </div>
                                         {student.date_of_birth && (
@@ -109,6 +109,12 @@ export default function Index({ students }) {
 
                                     {/* Card Actions */}
                                     <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
+                                        <Link
+                                            href={`/admin/students/${student.id}`}
+                                            className="rounded-lg border border-amber-500/40 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+                                        >
+                                            View details
+                                        </Link>
                                         <Link
                                             href={`/admin/students/${student.id}/edit`}
                                             className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
