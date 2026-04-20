@@ -131,8 +131,8 @@ export default function Create({ drivers, vehicles, schools = [] }) {
                                             className="form-control"
                                             required
                                         >
-                                            <option value="am">One Way Route Pickup Only (AM)</option>
-                                            <option value="pm">One Way Route Pickup Only (PM)</option>
+                                            <option value="am">One Way Route Pickup Only</option>
+                                            <option value="pm">One Way Route Pickup Only</option>
                                             <option value="both">Two Way Pickup and Dropoff</option>
                                         </select>
                                         <InputError message={errors.service_type} className="mt-2 text-red-300 font-semibold" />

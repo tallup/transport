@@ -40,8 +40,8 @@ class Route extends Model
     public static function serviceTypeLabels(): array
     {
         return [
-            'am' => 'One Way Route Pickup Only (AM)',
-            'pm' => 'One Way Route Pickup Only (PM)',
+            'am' => 'One Way Route Pickup Only',
+            'pm' => 'One Way Route Pickup Only',
             'both' => 'Two Way Pickup and Dropoff',
         ];
     }
