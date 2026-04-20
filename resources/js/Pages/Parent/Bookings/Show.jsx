@@ -13,9 +13,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import StatusBadge from '@/Components/StatusBadge';
+import { formatDistrictTime, DEFAULT_TIMEZONE } from '@/utils/districtTime';
 
 export default function ShowBooking({ booking, price, dailyPickups }) {
-    const { auth, flash } = usePage().props;
+    const { auth, flash, app } = usePage().props;
+    const districtTz = app?.timezone ?? DEFAULT_TIMEZONE;
     const [showFlash, setShowFlash] = useState(true);
 
     useEffect(() => {
@@ -26,31 +28,7 @@ export default function ShowBooking({ booking, price, dailyPickups }) {
         setShowFlash(true);
     }, [flash?.success, flash?.error]);
 
-    const formatTime = (timeString) => {
-        if (!timeString) return 'N/A';
-        try {
-            let date;
-            if (typeof timeString === 'string') {
-                if (timeString.includes('T') || timeString.includes(' ')) {
-                    date = new Date(timeString);
-                } else if (timeString.includes(':') && timeString.length <= 8) {
-                    date = new Date(`2000-01-01T${timeString}`);
-                } else {
-                    return timeString;
-                }
-            } else {
-                date = new Date(timeString);
-            }
-            if (Number.isNaN(date.getTime())) return timeString;
-            return date.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-            });
-        } catch (e) {
-            return timeString;
-        }
-    };
+    const formatTime = (timeString) => formatDistrictTime(timeString, districtTz, 'N/A');
 
     return (
         <AuthenticatedLayout user={auth.user}>

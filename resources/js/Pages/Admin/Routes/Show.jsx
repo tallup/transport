@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { routeServiceTypeLabel } from '@/utils/routeServiceType';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { 
     TruckIcon, 
@@ -158,13 +159,12 @@ export default function Show({ route, activeBookings, upcomingBookings, recentEx
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-500">Service Type</p>
-                                        <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full border ${
+                                        <span className={`inline-flex max-w-full px-3 py-1 text-sm font-semibold leading-snug rounded-full border ${
                                             route.service_type === 'am' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                                             route.service_type === 'pm' ? 'bg-sky-50 text-sky-700 border-sky-200' :
-                                            'bg-amber-50 text-amber-700 border-amber-200'
+                                            'bg-emerald-50 text-emerald-800 border-emerald-200'
                                         }`}>
-                                            {route.service_type === 'am' ? 'AM Only' :
-                                             route.service_type === 'pm' ? 'PM Only' : 'Both'}
+                                            {routeServiceTypeLabel(route.service_type)}
                                         </span>
                                     </div>
                                     <div>

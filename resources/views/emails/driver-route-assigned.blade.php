@@ -88,7 +88,7 @@
                 </div>
                 <div class="detail-row">
                     <strong>Service Type:</strong>
-                    <span>{{ strtoupper($route->service_type) }}</span>
+                    <span>{{ $route->serviceTypeLabel() }}</span>
                 </div>
                 @if($route->pickup_time)
                 <div class="detail-row">

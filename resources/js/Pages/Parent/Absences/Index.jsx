@@ -1,10 +1,14 @@
 import React from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { formatDistrictTime, formatDistrictDate, DEFAULT_TIMEZONE } from '@/utils/districtTime';
 import GlassCard from '@/Components/GlassCard';
 import PaginationLinks from '@/Components/PaginationLinks';
 
 export default function Index({ absences }) {
+    const { app } = usePage().props;
+    const districtTz = app?.timezone ?? DEFAULT_TIMEZONE;
+
     const handleCancel = (id) => {
         if (confirm('Are you sure you want to cancel this absence report?')) {
             router.delete(`/parent/absences/${id}`);
@@ -44,12 +48,7 @@ export default function Index({ absences }) {
                                             <div>
                                                 <h3 className="text-lg font-bold text-slate-900">{absence.student?.name}</h3>
                                                 <p className="text-sm font-medium text-slate-500">
-                                                    {new Date(absence.absence_date).toLocaleDateString('en-US', { 
-                                                        weekday: 'long', 
-                                                        year: 'numeric', 
-                                                        month: 'long', 
-                                                        day: 'numeric' 
-                                                    })}
+                                                    {formatDistrictDate(absence.absence_date, districtTz, '')}
                                                     <span className="mx-2 text-slate-300">•</span>
                                                     <span className="uppercase font-bold text-xs tracking-wider">
                                                         {absence.period === 'both' ? 'Both (AM & PM)' : absence.period.toUpperCase()}
@@ -66,7 +65,7 @@ export default function Index({ absences }) {
                                                     </svg>
                                                     <span className="text-[11px] font-bold uppercase tracking-tight">Seen by Driver</span>
                                                     <span className="text-[10px] text-emerald-600/70 border-l border-emerald-200 pl-1.5 ml-0.5">
-                                                        {new Date(absence.acknowledged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        {formatDistrictTime(absence.acknowledged_at, districtTz, '')}
                                                     </span>
                                                 </div>
                                             )}

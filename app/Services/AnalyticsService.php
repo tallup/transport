@@ -182,7 +182,7 @@ class AnalyticsService
                 if (!$route || !$route->pickup_time) {
                     return false;
                 }
-                $expectedTime = Carbon::parse($pickup->pickup_date->format('Y-m-d') . ' ' . $route->pickup_time->format('H:i:s'));
+                $expectedTime = Carbon::parse($pickup->pickup_date->format('Y-m-d') . ' ' . Carbon::parse($route->pickup_time)->format('H:i:s'));
                 $actualTime = $pickup->completed_at;
                 if (!$actualTime) {
                     return false;
@@ -198,7 +198,7 @@ class AnalyticsService
             if ($completions->isNotEmpty()) {
                 $totalMinutes = $completions->sum(function ($completion) {
                     if ($completion->completed_at && $completion->route && $completion->route->pickup_time) {
-                        $startTime = Carbon::parse($completion->completion_date->format('Y-m-d') . ' ' . $completion->route->pickup_time->format('H:i:s'));
+                        $startTime = Carbon::parse($completion->completion_date->format('Y-m-d') . ' ' . Carbon::parse($completion->route->pickup_time)->format('H:i:s'));
                         return $startTime->diffInMinutes($completion->completed_at);
                     }
                     return 0;

@@ -1,4 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { routeServiceTypeLabel } from '@/utils/routeServiceType';
 import AdminLayout from '@/Layouts/AdminLayout';
 import GlassCard from '@/Components/GlassCard';
 import PaginationLinks from '@/Components/PaginationLinks';
@@ -117,13 +118,12 @@ export default function Index({ routes }) {
                                             <svg className="w-4 h-4 text-brand-primary/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <span className={`rounded-lg border px-2 py-1 text-xs font-semibold ${
+                                            <span className={`max-w-[16rem] rounded-lg border px-2 py-1 text-left text-xs font-semibold leading-snug ${
                                                 route.service_type === 'am' ? 'border-amber-200 bg-amber-50 text-amber-700' :
                                                 route.service_type === 'pm' ? 'border-sky-200 bg-sky-50 text-sky-700' :
-                                                'border-amber-200 bg-amber-50 text-amber-700'
+                                                'border-emerald-200 bg-emerald-50 text-emerald-800'
                                             }`}>
-                                                {route.service_type === 'am' ? 'AM Only' :
-                                                 route.service_type === 'pm' ? 'PM Only' : 'Both'}
+                                                {routeServiceTypeLabel(route.service_type)}
                                             </span>
                                         </div>
                                         {route.schools && route.schools.length > 0 && (

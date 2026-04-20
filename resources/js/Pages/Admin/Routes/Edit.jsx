@@ -171,9 +171,9 @@ export default function Edit({ route, drivers, vehicles, schools = [] }) {
                                             className="form-control"
                                             required
                                         >
-                                            <option value="am">AM Only</option>
-                                            <option value="pm">PM Only</option>
-                                            <option value="both">Both AM & PM</option>
+                                            <option value="am">One Way Route Pickup Only (AM)</option>
+                                            <option value="pm">One Way Route Pickup Only (PM)</option>
+                                            <option value="both">Two Way Pickup and Dropoff</option>
                                         </select>
                                         <InputError message={errors.service_type} className="mt-2 text-red-300 font-semibold" />
                                     </div>

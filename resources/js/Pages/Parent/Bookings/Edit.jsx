@@ -4,49 +4,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
 import { toast } from 'sonner';
+import { formatDistrictTime, DEFAULT_TIMEZONE } from '@/utils/districtTime';
 const axios = window.axios;
 
 export default function EditBooking({ booking, students, routes, price: initialPrice }) {
-    const { auth } = usePage().props;
-    
-    // Helper function to format time - extract just the time portion
-    const formatTime = (timeString) => {
-        if (!timeString) return '';
-        
-        try {
-            let date;
-            // Handle different time formats
-            if (typeof timeString === 'string') {
-                // If it's a full datetime string (ISO format)
-                if (timeString.includes('T') || timeString.includes(' ')) {
-                    date = new Date(timeString);
-                }
-                // If it's just time (HH:MM:SS or HH:MM)
-                else if (timeString.includes(':') && timeString.length <= 8) {
-                    date = new Date('2000-01-01T' + timeString);
-                }
-                else {
-                    return timeString;
-                }
-            } else {
-                date = new Date(timeString);
-            }
-            
-            // Check if date is valid
-            if (isNaN(date.getTime())) {
-                return timeString;
-            }
-            
-            // Return formatted time in 12-hour format
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true 
-            });
-        } catch (e) {
-            return timeString;
-        }
-    };
+    const { auth, app } = usePage().props;
+    const districtTz = app?.timezone ?? DEFAULT_TIMEZONE;
+    const formatTime = (timeString) => formatDistrictTime(timeString, districtTz, '');
     
     // Get student_id from URL query parameter
     const [studentIdParam, setStudentIdParam] = useState(null);

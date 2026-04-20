@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { routeServiceTypeLabel } from '@/utils/routeServiceType';
 import DriverLayout from '@/Layouts/DriverLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
@@ -64,8 +65,8 @@ export default function RouteInformation({ route, pickupPoints, activeBookingsCo
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-base font-semibold text-slate-500">Service Type</p>
-                                            <p className="mt-2 text-xl font-bold capitalize text-amber-600">
-                                                {route.service_type || 'Standard'}
+                                            <p className="mt-2 text-base font-bold leading-snug text-amber-600 sm:text-lg">
+                                                {routeServiceTypeLabel(route.service_type) || 'Standard'}
                                             </p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">

@@ -30,9 +30,35 @@ class Route extends Model
 
     protected $casts = [
         'active' => 'boolean',
-        'pickup_time' => 'datetime',
-        'dropoff_time' => 'datetime',
     ];
+
+    /**
+     * User-facing labels for route service_type (stored values remain am, pm, both).
+     *
+     * @return array<string, string>
+     */
+    public static function serviceTypeLabels(): array
+    {
+        return [
+            'am' => 'One Way Route Pickup Only (AM)',
+            'pm' => 'One Way Route Pickup Only (PM)',
+            'both' => 'Two Way Pickup and Dropoff',
+        ];
+    }
+
+    public static function serviceTypeLabelFor(?string $value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        return self::serviceTypeLabels()[$value] ?? $value;
+    }
+
+    public function serviceTypeLabel(): string
+    {
+        return self::serviceTypeLabelFor($this->service_type);
+    }
 
     /**
      * Get the driver that owns the route.

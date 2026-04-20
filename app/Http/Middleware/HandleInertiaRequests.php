@@ -95,6 +95,9 @@ class HandleInertiaRequests extends Middleware
         
         return [
             ...parent::share($request),
+            'app' => [
+                'timezone' => config('app.timezone'),
+            ],
             'auth' => [
                 'user' => $userData,
             ],

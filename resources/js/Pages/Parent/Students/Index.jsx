@@ -11,42 +11,18 @@ import {
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GlassCard from '@/Components/GlassCard';
 import GlassButton from '@/Components/GlassButton';
+import { formatDistrictTime, formatDistrictDate, DEFAULT_TIMEZONE } from '@/utils/districtTime';
 
 export default function StudentsIndex({ students }) {
-    const { auth } = usePage().props;
+    const { auth, app } = usePage().props;
+    const districtTz = app?.timezone ?? DEFAULT_TIMEZONE;
 
-    const formatTime = (timeString) => {
-        if (!timeString) return 'N/A';
-        try {
-            let date;
-            if (typeof timeString === 'string') {
-                if (timeString.includes('T') || timeString.includes(' ')) {
-                    date = new Date(timeString);
-                } else if (timeString.includes(':') && timeString.length <= 8) {
-                    date = new Date(`2000-01-01T${timeString}`);
-                } else {
-                    return timeString;
-                }
-            } else {
-                date = new Date(timeString);
-            }
-
-            if (Number.isNaN(date.getTime())) return timeString;
-            return date.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-            });
-        } catch (e) {
-            return timeString;
-        }
-    };
+    const formatTime = (timeString) => formatDistrictTime(timeString, districtTz, 'N/A');
 
     const formatDate = (dateString) => {
         if (!dateString) return null;
-        const date = new Date(dateString);
-        if (Number.isNaN(date.getTime())) return dateString;
-        return date.toLocaleDateString();
+        const formatted = formatDistrictDate(dateString, districtTz, '');
+        return formatted || null;
     };
 
     return (
