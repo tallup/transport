@@ -1,7 +1,7 @@
 /** Mirrors App\Models\Route::serviceTypeLabels() for Inertia/JS surfaces. */
 export const ROUTE_SERVICE_TYPE_OPTIONS = [
     { value: 'am', label: 'One Way Route Pickup Only' },
-    { value: 'pm', label: 'One Way Route Pickup Only' },
+    { value: 'pm', label: 'One Way Route Dropoff Only' },
     { value: 'both', label: 'Two Way Pickup and Dropoff' },
 ];
 

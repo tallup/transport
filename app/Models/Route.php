@@ -41,7 +41,7 @@ class Route extends Model
     {
         return [
             'am' => 'One Way Route Pickup Only',
-            'pm' => 'One Way Route Pickup Only',
+            'pm' => 'One Way Route Dropoff Only',
             'both' => 'Two Way Pickup and Dropoff',
         ];
     }
