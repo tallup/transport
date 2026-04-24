@@ -118,7 +118,7 @@ export default function Home({ auth }) {
                     </div>
                 </section>
 
-                {/* Pricing & routes — visible before signup */}
+                {/* Pricing & routes, visible before signup */}
                 <section id="pricing" className="py-12 px-4 sm:px-6 lg:px-8 relative scroll-mt-24">
                     <div className="max-w-7xl mx-auto">
                         <div className="mb-8 rounded-xl bg-brand-primary px-4 py-3.5 shadow-lg border border-brand-primary/20">
@@ -138,7 +138,7 @@ export default function Home({ auth }) {
                                 <span className="text-yellow-600">pricing &amp; routes</span>
                             </h2>
                             <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
-                                Weekend &amp; weekday Quran class routes — monthly and weekly plans
+                                Weekend &amp; weekday Quran class routes, monthly and weekly plans
                             </p>
                             <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full" />
                         </div>
@@ -156,16 +156,16 @@ export default function Home({ auth }) {
                                     <li>
                                         <strong className="text-brand-primary">Bilal Islamic Center</strong> (Everett)
                                         <ul className="mt-1 ml-4 list-disc text-brand-primary/75 space-y-0.5">
-                                            <li>8:00 AM – 11:00 AM</li>
-                                            <li>11:00 AM – 2:00 PM</li>
-                                            <li>2:00 PM – 5:00 PM</li>
+                                            <li>8:00 AM to 11:00 AM</li>
+                                            <li>11:00 AM to 2:00 PM</li>
+                                            <li>2:00 PM to 5:00 PM</li>
                                         </ul>
                                     </li>
                                     <li>
                                         <strong className="text-brand-primary">ICOPS Lynnwood</strong> (Lynnwood)
                                         <ul className="mt-1 ml-4 list-disc text-brand-primary/75 space-y-0.5">
-                                            <li>9:00 AM – 12:00 PM</li>
-                                            <li>12:00 PM – 3:00 PM</li>
+                                            <li>9:00 AM to 12:00 PM</li>
+                                            <li>12:00 PM to 3:00 PM</li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -199,13 +199,13 @@ export default function Home({ auth }) {
                                     <span className="rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
                                         Weekday
                                     </span>
-                                    <span className="text-sm font-semibold text-brand-primary">Monday – Wednesday</span>
+                                    <span className="text-sm font-semibold text-brand-primary">Monday to Wednesday</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-brand-primary mb-3">Quran class route</h3>
                                 <ul className="space-y-3 text-sm text-brand-primary/85 mb-5">
                                     <li>
                                         <strong className="text-brand-primary">Bilal Islamic Center</strong> (Everett)
-                                        <p className="mt-1 ml-0 text-brand-primary/75">5:00 PM – 8:00 PM</p>
+                                        <p className="mt-1 ml-0 text-brand-primary/75">5:00 PM to 8:00 PM</p>
                                     </li>
                                 </ul>
                                 <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 overflow-hidden">
@@ -406,16 +406,16 @@ export default function Home({ auth }) {
 
                         <GlassCard className="p-6 md:p-8 text-left border border-brand-primary/20">
                             <p className="text-brand-primary/90 leading-relaxed mb-4">
-                                On-Time Transportation for Kids was born out of a deeply personal experience. <strong className="text-brand-primary">Amie Njie</strong>, a single mother and full-time professional, struggled to juggle work and getting her own child to preschool and school on time. She faced daily challenges balancing her job and her child's needs, and when she couldn't find a reliable transportation solution, she decided to create one. Amie realized that many other parents, like herself, were in the same boat—desperately needing a safe, dependable way to get their children to school and activities.
+                                On-Time Transportation for Kids was born out of a deeply personal experience. <strong className="text-brand-primary">Amie Njie</strong>, a single mother and full-time professional, struggled to juggle work and getting her own child to preschool and school on time. She faced daily challenges balancing her job and her child's needs, and when she couldn't find a reliable transportation solution, she decided to create one. Amie realized that many other parents, like herself, were in the same boat, desperately needing a safe, dependable way to get their children to school and activities.
                             </p>
                             <p className="text-brand-primary/90 leading-relaxed mb-0">
-                                This is why she founded On-Time Transportation for Kids—so no parent would have to choose between their career and their child's safety and education. With a focus on <strong className="text-yellow-600">punctuality</strong>, <strong className="text-yellow-600">trust</strong>, and <strong className="text-yellow-600">care</strong>, Amie ensures every child rides with confidence, and every parent knows their child is in good hands.
+                                This is why she founded On-Time Transportation for Kids, so no parent would have to choose between their career and their child's safety and education. With a focus on <strong className="text-yellow-600">punctuality</strong>, <strong className="text-yellow-600">trust</strong>, and <strong className="text-yellow-600">care</strong>, Amie ensures every child rides with confidence, and every parent knows their child is in good hands.
                             </p>
                             <div className="mt-6 pt-6 border-t border-brand-primary/20 flex items-center justify-center gap-2 text-brand-primary/80">
                                 <svg className="w-5 h-5 text-yellow-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                                 </svg>
-                                <span className="font-semibold text-brand-primary">Amie Njie — Founder</span>
+                                <span className="font-semibold text-brand-primary">Amie Njie, Founder</span>
                             </div>
                         </GlassCard>
                     </div>
