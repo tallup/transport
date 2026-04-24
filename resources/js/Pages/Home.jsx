@@ -39,6 +39,12 @@ export default function Home({ auth }) {
                                 
                                 {/* Right Content - Text, CTA, and Stats Cards */}
                                 <div className="lg:col-span-5 space-y-2 lg:space-y-3 flex flex-col justify-center">
+                                    <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.12em] text-brand-primary">
+                                        On-Time Transportation Services
+                                    </p>
+                                    <p className="text-xs sm:text-sm font-semibold text-brand-primary/85">
+                                        Safe <span className="text-yellow-600">•</span> Reliable <span className="text-yellow-600">•</span> Always On Time
+                                    </p>
                                     {/* Main Heading */}
                                     <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-brand-primary leading-[1.05]">
                                     <span className="block animate-slide-up" style={{ animationDelay: '0.2s' }}>
@@ -48,6 +54,11 @@ export default function Home({ auth }) {
                                             Kids Transportation
                                     </span>
                                 </h1>
+                                <p className="text-xs text-brand-primary/70">
+                                    <a href="#pricing" className="font-semibold text-yellow-700 hover:text-yellow-600 underline decoration-yellow-600/30">
+                                        View pricing &amp; routes
+                                    </a>
+                                </p>
                                 
                                 {/* Description */}
                                     <p className="text-sm md:text-base text-brand-primary/90 leading-relaxed">
@@ -104,6 +115,184 @@ export default function Home({ auth }) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Pricing & routes — visible before signup */}
+                <section id="pricing" className="py-12 px-4 sm:px-6 lg:px-8 relative scroll-mt-24">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="mb-8 rounded-xl bg-brand-primary px-4 py-3.5 shadow-lg border border-brand-primary/20">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-center">
+                                <svg className="w-6 h-6 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <p className="text-sm sm:text-base font-bold text-white tracking-wide uppercase">
+                                    Now serving families in Marysville, Everett, and Lynnwood
+                                </p>
+                            </div>
+                        </div>
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-primary mb-3 drop-shadow-lg">
+                                Transportation{' '}
+                                <span className="text-yellow-600">pricing &amp; routes</span>
+                            </h2>
+                            <p className="text-lg text-brand-primary/80 max-w-2xl mx-auto font-medium">
+                                Weekend &amp; weekday Quran class routes — monthly and weekly plans
+                            </p>
+                            <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full" />
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <GlassCard className="p-6 border border-brand-primary/20">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                                        Weekend
+                                    </span>
+                                    <span className="text-sm font-semibold text-brand-primary">Saturday &amp; Sunday</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-brand-primary mb-3">Quran class routes</h3>
+                                <ul className="space-y-3 text-sm text-brand-primary/85 mb-5">
+                                    <li>
+                                        <strong className="text-brand-primary">Bilal Islamic Center</strong> (Everett)
+                                        <ul className="mt-1 ml-4 list-disc text-brand-primary/75 space-y-0.5">
+                                            <li>8:00 AM – 11:00 AM</li>
+                                            <li>11:00 AM – 2:00 PM</li>
+                                            <li>2:00 PM – 5:00 PM</li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <strong className="text-brand-primary">ICOPS Lynnwood</strong> (Lynnwood)
+                                        <ul className="mt-1 ml-4 list-disc text-brand-primary/75 space-y-0.5">
+                                            <li>9:00 AM – 12:00 PM</li>
+                                            <li>12:00 PM – 3:00 PM</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 overflow-hidden">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-brand-primary/15 bg-white/60">
+                                                <th className="text-left py-2.5 px-3 font-bold text-brand-primary">Plan</th>
+                                                <th className="text-right py-2.5 px-3 font-bold text-brand-primary">One way</th>
+                                                <th className="text-right py-2.5 px-3 font-bold text-brand-primary">Round trip</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-brand-primary/90">
+                                            <tr className="border-b border-brand-primary/10">
+                                                <td className="py-2.5 px-3 font-medium">Monthly</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$200/mo</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$300/mo</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="py-2.5 px-3 font-medium">Weekly</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$75/wk</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$100/wk</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </GlassCard>
+
+                            <GlassCard className="p-6 border border-brand-primary/20">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                                        Weekday
+                                    </span>
+                                    <span className="text-sm font-semibold text-brand-primary">Monday – Wednesday</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-brand-primary mb-3">Quran class route</h3>
+                                <ul className="space-y-3 text-sm text-brand-primary/85 mb-5">
+                                    <li>
+                                        <strong className="text-brand-primary">Bilal Islamic Center</strong> (Everett)
+                                        <p className="mt-1 ml-0 text-brand-primary/75">5:00 PM – 8:00 PM</p>
+                                    </li>
+                                </ul>
+                                <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 overflow-hidden">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-brand-primary/15 bg-white/60">
+                                                <th className="text-left py-2.5 px-3 font-bold text-brand-primary">Plan</th>
+                                                <th className="text-right py-2.5 px-3 font-bold text-brand-primary">One way</th>
+                                                <th className="text-right py-2.5 px-3 font-bold text-brand-primary">Round trip</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-brand-primary/90">
+                                            <tr className="border-b border-brand-primary/10">
+                                                <td className="py-2.5 px-3 font-medium">Monthly</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$225/mo</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$325/mo</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="py-2.5 px-3 font-medium">Weekly</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$100/wk</td>
+                                                <td className="py-2.5 px-3 text-right font-semibold">$125/wk</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </GlassCard>
+                        </div>
+
+                        <div className="mb-6">
+                            <h3 className="text-center text-lg font-bold text-brand-primary mb-4">
+                                What you can expect
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {[
+                                    'Safe & reliable transportation',
+                                    'Small group rides',
+                                    'Background-checked drivers',
+                                    'On-time pickups & drop-offs',
+                                    'Real-time parent communication',
+                                ].map((label) => (
+                                    <GlassCard key={label} className="p-4 border border-brand-primary/15 flex items-start gap-3">
+                                        <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 text-white">
+                                            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                        <span className="text-sm font-semibold text-brand-primary leading-snug">{label}</span>
+                                    </GlassCard>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center gap-2 mb-6 text-center">
+                            <div className="inline-flex items-center gap-2 rounded-full border-2 border-yellow-500 bg-gradient-to-r from-brand-primary to-brand-primary/90 px-5 py-2.5 shadow-lg">
+                                <svg className="h-5 w-5 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-white">
+                                    Limited seats available per route
+                                </span>
+                            </div>
+                        </div>
+
+                        <GlassCard className="p-5 border border-dashed border-yellow-500/50 bg-brand-primary/[0.03]">
+                            <p className="text-xs font-bold uppercase tracking-wide text-yellow-700 mb-2">Important information</p>
+                            <ul className="text-sm text-brand-primary/85 space-y-1.5 list-disc list-inside">
+                                <li>Pricing is based on consistent weekly scheduling.</li>
+                                <li>Pickup locations are coordinated after enrollment.</li>
+                                <li>Seats are limited per route and fill quickly.</li>
+                                <li>All transportation follows Washington State child safety guidelines.</li>
+                            </ul>
+                            <div className="mt-5 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 px-4 py-4 text-center shadow-md">
+                                <p className="text-sm font-extrabold uppercase tracking-wide text-brand-primary mb-1">
+                                    Reserve your child&apos;s seat today
+                                </p>
+                                <a
+                                    href="tel:+12063964964"
+                                    className="inline-flex items-center gap-2 text-lg font-black text-brand-primary hover:text-brand-primary/90"
+                                >
+                                    <svg className="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    (206) 396-4964
+                                </a>
+                                <p className="mt-1 text-xs font-bold text-brand-primary/90 uppercase tracking-wide">Call or text to enroll</p>
+                            </div>
+                        </GlassCard>
                     </div>
                 </section>
 
@@ -451,6 +640,14 @@ export default function Home({ auth }) {
                                         </Link>
                                     </li>
                                     <li>
+                                        <Link href="/#pricing" className="text-white/70 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                            <span className="group-hover:translate-x-1 transition-transform duration-200">Pricing</span>
+                                        </Link>
+                                    </li>
+                                    <li>
                                         <Link href="/#our-story" className="text-white/70 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                                             <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -538,7 +735,9 @@ export default function Home({ auth }) {
                                         </div>
                                         <div>
                                             <p className="text-white/60 text-xs font-medium mb-1">Phone</p>
-                                            <p className="text-white/90 font-medium text-sm">(940) 465-9280</p>
+                                            <a href="tel:+12063964964" className="text-white/90 font-medium text-sm hover:text-white transition-colors">
+                                                (206) 396-4964
+                                            </a>
                                         </div>
                                     </div>
 
