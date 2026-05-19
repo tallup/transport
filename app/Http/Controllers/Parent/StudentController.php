@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
+use App\Jobs\ScanUploadedFile;
 use App\Models\Booking;
+use App\Models\PickupPoint;
 use App\Models\Policy;
 use App\Models\School;
 use App\Models\Student;
-use App\Models\PickupPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -26,7 +27,7 @@ class StudentController extends Controller
         // Load active bookings for all students in one query to avoid N+1
         $studentIds = $students->pluck('id');
         $activeBookings = collect();
-        
+
         if ($studentIds->isNotEmpty()) {
             $activeBookings = Booking::whereIn('student_id', $studentIds)
                 ->where('status', 'active')
@@ -39,6 +40,7 @@ class StudentController extends Controller
         // Map active bookings to students
         $students = $students->map(function ($student) use ($activeBookings) {
             $student->active_booking = $activeBookings->get($student->id)?->first();
+
             return $student;
         });
 
@@ -67,18 +69,18 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request)
     {
         $validated = $request->validated();
-        
+
         // Sanitize text inputs to prevent XSS
-        $textFields = ['name', 'home_address', 'grade', 'emergency_phone', 'emergency_contact_name', 
-                      'emergency_contact_2_name', 'emergency_contact_2_phone', 'emergency_contact_2_relationship',
-                      'doctor_name', 'doctor_phone', 'medical_notes', 'special_instructions'];
-        
+        $textFields = ['name', 'home_address', 'grade', 'emergency_phone', 'emergency_contact_name',
+            'emergency_contact_2_name', 'emergency_contact_2_phone', 'emergency_contact_2_relationship',
+            'doctor_name', 'doctor_phone', 'medical_notes', 'special_instructions'];
+
         foreach ($textFields as $field) {
             if (isset($validated[$field])) {
                 $validated[$field] = strip_tags($validated[$field]);
             }
         }
-        
+
         // Sanitize authorized pickup persons
         if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
             foreach ($validated['authorized_pickup_persons'] as &$person) {
@@ -97,27 +99,27 @@ class StudentController extends Controller
         $user = $request->user();
 
         // Handle signature timestamps
-        if (!empty($validated['authorization_to_transport_signature'])) {
+        if (! empty($validated['authorization_to_transport_signature'])) {
             $validated['authorization_to_transport_signed_at'] = now();
         }
-        if (!empty($validated['payment_agreement_signature'])) {
+        if (! empty($validated['payment_agreement_signature'])) {
             $validated['payment_agreement_signed_at'] = now();
         }
-        if (!empty($validated['liability_waiver_signature'])) {
+        if (! empty($validated['liability_waiver_signature'])) {
             $validated['liability_waiver_signed_at'] = now();
         }
 
         // Ensure authorized_pickup_persons is properly formatted as JSON
         if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
-            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], function($person) {
-                return !empty($person['name']);
+            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], function ($person) {
+                return ! empty($person['name']);
             }));
         }
 
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
             $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
-            $filename = 'student_' . time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
+            $filename = 'student_'.time().'_'.\Illuminate\Support\Str::random(10).'.'.$ext;
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
         } else {
             unset($validated['profile_picture']);
@@ -125,12 +127,17 @@ class StudentController extends Controller
 
         $student = $user->students()->create($validated);
 
+        if ($request->hasFile('profile_picture')) {
+            ScanUploadedFile::dispatch(Student::class, $student->id, 'profile_picture')->onQueue('default');
+        }
+
         // If route & pickup point provided ensure consistency
-        if (!empty($validated['route_id']) && !empty($validated['pickup_point_id'])) {
+        if (! empty($validated['route_id']) && ! empty($validated['pickup_point_id'])) {
             $pp = PickupPoint::find($validated['pickup_point_id']);
             if ($pp && $pp->route_id != $validated['route_id']) {
                 // rollback created student and return error
                 $student->delete();
+
                 return redirect()->back()->withInput()->withErrors(['pickup_point_id' => 'Selected pickup point does not belong to the selected route.']);
             }
         }
@@ -168,7 +175,7 @@ class StudentController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png|mimetypes:image/jpeg,image/png|max:10240',
             'school_id' => 'required|exists:schools,id',
             'date_of_birth' => 'nullable|date',
             'home_address' => 'nullable|string',
@@ -199,11 +206,17 @@ class StudentController extends Controller
         }
         if (isset($validated['authorized_pickup_persons']) && is_array($validated['authorized_pickup_persons'])) {
             foreach ($validated['authorized_pickup_persons'] as &$person) {
-                if (isset($person['name'])) $person['name'] = strip_tags($person['name']);
-                if (isset($person['relationship'])) $person['relationship'] = strip_tags($person['relationship']);
-                if (isset($person['phone'])) $person['phone'] = strip_tags($person['phone']);
+                if (isset($person['name'])) {
+                    $person['name'] = strip_tags($person['name']);
+                }
+                if (isset($person['relationship'])) {
+                    $person['relationship'] = strip_tags($person['relationship']);
+                }
+                if (isset($person['phone'])) {
+                    $person['phone'] = strip_tags($person['phone']);
+                }
             }
-            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], fn($p) => !empty($p['name'])));
+            $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], fn ($p) => ! empty($p['name'])));
         }
 
         if ($request->hasFile('profile_picture')) {
@@ -212,7 +225,7 @@ class StudentController extends Controller
             }
             $file = $request->file('profile_picture');
             $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
-            $filename = 'student_' . time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $ext;
+            $filename = 'student_'.time().'_'.\Illuminate\Support\Str::random(10).'.'.$ext;
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
         } else {
             unset($validated['profile_picture']);

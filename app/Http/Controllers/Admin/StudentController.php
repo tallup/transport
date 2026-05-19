@@ -61,19 +61,21 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png|mimetypes:image/jpeg,image/png|max:10240|dimensions:max_width=4096,max_height=4096',
         ]);
 
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
-            $filename = 'student_'.time().'_'.\Illuminate\Support\Str::random(10).'.'.$ext;
-            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $file->hashName(), 'public');
         } else {
             unset($validated['profile_picture']);
         }
 
-        Student::create($validated);
+        $student = Student::create($validated);
+
+        if ($request->hasFile('profile_picture')) {
+            ScanUploadedFile::dispatch(Student::class, $student->id, 'profile_picture')->onQueue('default');
+        }
 
         return redirect()->route('admin.students.index')
             ->with('success', 'Student created successfully.');
@@ -169,7 +171,7 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'emergency_phone' => 'required|string|max:20',
             'emergency_contact_name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png|mimetypes:image/jpeg,image/png|max:10240|dimensions:max_width=4096,max_height=4096',
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -177,9 +179,7 @@ class StudentController extends Controller
                 Storage::disk('public')->delete($student->profile_picture);
             }
             $file = $request->file('profile_picture');
-            $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
-            $filename = 'student_'.time().'_'.\Illuminate\Support\Str::random(10).'.'.$ext;
-            $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+            $validated['profile_picture'] = $file->storeAs('profile-pictures', $file->hashName(), 'public');
         } else {
             unset($validated['profile_picture']);
         }

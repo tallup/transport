@@ -75,26 +75,26 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::get('/students/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
-    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store')->middleware('throttle:students');
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
-    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update')->middleware('throttle:students');
 
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
-    Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+    Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update')->middleware('throttle:bookings');
     Route::get('/bookings/{booking}/checkout', [BookingController::class, 'showCheckout'])->name('bookings.checkout');
     Route::get('/pickup-history', [BookingController::class, 'allPickupHistory'])->name('pickup-history');
     Route::get('/bookings/{booking}/rebook', [BookingController::class, 'rebook'])->name('bookings.rebook');
     Route::get('/bookings/{booking}/pickup-history', [BookingController::class, 'pickupHistory'])->name('bookings.pickup-history');
-    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
-    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel')->middleware('throttle:bookings');
+    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy')->middleware('throttle:bookings');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store')->middleware('throttle:10,1');
     Route::post('/bookings/create-payment-intent', [BookingController::class, 'createPaymentIntent'])->name('bookings.create-payment-intent')->middleware('throttle:10,1');
     Route::post('/bookings/payment-success', [BookingController::class, 'paymentSuccess'])->name('bookings.payment-success')->middleware('throttle:10,1');
-    Route::post('/bookings/skip-payment', [BookingController::class, 'skipPayment'])->name('bookings.skip-payment');
+    Route::post('/bookings/skip-payment', [BookingController::class, 'skipPayment'])->name('bookings.skip-payment')->middleware('throttle:bookings');
     Route::get('/schools/{school}/routes', [BookingController::class, 'getRoutesBySchool'])->name('schools.routes');
     Route::get('/routes/{route}/pickup-points', [BookingController::class, 'getPickupPoints'])->name('routes.pickup-points');
     Route::get('/routes/{route}/capacity', [BookingController::class, 'checkCapacity'])->name('routes.capacity');
@@ -103,8 +103,8 @@ Route::middleware(['auth'])->prefix('parent')->name('parent.')->group(function (
     // Absences
     Route::get('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'index'])->name('absences.index');
     Route::get('/absences/create', [\App\Http\Controllers\Parent\AbsenceController::class, 'create'])->name('absences.create');
-    Route::post('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'store'])->name('absences.store');
-    Route::delete('/absences/{absence}', [\App\Http\Controllers\Parent\AbsenceController::class, 'destroy'])->name('absences.destroy');
+    Route::post('/absences', [\App\Http\Controllers\Parent\AbsenceController::class, 'store'])->name('absences.store')->middleware('throttle:absences');
+    Route::delete('/absences/{absence}', [\App\Http\Controllers\Parent\AbsenceController::class, 'destroy'])->name('absences.destroy')->middleware('throttle:absences');
 });
 
 // Admin Routes (admin accounts are created by the system; no email verification required)
@@ -116,21 +116,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
-    Route::post('/users/{user}/toggle-parent-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleParentStatus'])->name('users.toggle-parent-status');
-    Route::resource('schools', \App\Http\Controllers\Admin\SchoolController::class);
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->middleware('throttle:admin-mutations');
+    Route::post('/users/{user}/toggle-parent-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleParentStatus'])->name('users.toggle-parent-status')->middleware('throttle:admin-mutations');
+    Route::resource('schools', \App\Http\Controllers\Admin\SchoolController::class)->middleware('throttle:admin-mutations');
     Route::get('/students/{student}/pdf', [\App\Http\Controllers\Admin\StudentController::class, 'pdf'])->name('students.pdf');
-    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
-    Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
-    Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class);
-    Route::resource('pickup-points', \App\Http\Controllers\Admin\PickupPointController::class);
-    Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class);
-    Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class);
-    Route::resource('discounts', \App\Http\Controllers\Admin\DiscountController::class);
+    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class)->middleware('throttle:admin-mutations');
+    Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class)->middleware('throttle:admin-mutations');
+    Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class)->middleware('throttle:admin-mutations');
+    Route::resource('pickup-points', \App\Http\Controllers\Admin\PickupPointController::class)->middleware('throttle:admin-mutations');
+    Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->middleware('throttle:admin-mutations');
+    Route::resource('pricing-rules', \App\Http\Controllers\Admin\PricingRuleController::class)->middleware('throttle:admin-mutations');
+    Route::resource('discounts', \App\Http\Controllers\Admin\DiscountController::class)->middleware('throttle:admin-mutations');
     Route::get('/pricing/manage', [\App\Http\Controllers\Admin\PricingController::class, 'manage'])->name('pricing.manage');
-    Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
+    Route::post('/pricing-rules/{pricingRule}/toggle-active', [\App\Http\Controllers\Admin\PricingController::class, 'toggleActive'])->name('pricing-rules.toggle-active')->middleware('throttle:admin-mutations');
     Route::get('/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('finance.dashboard');
-    Route::post('/finance/export', [\App\Http\Controllers\Admin\FinanceController::class, 'exportReport'])->name('finance.export');
+    Route::post('/finance/export', [\App\Http\Controllers\Admin\FinanceController::class, 'exportReport'])->name('finance.export')->middleware('throttle:admin-mutations');
 
     // Analytics routes
     Route::prefix('analytics')->name('analytics.')->group(function () {
@@ -139,14 +139,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/capacity', [\App\Http\Controllers\Admin\AnalyticsController::class, 'capacityMetrics'])->name('capacity');
         Route::get('/drivers/{driver?}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'driverMetrics'])->name('driver');
         Route::get('/routes/{route?}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'routeMetrics'])->name('route');
-        Route::post('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportReport'])->name('export');
+        Route::post('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportReport'])->name('export')->middleware('throttle:admin-mutations');
     });
 
-    Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class);
-    Route::resource('absences', \App\Http\Controllers\Admin\AbsenceController::class)->only(['index', 'destroy']);
-    Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve');
-    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
-    Route::post('/bookings/{booking}/refund', [\App\Http\Controllers\Admin\BookingController::class, 'refund'])->name('bookings.refund');
+    Route::resource('calendar-events', \App\Http\Controllers\Admin\CalendarEventController::class)->middleware('throttle:admin-mutations');
+    Route::resource('absences', \App\Http\Controllers\Admin\AbsenceController::class)->only(['index', 'destroy'])->middleware('throttle:admin-mutations');
+    Route::post('/bookings/{booking}/approve', [\App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('bookings.approve')->middleware('throttle:admin-mutations');
+    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel')->middleware('throttle:admin-mutations');
+    Route::post('/bookings/{booking}/refund', [\App\Http\Controllers\Admin\BookingController::class, 'refund'])->name('bookings.refund')->middleware('throttle:admin-mutations');
 });
 
 // Driver Routes (driver accounts are created by admins; no email verification required)
@@ -166,23 +166,23 @@ Route::middleware(['auth', 'driver'])->prefix('driver')->name('driver.')->group(
     Route::post('/pickup-points/mark-complete', [\App\Http\Controllers\Driver\RosterController::class, 'markPickupPointComplete'])->name('pickup-points.mark-complete')->middleware('throttle:60,1');
     Route::post('/routes/{route}/mark-complete', [\App\Http\Controllers\Driver\DashboardController::class, 'markRouteComplete'])->name('routes.mark-complete')->middleware('throttle:10,1');
     Route::post('/routes/{route}/start-trip', [\App\Http\Controllers\Driver\DashboardController::class, 'startTrip'])->name('routes.start-trip')->middleware('throttle:10,1');
-    Route::post('/absences/{absence}/acknowledge', [\App\Http\Controllers\Driver\RosterController::class, 'acknowledgeAbsence'])->name('absences.acknowledge');
+    Route::post('/absences/{absence}/acknowledge', [\App\Http\Controllers\Driver\RosterController::class, 'acknowledgeAbsence'])->name('absences.acknowledge')->middleware('throttle:driver-actions');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('throttle:profile');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('throttle:profile');
 
     // Push subscriptions
-    Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
-    Route::delete('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
+    Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe')->middleware('throttle:profile');
+    Route::delete('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe')->middleware('throttle:profile');
 
     // Messages
     Route::get('/messages', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{thread}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');
-    Route::post('/messages', [\App\Http\Controllers\MessageController::class, 'store'])->name('messages.store');
-    Route::post('/messages/{thread}/read', [\App\Http\Controllers\MessageController::class, 'markAsRead'])->name('messages.read');
+    Route::post('/messages', [\App\Http\Controllers\MessageController::class, 'store'])->name('messages.store')->middleware('throttle:messaging');
+    Route::post('/messages/{thread}/read', [\App\Http\Controllers\MessageController::class, 'markAsRead'])->name('messages.read')->middleware('throttle:messaging');
 
     Route::get('/help/parent', [HelpController::class, 'parentPortal'])->name('help.parent');
 });
@@ -205,7 +205,7 @@ Route::get('/faq', function (Request $request) {
 })->name('faq');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:contact');
 
 // Keep-alive endpoint to prevent session expiration during active use
 Route::middleware(['auth'])->get('/api/keep-alive', function (Request $request) {

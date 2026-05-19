@@ -24,38 +24,38 @@ class StoreStudentRequest extends FormRequest
         return [
             // Basic Information
             'name' => 'required|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,bmp,svg|max:10240', // 10MB max
+            'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png|mimetypes:image/jpeg,image/png|max:10240',
             'school_id' => 'required|exists:schools,id',
             'date_of_birth' => 'nullable|date',
             'home_address' => 'nullable|string',
             'grade' => 'nullable|string|max:50',
-            
+
             // Emergency Contacts
             'emergency_phone' => 'required|string|max:255',
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_2_name' => 'nullable|string|max:255',
             'emergency_contact_2_phone' => 'nullable|string|max:255',
             'emergency_contact_2_relationship' => 'nullable|string|max:255',
-            
+
             // Medical Information
             'doctor_name' => 'nullable|string|max:255',
             'doctor_phone' => 'nullable|string|max:255',
             'medical_notes' => 'nullable|string',
-            
+
             // Authorized Pickup Persons
             'authorized_pickup_persons' => 'nullable|array',
             'authorized_pickup_persons.*.name' => 'required_with:authorized_pickup_persons|string|max:255',
             'authorized_pickup_persons.*.relationship' => 'nullable|string|max:255',
             'authorized_pickup_persons.*.phone' => 'nullable|string|max:255',
-            
+
             // Additional Information
             'special_instructions' => 'nullable|string',
-            
+
             // Signatures
             'authorization_to_transport_signature' => 'nullable|string|max:255',
             'payment_agreement_signature' => 'nullable|string|max:255',
             'liability_waiver_signature' => 'nullable|string|max:255',
-            
+
             // Optional transport assignment
             'route_id' => 'nullable|exists:routes,id',
             'pickup_point_id' => 'nullable|exists:pickup_points,id',

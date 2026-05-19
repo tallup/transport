@@ -9,7 +9,6 @@ use App\Models\MessageAttachment;
 use App\Models\MessageThread;
 use App\Models\Route;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MessageController extends Controller
@@ -183,7 +182,7 @@ class MessageController extends Controller
         } else {
             // Direct message
             $recipientId = $validated['recipient_id'];
-            if (!$recipientId) {
+            if (! $recipientId) {
                 return response()->json(['error' => 'Recipient is required for direct messages'], 422);
             }
 
@@ -199,7 +198,7 @@ class MessageController extends Controller
                 })
                 ->first();
 
-            if (!$thread) {
+            if (! $thread) {
                 $thread = MessageThread::create([
                     'type' => 'direct',
                     'participant_1_id' => $user->id,
@@ -223,15 +222,19 @@ class MessageController extends Controller
         // Handle attachments
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('message-attachments', 'public');
+                $path = $file->storeAs('message-attachments', $file->hashName(), 'public');
 
-                MessageAttachment::create([
+                $attachment = MessageAttachment::create([
                     'message_id' => $message->id,
                     'file_path' => $path,
                     'file_name' => $file->getClientOriginalName(),
+                    'original_name' => $file->getClientOriginalName(),
                     'file_size' => $file->getSize(),
                     'mime_type' => $file->getMimeType(),
+                    'scan_status' => 'pending',
                 ]);
+
+                ScanUploadedFile::dispatch(MessageAttachment::class, $attachment->id, 'file_path')->onQueue('default');
 
                 $message->type = 'file';
             }

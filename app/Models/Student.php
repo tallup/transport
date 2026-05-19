@@ -42,6 +42,7 @@ class Student extends Model
         'payment_agreement_signature',
         'liability_waiver_signed_at',
         'liability_waiver_signature',
+        'scan_status',
     ];
 
     protected $casts = [
