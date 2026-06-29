@@ -38,11 +38,8 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
             }
         } catch (error) {
             console.error('Error marking route as complete:', error);
-            if (error.message?.includes('419') || error.message?.includes('CSRF')) {
-                window.location.href = '/login';
-            } else {
-                toast.error('An error occurred while marking the route as complete');
-            }
+            // 419/CSRF recovery is handled centrally in bootstrap.js (refresh + retry).
+            toast.error('An error occurred while marking the route as complete');
         } finally {
             setSubmitting(false);
         }
@@ -72,12 +69,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         } catch (error) {
             console.error('Error marking trip as complete:', error);
 
-            // Handle CSRF token mismatch
-            if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
-                window.location.href = '/login';
-                return;
-            }
-
+            // 419/CSRF recovery is handled centrally in bootstrap.js (refresh + retry).
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while marking the trip as complete';
             toast.error(errorMessage);
             setCompleting({ ...completing, [key]: false });
@@ -104,12 +96,7 @@ export default function Roster({ route, date, isSchoolDay, groupedBookings, mess
         } catch (error) {
             console.error('Error updating pickup status:', error);
 
-            // Handle CSRF token mismatch
-            if (error.response?.status === 419 || error.response?.data?.message?.includes('CSRF')) {
-                window.location.href = '/login';
-                return;
-            }
-
+            // 419/CSRF recovery is handled centrally in bootstrap.js (refresh + retry).
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while updating the pickup status';
             toast.error(errorMessage);
             setCompleting({ ...completing, [bookingId]: false });

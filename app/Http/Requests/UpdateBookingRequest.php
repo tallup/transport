@@ -41,7 +41,8 @@ class UpdateBookingRequest extends FormRequest
             'plan_type' => 'sometimes|required|in:weekly,monthly,academic_term,annual',
             'trip_type' => 'sometimes|required|in:one_way,two_way',
             'trip_direction' => 'sometimes|required|in:pickup_only,dropoff_only,both',
-            'status' => 'sometimes|required|in:pending,awaiting_approval,active,cancelled,expired,completed',
+            // 'status' intentionally NOT accepted here: parents must not set booking status
+            // (e.g. self-activating without payment). Status transitions are admin/payment-flow only.
             'start_date' => 'sometimes|required|date',
             'end_date' => 'nullable|date|after:start_date',
         ];
@@ -59,7 +60,6 @@ class UpdateBookingRequest extends FormRequest
             'route_id.exists' => 'The selected route is invalid.',
             'pickup_point_id.exists' => 'The selected pickup point is invalid.',
             'plan_type.in' => 'The selected plan type is invalid.',
-            'status.in' => 'The selected status is invalid.',
             'end_date.after' => 'The end date must be after the start date.',
         ];
     }

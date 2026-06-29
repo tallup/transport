@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Jobs\ScanUploadedFile;
 use App\Models\Booking;
 use App\Models\Message;
 use App\Models\MessageAttachment;
@@ -148,7 +149,8 @@ class MessageController extends Controller
             'route_id' => 'nullable|exists:routes,id',
             'message' => 'required|string|max:5000',
             'attachments' => 'nullable|array',
-            'attachments.*' => 'file|max:10240', // 10MB max
+            // Whitelist message attachment types; reject executables and unexpected formats.
+            'attachments.*' => 'file|max:10240|mimes:jpeg,jpg,png,gif,webp,pdf,doc,docx,txt', // 10MB max
         ]);
 
         $user = $request->user();
@@ -156,7 +158,13 @@ class MessageController extends Controller
         // Determine thread type and find or create thread
         $thread = null;
         if ($validated['booking_id']) {
-            $booking = Booking::findOrFail($validated['booking_id']);
+            $booking = Booking::with('route')->findOrFail($validated['booking_id']);
+
+            // Only the booking's parent, an admin, or the route's driver may message about it.
+            if (! $this->canMessageAboutBooking($user, $booking)) {
+                abort(403, 'You are not authorized to message about this booking.');
+            }
+
             $thread = MessageThread::firstOrCreate(
                 [
                     'type' => 'booking',
@@ -169,6 +177,12 @@ class MessageController extends Controller
             );
         } elseif ($validated['route_id']) {
             $route = Route::findOrFail($validated['route_id']);
+
+            // Only an admin, the assigned driver, or a parent with a booking on the route may message about it.
+            if (! $this->canMessageAboutRoute($user, $route)) {
+                abort(403, 'You are not authorized to message about this route.');
+            }
+
             $thread = MessageThread::firstOrCreate(
                 [
                     'type' => 'route',
@@ -251,6 +265,45 @@ class MessageController extends Controller
             'success' => true,
             'message' => $message->load(['sender', 'attachments']),
         ]);
+    }
+
+    /**
+     * Whether the user may open/post to a thread about the given booking.
+     */
+    private function canMessageAboutBooking(\App\Models\User $user, Booking $booking): bool
+    {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'], true)) {
+            return true;
+        }
+
+        // Parent who owns the booking's student.
+        if ((int) ($booking->student?->parent_id) === (int) $user->id) {
+            return true;
+        }
+
+        // Driver assigned to the booking's route.
+        return $user->role === 'driver'
+            && (int) ($booking->route?->driver_id) === (int) $user->id;
+    }
+
+    /**
+     * Whether the user may open/post to a thread about the given route.
+     */
+    private function canMessageAboutRoute(\App\Models\User $user, Route $route): bool
+    {
+        if (in_array($user->role, ['super_admin', 'transport_admin', 'admin'], true)) {
+            return true;
+        }
+
+        // Driver assigned to the route.
+        if ($user->role === 'driver' && (int) $route->driver_id === (int) $user->id) {
+            return true;
+        }
+
+        // Parent with at least one booking on the route (via their students).
+        return Booking::where('route_id', $route->id)
+            ->whereHas('student', fn ($q) => $q->where('parent_id', $user->id))
+            ->exists();
     }
 
     /**

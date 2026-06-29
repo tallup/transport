@@ -7,7 +7,6 @@ use App\Models\Booking;
 use App\Notifications\PaymentFailed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Laravel\Cashier\Http\Controllers\WebhookController as CashierController;
 use Stripe\Stripe;
 use Stripe\Webhook;
 
@@ -16,7 +15,6 @@ class StripeWebhookController extends Controller
     /**
      * Handle Stripe webhook events.
      *
-     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function handleWebhook(Request $request)
@@ -28,8 +26,17 @@ class StripeWebhookController extends Controller
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
         } catch (\Exception $e) {
-            Log::error('Stripe webhook signature verification failed: ' . $e->getMessage());
+            Log::error('Stripe webhook signature verification failed: '.$e->getMessage());
+
             return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        // Idempotency: Stripe retries deliveries, so process each event id at most once.
+        $eventId = $event->id ?? null;
+        if ($eventId && ! \Illuminate\Support\Facades\Cache::add("stripe_webhook:{$eventId}", true, now()->addHours(24))) {
+            Log::info('Duplicate Stripe webhook ignored', ['event_id' => $eventId]);
+
+            return response()->json(['received' => true, 'duplicate' => true]);
         }
 
         // Handle the event
@@ -72,7 +79,7 @@ class StripeWebhookController extends Controller
     protected function handlePaymentIntentSucceeded($paymentIntent)
     {
         $bookingIdsRaw = $paymentIntent->metadata->booking_ids ?? $paymentIntent->metadata->booking_id ?? null;
-        if (!$bookingIdsRaw) {
+        if (! $bookingIdsRaw) {
             return;
         }
         $bookingIds = array_filter(array_map('intval', explode(',', (string) $bookingIdsRaw)));
@@ -94,7 +101,7 @@ class StripeWebhookController extends Controller
             }
         }
         if ($updated > 0) {
-            Log::info("Stripe webhook: {$updated} booking(s) marked awaiting approval", ['booking_ids' => $bookingIds]);
+            Log::info("Stripe webhook: {$updated} booking(s) activated", ['booking_ids' => $bookingIds]);
         }
     }
 
@@ -108,8 +115,8 @@ class StripeWebhookController extends Controller
         if ($bookingId) {
             $booking = Booking::with('student.parent')->find($bookingId);
             if ($booking) {
-                $booking->update(['status' => 'failed']);
-                
+                $booking->update(['status' => Booking::STATUS_FAILED]);
+
                 // Notify parent
                 if ($booking->student && $booking->student->parent) {
                     $booking->student->parent->notify(new PaymentFailed($booking));
@@ -127,16 +134,34 @@ class StripeWebhookController extends Controller
     {
         $paymentIntentId = $charge->payment_intent ?? null;
 
-        if ($paymentIntentId) {
-            // Find booking by payment intent metadata
-            // Note: This requires storing payment_intent_id in bookings table for better tracking
-            Log::info("Charge refunded for payment intent: {$paymentIntentId}");
-            
-            // Update booking status if needed
-            // $booking = Booking::where('stripe_payment_intent_id', $paymentIntentId)->first();
-            // if ($booking) {
-            //     $booking->update(['status' => 'refunded']);
-            // }
+        if (! $paymentIntentId) {
+            Log::warning('charge.refunded received with no payment_intent', ['charge_id' => $charge->id ?? null]);
+
+            return;
+        }
+
+        // Only act on full refunds; partial refunds keep the booking active.
+        $fullyRefunded = isset($charge->amount, $charge->amount_refunded)
+            && (int) $charge->amount_refunded >= (int) $charge->amount;
+
+        if (! $fullyRefunded) {
+            Log::info("Partial refund for payment intent {$paymentIntentId}; booking status unchanged");
+
+            return;
+        }
+
+        // Stripe bookings store the PaymentIntent id in payment_id (see paymentSuccess / webhook succeeded).
+        $bookings = Booking::where('payment_id', $paymentIntentId)->get();
+
+        foreach ($bookings as $booking) {
+            if ($booking->status !== Booking::STATUS_REFUNDED) {
+                $booking->update(['status' => Booking::STATUS_REFUNDED]);
+                Log::info("Booking {$booking->id} marked refunded via webhook", ['payment_intent' => $paymentIntentId]);
+            }
+        }
+
+        if ($bookings->isEmpty()) {
+            Log::warning("charge.refunded: no booking found for payment intent {$paymentIntentId}");
         }
     }
 
@@ -158,10 +183,3 @@ class StripeWebhookController extends Controller
         Log::info("Subscription deleted: {$subscription->id}");
     }
 }
-
-
-
-
-
-
-

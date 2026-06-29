@@ -7,20 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Booking extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_AWAITING_APPROVAL = 'awaiting_approval';
+
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_EXPIRED = 'expired';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_REFUNDED = 'refunded';
+
+    public const STATUS_FAILED = 'failed';
 
     /**
      * Statuses that count as "active" for capacity and roster (not yet ended or cancelled).

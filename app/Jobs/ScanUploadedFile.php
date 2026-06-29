@@ -52,10 +52,36 @@ class ScanUploadedFile implements ShouldQueue
         if (! $socket) {
             Log::error("ClamAV unreachable: {$errstr} ({$errno})");
 
-            return false;
+            // Fail closed: an unreachable scanner must not be treated as "clean".
+            // Throwing keeps the file in 'pending' (not downloadable) and lets the queue retry.
+            throw new \RuntimeException('ClamAV scanner unreachable');
         }
 
-        fwrite($socket, "SCAN {$path}\n");
+        stream_set_timeout($socket, 30);
+
+        // INSTREAM streams the file content over the socket, so it works whether clamd
+        // runs on the same host or in a separate container without filesystem access.
+        fwrite($socket, "zINSTREAM\0");
+
+        $handle = @fopen($path, 'rb');
+        if (! $handle) {
+            fclose($socket);
+
+            throw new \RuntimeException("Unable to open file for scanning: {$path}");
+        }
+
+        while (! feof($handle)) {
+            $chunk = fread($handle, 8192);
+            if ($chunk === '' || $chunk === false) {
+                break;
+            }
+            fwrite($socket, pack('N', strlen($chunk)).$chunk);
+        }
+        fclose($handle);
+
+        // A zero-length chunk terminates the INSTREAM upload.
+        fwrite($socket, pack('N', 0));
+
         $response = '';
         while (! feof($socket)) {
             $response .= fgets($socket, 1024);

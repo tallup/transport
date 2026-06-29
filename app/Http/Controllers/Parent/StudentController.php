@@ -219,6 +219,7 @@ class StudentController extends Controller
             $validated['authorized_pickup_persons'] = array_values(array_filter($validated['authorized_pickup_persons'], fn ($p) => ! empty($p['name'])));
         }
 
+        $pictureReplaced = false;
         if ($request->hasFile('profile_picture')) {
             if ($student->profile_picture) {
                 Storage::disk('public')->delete($student->profile_picture);
@@ -227,11 +228,16 @@ class StudentController extends Controller
             $ext = preg_replace('/[^a-z0-9]/', '', strtolower($file->getClientOriginalExtension())) ?: 'jpg';
             $filename = 'student_'.time().'_'.\Illuminate\Support\Str::random(10).'.'.$ext;
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $filename, 'public');
+            $pictureReplaced = true;
         } else {
             unset($validated['profile_picture']);
         }
 
         $student->update($validated);
+
+        if ($pictureReplaced) {
+            ScanUploadedFile::dispatch(Student::class, $student->id, 'profile_picture')->onQueue('default');
+        }
 
         return redirect()->route('parent.students.index')
             ->with('success', 'Student details updated successfully.');

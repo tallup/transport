@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\DailyPickup;
-use App\Models\PricingRule;
 use App\Services\PricingService;
 use App\Services\ReportExportService;
 use Carbon\Carbon;
@@ -17,6 +16,7 @@ use Inertia\Inertia;
 class FinanceController extends Controller
 {
     protected $pricingService;
+
     protected $reportExportService;
 
     public function __construct(PricingService $pricingService, ReportExportService $reportExportService)
@@ -33,7 +33,7 @@ class FinanceController extends Controller
             $activeBookings = Booking::whereIn('status', Booking::activeStatuses())
                 ->with(['route.vehicle', 'student.parent'])
                 ->get();
-            
+
             foreach ($activeBookings as $booking) {
                 try {
                     if ($booking->route) {
@@ -48,13 +48,11 @@ class FinanceController extends Controller
             // Revenue by plan type
             $revenueByPlanType = [];
             $planTypes = ['weekly', 'monthly', 'academic_term', 'annual'];
-            
+
             foreach ($planTypes as $planType) {
-                $bookings = Booking::whereIn('status', Booking::activeStatuses())
-                    ->where('plan_type', $planType)
-                    ->with(['route.vehicle', 'student.parent'])
-                    ->get();
-                
+                // Derive from the already-loaded active bookings instead of re-querying.
+                $bookings = $activeBookings->where('plan_type', $planType);
+
                 $planRevenue = 0;
                 foreach ($bookings as $booking) {
                     try {
@@ -66,7 +64,7 @@ class FinanceController extends Controller
                         // Skip bookings without valid pricing
                     }
                 }
-                
+
                 $revenueByPlanType[] = [
                     'plan_type' => $planType,
                     'label' => ucfirst(str_replace('_', '-', $planType)),
@@ -81,12 +79,10 @@ class FinanceController extends Controller
                 $date = Carbon::now()->subDays($i);
                 $dayStart = $date->copy()->startOfDay();
                 $dayEnd = $date->copy()->endOfDay();
-                
-                $dayBookings = Booking::whereIn('status', Booking::activeStatuses())
-                    ->whereBetween('created_at', [$dayStart, $dayEnd])
-                    ->with(['route.vehicle', 'student.parent'])
-                    ->get();
-                
+
+                // Filter the already-loaded active bookings in memory; no per-day query.
+                $dayBookings = $activeBookings->whereBetween('created_at', [$dayStart, $dayEnd]);
+
                 $dayRevenue = 0;
                 foreach ($dayBookings as $booking) {
                     try {
@@ -98,7 +94,7 @@ class FinanceController extends Controller
                         // Skip bookings without valid pricing
                     }
                 }
-                
+
                 $revenueTrends[] = [
                     'date' => $date->format('Y-m-d'),
                     'label' => $date->format('M d'),
@@ -110,11 +106,11 @@ class FinanceController extends Controller
             $bookingStats = Booking::select('plan_type', DB::raw('count(*) as count'))
                 ->groupBy('plan_type')
                 ->get()
-                ->mapWithKeys(fn($item) => [
+                ->mapWithKeys(fn ($item) => [
                     $item->plan_type => [
                         'count' => $item->count,
                         'label' => ucfirst(str_replace('_', '-', $item->plan_type)),
-                    ]
+                    ],
                 ])
                 ->toArray();
 
@@ -133,12 +129,10 @@ class FinanceController extends Controller
                 $month = Carbon::now()->subMonths($i);
                 $monthStart = $month->copy()->startOfMonth();
                 $monthEnd = $month->copy()->endOfMonth();
-                
-                $monthBookings = Booking::whereIn('status', Booking::activeStatuses())
-                    ->whereBetween('created_at', [$monthStart, $monthEnd])
-                    ->with(['route.vehicle', 'student.parent'])
-                    ->get();
-                
+
+                // Filter the already-loaded active bookings in memory; no per-month query.
+                $monthBookings = $activeBookings->whereBetween('created_at', [$monthStart, $monthEnd]);
+
                 $monthRev = 0;
                 foreach ($monthBookings as $booking) {
                     try {
@@ -150,7 +144,7 @@ class FinanceController extends Controller
                         // Skip bookings without valid pricing
                     }
                 }
-                
+
                 $monthlyRevenue[] = [
                     'month' => $month->format('Y-m'),
                     'label' => $month->format('M Y'),
@@ -218,9 +212,8 @@ class FinanceController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to export report: ' . $e->getMessage(),
+                'message' => 'Failed to export report: '.$e->getMessage(),
             ], 500);
         }
     }
 }
-

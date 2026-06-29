@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use App\Models\Booking;
-use App\Models\PickupPoint;
 use App\Models\Route;
 use App\Models\School;
 use App\Notifications\BookingConfirmed;
@@ -18,7 +17,6 @@ use App\Services\CapacityGuard;
 use App\Services\PricingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Laravel\Cashier\Exceptions\IncompletePayment;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -26,8 +24,11 @@ use Stripe\Stripe;
 class BookingController extends Controller
 {
     protected $capacityGuard;
+
     protected $pricingService;
+
     protected $bookingService;
+
     protected $calendarService;
 
     public function __construct(CapacityGuard $capacityGuard, PricingService $pricingService, BookingService $bookingService, CalendarService $calendarService)
@@ -36,7 +37,7 @@ class BookingController extends Controller
         $this->pricingService = $pricingService;
         $this->bookingService = $bookingService;
         $this->calendarService = $calendarService;
-        
+
         Stripe::setApiKey(config('cashier.secret'));
     }
 
@@ -45,37 +46,38 @@ class BookingController extends Controller
         $user = $request->user();
         $students = $user->students()->with('school')->get();
         $schools = School::where('active', true)->orderBy('name')->get();
-        
+
         // Filter routes by school if provided
         $schoolId = $request->query('school_id');
         $routesQuery = Route::where('active', true)
             ->with(['vehicle', 'pickupPoints', 'schools']);
-        
+
         if ($schoolId) {
             $routesQuery->whereHas('schools', function ($query) use ($schoolId) {
                 $query->where('schools.id', $schoolId);
             });
         }
-        
+
         $routes = $routesQuery->get()
             ->map(function ($route) {
                 $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
                 // Ensure pickup_points is accessible in frontend
                 $route->pickup_points = $route->pickupPoints;
+
                 return $route;
             });
 
         // Get recent custom pickup addresses for quick selection (address-only flow)
         $recentPickups = Booking::whereHas('student', function ($query) use ($user) {
-                $query->where('parent_id', $user->id);
-            })
+            $query->where('parent_id', $user->id);
+        })
             ->with(['route'])
             ->whereNotNull('pickup_address')
             ->where('pickup_address', '!=', '')
             ->orderBy('created_at', 'desc')
             ->get()
             ->unique(function ($b) {
-                return $b->route_id . '|' . trim($b->pickup_address ?? '');
+                return $b->route_id.'|'.trim($b->pickup_address ?? '');
             })
             ->take(3)
             ->values();
@@ -87,7 +89,7 @@ class BookingController extends Controller
             'recentPickups' => $recentPickups,
         ]);
     }
-    
+
     public function getRoutesBySchool(Request $request, School $school)
     {
         $routes = Route::where('active', true)
@@ -99,9 +101,10 @@ class BookingController extends Controller
             ->map(function ($route) {
                 $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
                 $route->pickup_points = $route->pickupPoints;
+
                 return $route;
             });
-        
+
         return response()->json($routes);
     }
 
@@ -109,19 +112,19 @@ class BookingController extends Controller
     {
         $validated = $request->validated();
         $user = $request->user();
-        
+
         // Support booking for one or multiple students
         $studentIds = [];
-        if (!empty($validated['student_ids']) && is_array($validated['student_ids'])) {
+        if (! empty($validated['student_ids']) && is_array($validated['student_ids'])) {
             $studentIds = array_unique(array_map('intval', $validated['student_ids']));
-        } elseif (!empty($validated['student_id'])) {
+        } elseif (! empty($validated['student_id'])) {
             $studentIds = [intval($validated['student_id'])];
         }
-        
+
         if (empty($studentIds)) {
             return back()->withErrors(['student_id' => 'Please select at least one student.']);
         }
-        
+
         // Sanitize text inputs
         if (isset($validated['pickup_address'])) {
             $validated['pickup_address'] = strip_tags($validated['pickup_address']);
@@ -137,23 +140,23 @@ class BookingController extends Controller
         if ($students->count() !== count($studentIds)) {
             abort(403, 'Unauthorized to create bookings for one or more selected students.');
         }
-        
+
         // Additional authorization check using policy
-        if (!$request->user()->can('create', Booking::class)) {
+        if (! $request->user()->can('create', Booking::class)) {
             abort(403, 'Unauthorized to create bookings.');
         }
 
         // Validate booking date against calendar
         $startDate = \Carbon\Carbon::parse($validated['start_date']);
         $dateValidation = $this->calendarService->validateBookingDate($startDate);
-        if (!$dateValidation['valid']) {
+        if (! $dateValidation['valid']) {
             return back()->withErrors(['start_date' => $dateValidation['message']]);
         }
 
         // Check for overlapping bookings
         $bookingService = app(BookingService::class);
         $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
-        
+
         // Check for overlapping bookings for each selected student
         foreach ($studentIds as $sid) {
             $overlappingBooking = Booking::where('student_id', $sid)
@@ -169,7 +172,7 @@ class BookingController extends Controller
                 })
                 ->with(['route', 'student'])
                 ->first();
-            
+
             if ($overlappingBooking) {
                 $bookingInfo = sprintf(
                     'Student %s already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
@@ -179,6 +182,7 @@ class BookingController extends Controller
                     $overlappingBooking->start_date->format('M d, Y'),
                     $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
                 );
+
                 return back()->withErrors(['start_date' => $bookingInfo]);
             }
         }
@@ -193,7 +197,7 @@ class BookingController extends Controller
                     'route_id' => 'Not enough available seats on this route for all selected students.',
                 ]);
             }
-            
+
             // Also run existing single-booking capacity validation for safety
             $this->capacityGuard->validateBookingCapacity($route);
         } catch (CapacityExceededException $e) {
@@ -227,7 +231,7 @@ class BookingController extends Controller
 
         // Two way = both pickup and dropoff; one way = pickup_only or dropoff_only (set by parent)
         $tripDirection = $validated['trip_type'] === 'two_way' ? 'both' : ($validated['trip_direction'] ?? 'pickup_only');
-        
+
         // Create booking(s) (pending until payment)
         $createdBookings = [];
         foreach ($studentIds as $sid) {
@@ -261,7 +265,7 @@ class BookingController extends Controller
                 ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.checkout', $booking)]
             );
         }
-        
+
         // Redirect to checkout: single booking → checkout for it; multiple → checkout for all in one payment
         if (count($createdBookings) === 1) {
             return redirect()->route('parent.bookings.checkout', $createdBookings[0]);
@@ -269,6 +273,7 @@ class BookingController extends Controller
 
         $bookingIds = collect($createdBookings)->pluck('id')->toArray();
         $request->session()->put('checkout_booking_ids', $bookingIds);
+
         return redirect()->route('parent.bookings.checkout', $createdBookings[0]);
     }
 
@@ -276,14 +281,8 @@ class BookingController extends Controller
     {
         $user = $request->user();
 
-        // Auto-update booking statuses; wrapped in try-catch so a notification
-        // failure never crashes this request and inadvertently logs the user out.
-        try {
-            $bookingService = app(BookingService::class);
-            $bookingService->updateBookingStatuses();
-        } catch (\Throwable $e) {
-            \Log::error('updateBookingStatuses failed on bookings index: ' . $e->getMessage());
-        }
+        // Booking-status expiry now runs via the scheduler (bookings:update-statuses, hourly),
+        // not on every page load. See routes/console.php.
 
         $students = $user->students;
 
@@ -306,7 +305,7 @@ class BookingController extends Controller
 
         // Group checkout: multiple pending bookings from session (created in same flow)
         $groupIds = $request->session()->get('checkout_booking_ids', []);
-        if (!empty($groupIds)) {
+        if (! empty($groupIds)) {
             $request->session()->forget('checkout_booking_ids');
             $bookings = Booking::whereIn('id', $groupIds)
                 ->where('status', 'pending')
@@ -314,7 +313,7 @@ class BookingController extends Controller
                 ->orderBy('id')
                 ->get();
             foreach ($bookings as $b) {
-                if (!$user->students->contains($b->student_id)) {
+                if (! $user->students->contains($b->student_id)) {
                     abort(403, 'Unauthorized');
                 }
             }
@@ -332,6 +331,7 @@ class BookingController extends Controller
                 }
             }
             $totalPrice = round($totalPrice, 2);
+
             return Inertia::render('Parent/Bookings/Checkout', [
                 'booking' => null,
                 'bookings' => $bookings->toArray(),
@@ -341,10 +341,10 @@ class BookingController extends Controller
         }
 
         // Single booking checkout
-        if (!$user->can('view', $booking)) {
+        if (! $user->can('view', $booking)) {
             abort(403, 'Unauthorized to view this booking.');
         }
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
         if ($booking->status !== 'pending') {
@@ -357,6 +357,7 @@ class BookingController extends Controller
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'Unable to calculate price for this booking.');
         }
+
         return Inertia::render('Parent/Bookings/Checkout', [
             'booking' => $booking->load(['student', 'route', 'pickupPoint']),
             'bookings' => null,
@@ -368,12 +369,14 @@ class BookingController extends Controller
     public function getPickupPoints(Request $request, Route $route)
     {
         $pickupPoints = $route->pickupPoints()->orderBy('sequence_order')->get();
+
         return response()->json($pickupPoints);
     }
 
     public function checkCapacity(Request $request, Route $route)
     {
         $availableSeats = $this->capacityGuard->getAvailableSeats($route);
+
         return response()->json([
             'available' => $availableSeats,
             'capacity' => $route->capacity,
@@ -392,12 +395,13 @@ class BookingController extends Controller
         ]);
 
         try {
-            if (!empty($validated['booking_id'])) {
+            if (! empty($validated['booking_id'])) {
                 $booking = Booking::findOrFail($validated['booking_id']);
-                if (!$request->user()->students->contains($booking->student_id)) {
+                if (! $request->user()->students->contains($booking->student_id)) {
                     return response()->json(['error' => 'Unauthorized'], 403);
                 }
                 $price = $this->pricingService->calculatePriceForBooking($booking);
+
                 return response()->json(['price' => $price, 'formatted' => $this->pricingService->formatPrice($price)]);
             }
 
@@ -437,11 +441,11 @@ class BookingController extends Controller
         ]);
 
         $user = $request->user();
-        $bookingIds = !empty($validated['booking_ids']) ? $validated['booking_ids'] : [$validated['booking_id']];
+        $bookingIds = ! empty($validated['booking_ids']) ? $validated['booking_ids'] : [$validated['booking_id']];
         $bookings = Booking::whereIn('id', $bookingIds)->get();
 
         foreach ($bookings as $b) {
-            if (!$user->students->contains($b->student_id) || $b->status !== 'pending') {
+            if (! $user->students->contains($b->student_id) || $b->status !== 'pending') {
                 return response()->json(['error' => 'Unauthorized or booking not pending.'], 403);
             }
         }
@@ -494,12 +498,25 @@ class BookingController extends Controller
                     return back()->withErrors(['error' => 'Payment was not successful']);
                 }
 
+                // Defense-in-depth: the payment intent must belong to the authenticated user.
+                if (isset($paymentIntent->metadata->user_id)
+                    && (int) $paymentIntent->metadata->user_id !== (int) $user->id) {
+                    \Log::warning('Payment intent user mismatch', [
+                        'payment_intent_id' => $validated['payment_intent_id'],
+                        'pi_user_id' => $paymentIntent->metadata->user_id,
+                        'auth_user_id' => $user->id,
+                    ]);
+
+                    return back()->withErrors(['error' => 'Unauthorized']);
+                }
+
                 // --- Idempotency check: skip if this payment intent was already applied ---
                 $alreadyApplied = Booking::where('payment_id', $validated['payment_intent_id'])
                     ->where('status', Booking::STATUS_ACTIVE)
                     ->exists();
                 if ($alreadyApplied) {
                     \Log::info('Payment already applied (idempotent skip)', ['payment_intent_id' => $validated['payment_intent_id']]);
+
                     return redirect()->route('parent.bookings.index')->with('success', 'Payment already processed.');
                 }
 
@@ -512,14 +529,14 @@ class BookingController extends Controller
                 $requestIds = isset($validated['booking_ids']) && is_array($validated['booking_ids'])
                     ? array_map('intval', $validated['booking_ids'])
                     : [];
-                
-                $bookingIds = !empty($metaIds) 
+
+                $bookingIds = ! empty($metaIds)
                     ? array_values(array_unique(array_merge($metaIds, $requestIds)))
-                    : (!empty($requestIds) ? $requestIds : (isset($validated['booking_id']) ? [(int) $validated['booking_id']] : []));
+                    : (! empty($requestIds) ? $requestIds : (isset($validated['booking_id']) ? [(int) $validated['booking_id']] : []));
 
                 $bookings = Booking::whereIn('id', $bookingIds)->get();
                 foreach ($bookings as $b) {
-                    if (!$user->can('update', $b) || !$user->students->contains($b->student_id)) {
+                    if (! $user->can('update', $b) || ! $user->students->contains($b->student_id)) {
                         return back()->withErrors(['error' => 'Unauthorized']);
                     }
                 }
@@ -540,6 +557,7 @@ class BookingController extends Controller
                             'expected' => $expectedAmount,
                             'booking_ids' => $bookings->pluck('id')->toArray(),
                         ]);
+
                         return back()->withErrors(['error' => 'Payment amount does not match expected price. Please contact support.']);
                     }
                 } catch (\Exception $e) {
@@ -569,27 +587,32 @@ class BookingController extends Controller
                     try {
                         $pushHelper = app(\App\Services\PushNotificationHelper::class);
                         $pushHelper->sendIfSubscribed($user, 'Booking Confirmed', 'Your payment has been processed.', ['type' => 'payment_received', 'booking_id' => $booking->id]);
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
 
                     try {
                         $driver = $booking->route?->driver;
                         if ($driver && filter_var($driver->email, FILTER_VALIDATE_EMAIL)) {
                             $driver->notify(new \App\Notifications\DriverStudentAdded($booking));
                         }
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
 
                     try {
                         $adminService = app(\App\Services\AdminNotificationService::class);
                         $adminService->notifyAdmins(new \App\Notifications\Admin\PaymentReceivedAlert($booking, $perBookingAmount, 'stripe'));
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
 
-                $message = count($bookings) === 1 ? 'Payment received. Your booking is now active!' : 'Payment received. Your ' . count($bookings) . ' bookings are now active!';
+                $message = count($bookings) === 1 ? 'Payment received. Your booking is now active!' : 'Payment received. Your '.count($bookings).' bookings are now active!';
+
                 return redirect()->route('parent.bookings.index')->with('success', $message);
             });
         } catch (\Exception $e) {
             \Log::error('Payment verification failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return back()->withErrors(['error' => 'Payment verification failed: ' . $e->getMessage()]);
+
+            return back()->withErrors(['error' => 'Payment verification failed: '.$e->getMessage()]);
         }
     }
 
@@ -603,12 +626,12 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($validated['booking_id']);
 
         // Authorization check using policy
-        if (!$user->can('update', $booking)) {
+        if (! $user->can('update', $booking)) {
             abort(403, 'Unauthorized to update this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             return back()->withErrors(['error' => 'Unauthorized']);
         }
 
@@ -635,7 +658,7 @@ class BookingController extends Controller
             'Complete payment to activate your booking.',
             ['type' => 'booking_created', 'booking_id' => $booking->id, 'url' => route('parent.bookings.show', $booking)]
         );
-        
+
         // Admin is not notified until payment is complete (see paymentSuccess / PayPal success).
 
         return redirect()->route('parent.bookings.index')
@@ -644,17 +667,32 @@ class BookingController extends Controller
 
     public function createPayPalOrder(Request $request)
     {
+        // NOTE: 'amount' is intentionally NOT trusted from the client. The order value is
+        // always recalculated server-side to prevent price-tampering (e.g. paying $0.01).
         $validated = $request->validate([
             'booking_id' => 'required|exists:bookings,id',
-            'amount' => 'required|numeric|min:0.01',
         ]);
 
         $user = $request->user();
         $booking = Booking::findOrFail($validated['booking_id']);
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Only unpaid (pending) bookings may be paid for.
+        if ($booking->status !== Booking::STATUS_PENDING) {
+            return response()->json(['error' => 'This booking is not awaiting payment.'], 422);
+        }
+
+        // Authoritative server-side price.
+        try {
+            $amount = max(0.01, round($this->pricingService->calculatePriceForBooking($booking), 2));
+        } catch (\Exception $e) {
+            \Log::error('PayPal order: price calculation failed', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+
+            return response()->json(['error' => 'Unable to calculate price.'], 400);
         }
 
         try {
@@ -663,21 +701,21 @@ class BookingController extends Controller
             $accessToken = $provider->getAccessToken();
 
             $order = $provider->createOrder([
-                "intent" => "CAPTURE",
-                "purchase_units" => [
+                'intent' => 'CAPTURE',
+                'purchase_units' => [
                     [
-                        "reference_id" => "booking_{$booking->id}",
-                        "amount" => [
-                            "currency_code" => config('paypal.currency', 'USD'),
-                            "value" => number_format($validated['amount'], 2, '.', '')
+                        'reference_id' => "booking_{$booking->id}",
+                        'amount' => [
+                            'currency_code' => config('paypal.currency', 'USD'),
+                            'value' => number_format($amount, 2, '.', ''),
                         ],
-                        "description" => "Transport booking for {$booking->student->name}"
-                    ]
+                        'description' => "Transport booking for {$booking->student->name}",
+                    ],
                 ],
-                "application_context" => [
-                    "return_url" => route('parent.bookings.paypal.success'),
-                    "cancel_url" => route('parent.bookings.paypal.cancel'),
-                ]
+                'application_context' => [
+                    'return_url' => route('parent.bookings.paypal.success'),
+                    'cancel_url' => route('parent.bookings.paypal.cancel'),
+                ],
             ]);
 
             // Store order ID in booking temporarily
@@ -699,14 +737,15 @@ class BookingController extends Controller
             if ($approvalUrl) {
                 return response()->json([
                     'orderId' => $order['id'],
-                    'approvalUrl' => $approvalUrl
+                    'approvalUrl' => $approvalUrl,
                 ]);
             }
 
             return response()->json(['error' => 'Failed to create PayPal order'], 500);
         } catch (\Exception $e) {
-            \Log::error('PayPal order creation failed: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create payment order: ' . $e->getMessage()], 500);
+            \Log::error('PayPal order creation failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Failed to create payment order: '.$e->getMessage()], 500);
         }
     }
 
@@ -724,7 +763,7 @@ class BookingController extends Controller
             $booking = Booking::where('paypal_order_id', $validated['token'])->firstOrFail();
 
             // Verify booking belongs to user's student
-            if (!$user->students->contains($booking->student_id)) {
+            if (! $user->students->contains($booking->student_id)) {
                 abort(403, 'Unauthorized');
             }
 
@@ -740,7 +779,24 @@ class BookingController extends Controller
                 if (isset($capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'])) {
                     $amount = (float) $capture['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
                 }
-                
+
+                // Defense-in-depth: captured amount must cover the server-calculated price.
+                try {
+                    $expectedAmount = max(0.01, round($this->pricingService->calculatePriceForBooking($booking), 2));
+                    if ($amount + 0.01 < $expectedAmount) {
+                        \Log::warning('PayPal captured amount below expected price', [
+                            'booking_id' => $booking->id,
+                            'captured' => $amount,
+                            'expected' => $expectedAmount,
+                        ]);
+
+                        return redirect()->route('parent.bookings.show', $booking)
+                            ->with('error', 'Payment amount did not match the booking price. Please contact support.');
+                    }
+                } catch (\Exception $e) {
+                    \Log::warning('PayPal amount verification skipped', ['booking_id' => $booking->id, 'error' => $e->getMessage()]);
+                }
+
                 // Payment confirmed → booking is automatically approved (active)
                 $booking->update([
                     'status' => 'active',
@@ -786,7 +842,7 @@ class BookingController extends Controller
                         'paypal'
                     ));
                     $adminIds = $adminService->getAdmins()->pluck('id')->toArray();
-                    if (!empty($adminIds)) {
+                    if (! empty($adminIds)) {
                         event(new \App\Events\PortalUpdate(
                             $adminIds,
                             'payment_received',
@@ -805,7 +861,8 @@ class BookingController extends Controller
             return redirect()->route('parent.bookings.show', $booking)
                 ->with('error', 'Payment was not completed successfully.');
         } catch (\Exception $e) {
-            \Log::error('PayPal payment capture failed: ' . $e->getMessage());
+            \Log::error('PayPal payment capture failed: '.$e->getMessage());
+
             return redirect()->route('parent.bookings.index')
                 ->with('error', 'Payment verification failed. Please contact support.');
         }
@@ -814,7 +871,7 @@ class BookingController extends Controller
     public function paypalCancel(Request $request)
     {
         $token = $request->input('token');
-        
+
         if ($token) {
             $booking = Booking::where('paypal_order_id', $token)->first();
             if ($booking) {
@@ -831,12 +888,12 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check using policy
-        if (!$user->can('view', $booking)) {
+        if (! $user->can('view', $booking)) {
             abort(403, 'Unauthorized to view this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
 
@@ -844,7 +901,7 @@ class BookingController extends Controller
         $booking->load(['student', 'route', 'pickupPoint', 'student.school']);
         $students = $user->students()->with('school')->get();
         $schools = \App\Models\School::where('active', true)->orderBy('name')->get();
-        
+
         // Get routes for the student's school
         $schoolId = $booking->student->school_id;
         $routes = Route::where('active', true)
@@ -856,6 +913,7 @@ class BookingController extends Controller
             ->map(function ($route) {
                 $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
                 $route->pickup_points = $route->pickupPoints;
+
                 return $route;
             });
 
@@ -872,12 +930,12 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check
-        if (!$user->can('view', $booking)) {
+        if (! $user->can('view', $booking)) {
             abort(403, 'Unauthorized to view this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
 
@@ -926,13 +984,13 @@ class BookingController extends Controller
                 ->groupBy('pickup_date');
         } catch (\Exception $e) {
             // If there's an error loading pickups, use empty collection
-            \Log::error('Error loading daily pickups: ' . $e->getMessage());
+            \Log::error('Error loading daily pickups: '.$e->getMessage());
             $dailyPickups = collect([]);
         }
 
         // Load booking with relationships (safely handle missing relationships)
         $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
-        
+
         // Load driver separately if route exists
         if ($booking->route) {
             $booking->route->load('driver');
@@ -950,18 +1008,18 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check
-        if (!$user->can('view', $booking)) {
+        if (! $user->can('view', $booking)) {
             abort(403, 'Unauthorized to view this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
 
         // Load booking with relationships (safely handle missing relationships)
         $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
-        
+
         // Load driver separately if route exists
         if ($booking->route) {
             $booking->route->load('driver');
@@ -1010,10 +1068,11 @@ class BookingController extends Controller
                             ] : null,
                         ];
                     } catch (\Exception $e) {
-                        \Log::error('Error mapping daily pickup: ' . $e->getMessage(), [
+                        \Log::error('Error mapping daily pickup: '.$e->getMessage(), [
                             'pickup_id' => $pickup->id ?? null,
                             'booking_id' => $booking->id ?? null,
                         ]);
+
                         return null;
                     }
                 })
@@ -1023,7 +1082,7 @@ class BookingController extends Controller
                 })
                 ->groupBy('pickup_date');
         } catch (\Exception $e) {
-            \Log::error('Error loading daily pickups: ' . $e->getMessage(), [
+            \Log::error('Error loading daily pickups: '.$e->getMessage(), [
                 'booking_id' => $booking->id ?? null,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -1032,9 +1091,9 @@ class BookingController extends Controller
 
         // Calculate statistics
         $totalPickups = $dailyPickups->flatten()->count();
-        $completedPickups = $dailyPickups->flatten()->filter(fn($p) => $p['completed_at'] !== null)->count();
-        $amPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'am')->count();
-        $pmPickups = $dailyPickups->flatten()->filter(fn($p) => $p['period'] === 'pm')->count();
+        $completedPickups = $dailyPickups->flatten()->filter(fn ($p) => $p['completed_at'] !== null)->count();
+        $amPickups = $dailyPickups->flatten()->filter(fn ($p) => $p['period'] === 'am')->count();
+        $pmPickups = $dailyPickups->flatten()->filter(fn ($p) => $p['period'] === 'pm')->count();
 
         return Inertia::render('Parent/Bookings/PickupHistory', [
             'booking' => $booking,
@@ -1054,7 +1113,7 @@ class BookingController extends Controller
 
         // Get all bookings for the parent's students
         $studentIds = $user->students->pluck('id');
-        
+
         if ($studentIds->isEmpty()) {
             return Inertia::render('Parent/Bookings/AllPickupHistory', [
                 'bookings' => [],
@@ -1068,14 +1127,14 @@ class BookingController extends Controller
                 ],
             ]);
         }
-        
+
         $bookings = Booking::whereIn('student_id', $studentIds)
             ->with(['student', 'route.vehicle', 'route.driver', 'pickupPoint', 'dropoffPoint'])
             ->get();
 
         // Load all daily pickups for all bookings
         $bookingIds = $bookings->pluck('id');
-        
+
         if ($bookingIds->isEmpty()) {
             return Inertia::render('Parent/Bookings/AllPickupHistory', [
                 'bookings' => $bookings->map(function ($booking) {
@@ -1101,7 +1160,7 @@ class BookingController extends Controller
                 ],
             ]);
         }
-        
+
         try {
             $dailyPickups = \App\Models\DailyPickup::whereIn('booking_id', $bookingIds->toArray())
                 ->with(['driver', 'pickupPoint', 'booking.student', 'booking.route'])
@@ -1110,6 +1169,7 @@ class BookingController extends Controller
                 ->get()
                 ->map(function ($pickup) {
                     $booking = $pickup->booking;
+
                     return [
                         'id' => $pickup->id,
                         'booking_id' => $pickup->booking_id,
@@ -1158,17 +1218,17 @@ class BookingController extends Controller
                 })
                 ->toArray();
         } catch (\Exception $e) {
-            \Log::error('Error loading daily pickups: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('Error loading daily pickups: '.$e->getMessage());
+            \Log::error('Stack trace: '.$e->getTraceAsString());
             $dailyPickups = [];
         }
 
         // Calculate overall statistics
         $allPickups = collect($dailyPickups)->flatten(1);
         $totalPickups = $allPickups->count();
-        $completedPickups = $allPickups->filter(fn($p) => isset($p['completed_at']) && $p['completed_at'] !== null)->count();
-        $amPickups = $allPickups->filter(fn($p) => isset($p['period']) && $p['period'] === 'am')->count();
-        $pmPickups = $allPickups->filter(fn($p) => isset($p['period']) && $p['period'] === 'pm')->count();
+        $completedPickups = $allPickups->filter(fn ($p) => isset($p['completed_at']) && $p['completed_at'] !== null)->count();
+        $amPickups = $allPickups->filter(fn ($p) => isset($p['period']) && $p['period'] === 'am')->count();
+        $pmPickups = $allPickups->filter(fn ($p) => isset($p['period']) && $p['period'] === 'pm')->count();
 
         // Group by booking for easier navigation
         $pickupsByBooking = $allPickups->groupBy('booking_id')
@@ -1207,12 +1267,12 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check
-        if (!$user->can('update', $booking)) {
+        if (! $user->can('update', $booking)) {
             abort(403, 'Unauthorized to edit this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
 
@@ -1229,7 +1289,7 @@ class BookingController extends Controller
         $booking->load(['student.parent', 'student.school', 'route.vehicle', 'pickupPoint', 'dropoffPoint']);
         $students = $user->students()->with('school')->get();
         $schools = \App\Models\School::where('active', true)->orderBy('name')->get();
-        
+
         // Get routes for the student's school
         $schoolId = $booking->student->school_id;
         $routes = Route::where('active', true)
@@ -1241,6 +1301,7 @@ class BookingController extends Controller
             ->map(function ($route) {
                 $route->available_seats = $this->capacityGuard->getAvailableSeats($route);
                 $route->pickup_points = $route->pickupPoints;
+
                 return $route;
             });
 
@@ -1269,12 +1330,12 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check
-        if (!$user->can('update', $booking)) {
+        if (! $user->can('update', $booking)) {
             abort(403, 'Unauthorized to update this booking.');
         }
 
         // Verify booking belongs to user's student
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized');
         }
 
@@ -1296,7 +1357,7 @@ class BookingController extends Controller
         // Ensure either pickup_point_id OR pickup_address is provided if route_id is being updated
         if (isset($validated['route_id']) && empty($validated['pickup_point_id']) && empty($validated['pickup_address'])) {
             // If no new pickup info provided, keep existing
-            if (!$booking->pickup_point_id && !$booking->pickup_address) {
+            if (! $booking->pickup_point_id && ! $booking->pickup_address) {
                 return back()->withErrors(['pickup_address' => 'Please either select a pickup point or enter a pickup address.']);
             }
         }
@@ -1305,26 +1366,26 @@ class BookingController extends Controller
         if (isset($validated['start_date'])) {
             $startDate = \Carbon\Carbon::parse($validated['start_date']);
             $dateValidation = $this->calendarService->validateBookingDate($startDate);
-            if (!$dateValidation['valid']) {
+            if (! $dateValidation['valid']) {
                 return back()->withErrors(['start_date' => $dateValidation['message']]);
             }
         }
 
         // Check for overlapping bookings if dates are being updated (excluding current booking)
         if (isset($validated['start_date']) || isset($validated['end_date'])) {
-            $startDate = isset($validated['start_date']) 
-                ? \Carbon\Carbon::parse($validated['start_date']) 
+            $startDate = isset($validated['start_date'])
+                ? \Carbon\Carbon::parse($validated['start_date'])
                 : \Carbon\Carbon::parse($booking->start_date);
-            
+
             $bookingService = app(BookingService::class);
-            $endDate = isset($validated['plan_type']) 
+            $endDate = isset($validated['plan_type'])
                 ? $bookingService->calculateEndDate($validated['plan_type'], $startDate)
                 : ($booking->end_date ? \Carbon\Carbon::parse($booking->end_date) : null);
-            
-            if (!$endDate && isset($validated['plan_type'])) {
+
+            if (! $endDate && isset($validated['plan_type'])) {
                 $endDate = $bookingService->calculateEndDate($validated['plan_type'], $startDate);
             }
-            
+
             $overlappingBooking = Booking::where('student_id', $booking->student_id)
                 ->where('id', '!=', $booking->id)
                 ->whereIn('status', Booking::activeStatuses())
@@ -1339,7 +1400,7 @@ class BookingController extends Controller
                 })
                 ->with(['route', 'student'])
                 ->first();
-            
+
             if ($overlappingBooking) {
                 $bookingInfo = sprintf(
                     'This student already has a %s booking (ID: %d) from %s to %s. Please cancel or complete the existing booking first.',
@@ -1348,6 +1409,7 @@ class BookingController extends Controller
                     $overlappingBooking->start_date->format('M d, Y'),
                     $overlappingBooking->end_date ? $overlappingBooking->end_date->format('M d, Y') : 'ongoing'
                 );
+
                 return back()->withErrors(['start_date' => $bookingInfo]);
             }
         }
@@ -1365,10 +1427,10 @@ class BookingController extends Controller
         // Recalculate end date if plan_type or start_date changed
         if (isset($validated['plan_type']) || isset($validated['start_date'])) {
             $planType = $validated['plan_type'] ?? $booking->plan_type;
-            $startDate = isset($validated['start_date']) 
-                ? \Carbon\Carbon::parse($validated['start_date']) 
+            $startDate = isset($validated['start_date'])
+                ? \Carbon\Carbon::parse($validated['start_date'])
                 : \Carbon\Carbon::parse($booking->start_date);
-            
+
             $bookingService = app(BookingService::class);
             $newEndDate = $bookingService->calculateEndDate($planType, $startDate);
             $validated['end_date'] = $newEndDate?->format('Y-m-d');
@@ -1386,12 +1448,12 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check - parent can only cancel their own student's bookings
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized to cancel this booking.');
         }
 
         // Allow cancelling pending or active bookings
-        if (!in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
+        if (! in_array($booking->status, ['pending', 'awaiting_approval', 'active'])) {
             return back()->withErrors(['error' => 'Only pending, awaiting approval, or active bookings can be cancelled.']);
         }
 
@@ -1408,7 +1470,7 @@ class BookingController extends Controller
                 'booking_id' => $booking->id,
             ]);
         }
-        
+
         // Send push notification
         $pushHelper = app(\App\Services\PushNotificationHelper::class);
         $pushHelper->sendIfSubscribed(
@@ -1417,7 +1479,7 @@ class BookingController extends Controller
             'Your booking has been cancelled.',
             ['type' => 'booking_cancelled', 'booking_id' => $booking->id, 'url' => route('parent.bookings.index')]
         );
-        
+
         // Notify admins of cancellation
         $adminService = app(\App\Services\AdminNotificationService::class);
         $adminService->notifyAdmins(new \App\Notifications\Admin\BookingCancelledAlert(
@@ -1434,13 +1496,13 @@ class BookingController extends Controller
         $user = $request->user();
 
         // Authorization check - parent can only delete their own student's bookings
-        if (!$user->students->contains($booking->student_id)) {
+        if (! $user->students->contains($booking->student_id)) {
             abort(403, 'Unauthorized to delete this booking.');
         }
 
         // Only allow deleting cancelled, completed, or expired bookings
         // Prevent deleting pending, awaiting approval, or active bookings (they should be cancelled first)
-        if (!in_array($booking->status, ['cancelled', 'completed', 'expired'])) {
+        if (! in_array($booking->status, ['cancelled', 'completed', 'expired'])) {
             return back()->withErrors(['error' => 'Cannot delete pending, awaiting approval, or active bookings. Please cancel them first.']);
         }
 

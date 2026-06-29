@@ -6,20 +6,27 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // Axios automatically handles the X-XSRF-TOKEN header from the cookie set by Laravel.
 // We do NOT need to manually read the meta tag, as it becomes stale in an SPA after login.
 
-// Track if we're already handling a 419 error to prevent multiple redirects
-let handling419 = false;
-
-// Add response interceptor to handle CSRF token mismatch (419 errors)
+// CSRF token mismatch (419) recovery.
+// Previously ANY 419 hard-redirected to /login, which logged users out on transient
+// token desyncs (e.g. after some idle time or concurrent requests) — the "logged out
+// while clicking the menu" bug. Instead, refresh the XSRF-TOKEN cookie via Sanctum and
+// retry the original request ONCE. Only send the user to login if recovery genuinely fails.
 window.axios.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        // Handle CSRF token mismatch (419) - redirect to fresh login so user gets new token and a message
-        if (error.response?.status === 419 && !handling419) {
-            handling419 = true;
-            window.location.href = '/login?expired=1';
+    (response) => response,
+    async (error) => {
+        const original = error.config;
+
+        if (error.response?.status === 419 && original && !original._csrfRetried) {
+            original._csrfRetried = true;
+            try {
+                await window.axios.get('/sanctum/csrf-cookie');
+                return await window.axios(original); // retry with the fresh XSRF-TOKEN cookie
+            } catch (_) {
+                // Recovery failed — the session is genuinely gone.
+                window.location.href = '/login?expired=1';
+            }
         }
+
         return Promise.reject(error);
     }
 );

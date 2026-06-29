@@ -39,10 +39,10 @@ class HandleInertiaRequests extends Middleware
         if ($request->hasSession()) {
             $request->session()->put('last_activity', now()->timestamp);
         }
-        
+
         $user = $request->user();
         $userData = null;
-        
+
         if ($user) {
             $userData = [
                 'id' => $user->id,
@@ -51,39 +51,20 @@ class HandleInertiaRequests extends Middleware
                 'profile_picture_url' => $user->profile_picture_url,
                 'primary_phone' => $user->getPrimaryPhone(),
             ];
-            
-            // Safely get role - try multiple methods
-            try {
-                // First try to get role directly (fastest)
-                if (isset($user->role) && $user->role !== null) {
-                    $userData['role'] = $user->role;
-                } else {
-                    // Fallback: check if column exists in database
-                    try {
-                        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
-                            $userData['role'] = $user->role ?? 'parent';
-                        } else {
-                            $userData['role'] = 'parent';
-                        }
-                    } catch (\Exception $e) {
-                        // If database check fails, default to parent
-                        $userData['role'] = 'parent';
-                    }
-                }
-            } catch (\Exception $e) {
-                // If anything fails, default to parent
-                $userData['role'] = 'parent';
-            }
+
+            // Role accessor already defaults to 'parent' when the column is null/absent;
+            // no need for a per-request Schema::hasColumn introspection query.
+            $userData['role'] = $user->role ?? 'parent';
         }
-        
+
         // Safely generate Ziggy routes
         $ziggyRoutes = [];
         try {
             // Check if Ziggy v2 class exists (new namespace)
             if (class_exists(\Tighten\Ziggy\Ziggy::class)) {
-                $ziggy = new \Tighten\Ziggy\Ziggy();
+                $ziggy = new \Tighten\Ziggy\Ziggy;
                 $ziggyRoutes = $ziggy->toArray();
-            } 
+            }
             // Don't try v1 namespace - it doesn't exist in Ziggy v2
         } catch (\Exception $e) {
             // If Ziggy fails, use empty array - routes will still work via direct URLs
@@ -92,7 +73,7 @@ class HandleInertiaRequests extends Middleware
             // Catch fatal errors if class doesn't exist
             $ziggyRoutes = [];
         }
-        
+
         return [
             ...parent::share($request),
             'app' => [

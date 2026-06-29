@@ -65,6 +65,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Disabled accounts must not be able to log in even with valid credentials.
+        // Note: is_active is not cast to bool, so it arrives as int 0/1 from the DB; a strict
+        // === false check would miss it. isset() keeps this fail-safe if the column is absent.
+        if (isset($user->is_active) && ! $user->is_active) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been deactivated. Please contact an administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

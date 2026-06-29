@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsAdmin
@@ -16,18 +15,14 @@ class EnsureUserIsAdmin
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login');
         }
 
-        // Get role directly from database to ensure we have the latest value
-        // This bypasses any caching or accessor issues
-        $role = DB::table('users')
-            ->where('id', $user->id)
-            ->value('role');
-        
-        if (!in_array($role, ['super_admin', 'transport_admin', 'admin'])) {
-            abort(403, 'Unauthorized access to admin area. Your current role is: ' . ($role ?? 'not set'));
+        // Role from the loaded model (accessor defaults to 'parent'); avoids a DB query per request.
+        if (! in_array($user->role, ['super_admin', 'transport_admin', 'admin'], true)) {
+            // Generic message — do not disclose the user's role.
+            abort(403, 'Unauthorized.');
         }
 
         return $next($request);

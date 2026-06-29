@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ScanUploadedFile;
 use App\Models\Policy;
 use App\Models\Student;
 use App\Models\User;
@@ -174,17 +175,23 @@ class StudentController extends Controller
             'profile_picture' => 'nullable|image|mimes:jpeg,jpg,png|mimetypes:image/jpeg,image/png|max:10240|dimensions:max_width=4096,max_height=4096',
         ]);
 
+        $pictureReplaced = false;
         if ($request->hasFile('profile_picture')) {
             if ($student->profile_picture) {
                 Storage::disk('public')->delete($student->profile_picture);
             }
             $file = $request->file('profile_picture');
             $validated['profile_picture'] = $file->storeAs('profile-pictures', $file->hashName(), 'public');
+            $pictureReplaced = true;
         } else {
             unset($validated['profile_picture']);
         }
 
         $student->update($validated);
+
+        if ($pictureReplaced) {
+            ScanUploadedFile::dispatch(Student::class, $student->id, 'profile_picture')->onQueue('default');
+        }
 
         return redirect()->route('admin.students.index')
             ->with('success', 'Student updated successfully.');

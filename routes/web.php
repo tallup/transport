@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-// Serve profile pictures through Laravel (works even when public/storage symlink is missing on Forge)
+// Serve profile pictures through Laravel (works even when public/storage symlink is missing on Forge).
+// Auth-gated: student photos are personal data and must not be publicly enumerable.
 Route::get('/profile-pictures/{path}', function (string $path) {
     $path = ltrim(rawurldecode($path), '/');
     if ($path === '') {
+        abort(404);
+    }
+    // Reject path traversal before touching the filesystem.
+    if (str_contains($path, '..')) {
         abort(404);
     }
     // Stored paths are "profile-pictures/filename.jpg"; support both that and bare "filename.jpg"
@@ -43,8 +48,8 @@ Route::get('/profile-pictures/{path}', function (string $path) {
         default => 'application/octet-stream',
     };
 
-    return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
-})->where('path', '.*')->name('profile-pictures.serve');
+    return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'private, max-age=86400']);
+})->where('path', '.*')->middleware('auth')->name('profile-pictures.serve');
 
 Route::get('/', function (Request $request) {
     $user = $request->user();

@@ -31,9 +31,16 @@ class MessageAttachment extends Model
 
     /**
      * Get the URL for the attachment.
+     *
+     * Only "clean" (virus-scanned) attachments are downloadable. Pending or
+     * infected files return null so they are never served to clients.
      */
-    public function getUrlAttribute(): string
+    public function getUrlAttribute(): ?string
     {
+        if ($this->scan_status !== 'clean') {
+            return null;
+        }
+
         return Storage::url($this->file_path);
     }
 

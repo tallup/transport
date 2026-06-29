@@ -42,11 +42,8 @@ function StripeCheckoutForm({ booking, bookings, price }) {
 
         try {
             await axios.get('/api/keep-alive', { headers: { 'X-Keep-Alive': 'true' } });
-        } catch (err) {
-            if (err?.response?.status === 419) {
-                window.location.href = '/login';
-                return;
-            }
+        } catch (_) {
+            // Non-fatal; keep-alive is a GET (never a CSRF 419) and recovery is handled centrally.
         }
 
         try {
@@ -94,10 +91,7 @@ function StripeCheckoutForm({ booking, bookings, price }) {
                 onFinish: () => setLoading(false),
             });
         } catch (err) {
-            if (err?.response?.status === 419) {
-                window.location.href = '/login';
-                return;
-            }
+            // 419/CSRF recovery is handled centrally in bootstrap.js (refresh + retry).
             setError(err?.response?.data?.error || 'An error occurred. Please try again.');
             setLoading(false);
         }

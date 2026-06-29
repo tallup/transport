@@ -180,10 +180,8 @@ class User extends Authenticatable
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        // Get role directly from database to ensure we have the latest value
-        $role = \Illuminate\Support\Facades\DB::table('users')
-            ->where('id', $this->id)
-            ->value('role');
+        // Role from the loaded model attribute (accessor defaults to 'parent'); avoids a DB query per panel load.
+        $role = $this->role;
 
         if ($panel->getId() === 'admin') {
             // Allow all admin roles to access admin panel

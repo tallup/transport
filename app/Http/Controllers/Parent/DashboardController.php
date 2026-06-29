@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Parent;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Student;
-use App\Services\BookingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,16 +14,10 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
-        // Auto-update booking statuses; wrapped so a notification failure never
-        // crashes the dashboard request and inadvertently logs the user out.
-        try {
-            $bookingService = app(BookingService::class);
-            $bookingService->updateBookingStatuses();
-        } catch (\Throwable $e) {
-            \Log::error('updateBookingStatuses failed on dashboard: ' . $e->getMessage());
-        }
-        
+
+        // Booking-status expiry now runs via the scheduler (bookings:update-statuses, hourly),
+        // not on every dashboard load. See routes/console.php.
+
         $students = Student::where('parent_id', $user->id)->get(['id', 'name', 'parent_id', 'school_id']);
         $studentIds = $students->pluck('id');
 
@@ -39,16 +32,16 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $activeBookings = $bookings->filter(function ($booking) use ($today) {
             // Must be pending or active status
-            if (!in_array($booking->status, \App\Models\Booking::activeStatuses())) {
+            if (! in_array($booking->status, \App\Models\Booking::activeStatuses())) {
                 return false;
             }
-            
+
             // For pending bookings: include all pending bookings (they're waiting for payment or to start)
             // Don't filter by date - parent wants to see all pending bookings
             if (in_array($booking->status, [\App\Models\Booking::STATUS_PENDING, \App\Models\Booking::STATUS_AWAITING_APPROVAL])) {
                 return true;
             }
-            
+
             // For active bookings: include if not ended yet
             if ($booking->status === \App\Models\Booking::STATUS_ACTIVE) {
                 $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : null;
@@ -56,9 +49,10 @@ class DashboardController extends Controller
                 if ($endDate && $today->gt($endDate)) {
                     return false; // Active booking has ended
                 }
+
                 return true; // Active booking is still valid
             }
-            
+
             return false;
         });
 
@@ -67,11 +61,11 @@ class DashboardController extends Controller
         foreach ($activeBookings as $booking) {
             $startDate = Carbon::parse($booking->start_date);
             $endDate = $booking->end_date ? Carbon::parse($booking->end_date) : $today->copy()->addMonths(6);
-            
+
             // Determine pickup location and time
             $pickupLocation = 'N/A';
             $pickupTime = 'N/A';
-            
+
             if ($booking->pickupPoint) {
                 // Use assigned pickup point
                 $pickupLocation = $booking->pickupPoint->name;
@@ -96,7 +90,7 @@ class DashboardController extends Controller
                     $pickupTime = 'TBD';
                 }
             }
-            
+
             for ($date = $today->copy(); $date <= $today->copy()->addDays(14) && $date <= $endDate; $date->addDay()) {
                 if ($date >= $startDate) {
                     $upcomingPickups[] = [
@@ -131,6 +125,7 @@ class DashboardController extends Controller
         $notificationsUnreadCount = $user->unreadNotifications()->count();
         $notifications = $user->notifications()->latest()->take(5)->get()->map(function ($n) {
             $data = $n->data;
+
             return [
                 'id' => $n->id,
                 'type' => $data['type'] ?? 'info',
