@@ -8,15 +8,25 @@ Branch: feat/booking-expiry-notifications
 When a booking's period ends (`end_date` passes), nobody is notified and the
 student is not cleanly removed from the route:
 
-- The expiry logic exists in `BookingService::updateBookingStatuses()` (flips
-  `active` -> `expired`, emails the parent via `BookingExpired`), **but the
-  `bookings:update-statuses` command is never scheduled** — `routes/console.php`
-  only schedules `bookings:notify-starting-soon`. So in production nothing ever
-  expires a booking: status stays `active` forever, the parent email never
-  fires.
-- Admins are never told a booking expired (no `Admin\BookingExpiredAlert`).
+- **Admins are never told a booking expired** (no `Admin\BookingExpiredAlert`).
+  This is a genuine code gap.
 - The parent notification is mail-only; other booking notifications also use
   in-app (`database`) + PWA push.
+
+### Root-cause correction
+
+Initial scouting (which read only `routes/console.php`) concluded the
+`bookings:update-statuses` command was never scheduled. **That was wrong** —
+`bootstrap/app.php` already schedules it `->hourly()` (line 37). The expiry
+logic in `BookingService::updateBookingStatuses()` (flips `active` -> `expired`,
+emails parent via `BookingExpired`) therefore does run, *provided the server's
+`schedule:run` cron is configured*.
+
+So if production shows "parent not notified / student still active", the most
+likely cause is **the Laravel scheduler cron is not running on the server**
+(an infra check for Forge), not missing code. We did NOT add a duplicate
+schedule entry. Code changes here cover the real gaps: the missing admin alert
+and richer parent channels.
 
 ## Source of truth
 
@@ -37,9 +47,9 @@ status to `expired` removes the student from the roster automatically.
 
 ## Changes
 
-1. **Schedule the command (root fix)** — `routes/console.php`:
-   `Schedule::command('bookings:update-statuses')->dailyAt('06:00');`
-   Runs before drivers load rosters so expired students drop the same morning.
+1. **Scheduling** — no change. `bootstrap/app.php` already runs
+   `bookings:update-statuses` hourly. Verify the server `schedule:run` cron
+   separately (infra).
 
 2. **Parent `BookingExpired`** — `via()` returns `['mail', 'database']`
    (`toArray()` already present). PWA push sent from the service loop via

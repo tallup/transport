@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Admin;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BookingExpired extends Notification implements ShouldQueue
+class BookingExpiredAlert extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -21,16 +22,15 @@ class BookingExpired extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 
-    public function toMail(object $notifiable): \Illuminate\Notifications\Messages\MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
-        return (new \Illuminate\Notifications\Messages\MailMessage)
-            ->subject('Booking Expired - Renew to Continue Service')
-            ->view('emails.booking-expired', [
+        return (new MailMessage)
+            ->subject('Booking Expired - Student Removed from Route')
+            ->view('emails.admin.booking-expired', [
                 'booking' => $this->booking,
-                'user' => $notifiable,
             ]);
     }
 
@@ -43,8 +43,9 @@ class BookingExpired extends Notification implements ShouldQueue
     {
         return [
             'booking_id' => $this->booking->id,
-            'end_date' => $this->booking->end_date,
             'student_name' => $this->booking->student?->name,
+            'route_name' => $this->booking->route?->name,
+            'end_date' => $this->booking->end_date,
         ];
     }
 }

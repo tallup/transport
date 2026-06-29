@@ -3,23 +3,29 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use App\Notifications\Admin\BookingExpiredAlert;
+use App\Notifications\BookingExpired;
 use Carbon\Carbon;
 
 class BookingService
 {
     protected $calendarService;
 
-    public function __construct(CalendarService $calendarService)
-    {
+    public function __construct(
+        CalendarService $calendarService,
+        protected AdminNotificationService $adminNotificationService,
+        protected PushNotificationHelper $pushNotificationHelper,
+    ) {
         $this->calendarService = $calendarService;
     }
+
     /**
      * Handle booking lifecycle and status updates.
      */
     public function updateBookingStatuses(): void
     {
         $today = Carbon::today();
-        
+
         // Fix bookings marked as 'completed' - they should be 'active' until plan period ends
         // If end_date has passed, mark as expired; otherwise mark as active
         Booking::where('status', Booking::STATUS_COMPLETED)
@@ -28,7 +34,7 @@ class BookingService
                     ->orWhere('end_date', '>=', $today);
             })
             ->update(['status' => Booking::STATUS_ACTIVE]);
-        
+
         // Get bookings that are expiring today (before updating status)
         // so we can send notifications to parents
         $expiringBookings = Booking::whereIn('status', [Booking::STATUS_ACTIVE, Booking::STATUS_COMPLETED])
@@ -36,27 +42,51 @@ class BookingService
             ->where('end_date', '<', $today)
             ->with(['student.parent', 'route', 'pickupPoint'])
             ->get();
-        
+
         // Auto-expire bookings past end_date (including those that were 'completed')
         Booking::whereIn('status', [Booking::STATUS_ACTIVE, Booking::STATUS_COMPLETED])
             ->whereNotNull('end_date')
             ->where('end_date', '<', $today)
             ->update(['status' => Booking::STATUS_EXPIRED]);
-        
-        // Send expiration notifications to parents; each is wrapped individually
-        // so one failed notification never aborts the loop or the HTTP request.
+
+        // Notify parents (mail + in-app), push, and admins for each expired
+        // booking. Each side-effect is wrapped individually so one failure
+        // never aborts the loop or the HTTP request.
         foreach ($expiringBookings as $booking) {
+            $parent = $booking->student?->parent;
+
+            // Parent: mail + in-app database notification.
             try {
-                $parent = $booking->student?->parent;
                 if ($parent && filter_var($parent->email ?? '', FILTER_VALIDATE_EMAIL)) {
-                    $parent->notify(new \App\Notifications\BookingExpired($booking));
+                    $parent->notify(new BookingExpired($booking));
                 } else {
                     \Log::debug('BookingExpired notification skipped: missing parent email', [
                         'booking_id' => $booking->id,
                     ]);
                 }
             } catch (\Throwable $e) {
-                \Log::error('BookingExpired notification failed for booking #' . $booking->id . ': ' . $e->getMessage());
+                \Log::error('BookingExpired notification failed for booking #'.$booking->id.': '.$e->getMessage());
+            }
+
+            // Parent: PWA push (no-op when no subscription).
+            try {
+                if ($parent) {
+                    $this->pushNotificationHelper->sendIfSubscribed(
+                        $parent,
+                        'Booking Expired',
+                        'The booking for '.($booking->student?->name ?? 'your child').' has ended. Renew to continue service.',
+                        ['type' => 'booking_expired', 'booking_id' => $booking->id],
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Log::error('BookingExpired push failed for booking #'.$booking->id.': '.$e->getMessage());
+            }
+
+            // Admins: per-booking alert.
+            try {
+                $this->adminNotificationService->notifyAdmins(new BookingExpiredAlert($booking));
+            } catch (\Throwable $e) {
+                \Log::error('BookingExpiredAlert admin notification failed for booking #'.$booking->id.': '.$e->getMessage());
             }
         }
 
@@ -65,10 +95,6 @@ class BookingService
 
     /**
      * Sync booking status with Stripe subscription.
-     *
-     * @param Booking $booking
-     * @param string $stripeStatus
-     * @return void
      */
     public function syncStripeStatus(Booking $booking, string $stripeStatus): void
     {
@@ -81,10 +107,6 @@ class BookingService
 
     /**
      * Calculate end date based on plan type and start date.
-     *
-     * @param string $planType
-     * @param Carbon $startDate
-     * @return Carbon|null
      */
     public function calculateEndDate(string $planType, Carbon $startDate): ?Carbon
     {
@@ -100,7 +122,6 @@ class BookingService
     /**
      * Validate booking dates against calendar events.
      *
-     * @param Carbon $startDate
      * @return array ['valid' => bool, 'message' => string]
      */
     public function validateBookingDates(Carbon $startDate): array
@@ -111,11 +132,7 @@ class BookingService
     /**
      * Check if a student has overlapping bookings for the same date range.
      *
-     * @param int $studentId
-     * @param Carbon $startDate
-     * @param Carbon|null $endDate
-     * @param int|null $excludeBookingId Booking ID to exclude from check (for updates)
-     * @return bool
+     * @param  int|null  $excludeBookingId  Booking ID to exclude from check (for updates)
      */
     public function hasOverlappingBooking(int $studentId, Carbon $startDate, ?Carbon $endDate = null, ?int $excludeBookingId = null): bool
     {
@@ -141,4 +158,3 @@ class BookingService
         return $query->exists();
     }
 }
-
